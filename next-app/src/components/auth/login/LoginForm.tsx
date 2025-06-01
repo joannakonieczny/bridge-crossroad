@@ -11,24 +11,20 @@ import { userSchema } from "@/schemas/user";
 import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
-
-type FormValues = {
-  loginOrEmail: string;
-  password: string;
-  rememberMe: boolean;
-};
+import { login, FormValues } from "@/services/actions";
 
 export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
   const { handleSubmit, control } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
-    alert(JSON.stringify(data));
-  };
+  //const onSubmit = (data: FormValues) => {
+  //  alert(JSON.stringify(data));
+  //};
+
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(login)}>
         <Stack spacing={2} mt={8}>
           <FormHeading
             title={t("title")}
