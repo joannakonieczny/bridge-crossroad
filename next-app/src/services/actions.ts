@@ -18,7 +18,7 @@ const testUser = {
 
 export async function login(formData: FormValues) {
   if (formData.loginOrEmail !== testUser.email || formData.password !== testUser.password) {
-    alert("User does not exist. Try again.");
+    console.warn("User does not exist. Try again.");
     return;
   }
   await createSession(testUser.id);

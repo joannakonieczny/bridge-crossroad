@@ -13,5 +13,5 @@ function getEnvVar(key: string, fallback?: string): string {
 
 export const config = {
   SESSION_SECRET: getEnvVar("SESSION_SECRET", "123"),
-  EXPIRATION_TIME: Number(getEnvVar("EXPIRATION_TIME", "3600000"))
+  EXPIRATION_TIME: Number(getEnvVar("EXPIRATION_TIME_MS", "3600000"))
 };
