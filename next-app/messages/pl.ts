@@ -49,6 +49,48 @@ const authForm = {
   },
 };
 
+const onboardingPage = {
+  common: {
+    nextButton: "Dalej",
+    prevButton: "Cofnij",
+  },
+  firstPage: {
+    mainHeading: {
+      text: "Najpierw... Opowiedz nam trochę o sobie!",
+      highlight: "sobie",
+    },
+    subHeading: "Ważne dane personalne",
+    nickName: {
+      placeholder: "Twój nick lub brydżowe przezwisko (opcjonalne)",
+      errorMessage: "Podaj poprawny nick",
+      invalidNickSyntax: "Nick może zawierać tylko litery, cyfry, _ i -",
+      minLengthNick: "Nick musi mieć co najmniej {minLength} znaki",
+      maxLengthNick: "Nick nie może być dłuższy niż {maxLength} znaków",
+    },
+    university: {
+      placeholder: "Wybierz uczelnię",
+    },
+    yearOfBirth: {
+      placeholder: "Wybierz rok urodzenia",
+    },
+  },
+  secondPage: {
+    mainHeading: {
+      text: "Jesteś brydżowym weteranem? Może dopiero zaczynasz?",
+      highlight: "weteranem",
+    },
+    subHeading: "Kilka rzeczy o Twoim doświadczeniu!",
+  },
+  thirdPage: {
+    mainHeading: {
+      text: "Nadróbka dodatkowych informacji",
+      highlight: "Nadróbka",
+    },
+    subHeading:
+      "Profile brydżowe - ich widoczność dla innych możesz zmienić w ustawieniach",
+  },
+};
+
 const messages = {
   DummyPage: {
     text: "Witaj świecie!",
@@ -113,6 +155,7 @@ const messages = {
       },
     },
   },
+  OnboardingPage: onboardingPage,
 };
 
 export default messages;
