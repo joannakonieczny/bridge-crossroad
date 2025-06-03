@@ -1,20 +1,37 @@
 import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { config } from "@/i18n/config";
 
-const secretKey = process.env.SESSION_SECRET;
+const secretKey = config.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
-export async function createSession(userId: string) {
-  console.log(secretKey);
-  const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
-  const session = await encrypt({ userId, expiresAt });
-  const cookie = await cookies();
+type SessionPayload = {
+  userId: string;
+  expiresAt: number;
+};
 
-  cookie.set("session", session, {
+export async function createSession(userId: string) {
+  const ttl = config.EXPIRATION_TIME;
+  const expiresDate = new Date(Date.now() + ttl);
+
+  const payload: SessionPayload = {
+    userId,
+    expiresAt: expiresDate.getTime(),
+  };
+
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(`${Math.floor(ttl / 1000)}s`)
+    .sign(encodedKey);
+
+  const cookieStore = await cookies();
+  cookieStore.set("session", token, {
     httpOnly: true,
-    secure: true,
-    expires: expiresAt,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: expiresDate,
   });
 }
 
@@ -23,16 +40,12 @@ export async function deleteSession() {
   cookie.delete("session");
 }
 
-type SessionPayload = {
-  userId: string;
-  expiresAt: Date;
-};
 
 export async function encrypt(payload: SessionPayload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("1h")
     .sign(encodedKey);
 }
 
