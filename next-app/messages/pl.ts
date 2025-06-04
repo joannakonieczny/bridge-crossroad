@@ -19,6 +19,8 @@ const nameFields = {
   invalidSyntax: "Tylko litery",
 };
 
+const tooLongString = "Max. {maxLength} znaków";
+
 const authForm = {
   nicknameField: {
     placeholder: "Nick lub przezwisko (opcjonalne)",
@@ -163,6 +165,18 @@ const onboardingPage = {
     },
     subHeading:
       "Profile brydżowe - ich widoczność dla innych możesz zmienić w ustawieniach",
+    cezarId: {
+      placeholder: "Numer Cezar (opcjonalne)",
+      maxLenght: tooLongString,
+    },
+    bboId: {
+      placeholder: "Nick na BBO (opcjonalne)",
+      maxLenght: tooLongString,
+    },
+    cuebidsId: {
+      placeholder: "Kod użytkownika na Cuebids (opcjonalne)",
+      maxLenght: tooLongString,
+    },
   },
 };
 
