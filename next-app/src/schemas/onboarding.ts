@@ -1,3 +1,5 @@
+import { userSchema } from "./user";
+
 export enum KrakowAcademy {
   UNIWERSYTET_JAGIELLONSKI = "Uniwersytet Jagielloński",
   AGH = "Akademia Górniczo-Hutnicza im. Stanisława Staszica",
@@ -37,3 +39,7 @@ export enum TrainingGroup {
 }
 
 export const minYear = 1900;
+
+export const nicknameSchema = {
+  ...userSchema.loginSchema,
+};

@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import DefaultInput from "../inputs/DefaultInput";
 import SelectInput from "../inputs/SelectInput";
 import { Stack } from "@chakra-ui/react";
-import { KrakowAcademy, minYear } from "@/schemas/onboarding";
+import { KrakowAcademy, minYear, nicknameSchema } from "@/schemas/onboarding";
+import { useForm, Controller } from "react-hook-form";
 
 function generateYearOptions() {
   const currentYear = new Date().getFullYear();
@@ -29,21 +30,47 @@ function generateUniversityOptions() {
   }));
 }
 
+interface FormData {
+  nickname: string;
+  university: string;
+  yearOfBirth: string;
+}
+
 export default function FirstPage() {
   const t = useTranslations("OnboardingPage.firstPage");
   const tc = useTranslations("OnboardingPage.common");
+  const [submitSource, setSubmitSource] = React.useState<
+    "prev" | "next" | null
+  >(null);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    alert("Form submitted");
-    console.log("Form submitted", event);
-  }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      nickname: "",
+      university: "",
+      yearOfBirth: "",
+    },
+  });
+
+  const onSubmit = (data: FormData) => {
+    alert("Form submitted successfully: " + JSON.stringify(data));
+    if (submitSource === "next") {
+      alert("Przechodzimy do następnej strony");
+    } else if (submitSource === "prev") {
+      alert("Wracamy do poprzedniej strony");
+    }
+    setSubmitSource(null);
+  };
 
   function handlePrevButtonClick() {
-    alert("Previous button clicked");
+    setSubmitSource("prev");
   }
 
   function handleNextButtonClick() {
-    alert("Next button clicked");
+    setSubmitSource("next");
   }
 
   return (
@@ -55,7 +82,7 @@ export default function FirstPage() {
         },
       }}
       subHeading={{ text: t("subHeading") }}
-      onFormProps={{ onSubmit: handleSubmit }}
+      onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
         text: tc("prevButton"),
         onClick: handlePrevButtonClick,
@@ -66,14 +93,72 @@ export default function FirstPage() {
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">
-        <DefaultInput placeholder={t("nickName.placeholder")} />
-        <SelectInput
-          placeholder={t("university.placeholder")}
-          options={generateUniversityOptions()}
+        <Controller
+          name="nickname"
+          control={control}
+          rules={{
+            required: "Nick jest wymagany",
+            minLength: {
+              value: nicknameSchema.minLength,
+              message: `Nick musi mieć minimum ${nicknameSchema.minLength} znaki`,
+            },
+            maxLength: {
+              value: nicknameSchema.maxLength,
+              message: `Nick może mieć maksymalnie ${nicknameSchema.maxLength} znaków`,
+            },
+            pattern: {
+              value: nicknameSchema.regex,
+              message:
+                "Nick może zawierać tylko litery, cyfry, myślnik i podkreślenie",
+            },
+          }}
+          render={({ field }) => (
+            <DefaultInput
+              placeholder={t("nickName.placeholder")}
+              isRequired
+              isInvalid={!!errors.nickname}
+              errorMessage={errors.nickname?.message}
+              onInputProps={{
+                ...field,
+              }}
+            />
+          )}
         />
-        <SelectInput
-          placeholder={t("yearOfBirth.placeholder")}
-          options={generateYearOptions()}
+
+        <Controller
+          name="university"
+          control={control}
+          rules={{ required: "Wybierz uczelnię" }}
+          render={({ field }) => (
+            <SelectInput
+              placeholder={t("university.placeholder")}
+              isRequired
+              isInvalid={!!errors.university}
+              errorMessage={errors.university?.message}
+              options={generateUniversityOptions()}
+              onSelectProps={{
+                ...field,
+              }}
+            />
+          )}
+        />
+
+        <Controller
+          name="yearOfBirth"
+          control={control}
+          rules={{ required: "Podaj rok urodzenia" }}
+          render={({ field }) => (
+            <SelectInput
+              placeholder={t("yearOfBirth.placeholder")}
+              isRequired
+              isInvalid={!!errors.yearOfBirth}
+              errorMessage={errors.yearOfBirth?.message}
+              options={generateYearOptions()}
+              onSelectProps={{
+                ...field,
+              }}
+            />
+          )}
         />
       </Stack>
     </PagesLayout>
