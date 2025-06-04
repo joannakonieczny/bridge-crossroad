@@ -6,14 +6,16 @@ import { useTranslations } from "next-intl";
 import DefaultInput from "../inputs/DefaultInput";
 import SelectInput from "../inputs/SelectInput";
 import { Stack } from "@chakra-ui/react";
-import { KrakowAcademy, minYear, nicknameSchema } from "@/schemas/onboarding";
 import { useForm, Controller } from "react-hook-form";
+import { KrakowAcademy, userSchema } from "@/schemas/user";
 
 function generateYearOptions() {
-  const currentYear = new Date().getFullYear();
   const years = [];
-
-  for (let year = currentYear; year >= minYear; year--) {
+  for (
+    let year = userSchema.yearOfBirthSchema.max;
+    year >= userSchema.yearOfBirthSchema.min;
+    year--
+  ) {
     years.push({
       value: year.toString(),
       label: year.toString(),
@@ -99,15 +101,15 @@ export default function FirstPage() {
           rules={{
             required: "Nick jest wymagany",
             minLength: {
-              value: nicknameSchema.minLength,
-              message: `Nick musi mieć minimum ${nicknameSchema.minLength} znaki`,
+              value: userSchema.nicknameSchema.minLength,
+              message: `Nick musi mieć minimum ${userSchema.nicknameSchema.minLength} znaki`,
             },
             maxLength: {
-              value: nicknameSchema.maxLength,
-              message: `Nick może mieć maksymalnie ${nicknameSchema.maxLength} znaków`,
+              value: userSchema.nicknameSchema.maxLength,
+              message: `Nick może mieć maksymalnie ${userSchema.nicknameSchema.maxLength} znaków`,
             },
             pattern: {
-              value: nicknameSchema.regex,
+              value: userSchema.nicknameSchema.regex,
               message:
                 "Nick może zawierać tylko litery, cyfry, myślnik i podkreślenie",
             },
