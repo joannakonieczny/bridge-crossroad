@@ -73,15 +73,8 @@ export default function FirstPage() {
       case "next":
         router.push("/onboarding/2");
         break;
-      case "prev":
-        router.push("/onboarding/0");
-        break;
     }
     setSubmitSource(null);
-  }
-
-  function handlePrevButtonClicked() {
-    setSubmitSource("prev");
   }
 
   function handleNextButtonClicked() {
@@ -99,7 +92,7 @@ export default function FirstPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        onClick: handlePrevButtonClicked,
+        disabled: true, // No previous page
       }}
       nextButton={{
         onClick: handleNextButtonClicked,

@@ -10,13 +10,13 @@ import React, {
 } from "react";
 
 interface FirstPage {
-  university: KrakowAcademy;
+  university: KrakowAcademy; // enum key exacly
   yearOfBirth: number;
 }
 
 interface SecondPage {
-  playingExperience: number;
-  trainingGroup: TrainingGroup;
+  startPlayingDate: string; // format: "MM-YYYY"
+  trainingGroup: TrainingGroup; // enum key exacly
   hasRefereeLicence: boolean;
 }
 

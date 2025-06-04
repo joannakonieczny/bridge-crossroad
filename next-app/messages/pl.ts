@@ -1,3 +1,18 @@
+const MONTHS = {
+  jan: "Styczeń",
+  feb: "Luty",
+  mar: "Marzec",
+  apr: "Kwiecień",
+  may: "Maj",
+  jun: "Czerwiec",
+  jul: "Lipiec",
+  aug: "Sierpień",
+  sep: "Wrzesień",
+  oct: "Październik",
+  nov: "Listopad",
+  dec: "Grudzień",
+};
+
 const nameFields = {
   minLength: "Min. {minLength} znaki",
   maxLength: "Max. {maxLength} znaków",
@@ -129,6 +144,17 @@ const onboardingPage = {
       highlight: "weteranem",
     },
     subHeading: "Kilka rzeczy o Twoim doświadczeniu!",
+    skillLevel: {
+      placeholder: "Grupa zaawansowania, początkujący, trener?",
+      noneSelected: "Nie wybrano grupy zaawansowania",
+    },
+    hasRefereeLicence: {
+      label: "Czy skończyłeś kurs sędziowski?",
+    },
+    monthYear: {
+      placeholder: "Kiedy zacząłeś grać w brydża?",
+      noneSelected: "Nie wybrano daty",
+    },
   },
   thirdPage: {
     mainHeading: {
@@ -153,6 +179,9 @@ const messages = {
     appNameWords: {
       first: "Bridge",
       second: "Crossroad",
+    },
+    date: {
+      months: MONTHS,
     },
   },
   Auth: {
