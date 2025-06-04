@@ -116,9 +116,11 @@ const onboardingPage = {
     subHeading: "Ważne dane personalne",
     university: {
       placeholder: "Wybierz uczelnię",
+      noneSelected: "Nie wybrano uczelni",
     },
     yearOfBirth: {
       placeholder: "Wybierz rok urodzenia",
+      noneSelected: "Nie wybrano roku urodzenia",
     },
   },
   secondPage: {

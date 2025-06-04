@@ -1,5 +1,6 @@
 "use client";
 
+import { KrakowAcademy, TrainingGroup } from "@/schemas/user";
 import React, {
   createContext,
   useContext,
@@ -8,45 +9,17 @@ import React, {
   useEffect,
 } from "react";
 
-enum Academies {
-  UNIWERSYTET_JAGIELLONSKI = "Uniwersytet Jagielloński",
-  AGH = "Akademia Górniczo-Hutnicza im. Stanisława Staszica",
-  POLITECHNIKA_KRAKOWSKA = "Politechnika Krakowska im. Tadeusza Kościuszki",
-  UNIWERSYTET_EKONOMICZNY = "Uniwersytet Ekonomiczny w Krakowie",
-  UNIWERSYTET_PEDAGOGICZNY = "Uniwersytet Pedagogiczny im. Komisji Edukacji Narodowej",
-  UNIWERSYTET_ROLNICZY = "Uniwersytet Rolniczy im. Hugona Kołłątaja",
-  AKADEMIA_SZTUK_PIEKNYCH = "Akademia Sztuk Pięknych im. Jana Matejki",
-  AKADEMIA_MUZYCZNA = "Akademia Muzyczna w Krakowie",
-  AKADEMIA_WYCHOWANIA_FIZYCZNEGO = "Akademia Wychowania Fizycznego im. Bronisława Czecha",
-  AKADEMIA_TEOLOGICZNA = "Uniwersytet Papieski Jana Pawła II",
-  AKADEMIA_IGNATIANUM = "Uniwersytet Ignatianum w Krakowie",
-  INNA = "Inna",
-}
-
-enum TrainingGroup {
-  PODSTAWOWA = "grupa podstawowa",
-  SREDNIOZAAWANSOWANA = "średniozaawansowana",
-  ZAAWANSOWANA = "zaawansowana",
-  TRENER = "Jestem trenerem!",
-  NIE_UCZESTNICZE = "Nie chodzę na zajęcia z brydża na AGH",
-}
-
-//Wazne dane personalne
 interface FirstPage {
-  nickname?: string;
-  academy: Academies;
+  university: KrakowAcademy;
   yearOfBirth: number;
 }
 
-//Informacje o doświadczeniu
 interface SecondPage {
-  startPlayingDate: string; // Format: YYYY-MM-DD , ISO date
-  yearOfStartingPlaying: number;
+  playingExperience: number;
   trainingGroup: TrainingGroup;
   hasRefereeLicence: boolean;
 }
 
-//Profile brydżowe
 interface ThirdPage {
   CezarId?: string;
   BBOId?: string;
@@ -100,6 +73,7 @@ export const OnboardingFormDataProvider = ({
           throw new Error(`Invalid page number got: ${page} expected 1-3`);
       }
       storeData();
+      alert(`Data for page ${page} set successfully: ${JSON.stringify(data)}`);
       return newData;
     });
   }

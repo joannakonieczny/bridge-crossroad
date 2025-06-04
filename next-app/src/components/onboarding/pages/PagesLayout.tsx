@@ -14,6 +14,7 @@ import {
   ButtonProps,
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useTranslations } from "next-intl";
 
 export interface IPagesLayoutProps {
   children?: React.ReactNode;
@@ -30,13 +31,11 @@ export interface IPagesLayoutProps {
     onSubHeadingProps?: TextProps;
   };
   prevButton?: {
-    text: string;
     onClick?: () => void;
     disabled?: boolean;
     onPrevButtonProps?: ButtonProps;
   };
   nextButton?: {
-    text: string;
     onClick?: () => void;
     disabled?: boolean;
     onNextButtonProps?: ButtonProps;
@@ -46,6 +45,7 @@ export interface IPagesLayoutProps {
 }
 
 export default function PagesLayout(props: IPagesLayoutProps) {
+  const t = useTranslations("OnboardingPage.common");
   return (
     <>
       <Heading
@@ -101,7 +101,7 @@ export default function PagesLayout(props: IPagesLayoutProps) {
             onClick={props.prevButton?.onClick}
             {...props.prevButton?.onPrevButtonProps}
           >
-            {props.prevButton?.text}
+            {t("prevButton")}
           </Button>
 
           <Button
@@ -113,7 +113,7 @@ export default function PagesLayout(props: IPagesLayoutProps) {
             onClick={props.nextButton?.onClick}
             {...props.nextButton?.onNextButtonProps}
           >
-            {props.nextButton?.text}
+            {t("nextButton")}
           </Button>
         </HStack>
       </form>

@@ -49,3 +49,11 @@ export enum KrakowAcademy {
   AKADEMIA_IGNATIANUM = "Uniwersytet Ignatianum w Krakowie",
   INNA = "Inna",
 }
+
+export enum TrainingGroup {
+  PODSTAWOWA = "grupa podstawowa",
+  SREDNIOZAAWANSOWANA = "średniozaawansowana",
+  ZAAWANSOWANA = "zaawansowana",
+  TRENER = "Jestem trenerem!",
+  NIE_UCZESTNICZE = "Nie chodzę na zajęcia z brydża na AGH",
+}

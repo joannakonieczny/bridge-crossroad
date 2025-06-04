@@ -3,11 +3,12 @@
 import * as React from "react";
 import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
-import DefaultInput from "../inputs/DefaultInput";
 import SelectInput from "../inputs/SelectInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { KrakowAcademy, userSchema } from "@/schemas/user";
+import { useRouter } from "next/navigation";
+import { useOnboardingFormData } from "../FormDataContext";
 
 function generateYearOptions() {
   const years = [];
@@ -33,45 +34,57 @@ function generateUniversityOptions() {
 }
 
 interface FormData {
-  nickname: string;
   university: string;
   yearOfBirth: string;
 }
 
+type SubmitSourceType = "prev" | "next" | null;
+
 export default function FirstPage() {
   const t = useTranslations("OnboardingPage.firstPage");
-  const tc = useTranslations("OnboardingPage.common");
-  const [submitSource, setSubmitSource] = React.useState<
-    "prev" | "next" | null
-  >(null);
+  const [submitSource, setSubmitSource] =
+    React.useState<SubmitSourceType>(null);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
-    defaultValues: {
-      nickname: "",
-      university: "",
-      yearOfBirth: "",
-    },
-  });
+  } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    alert("Form submitted successfully: " + JSON.stringify(data));
-    if (submitSource === "next") {
-      alert("Przechodzimy do następnej strony");
-    } else if (submitSource === "prev") {
-      alert("Wracamy do poprzedniej strony");
+  const router = useRouter();
+  const onboardingContext = useOnboardingFormData();
+
+  const universityOptions = React.useMemo(
+    () => generateUniversityOptions(),
+    []
+  );
+  const yearOptions = React.useMemo(() => generateYearOptions(), []);
+
+  function onSubmit(data: FormData) {
+    onboardingContext.setData({
+      page: 1,
+      data: {
+        university: data.university as KrakowAcademy,
+        yearOfBirth: parseInt(data.yearOfBirth, 10),
+      },
+    });
+
+    switch (submitSource) {
+      case "next":
+        router.push("/onboarding/2");
+        break;
+      case "prev":
+        router.push("/onboarding/0");
+        break;
     }
     setSubmitSource(null);
-  };
+  }
 
-  function handlePrevButtonClick() {
+  function handlePrevButtonClicked() {
     setSubmitSource("prev");
   }
 
-  function handleNextButtonClick() {
+  function handleNextButtonClicked() {
     setSubmitSource("next");
   }
 
@@ -86,76 +99,41 @@ export default function FirstPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        text: tc("prevButton"),
-        onClick: handlePrevButtonClick,
+        onClick: handlePrevButtonClicked,
       }}
       nextButton={{
-        text: tc("nextButton"),
-        onClick: handleNextButtonClick,
+        onClick: handleNextButtonClicked,
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">
         <Controller
-          name="nickname"
-          control={control}
-          rules={{
-            required: "Nick jest wymagany",
-            minLength: {
-              value: userSchema.nicknameSchema.minLength,
-              message: `Nick musi mieć minimum ${userSchema.nicknameSchema.minLength} znaki`,
-            },
-            maxLength: {
-              value: userSchema.nicknameSchema.maxLength,
-              message: `Nick może mieć maksymalnie ${userSchema.nicknameSchema.maxLength} znaków`,
-            },
-            pattern: {
-              value: userSchema.nicknameSchema.regex,
-              message:
-                "Nick może zawierać tylko litery, cyfry, myślnik i podkreślenie",
-            },
-          }}
-          render={({ field }) => (
-            <DefaultInput
-              placeholder={t("nickName.placeholder")}
-              isRequired
-              isInvalid={!!errors.nickname}
-              errorMessage={errors.nickname?.message}
-              onInputProps={{
-                ...field,
-              }}
-            />
-          )}
-        />
-
-        <Controller
           name="university"
+          defaultValue=""
           control={control}
-          rules={{ required: "Wybierz uczelnię" }}
+          rules={{ required: t("university.noneSelected") }}
           render={({ field }) => (
             <SelectInput
               placeholder={t("university.placeholder")}
-              isRequired
               isInvalid={!!errors.university}
               errorMessage={errors.university?.message}
-              options={generateUniversityOptions()}
+              options={universityOptions}
               onSelectProps={{
                 ...field,
               }}
             />
           )}
         />
-
         <Controller
           name="yearOfBirth"
+          defaultValue=""
           control={control}
-          rules={{ required: "Podaj rok urodzenia" }}
+          rules={{ required: t("yearOfBirth.noneSelected") }}
           render={({ field }) => (
             <SelectInput
               placeholder={t("yearOfBirth.placeholder")}
-              isRequired
               isInvalid={!!errors.yearOfBirth}
               errorMessage={errors.yearOfBirth?.message}
-              options={generateYearOptions()}
+              options={yearOptions}
               onSelectProps={{
                 ...field,
               }}
