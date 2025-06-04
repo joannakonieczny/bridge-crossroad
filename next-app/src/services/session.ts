@@ -1,7 +1,7 @@
 import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { config } from "@/i18n/config";
+import { config } from "@/util/envVariables";
 
 const secretKey = config.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -12,7 +12,7 @@ type SessionPayload = {
 };
 
 export async function createSession(userId: string) {
-  const ttl = config.EXPIRATION_TIME;
+  const ttl = config.EXPIRATION_TIME_MS;
   const expiresDate = new Date(Date.now() + ttl);
 
   const payload: SessionPayload = {
@@ -42,10 +42,11 @@ export async function deleteSession() {
 
 
 export async function encrypt(payload: SessionPayload) {
+  const ttl = config.EXPIRATION_TIME_MS;
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("1h")
+    .setExpirationTime(`${Math.floor(ttl / 1000)}s`)
     .sign(encodedKey);
 }
 
