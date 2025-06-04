@@ -33,6 +33,10 @@ export const userSchema = {
     min: 1900,
     max: new Date().getFullYear(),
   },
+  inviteCodeSchema: {
+    regex: /^[A-Z0-9]{8}$/,
+    length: 8,
+  },
 };
 
 export enum KrakowAcademy {

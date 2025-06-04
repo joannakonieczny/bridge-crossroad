@@ -6,10 +6,10 @@ import { useTranslations } from "next-intl";
 import SelectInput from "../inputs/SelectInput";
 import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { useOnboardingFormData } from "../FormDataContext";
 import MonthYearInput from "../inputs/MonthYearInput";
 import { TrainingGroup } from "@/schemas/user";
+import { useFormNavigation } from "../FormNavigationHook";
 
 function generateSkillLevelOptions() {
   return Object.entries(TrainingGroup).map(([key, value]) => ({
@@ -24,14 +24,13 @@ interface FormData {
   hasRefereeLicence: boolean;
 }
 
-type SubmitSourceType = "prev" | "next" | null;
-
-// Komponent wyboru miesiąca i roku
-
 export default function SecondPage() {
   const t = useTranslations("OnboardingPage.secondPage");
-  const [submitSource, setSubmitSource] =
-    React.useState<SubmitSourceType>(null);
+  const { handleNextClicked, handlePrevClicked, handleNavigation } =
+    useFormNavigation({
+      nextPage: "/onboarding/3",
+      prevPage: "/onboarding/1",
+    });
 
   const {
     control,
@@ -39,7 +38,6 @@ export default function SecondPage() {
     formState: { errors },
   } = useForm<FormData>();
 
-  const router = useRouter();
   const onboardingContext = useOnboardingFormData();
   const skillLevelOptions = React.useMemo(
     () => generateSkillLevelOptions(),
@@ -48,31 +46,14 @@ export default function SecondPage() {
 
   function onSubmit(data: FormData) {
     onboardingContext.setData({
-      page: 2,
+      page: "2",
       data: {
         startPlayingDate: data.monthYear,
         trainingGroup: data.skillLevel as TrainingGroup,
         hasRefereeLicence: data.hasRefereeLicence,
       },
     });
-
-    switch (submitSource) {
-      case "next":
-        router.push("/onboarding/3");
-        break;
-      case "prev":
-        router.push("/onboarding/1");
-        break;
-    }
-    setSubmitSource(null);
-  }
-
-  function handlePrevButtonClicked() {
-    setSubmitSource("prev");
-  }
-
-  function handleNextButtonClicked() {
-    setSubmitSource("next");
+    handleNavigation();
   }
 
   return (
@@ -86,10 +67,10 @@ export default function SecondPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        onClick: handlePrevButtonClicked,
+        onClick: handlePrevClicked,
       }}
       nextButton={{
-        onClick: handleNextButtonClicked,
+        onClick: handleNextClicked,
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">

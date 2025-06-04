@@ -7,8 +7,8 @@ import SelectInput from "../inputs/SelectInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { KrakowAcademy, userSchema } from "@/schemas/user";
-import { useRouter } from "next/navigation";
 import { useOnboardingFormData } from "../FormDataContext";
+import { useFormNavigation } from "../FormNavigationHook";
 
 function generateYearOptions() {
   const years = [];
@@ -38,12 +38,10 @@ interface FormData {
   yearOfBirth: string;
 }
 
-type SubmitSourceType = "prev" | "next" | null;
-
 export default function FirstPage() {
   const t = useTranslations("OnboardingPage.firstPage");
-  const [submitSource, setSubmitSource] =
-    React.useState<SubmitSourceType>(null);
+  const { handleNextClicked, handlePrevClicked, handleNavigation } =
+    useFormNavigation({ nextPage: "/onboarding/2" });
 
   const {
     control,
@@ -51,7 +49,6 @@ export default function FirstPage() {
     formState: { errors },
   } = useForm<FormData>();
 
-  const router = useRouter();
   const onboardingContext = useOnboardingFormData();
 
   const universityOptions = React.useMemo(
@@ -62,23 +59,13 @@ export default function FirstPage() {
 
   function onSubmit(data: FormData) {
     onboardingContext.setData({
-      page: 1,
+      page: "1",
       data: {
         university: data.university as KrakowAcademy,
         yearOfBirth: parseInt(data.yearOfBirth, 10),
       },
     });
-
-    switch (submitSource) {
-      case "next":
-        router.push("/onboarding/2");
-        break;
-    }
-    setSubmitSource(null);
-  }
-
-  function handleNextButtonClicked() {
-    setSubmitSource("next");
+    handleNavigation();
   }
 
   return (
@@ -92,10 +79,11 @@ export default function FirstPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        disabled: true, // No previous page
+        disabled: true, // no prev page
+        onClick: handlePrevClicked,
       }}
       nextButton={{
-        onClick: handleNextButtonClicked,
+        onClick: handleNextClicked,
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">

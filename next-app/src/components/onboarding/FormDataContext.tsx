@@ -1,5 +1,6 @@
 "use client";
 
+import { PageId } from "@/app/onboarding/[page]/page";
 import { KrakowAcademy, TrainingGroup } from "@/schemas/user";
 import React, {
   createContext,
@@ -21,15 +22,21 @@ interface SecondPage {
 }
 
 interface ThirdPage {
-  CezarId?: string;
-  BBOId?: string;
-  CuebidsId?: string;
+  cezarId?: string;
+  bboId?: string;
+  cuebidsId?: string;
+}
+
+interface FinalPage {
+  inviteCode: string;
+  termsAccepted: boolean;
 }
 
 type FormData = {
   firstPage?: FirstPage;
   secondPage?: SecondPage;
   thirdPage?: ThirdPage;
+  finalPage?: FinalPage;
 };
 
 type FormDataContextType = {
@@ -39,8 +46,8 @@ type FormDataContextType = {
 };
 
 interface SetDataParams {
-  page: number;
-  data: FirstPage | SecondPage | ThirdPage;
+  page: PageId;
+  data: FirstPage | SecondPage | ThirdPage | FinalPage;
 }
 
 const FormDataContext = createContext<FormDataContextType | undefined>(
@@ -60,14 +67,17 @@ export const OnboardingFormDataProvider = ({
     setFormData((prevData) => {
       const newData = { ...prevData };
       switch (page) {
-        case 1:
+        case "1":
           newData.firstPage = data as FirstPage;
           break;
-        case 2:
+        case "2":
           newData.secondPage = data as SecondPage;
           break;
-        case 3:
+        case "3":
           newData.thirdPage = data as ThirdPage;
+          break;
+        case "final":
+          newData.finalPage = data as FinalPage;
           break;
         default:
           throw new Error(`Invalid page number got: ${page} expected 1-3`);

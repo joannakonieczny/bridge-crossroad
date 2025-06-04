@@ -6,9 +6,9 @@ import { useTranslations } from "next-intl";
 import DefaultInput from "../inputs/DefaultInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { useOnboardingFormData } from "../FormDataContext";
 import { casualString } from "@/schemas/user";
+import { useFormNavigation } from "../FormNavigationHook";
 
 interface FormData {
   cezarId?: string;
@@ -16,12 +16,13 @@ interface FormData {
   cuebidsId?: string;
 }
 
-type SubmitSourceType = "prev" | "next" | null;
-
 export default function ThirdPage() {
   const t = useTranslations("OnboardingPage.thirdPage");
-  const [submitSource, setSubmitSource] =
-    React.useState<SubmitSourceType>(null);
+  const { handlePrevClicked, handleNextClicked, handleNavigation } =
+    useFormNavigation({
+      nextPage: "/onboarding/final",
+      prevPage: "/onboarding/2",
+    });
 
   const {
     control,
@@ -29,36 +30,14 @@ export default function ThirdPage() {
     formState: { errors },
   } = useForm<FormData>();
 
-  const router = useRouter();
   const onboardingContext = useOnboardingFormData();
 
   function onSubmit(data: FormData) {
     onboardingContext.setData({
-      page: 3,
-      data: {
-        CezarId: data.cezarId || undefined,
-        BBOId: data.bboId || undefined,
-        CuebidsId: data.cuebidsId || undefined,
-      },
+      page: "3",
+      data: data,
     });
-
-    switch (submitSource) {
-      case "next":
-        router.push("/onboarding/4");
-        break;
-      case "prev":
-        router.push("/onboarding/2");
-        break;
-    }
-    setSubmitSource(null);
-  }
-
-  function handlePrevButtonClicked() {
-    setSubmitSource("prev");
-  }
-
-  function handleNextButtonClicked() {
-    setSubmitSource("next");
+    handleNavigation();
   }
 
   return (
@@ -72,10 +51,10 @@ export default function ThirdPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        onClick: handlePrevButtonClicked,
+        onClick: handlePrevClicked,
       }}
       nextButton={{
-        onClick: handleNextButtonClicked,
+        onClick: handleNextClicked,
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">

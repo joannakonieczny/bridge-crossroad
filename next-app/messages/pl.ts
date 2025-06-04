@@ -178,6 +178,23 @@ const onboardingPage = {
       maxLenght: tooLongString,
     },
   },
+  finalPage: {
+    mainHeading: {
+      text: "To już ostatnia lewa - czysta formalność!",
+      highlight: "lewa",
+    },
+    subHeading:
+      "Twoja pierwsza grupa - podaj kod aby mieć dostęp do społeczności Just Bridge AGH",
+    submitButton: "Zakończ",
+    inviteCode: {
+      errorMessage: "Podaj poprawny kod zaproszenia",
+    },
+    terms: {
+      acceptPrefix: "Akceptuję ",
+      link: "regulamin i warunki użytkowania",
+      errorMessage: "Musisz zaakceptować regulamin i politykę prywatności",
+    },
+  },
 };
 
 const messages = {

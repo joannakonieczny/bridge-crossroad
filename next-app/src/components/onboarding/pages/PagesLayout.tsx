@@ -34,11 +34,13 @@ export interface IPagesLayoutProps {
     onClick?: () => void;
     disabled?: boolean;
     onPrevButtonProps?: ButtonProps;
+    text?: string;
   };
   nextButton?: {
     onClick?: () => void;
     disabled?: boolean;
     onNextButtonProps?: ButtonProps;
+    text?: string;
   };
   onDividerProps?: DividerProps;
   onFormProps?: React.HTMLAttributes<HTMLFormElement>;
@@ -101,7 +103,7 @@ export default function PagesLayout(props: IPagesLayoutProps) {
             onClick={props.prevButton?.onClick}
             {...props.prevButton?.onPrevButtonProps}
           >
-            {t("prevButton")}
+            {props.prevButton?.text || t("prevButton")}
           </Button>
 
           <Button
@@ -113,7 +115,7 @@ export default function PagesLayout(props: IPagesLayoutProps) {
             onClick={props.nextButton?.onClick}
             {...props.nextButton?.onNextButtonProps}
           >
-            {t("nextButton")}
+            {props.nextButton?.text || t("nextButton")}
           </Button>
         </HStack>
       </form>
