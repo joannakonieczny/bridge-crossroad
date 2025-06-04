@@ -1,6 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import * as React from "react";
+// app/(logged)/dashboard/page.tsx
+import { cookies } from "next/headers";
+import { decrypt } from "@/services/session";
+import DashboardClient from "./DashboardClient";
 
-export default function DashboardPage() {
-  return <p>To jest twój dashboard!</p>;
+export default async function DashboardPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+  const session = await decrypt(token);
+
+  return <DashboardClient userId={session?.userId ?? null} />;
 }
