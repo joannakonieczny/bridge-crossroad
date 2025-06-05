@@ -74,6 +74,7 @@ export default function FinalPage() {
           name="inviteCode"
           control={control}
           rules={{
+            required: t("inviteCode.noneSelected"),
             pattern: {
               value: userSchema.inviteCodeSchema.regex,
               message: t("inviteCode.errorMessage"),
@@ -87,6 +88,7 @@ export default function FinalPage() {
               onPinInputProps={{
                 value: value,
                 onChange: (val) => onChange(val.toUpperCase()),
+                isInvalid: !!errors.inviteCode,
               }}
             />
           )}

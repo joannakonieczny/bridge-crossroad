@@ -188,6 +188,7 @@ const onboardingPage = {
     submitButton: "Zakończ",
     inviteCode: {
       errorMessage: "Podaj poprawny kod zaproszenia",
+      noneSelected: "Nie podano kodu zaproszenia",
     },
     terms: {
       acceptPrefix: "Akceptuję ",
