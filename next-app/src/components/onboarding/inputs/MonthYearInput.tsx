@@ -6,7 +6,6 @@ import {
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 import {
-  Text,
   Input,
   InputGroup,
   InputRightElement,
@@ -14,13 +13,14 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  Flex,
   IconButton,
   ModalCloseButton,
   ModalBody,
   SimpleGrid,
   Button,
   useDisclosure,
+  HStack,
+  useNumberInput,
 } from "@chakra-ui/react";
 import { FiCalendar, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useGetMonths } from "@/util/date";
@@ -34,20 +34,58 @@ interface IMonthYearInputProps {
 function MonthYearInput(props: IMonthYearInputProps) {
   // Używamy useDisclosure zamiast własnego stanu dla modala
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [currentYear, setCurrentYear] = React.useState(
-    new Date().getFullYear()
-  );
+
+  // Pobierz bieżącą datę
+  const currentDate = new Date();
+  const currentMonthNumber = currentDate.getMonth(); // 0-11
+  const currentYearNumber = currentDate.getFullYear();
+
+  // Stan dla roku pokazywanego w selektorze
+  const [selectedYear, setSelectedYear] = React.useState(currentYearNumber);
 
   // Pobieramy nazwy miesięcy z hooka tłumaczeń
   const months = useGetMonths();
 
-  const prevYear = () => setCurrentYear(currentYear - 1);
-  const nextYear = () => setCurrentYear(currentYear + 1);
+  // Hook do obsługi input numbera dla roku
+  const {
+    getInputProps,
+    getIncrementButtonProps,
+    getDecrementButtonProps,
+    value: yearInputValue,
+  } = useNumberInput({
+    step: 1,
+    defaultValue: selectedYear,
+    min: 1900, // Sensowny minimalny rok
+    max: currentYearNumber, // Maksymalny rok to obecny rok
+    precision: 0, // Tylko liczby całkowite
+    onChange: (valueAsString) => {
+      const year = parseInt(valueAsString, 10);
+      if (!isNaN(year) && year <= currentYearNumber) {
+        setSelectedYear(year);
+      }
+    },
+  });
+
+  // Przyciski inkrementacji/dekrementacji roku
+  const incYear = getIncrementButtonProps();
+  const decYear = getDecrementButtonProps();
+  const yearInput = getInputProps();
+
+  // Sprawdza czy dany miesiąc jest w przyszłości
+  const isMonthInFuture = (monthIndex: number) => {
+    // Jeśli wybrany rok jest bieżącym rokiem
+    if (selectedYear === currentYearNumber) {
+      // Miesiąc jest w przyszłości, jeśli jego indeks jest większy niż bieżący miesiąc
+      return monthIndex > currentMonthNumber;
+    }
+    // Jeśli rok jest przyszły, wszystkie miesiące są w przyszłości
+    return selectedYear > currentYearNumber;
+  };
 
   const selectMonthYear = (month: number) => {
     const monthStr = (month + 1).toString().padStart(2, "0");
     // Format: MM-YYYY
-    const formatted = `${monthStr}-${currentYear}`;
+    const formatted = `${monthStr}-${selectedYear}`;
     props.onChange(formatted);
     onClose(); // Używamy onClose z useDisclosure
   };
@@ -61,6 +99,19 @@ function MonthYearInput(props: IMonthYearInputProps) {
 
     return `${months[parseInt(month, 10) - 1]} ${year}`;
   }, [props.value, months]);
+
+  // Aktualizuj rok w useNumberInput gdy otwieramy modal
+  React.useEffect(() => {
+    if (isOpen && props.value) {
+      const [, year] = props.value.split("-");
+      if (year) {
+        const parsedYear = parseInt(year, 10);
+        if (!isNaN(parsedYear)) {
+          setSelectedYear(parsedYear);
+        }
+      }
+    }
+  }, [isOpen, props.value]);
 
   return (
     <>
@@ -82,46 +133,68 @@ function MonthYearInput(props: IMonthYearInputProps) {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            <Flex alignItems="center" justifyContent="space-between">
+          <ModalHeader px={4} pb={2}>
+            <HStack spacing={2} justifyContent="center" mb={2}>
               <IconButton
-                aria-label="Poprzedni rok"
+                aria-label="Zmniejsz rok"
                 icon={<FiChevronLeft />}
-                onClick={prevYear}
-                variant="ghost"
+                {...decYear}
+                variant="outline"
               />
-              <Text textAlign="center" fontWeight="bold">
-                {currentYear}
-              </Text>
+              <Input
+                {...yearInput}
+                width="100px"
+                textAlign="center"
+                fontWeight="bold"
+              />
               <IconButton
-                aria-label="Następny rok"
+                aria-label="Zwiększ rok"
                 icon={<FiChevronRight />}
-                onClick={nextYear}
-                variant="ghost"
+                {...incYear}
+                variant="outline"
+                // Ograniczymy do bieżącego roku
+                isDisabled={parseInt(yearInputValue, 10) >= currentYearNumber}
               />
-            </Flex>
+            </HStack>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <SimpleGrid columns={3} spacing={2} mb={4}>
-              {months.map((month, index) => (
-                <Button
-                  key={month}
-                  onClick={() => selectMonthYear(index)}
-                  size="md"
-                  variant="outline"
-                  _hover={{ bg: "accent.100" }}
-                  _active={{ bg: "accent.200" }}
-                  isActive={props.value === `${index + 1}-${currentYear}`}
-                  bg={
-                    props.value === `${index + 1}-${currentYear}`
-                      ? "accent.100"
-                      : undefined
-                  }
-                >
-                  {month.substring(0, 3)}
-                </Button>
-              ))}
+              {months.map((month, index) => {
+                // Sprawdź czy miesiąc jest w przyszłości
+                const isFutureMonth = isMonthInFuture(index);
+
+                return (
+                  <Button
+                    key={month}
+                    onClick={() => selectMonthYear(index)}
+                    size="md"
+                    variant="outline"
+                    _hover={{ bg: "accent.100" }}
+                    _active={{ bg: "accent.200" }}
+                    isActive={
+                      props.value ===
+                      `${(index + 1)
+                        .toString()
+                        .padStart(2, "0")}-${selectedYear}`
+                    }
+                    bg={
+                      props.value ===
+                      `${(index + 1)
+                        .toString()
+                        .padStart(2, "0")}-${selectedYear}`
+                        ? "accent.100"
+                        : undefined
+                    }
+                    // Wyłącz przyciski dla miesięcy w przyszłości
+                    isDisabled={isFutureMonth}
+                    // Przyciemnij przyciski dla przyszłych miesięcy
+                    opacity={isFutureMonth ? 0.5 : 1}
+                  >
+                    {month.substring(0, 3)}
+                  </Button>
+                );
+              })}
             </SimpleGrid>
           </ModalBody>
         </ModalContent>
