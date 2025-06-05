@@ -26,11 +26,10 @@ interface FormData {
 
 export default function SecondPage() {
   const t = useTranslations("OnboardingPage.secondPage");
-  const { handleNextClicked, handlePrevClicked, handleNavigation } =
-    useFormNavigation({
-      nextPage: "/onboarding/3",
-      prevPage: "/onboarding/1",
-    });
+  const formNavigation = useFormNavigation({
+    nextPage: "/onboarding/3",
+    prevPage: "/onboarding/1",
+  });
 
   const {
     control,
@@ -53,7 +52,7 @@ export default function SecondPage() {
         hasRefereeLicence: data.hasRefereeLicence,
       },
     });
-    handleNavigation();
+    formNavigation.handleNavigation();
   }
 
   return (
@@ -67,10 +66,10 @@ export default function SecondPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        onClick: handlePrevClicked,
+        onClick: formNavigation.handlePrevClickedRedirectNow,
       }}
       nextButton={{
-        onClick: handleNextClicked,
+        onClick: formNavigation.handleNextClicked,
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">

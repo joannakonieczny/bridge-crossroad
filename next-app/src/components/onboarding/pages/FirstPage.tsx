@@ -40,16 +40,27 @@ interface FormData {
 
 export default function FirstPage() {
   const t = useTranslations("OnboardingPage.firstPage");
-  const { handleNextClicked, handlePrevClicked, handleNavigation } =
-    useFormNavigation({ nextPage: "/onboarding/2" });
+  const formNavigation = useFormNavigation({ nextPage: "/onboarding/2" });
+
+  const onboardingContext = useOnboardingFormData();
+  const firstPageData = onboardingContext.formData.firstPage;
+  const defaultValues = React.useMemo(
+    () => ({
+      university: firstPageData?.university || "",
+      yearOfBirth: firstPageData?.yearOfBirth
+        ? firstPageData.yearOfBirth.toString()
+        : "",
+    }),
+    [firstPageData]
+  );
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
-
-  const onboardingContext = useOnboardingFormData();
+  } = useForm<FormData>({
+    defaultValues: defaultValues,
+  });
 
   const universityOptions = React.useMemo(
     () => generateUniversityOptions(),
@@ -65,7 +76,7 @@ export default function FirstPage() {
         yearOfBirth: parseInt(data.yearOfBirth, 10),
       },
     });
-    handleNavigation();
+    formNavigation.handleNavigation();
   }
 
   return (
@@ -80,17 +91,15 @@ export default function FirstPage() {
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
         disabled: true, // no prev page
-        onClick: handlePrevClicked,
       }}
       nextButton={{
-        onClick: handleNextClicked,
+        onClick: formNavigation.handleNextClicked,
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">
         <Controller
           name="university"
-          defaultValue=""
-          control={control}
+          control={control} // usunięto defaultValue, bo jest już w useForm
           rules={{ required: t("university.noneSelected") }}
           render={({ field }) => (
             <SelectInput
@@ -106,8 +115,7 @@ export default function FirstPage() {
         />
         <Controller
           name="yearOfBirth"
-          defaultValue=""
-          control={control}
+          control={control} // usunięto defaultValue, bo jest już w useForm
           rules={{ required: t("yearOfBirth.noneSelected") }}
           render={({ field }) => (
             <SelectInput

@@ -14,29 +14,42 @@ export function useFormNavigation({
   nextPage,
   prevPage,
 }: UseFormNavigationProps) {
-  const [submitSource, setSubmitSource] = useState<SubmitSourceType>(null);
+  const [destination, setDestination] = useState<SubmitSourceType>(null);
   const router = useRouter();
 
   const handlePrevClicked = () => {
-    setSubmitSource("prev");
+    setDestination("prev");
   };
 
   const handleNextClicked = () => {
-    setSubmitSource("next");
+    setDestination("next");
   };
 
-  const handleNavigation = () => {
-    if (submitSource === "next" && nextPage) {
+  const handlePrevClickedRedirectNow = () => {
+    setDestination("prev");
+    handleNavigation("prev");
+  };
+
+  const handleNextClickedRedirectNow = () => {
+    setDestination("next");
+    handleNavigation("next");
+  };
+
+  const handleNavigation = (source?: SubmitSourceType) => {
+    const currentDestination = source ?? destination;
+    if (currentDestination === "next" && nextPage) {
       router.push(nextPage);
-    } else if (submitSource === "prev" && prevPage) {
+    } else if (currentDestination === "prev" && prevPage) {
       router.push(prevPage);
     }
-    setSubmitSource(null);
+    setDestination(null);
   };
 
   return {
     handlePrevClicked,
     handleNextClicked,
     handleNavigation,
+    handlePrevClickedRedirectNow,
+    handleNextClickedRedirectNow,
   };
 }

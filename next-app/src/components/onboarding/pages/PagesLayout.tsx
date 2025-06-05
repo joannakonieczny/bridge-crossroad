@@ -16,6 +16,14 @@ import {
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useTranslations } from "next-intl";
 
+interface FormButtonProps {
+  onClick?: () => void;
+  disabled?: boolean;
+  onButtonProps?: ButtonProps;
+  text?: string;
+  type?: "button" | "submit";
+}
+
 export interface IPagesLayoutProps {
   children?: React.ReactNode;
   mainHeading?: {
@@ -30,18 +38,8 @@ export interface IPagesLayoutProps {
     text: string;
     onSubHeadingProps?: TextProps;
   };
-  prevButton?: {
-    onClick?: () => void;
-    disabled?: boolean;
-    onPrevButtonProps?: ButtonProps;
-    text?: string;
-  };
-  nextButton?: {
-    onClick?: () => void;
-    disabled?: boolean;
-    onNextButtonProps?: ButtonProps;
-    text?: string;
-  };
+  prevButton?: FormButtonProps;
+  nextButton?: FormButtonProps;
   onDividerProps?: DividerProps;
   onFormProps?: React.HTMLAttributes<HTMLFormElement>;
 }
@@ -98,10 +96,10 @@ export default function PagesLayout(props: IPagesLayoutProps) {
             variant="outline"
             colorScheme="accent"
             minW="160px"
-            type="submit"
+            type={props.prevButton?.type || "button"}
             disabled={props.prevButton?.disabled}
             onClick={props.prevButton?.onClick}
-            {...props.prevButton?.onPrevButtonProps}
+            {...props.prevButton?.onButtonProps}
           >
             {props.prevButton?.text || t("prevButton")}
           </Button>
@@ -110,10 +108,10 @@ export default function PagesLayout(props: IPagesLayoutProps) {
             rightIcon={<FiChevronRight />}
             colorScheme="accent"
             minW="160px"
-            type="submit"
+            type={props.nextButton?.type || "submit"}
             disabled={props.nextButton?.disabled}
             onClick={props.nextButton?.onClick}
-            {...props.nextButton?.onNextButtonProps}
+            {...props.nextButton?.onButtonProps}
           >
             {props.nextButton?.text || t("nextButton")}
           </Button>

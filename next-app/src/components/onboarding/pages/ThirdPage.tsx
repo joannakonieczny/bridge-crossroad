@@ -18,11 +18,10 @@ interface FormData {
 
 export default function ThirdPage() {
   const t = useTranslations("OnboardingPage.thirdPage");
-  const { handlePrevClicked, handleNextClicked, handleNavigation } =
-    useFormNavigation({
-      nextPage: "/onboarding/final",
-      prevPage: "/onboarding/2",
-    });
+  const formNavigation = useFormNavigation({
+    nextPage: "/onboarding/final",
+    prevPage: "/onboarding/2",
+  });
 
   const {
     control,
@@ -37,7 +36,7 @@ export default function ThirdPage() {
       page: "3",
       data: data,
     });
-    handleNavigation();
+    formNavigation.handleNavigation();
   }
 
   return (
@@ -51,10 +50,10 @@ export default function ThirdPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        onClick: handlePrevClicked,
+        onClick: formNavigation.handlePrevClickedRedirectNow,
       }}
       nextButton={{
-        onClick: handleNextClicked,
+        onClick: formNavigation.handleNextClicked,
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">

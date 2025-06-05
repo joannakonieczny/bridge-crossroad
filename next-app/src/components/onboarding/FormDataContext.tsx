@@ -83,7 +83,6 @@ export const OnboardingFormDataProvider = ({
           throw new Error(`Invalid page number got: ${page} expected 1-3`);
       }
       storeData();
-      alert(`Data for page ${page} set successfully: ${JSON.stringify(data)}`);
       return newData;
     });
   }

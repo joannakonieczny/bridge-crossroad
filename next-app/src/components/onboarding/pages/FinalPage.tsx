@@ -17,11 +17,10 @@ interface FormData {
 
 export default function FinalPage() {
   const t = useTranslations("OnboardingPage.finalPage");
-  const { handleNextClicked, handlePrevClicked, handleNavigation } =
-    useFormNavigation({
-      nextPage: "/dashboard", // strona po zakończeniu onboardingu
-      prevPage: "/onboarding/3",
-    });
+  const formNavigation = useFormNavigation({
+    nextPage: "/dashboard", // strona po zakończeniu onboardingu
+    prevPage: "/onboarding/3",
+  });
 
   const {
     control,
@@ -43,7 +42,7 @@ export default function FinalPage() {
       page: "final",
       data: data,
     });
-    handleNavigation();
+    formNavigation.handleNavigation();
   }
 
   return (
@@ -57,10 +56,10 @@ export default function FinalPage() {
       subHeading={{ text: t("subHeading") }}
       onFormProps={{ onSubmit: handleSubmit(onSubmit) }}
       prevButton={{
-        onClick: handlePrevClicked,
+        onClick: formNavigation.handlePrevClickedRedirectNow,
       }}
       nextButton={{
-        onClick: handleNextClicked,
+        onClick: formNavigation.handleNextClicked,
         disabled: !termsAccepted, // disabled if terms are not accepted
         text: t("submitButton"),
       }}
