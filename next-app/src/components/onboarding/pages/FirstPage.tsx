@@ -9,6 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { KrakowAcademy, userSchema } from "@/schemas/user";
 import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
+import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 
 function generateYearOptions() {
   const years = [];
@@ -39,9 +40,9 @@ interface FormData {
 }
 
 export default function FirstPage() {
+  useFormSkippingValidation({ currentPage: "1" });
   const t = useTranslations("OnboardingPage.firstPage");
   const formNavigation = useFormNavigation({ nextPage: "/onboarding/2" });
-
   const onboardingContext = useOnboardingFormData();
   const firstPageData = onboardingContext.formData.firstPage;
   const defaultValues = React.useMemo(

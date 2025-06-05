@@ -9,6 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
 import { casualString } from "@/schemas/user";
 import { useFormNavigation } from "../FormNavigationHook";
+import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 
 interface FormData {
   cezarId?: string;
@@ -17,6 +18,7 @@ interface FormData {
 }
 
 export default function ThirdPage() {
+  useFormSkippingValidation({ currentPage: "3" });
   const t = useTranslations("OnboardingPage.thirdPage");
   const formNavigation = useFormNavigation({
     nextPage: "/onboarding/final",
@@ -26,9 +28,9 @@ export default function ThirdPage() {
   const thirdPageData = onboardingContext.formData.thirdPage;
   const defaultValues = React.useMemo(
     () => ({
-      cezarId: thirdPageData?.cezarId,
-      bboId: thirdPageData?.bboId,
-      cuebidsId: thirdPageData?.cuebidsId,
+      cezarId: thirdPageData?.cezarId || "",
+      bboId: thirdPageData?.bboId || "",
+      cuebidsId: thirdPageData?.cuebidsId || "",
     }),
     [thirdPageData]
   );
@@ -42,7 +44,11 @@ export default function ThirdPage() {
   function onSubmit(data: FormData) {
     onboardingContext.setData({
       page: "3",
-      data: data,
+      data: {
+        cezarId: data.cezarId?.trim() || undefined,
+        bboId: data.bboId?.trim() || undefined,
+        cuebidsId: data.cuebidsId?.trim() || undefined,
+      },
     });
     formNavigation.handleNavigation();
   }

@@ -10,6 +10,7 @@ import { useFormNavigation } from "../FormNavigationHook";
 import { userSchema } from "@/schemas/user";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";
+import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 
 interface FormData {
   inviteCode: string;
@@ -17,6 +18,7 @@ interface FormData {
 }
 
 export default function FinalPage() {
+  useFormSkippingValidation({ currentPage: "final" });
   const t = useTranslations("OnboardingPage.finalPage");
   const formNavigation = useFormNavigation({
     nextPage: "/dashboard", // strona po zakończeniu onboardingu

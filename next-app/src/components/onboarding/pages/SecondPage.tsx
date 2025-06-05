@@ -10,6 +10,7 @@ import { useOnboardingFormData } from "../FormDataContext";
 import MonthYearInput from "../inputs/MonthYearInput";
 import { TrainingGroup } from "@/schemas/user";
 import { useFormNavigation } from "../FormNavigationHook";
+import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 
 function generateSkillLevelOptions() {
   return Object.entries(TrainingGroup).map(([key, value]) => ({
@@ -25,6 +26,7 @@ interface FormData {
 }
 
 export default function SecondPage() {
+  useFormSkippingValidation({ currentPage: "2" });
   const t = useTranslations("OnboardingPage.secondPage");
   const formNavigation = useFormNavigation({
     nextPage: "/onboarding/3",

@@ -10,29 +10,29 @@ import React, {
   useEffect,
 } from "react";
 
-interface FirstPage {
+export interface FirstPage {
   university: KrakowAcademy; // enum key exacly
   yearOfBirth: number;
 }
 
-interface SecondPage {
+export interface SecondPage {
   startPlayingDate: string; // format: "MM-YYYY"
   trainingGroup: TrainingGroup; // enum key exacly
   hasRefereeLicence: boolean;
 }
 
-interface ThirdPage {
+export interface ThirdPage {
   cezarId?: string;
   bboId?: string;
   cuebidsId?: string;
 }
 
-interface FinalPage {
+export interface FinalPage {
   inviteCode: string;
   termsAccepted: boolean;
 }
 
-type FormData = {
+export type FormData = {
   firstPage?: FirstPage;
   secondPage?: SecondPage;
   thirdPage?: ThirdPage;
