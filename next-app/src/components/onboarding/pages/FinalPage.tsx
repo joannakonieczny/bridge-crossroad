@@ -3,12 +3,13 @@
 import * as React from "react";
 import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
-import { Stack, Checkbox, FormControl, Text, Link } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import { userSchema } from "@/schemas/user";
 import InviteCodeInput from "../inputs/InviteCodeInput";
+import CheckBoxInput from "../inputs/CheckBoxInput";
 
 interface FormData {
   inviteCode: string;
@@ -101,31 +102,17 @@ export default function FinalPage() {
             required: t("terms.errorMessage"),
           }}
           render={({ field: { onChange, value } }) => (
-            <FormControl isInvalid={!!errors.termsAccepted}>
-              <Checkbox
-                colorScheme="accent"
-                isChecked={value}
-                onChange={(e) => onChange(e.target.checked)}
-                isRequired
-              >
-                <Text fontSize="sm">
-                  {t("terms.acceptPrefix")}{" "}
-                  <Link
-                    href="/terms"
-                    isExternal
-                    color="accent.500"
-                    textDecoration="underline"
-                  >
-                    {t("terms.link")}
-                  </Link>
-                </Text>
-              </Checkbox>
-              {errors.termsAccepted && (
-                <Text color="red.500" fontSize="xs" mt={1}>
-                  {errors.termsAccepted.message}
-                </Text>
-              )}
-            </FormControl>
+            <CheckBoxInput
+              label={t("terms.acceptPrefix")}
+              linkInfo={{
+                text: t("terms.link"),
+                href: "/terms",
+              }}
+              isChecked={value}
+              onChange={onChange}
+              isInvalid={!!errors.termsAccepted}
+              errorMessage={errors.termsAccepted?.message}
+            />
           )}
         />
       </Stack>
