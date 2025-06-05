@@ -30,14 +30,25 @@ export default function SecondPage() {
     nextPage: "/onboarding/3",
     prevPage: "/onboarding/1",
   });
+  const onboardingContext = useOnboardingFormData();
+  const secondPageData = onboardingContext.formData.secondPage;
+  const defaultValues = React.useMemo(
+    () => ({
+      monthYear: secondPageData?.startPlayingDate || "",
+      skillLevel: secondPageData?.trainingGroup || "",
+      hasRefereeLicence: secondPageData?.hasRefereeLicence || false,
+    }),
+    [secondPageData]
+  );
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: defaultValues,
+  });
 
-  const onboardingContext = useOnboardingFormData();
   const skillLevelOptions = React.useMemo(
     () => generateSkillLevelOptions(),
     []
@@ -76,7 +87,6 @@ export default function SecondPage() {
         <FormControl isInvalid={!!errors.monthYear}>
           <Controller
             name="monthYear"
-            defaultValue=""
             control={control}
             rules={{ required: t("monthYear.noneSelected") }}
             render={({ field }) => (
@@ -96,7 +106,6 @@ export default function SecondPage() {
 
         <Controller
           name="skillLevel"
-          defaultValue=""
           control={control}
           rules={{ required: t("skillLevel.noneSelected") }}
           render={({ field }) => (
@@ -114,7 +123,6 @@ export default function SecondPage() {
 
         <Controller
           name="hasRefereeLicence"
-          defaultValue={false}
           control={control}
           render={({ field: { onChange, value } }) => (
             <FormControl>

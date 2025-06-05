@@ -21,6 +21,15 @@ export default function FinalPage() {
     nextPage: "/dashboard", // strona po zakończeniu onboardingu
     prevPage: "/onboarding/3",
   });
+  const onboardingContext = useOnboardingFormData();
+  const finalPageData = onboardingContext.formData.finalPage;
+  const defaultValues = React.useMemo(
+    () => ({
+      inviteCode: finalPageData?.inviteCode || "",
+      termsAccepted: finalPageData?.termsAccepted || false,
+    }),
+    [finalPageData]
+  );
 
   const {
     control,
@@ -28,20 +37,16 @@ export default function FinalPage() {
     formState: { errors },
     watch,
   } = useForm<FormData>({
-    defaultValues: {
-      inviteCode: "",
-      termsAccepted: false,
-    },
+    defaultValues: defaultValues,
   });
   const termsAccepted = watch("termsAccepted");
-
-  const onboardingContext = useOnboardingFormData();
 
   function onSubmit(data: FormData) {
     onboardingContext.setData({
       page: "final",
       data: data,
     });
+    alert(JSON.stringify(onboardingContext.formData));
     formNavigation.handleNavigation();
   }
 

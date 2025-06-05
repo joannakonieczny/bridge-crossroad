@@ -22,14 +22,22 @@ export default function ThirdPage() {
     nextPage: "/onboarding/final",
     prevPage: "/onboarding/2",
   });
+  const onboardingContext = useOnboardingFormData();
+  const thirdPageData = onboardingContext.formData.thirdPage;
+  const defaultValues = React.useMemo(
+    () => ({
+      cezarId: thirdPageData?.cezarId,
+      bboId: thirdPageData?.bboId,
+      cuebidsId: thirdPageData?.cuebidsId,
+    }),
+    [thirdPageData]
+  );
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
-
-  const onboardingContext = useOnboardingFormData();
+  } = useForm<FormData>({ defaultValues: defaultValues });
 
   function onSubmit(data: FormData) {
     onboardingContext.setData({
@@ -60,7 +68,6 @@ export default function ThirdPage() {
         <Controller
           name="cezarId"
           control={control}
-          defaultValue=""
           rules={{
             maxLength: {
               value: casualString.maxLength,
@@ -84,7 +91,6 @@ export default function ThirdPage() {
         <Controller
           name="bboId"
           control={control}
-          defaultValue=""
           rules={{
             maxLength: {
               value: casualString.maxLength,
@@ -108,7 +114,6 @@ export default function ThirdPage() {
         <Controller
           name="cuebidsId"
           control={control}
-          defaultValue=""
           rules={{
             maxLength: {
               value: casualString.maxLength,
