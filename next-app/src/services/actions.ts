@@ -2,19 +2,13 @@
 
 import { createSession, deleteSession } from "./session";
 import { redirect } from "next/navigation";
+import testUser from "@/data/test-user.json"
 
 export type FormValues = {
   loginOrEmail: string;
   password: string;
   rememberMe: boolean;
 };
-
-const testUser = {
-  id: "1",
-  email: "contact@cosdensolutions.io",
-  password: "12345678",
-};
-
 
 export async function login(formData: FormValues) {
   if (formData.loginOrEmail !== testUser.email || formData.password !== testUser.password) {
@@ -27,4 +21,5 @@ export async function login(formData: FormValues) {
 
 export async function logout() {
   await deleteSession();
+  redirect("/auth/login");
 }
