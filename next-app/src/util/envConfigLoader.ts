@@ -16,12 +16,12 @@ interface Config {
   SESSION_SECRET: string;
   EXPIRATION_TIME_MS: number;
   SECURE_COOKIES: boolean;
-  DB_PASSWORD: string
+  MONGO_URI: string
 }
 
 export const config: Config = {
   SESSION_SECRET: getEnvVar("SESSION_SECRET", "123"),
   EXPIRATION_TIME_MS: Number(getEnvVar("EXPIRATION_TIME", "3600")) * 1000, // 3600000 ms = 3600 s = 60 min = 1h
   SECURE_COOKIES: Boolean(getEnvVar("SECURE_COOKIES", "false")),
-  DB_PASSWORD: getEnvVar("DB_PASSWORD", undefined)
+  MONGO_URI: getEnvVar("MONGO_URI", "")
 };

@@ -10,25 +10,24 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { userSchema } from "@/schemas/user";
-
-type FormValues = {
-  name: string;
-  surname: string;
-  email: string;
-  password: string;
-  repeatPassword: string;
-  rememberMe: boolean;
-};
+import { RegisterFormValues, register } from "@/services/auth/actions";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const t = useTranslations("Auth.RegisterPage");
-  const { handleSubmit, control, watch } = useForm<FormValues>();
-
-  const onSubmit = (data: FormValues) => {
-    alert(JSON.stringify(data));
-  };
+  const { handleSubmit, control, watch } = useForm<RegisterFormValues>();
 
   const passwordValue = watch("password");
+
+  const onSubmit = async (data: RegisterFormValues) => {
+    const result = await register(data);
+    if (result.success) {
+      router.push('/dashboard');
+    } else {
+      alert(result.error || 'Błąd logowania');
+    }
+  };
 
   return (
     <FormLayout>

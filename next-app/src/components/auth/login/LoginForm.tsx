@@ -12,18 +12,25 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { login, LoginFormValues } from "@/services/auth/actions";
+import { useRouter } from "next//navigation";
 
 export default function LoginForm() {
+  const router = useRouter();
   const t = useTranslations("Auth.LoginPage");
   const { handleSubmit, control } = useForm<LoginFormValues>();
 
-  //const onSubmit = (data: FormValues) => {
-  //  alert(JSON.stringify(data));
-  //};
+  const onSubmit = async (data: LoginFormValues) => {
+    const result = await login(data);
+    if (result.success) {
+      router.push('/dashboard');
+    } else {
+      alert(result.error || 'Błąd logowania');
+    }
+  };
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(login)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} mt={8}>
           <FormHeading
             title={t("title")}
