@@ -60,9 +60,14 @@ export async function register(formData: RegisterFormValues) {
       console.warn('Użytkownik już istnieje');
       return { success: false, error: 'Nieprawidłowe dane' };
     }
-    
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { repeatPassword, rememberMe, ...userData } = formData;
+    if (repeatPassword !== userData.password) {
+      return { success: false, error: 'Nieprawidłowe dane' };
+    }
+    if (rememberMe) {
+      // TODO
+    }
     const insertResult = await usersCollection.insertOne(userData);
 
     await createSession(insertResult.insertedId.toString());
