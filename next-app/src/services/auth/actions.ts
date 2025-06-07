@@ -34,5 +34,6 @@ export async function requireUserId(): Promise<UserId> {
       redirect(redirectPath);
     },
   });
+
   return userId as UserId; //never null, because server redirect will be called if userId is null
 }
