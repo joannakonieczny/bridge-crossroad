@@ -2,8 +2,12 @@
 
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./server-only/session";
-import testUser from "@/data/test-user.json";
 import { getUserId, UserId } from "./server-only/user-id";
+import {
+  createNewUser,
+  CreateUserParams,
+  findExisting,
+} from "@/controller/user";
 
 export type LoginFormValues = {
   loginOrEmail: string;
@@ -12,14 +16,28 @@ export type LoginFormValues = {
 };
 
 export async function login(formData: LoginFormValues) {
-  if (
-    formData.loginOrEmail !== testUser.email ||
-    formData.password !== testUser.password
-  ) {
-    console.warn("User does not exist. Try again.");
-    return;
+  const user =
+    (await findExisting({
+      email: formData.loginOrEmail,
+      password: formData.password,
+    })) ||
+    (await findExisting({
+      nickname: formData.loginOrEmail,
+      password: formData.password,
+    }));
+  if (!user) {
+    throw new Error("Invalid credentials");
   }
-  await createSession(testUser.id);
+
+  await createSession(user._id.toString());
+  redirect("/dashboard"); //TODO
+}
+
+type RegisterFormValues = CreateUserParams;
+
+export async function register(formData: RegisterFormValues) {
+  const user = await createNewUser(formData);
+  await createSession(user._id.toString());
   redirect("/dashboard"); //TODO
 }
 
@@ -34,6 +52,5 @@ export async function requireUserId(): Promise<UserId> {
       redirect(redirectPath);
     },
   });
-
   return userId as UserId; //never null, because server redirect will be called if userId is null
 }

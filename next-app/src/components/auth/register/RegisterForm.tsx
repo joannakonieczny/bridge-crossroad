@@ -10,10 +10,11 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { userSchema } from "@/schemas/user";
+import { register } from "@/services/auth/actions";
 
 type FormValues = {
-  name: string;
-  surname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   repeatPassword: string;
@@ -25,7 +26,12 @@ export default function RegisterForm() {
   const { handleSubmit, control, watch } = useForm<FormValues>();
 
   const onSubmit = (data: FormValues) => {
-    alert(JSON.stringify(data));
+    register({
+      email: data.email,
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+    });
   };
 
   const passwordValue = watch("password");
@@ -43,7 +49,7 @@ export default function RegisterForm() {
           <HStack>
             <Controller
               control={control}
-              name="name"
+              name="firstName"
               defaultValue=""
               rules={{
                 required: t("form.nameField.errorMessage"),
@@ -80,7 +86,7 @@ export default function RegisterForm() {
 
             <Controller
               control={control}
-              name="surname"
+              name="lastName"
               defaultValue=""
               rules={{
                 required: t("form.surnameField.errorMessage"),
