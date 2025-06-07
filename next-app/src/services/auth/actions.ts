@@ -5,13 +5,13 @@ import { createSession, deleteSession } from "./server-only/session";
 import testUser from "@/data/test-user.json";
 import { getUserId, UserId } from "./server-only/user-id";
 
-export type FormValues = {
+export type LoginFormValues = {
   loginOrEmail: string;
   password: string;
   rememberMe: boolean;
 };
 
-export async function login(formData: FormValues) {
+export async function login(formData: LoginFormValues) {
   if (
     formData.loginOrEmail !== testUser.email ||
     formData.password !== testUser.password
