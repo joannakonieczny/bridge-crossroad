@@ -11,7 +11,7 @@ import { userSchema } from "@/schemas/user";
 import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
-import { login, FormValues } from "@/services/actions";
+import { login, FormValues } from "@/services/auth/actions";
 
 export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
@@ -20,7 +20,6 @@ export default function LoginForm() {
   //const onSubmit = (data: FormValues) => {
   //  alert(JSON.stringify(data));
   //};
-
 
   return (
     <FormLayout>

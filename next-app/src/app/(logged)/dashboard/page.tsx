@@ -1,12 +1,9 @@
 // app/(logged)/dashboard/page.tsx
-import { cookies } from "next/headers";
-import { decrypt } from "@/services/session";
+import { requireUserId } from "@/services/auth/actions";
 import DashboardClient from "./DashboardClient";
 
 export default async function DashboardPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("session")?.value;
-  const session = await decrypt(token);
+  const userId = await requireUserId();
 
-  return <DashboardClient userId={session?.userId ?? null} />;
+  return <DashboardClient userId={userId} />;
 }

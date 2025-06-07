@@ -1,12 +1,73 @@
-'use client';
+"use client";
 
-import { logout } from "@/services/actions";
+import { useState, useEffect } from "react";
+import { logout, requireUserId } from "@/services/auth/actions";
+import { UserId } from "@/services/auth/server-only/user-id";
 
-export default function DashboardClient({ userId }: { userId: string | null }) {
+export default function DashboardClient({ userId }: { userId: UserId }) {
+  const [serverUserId, setServerUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Wywołaj requireUserId jako Server Action
+    const fetchUserId = async () => {
+      try {
+        setIsLoading(true);
+        const result = await requireUserId();
+        setServerUserId(result);
+      } catch (err) {
+        setError("Nie udało się pobrać ID użytkownika");
+        console.error("Error fetching user ID:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
   return (
     <>
-      <p>{userId ? `Twój ID to: ${userId}` : "Nie jesteś zalogowany."}</p>
-      <button style={{ backgroundColor: "blue", color: "white", padding: "8px 16px" }} onClick={logout}> 
+      <p>
+        {userId
+          ? `Twój ID z props to: ${userId}`
+          : "Nie jesteś zalogowany (z props)."}
+      </p>
+
+      <div
+        style={{
+          margin: "20px 0",
+          padding: "10px",
+          backgroundColor: "#f0f0f0",
+          borderRadius: "5px",
+        }}
+      >
+        <h3>Wynik wywołania requireUserId():</h3>
+        {isLoading ? (
+          <p>Ładowanie ID użytkownika...</p>
+        ) : error ? (
+          <p style={{ color: "red" }}>{error}</p>
+        ) : (
+          <p style={{ fontWeight: "bold" }}>
+            {serverUserId
+              ? `ID z Server Action: ${serverUserId}`
+              : "Brak ID z Server Action"}
+          </p>
+        )}
+      </div>
+
+      <button
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "8px 16px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+        onClick={logout}
+      >
         {userId ? "Wyloguj się" : "Zaloguj się"}
       </button>
     </>

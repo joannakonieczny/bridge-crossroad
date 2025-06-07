@@ -1,13 +1,15 @@
 import "server-only";
+
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { config } from "@/util/envVariables";
+import { config } from "@/util/envConfigLoader";
+import { UserId } from "./user-id";
 
 const secretKey = config.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 type SessionPayload = {
-  userId: string;
+  userId: UserId;
   expiresAt: number;
 };
 
@@ -29,7 +31,7 @@ export async function createSession(userId: string) {
   const cookieStore = await cookies();
   cookieStore.set("session", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: config.SECURE_COOKIES,
     sameSite: "lax",
     expires: expiresDate,
   });
@@ -40,7 +42,6 @@ export async function deleteSession() {
   cookie.delete("session");
 }
 
-
 export async function encrypt(payload: SessionPayload) {
   const ttl = config.EXPIRATION_TIME_MS;
   return new SignJWT(payload)
@@ -50,14 +51,15 @@ export async function encrypt(payload: SessionPayload) {
     .sign(encodedKey);
 }
 
-export async function decrypt(session: string | undefined = "") : Promise<SessionPayload | null> {
+export async function decrypt(
+  session: string | undefined = ""
+): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
     return payload as SessionPayload;
-  } catch (error) {
-    console.warn(error);
+  } catch {
     return null;
   }
 }
