@@ -5,6 +5,7 @@ import { createSession, deleteSession } from "./server-only/session";
 //import testUser from "@/data/test-user.json";
 import { getUserId, UserId } from "./server-only/userID";
 import { connectDB } from "@/services/dbManagement"
+import { User, IUserData } from '@/services/user';
  
 export type LoginFormValues = {
   loginOrEmail: string;
@@ -21,24 +22,44 @@ export type RegisterFormValues = {
   rememberMe: boolean;
 };
 
-export async function login(formData: LoginFormValues) {
+
+export async function register(formData: Partial<IUserData>) {
   try {
-    const db = await connectDB();
-    const usersCollection = db.collection('v1');
+    await connectDB();
 
-    const user = await usersCollection.findOne({
-      $or: [
-        { email: formData.loginOrEmail },
-        { login: formData.loginOrEmail }
-      ]
-    });
-
-    if (!user) {
-      return { success: false, error: 'Nieprawidłowy login lub hasło' };
+    const existingUser = await User.findOne({ email: formData.email });
+    if (existingUser) {
+      return { success: false, error: 'Użytkownik o takim emailu już istnieje' };
     }
 
-    if (user.password !== formData.password) {
-      return { success: false, error: 'Nieprawidłowy login lub hasło' };
+    const newUser = new User(formData);
+    await newUser.save();
+
+    await createSession(newUser._id.toString());
+
+    return { success: true, userId: newUser._id.toString() };
+  } catch (error) {
+    console.error('Błąd rejestracji:', error);
+    return { success: false, error: 'Coś poszło nie tak' };
+  }
+}
+
+export async function login(formData: LoginFormValues) {
+  try {
+    await connectDB();
+
+    const query = formData.loginOrEmail.includes('@')
+      ? { email: formData.loginOrEmail }
+      : { nickname: formData.loginOrEmail };
+
+    const user = await User.findOne(query);
+
+    if (!user) {
+      return { success: false, error: 'Nie znaleziono użytkownika' };
+    }
+
+    if (user.encodedPassword !== formData.password) {
+      return { success: false, error: 'Nieprawidłowe hasło' };
     }
 
     await createSession(user._id.toString());
@@ -46,35 +67,7 @@ export async function login(formData: LoginFormValues) {
     return { success: true };
   } catch (error) {
     console.error('Błąd logowania:', error);
-    return { success: false, error: 'Coś poszło nie tak' };
-  }
-}
-
-export async function register(formData: RegisterFormValues) {
-  try {
-    const db = await connectDB();
-    const usersCollection = db.collection('v1');
-
-    const existingUser = await usersCollection.findOne({ email: formData.email });
-    if (existingUser) {
-      console.warn('Użytkownik już istnieje');
-      return { success: false, error: 'Nieprawidłowe dane' };
-    }
-
-    const { repeatPassword, rememberMe, ...userData } = formData;
-    if (repeatPassword !== userData.password) {
-      return { success: false, error: 'Nieprawidłowe dane' };
-    }
-    if (rememberMe) {
-      // TODO
-    }
-    const insertResult = await usersCollection.insertOne(userData);
-
-    await createSession(insertResult.insertedId.toString());
-    return { success: true };
-  } catch (error) {
-    console.error('Błąd rejestracji:', error);
-    return { success: false, error: 'Nieprawidłowe dane' };
+    return { success: false, error: 'Błąd serwera' };
   }
 }
 

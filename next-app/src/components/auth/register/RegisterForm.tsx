@@ -21,13 +21,22 @@ export default function RegisterForm() {
   const passwordValue = watch("password");
 
   const onSubmit = async (data: RegisterFormValues) => {
-    const result = await register(data);
-    if (result.success) {
-      router.push('/dashboard');
-    } else {
-      alert(result.error || 'Błąd logowania');
-    }
+  const formattedData = {
+    email: data.email,
+    encodedPassword: data.password,
+    name: {
+      firstName: data.name,
+      lastName: data.surname,
+    },
   };
+
+  const result = await register(formattedData);
+  if (result.success) {
+    router.push('/dashboard');
+  } else {
+    alert(result.error || 'Błąd rejestracji');
+  }
+};
 
   return (
     <FormLayout>
