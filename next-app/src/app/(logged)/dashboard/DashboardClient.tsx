@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { logout, requireUserId } from "@/services/auth/actions";
-import { UserId } from "@/services/auth/server-only/user-id";
+import { UserId } from "@/services/auth/server-only/userID";
 
 export default function DashboardClient({ userId }: { userId: UserId }) {
   const [serverUserId, setServerUserId] = useState<string | null>(null);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserId } from "@/services/auth/server-only/user-id";
+import { getUserId } from "@/services/auth/server-only/userID";
 
 // additional firewall
 export default async function middleware(req: NextRequest) {

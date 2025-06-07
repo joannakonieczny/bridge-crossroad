@@ -3,11 +3,20 @@
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./server-only/session";
 import testUser from "@/data/test-user.json";
-import { getUserId, UserId } from "./server-only/user-id";
+import { getUserId, UserId } from "./server-only/userID";
 
 export type LoginFormValues = {
   loginOrEmail: string;
   password: string;
+  rememberMe: boolean;
+};
+
+export type RegisterFormValues = {
+  name: string;
+  surname: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
   rememberMe: boolean;
 };
 
