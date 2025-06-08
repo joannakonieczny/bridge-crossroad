@@ -49,7 +49,7 @@ export async function logout() {
 }
 
 export async function requireUserId(): Promise<UserId> {
-  const redirectPath = "/auth/login";
+  const redirectPath = "/auth";
   const userId = await getUserId({
     onUnauthenticated: () => {
       redirect(redirectPath);

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useOnboardingFormData } from "./FormDataContext";
-import { PageId } from "@/app/onboarding/[page]/page";
+import { PageId } from "@/app/(logged)/onboarding/[page]/page";
 import { FormData } from "./FormDataContext";
 
 // route : "/onboarding/[page]"
