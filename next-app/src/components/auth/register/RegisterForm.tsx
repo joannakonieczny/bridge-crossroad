@@ -10,35 +10,17 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { userSchema } from "@/schemas/user";
-import { register } from "@/services/auth/actions";
-
-type FormValues = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  repeatPassword: string;
-  rememberMe: boolean;
-};
+import { register, RegisterFormValues } from "@/services/auth/actions";
 
 export default function RegisterForm() {
   const t = useTranslations("Auth.RegisterPage");
-  const { handleSubmit, control, watch } = useForm<FormValues>();
-
-  const onSubmit = (data: FormValues) => {
-    register({
-      email: data.email,
-      password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
-    });
-  };
+  const { handleSubmit, control, watch } = useForm<RegisterFormValues>();
 
   const passwordValue = watch("password");
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(register)}>
         <Stack spacing={3} mt={8}>
           <FormHeading
             title={t("title")}
@@ -52,31 +34,31 @@ export default function RegisterForm() {
               name="firstName"
               defaultValue=""
               rules={{
-                required: t("form.nameField.errorMessage"),
+                required: t("form.firstNameField.errorMessage"),
                 minLength: {
-                  value: userSchema.nameSchema.minLength,
-                  message: t("form.nameField.minLength", {
-                    minLength: userSchema.nameSchema.minLength,
+                  value: userSchema.firstNameSchema.minLength,
+                  message: t("form.firstNameField.minLength", {
+                    minLength: userSchema.firstNameSchema.minLength,
                   }),
                 },
                 maxLength: {
-                  value: userSchema.nameSchema.maxLength,
-                  message: t("form.nameField.maxLength", {
-                    maxLength: userSchema.nameSchema.maxLength,
+                  value: userSchema.firstNameSchema.maxLength,
+                  message: t("form.firstNameField.maxLength", {
+                    maxLength: userSchema.firstNameSchema.maxLength,
                   }),
                 },
                 validate: (value: string) =>
-                  userSchema.nameSchema.regex.test(value) ||
-                  t("form.nameField.invalidNameSyntax"),
+                  userSchema.firstNameSchema.regex.test(value) ||
+                  t("form.firstNameField.invalidSyntax"),
               }}
               render={({ field, fieldState: { error } }) => (
                 <FormInput
-                  placeholder={t("form.nameField.placeholder")}
+                  placeholder={t("form.firstNameField.placeholder")}
                   errorMessage={
-                    error?.message ?? t("form.nameField.errorMessage")
+                    error?.message ?? t("form.firstNameField.errorMessage")
                   }
                   isInvalid={!!error}
-                  id="name"
+                  id="firstName"
                   type="text"
                   value={field.value}
                   onChange={field.onChange}
@@ -89,31 +71,31 @@ export default function RegisterForm() {
               name="lastName"
               defaultValue=""
               rules={{
-                required: t("form.surnameField.errorMessage"),
+                required: t("form.lastNameField.errorMessage"),
                 minLength: {
-                  value: userSchema.surnameSchema.minLength,
-                  message: t("form.surnameField.minLength", {
-                    minLength: userSchema.surnameSchema.minLength,
+                  value: userSchema.lastNameSchema.minLength,
+                  message: t("form.lastNameField.minLength", {
+                    minLength: userSchema.lastNameSchema.minLength,
                   }),
                 },
                 maxLength: {
-                  value: userSchema.surnameSchema.maxLength,
-                  message: t("form.surnameField.maxLength", {
-                    maxLength: userSchema.surnameSchema.maxLength,
+                  value: userSchema.lastNameSchema.maxLength,
+                  message: t("form.lastNameField.maxLength", {
+                    maxLength: userSchema.lastNameSchema.maxLength,
                   }),
                 },
                 validate: (value: string) =>
-                  userSchema.surnameSchema.regex.test(value) ||
-                  t("form.surnameField.invalidSurnameSyntax"),
+                  userSchema.lastNameSchema.regex.test(value) ||
+                  t("form.lastNameField.invalidSyntax"),
               }}
               render={({ field, fieldState: { error } }) => (
                 <FormInput
-                  placeholder={t("form.surnameField.placeholder")}
+                  placeholder={t("form.lastNameField.placeholder")}
                   errorMessage={
-                    error?.message ?? t("form.surnameField.errorMessage")
+                    error?.message ?? t("form.lastNameField.errorMessage")
                   }
                   isInvalid={!!error}
-                  id="surname"
+                  id="lastName"
                   type="text"
                   value={field.value}
                   onChange={field.onChange}
@@ -121,6 +103,47 @@ export default function RegisterForm() {
               )}
             />
           </HStack>
+
+          <Controller
+            control={control}
+            name="nickname"
+            rules={{
+              minLength: {
+                value: userSchema.nicknameSchema.minLength,
+                message: t("form.nicknameField.minLength", {
+                  minLength: userSchema.nicknameSchema.minLength,
+                }),
+              },
+              maxLength: {
+                value: userSchema.nicknameSchema.maxLength,
+                message: t("form.nicknameField.maxLength", {
+                  maxLength: userSchema.nicknameSchema.maxLength,
+                }),
+              },
+              validate: (value: string | undefined) => {
+                if (!value) {
+                  return true; //optional field
+                }
+                return (
+                  userSchema.nicknameSchema.regex.test(value) ||
+                  t("form.nicknameField.invalidSyntax")
+                );
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <FormInput
+                placeholder={t("form.nicknameField.placeholder")}
+                errorMessage={
+                  error?.message ?? t("form.nicknameField.errorMessage")
+                }
+                isInvalid={!!error}
+                id="nickname"
+                type="text"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
 
           <Controller
             control={control}
@@ -141,7 +164,6 @@ export default function RegisterForm() {
                 }
                 isInvalid={!!error}
                 id="email"
-                type="email"
                 value={field.value}
                 onChange={field.onChange}
               />

@@ -17,10 +17,6 @@ export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
   const { handleSubmit, control } = useForm<LoginFormValues>();
 
-  //const onSubmit = (data: FormValues) => {
-  //  alert(JSON.stringify(data));
-  //};
-
   return (
     <FormLayout>
       <form onSubmit={handleSubmit(login)}>
@@ -34,31 +30,39 @@ export default function LoginForm() {
 
           <Controller
             control={control}
-            name="loginOrEmail"
+            name="nicknameOrEmail"
             defaultValue=""
             rules={{
-              required: t("form.loginOrEmailField.errorMessage"),
+              required: t("form.nicknameOrEmailField.errorMessage"),
               validate: (value: string) => {
                 if (value.includes("@")) {
                   // as email
                   return (
                     userSchema.emailSchema.regex.test(value) ||
-                    t("form.loginOrEmailField.invalidEmail")
+                    t("form.nicknameOrEmailField.emailField.errorMessage")
                   );
                 } else {
-                  // as login
-                  if (value.length < userSchema.loginSchema.minLength) {
-                    return t("form.loginOrEmailField.minLengthLogin", {
-                      minLength: userSchema.loginSchema.minLength,
-                    });
+                  // as nickname
+                  if (value.length < userSchema.nicknameSchema.minLength) {
+                    return t(
+                      "form.nicknameOrEmailField.nicknameField.minLength",
+                      {
+                        minLength: userSchema.nicknameSchema.minLength,
+                      }
+                    );
                   }
-                  if (value.length > userSchema.loginSchema.maxLength) {
-                    return t("form.loginOrEmailField.maxLengthLogin", {
-                      maxLength: userSchema.loginSchema.maxLength,
-                    });
+                  if (value.length > userSchema.nicknameSchema.maxLength) {
+                    return t(
+                      "form.nicknameOrEmailField.nicknameField.maxLength",
+                      {
+                        maxLength: userSchema.nicknameSchema.maxLength,
+                      }
+                    );
                   }
-                  if (!userSchema.loginSchema.regex.test(value)) {
-                    return t("form.loginOrEmailField.invalidLoginSyntax");
+                  if (!userSchema.nicknameSchema.regex.test(value)) {
+                    return t(
+                      "form.nicknameOrEmailField.nicknameField.invalidSyntax"
+                    );
                   }
                   return true;
                 }
@@ -66,12 +70,12 @@ export default function LoginForm() {
             }}
             render={({ field, fieldState: { error } }) => (
               <FormInput
-                placeholder={t("form.loginOrEmailField.placeholder")}
+                placeholder={t("form.nicknameOrEmailField.placeholder")}
                 errorMessage={
-                  error?.message ?? t("form.loginOrEmailField.errorMessage")
+                  error?.message ?? t("form.nicknameOrEmailField.errorMessage")
                 }
                 isInvalid={!!error}
-                id="loginOrEmail"
+                id="nicknameOrEmail"
                 type="text"
                 value={field.value}
                 onChange={field.onChange}
@@ -85,18 +89,6 @@ export default function LoginForm() {
             defaultValue=""
             rules={{
               required: t("form.passwordField.errorMessage"),
-              minLength: {
-                value: userSchema.passwordSchema.minLength,
-                message: t("form.passwordField.minLength", {
-                  minLength: userSchema.passwordSchema.minLength,
-                }),
-              },
-              maxLength: {
-                value: userSchema.passwordSchema.maxLength,
-                message: t("form.passwordField.maxLength", {
-                  maxLength: userSchema.passwordSchema.maxLength,
-                }),
-              },
             }}
             render={({ field, fieldState: { error } }) => (
               <FormInput

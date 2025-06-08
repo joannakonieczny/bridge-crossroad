@@ -10,7 +10,7 @@ import {
 } from "@/controller/user";
 
 export type LoginFormValues = {
-  loginOrEmail: string;
+  nicknameOrEmail: string;
   password: string;
   rememberMe: boolean;
 };
@@ -18,11 +18,11 @@ export type LoginFormValues = {
 export async function login(formData: LoginFormValues) {
   const user =
     (await findExisting({
-      email: formData.loginOrEmail,
+      email: formData.nicknameOrEmail,
       password: formData.password,
     })) ||
     (await findExisting({
-      nickname: formData.loginOrEmail,
+      nickname: formData.nicknameOrEmail,
       password: formData.password,
     }));
   if (!user) {
@@ -30,15 +30,18 @@ export async function login(formData: LoginFormValues) {
   }
 
   await createSession(user._id.toString());
-  redirect("/dashboard"); //TODO
+  redirect("/onboarding"); //TODO
 }
 
-type RegisterFormValues = CreateUserParams;
+export type RegisterFormValues = CreateUserParams & {
+  rememberMe: boolean;
+  repeatPassword: string;
+};
 
 export async function register(formData: RegisterFormValues) {
   const user = await createNewUser(formData);
   await createSession(user._id.toString());
-  redirect("/dashboard"); //TODO
+  redirect("/onboarding"); //TODO
 }
 
 export async function logout() {
