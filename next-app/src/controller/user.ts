@@ -1,5 +1,6 @@
 import User, { IUserDTO } from "@/models/user";
 import dbConnect from "@/util/connect-mongo";
+import bcrypt from "bcryptjs";
 
 export type CreateUserParams = {
   email: string;
@@ -9,14 +10,19 @@ export type CreateUserParams = {
   nickname?: string;
 };
 
+const hashingRounds = 10;
+
 export async function createNewUser(
   params: CreateUserParams
 ): Promise<IUserDTO> {
   await dbConnect();
 
+  const salt = await bcrypt.genSalt(hashingRounds);
+  const encodedPassword = await bcrypt.hash(params.password, salt);
+
   const userData = {
     email: params.email,
-    encodedPassword: params.password, // TODO
+    encodedPassword: encodedPassword,
     name: {
       firstName: params.firstName,
       lastName: params.lastName,
@@ -49,16 +55,23 @@ export async function findExisting(
 ): Promise<IUserDTO | null> {
   await dbConnect();
 
+  let user: IUserDTO | null = null;
+
   if ("email" in params) {
-    return User.findOne({
-      email: params.email,
-      encodedPassword: params.password,
-    });
+    user = await User.findOne({ email: params.email });
   } else if ("nickname" in params) {
-    return User.findOne({
-      nickname: params.nickname,
-      encodedPassword: params.password,
-    });
+    user = await User.findOne({ nickname: params.nickname });
+  }
+
+  if (user) {
+    const isPasswordValid = await bcrypt.compare(
+      params.password,
+      user.encodedPassword
+    );
+
+    if (isPasswordValid) {
+      return user;
+    }
   }
 
   return null;
