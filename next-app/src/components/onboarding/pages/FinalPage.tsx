@@ -5,12 +5,19 @@ import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
-import { useOnboardingFormData } from "../FormDataContext";
+import {
+  FirstPage as FirstPageType,
+  SecondPage as SecondPageType,
+  ThirdPage as ThirdPageType,
+  FinalPage as FinalPageType,
+  useOnboardingFormData,
+} from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import { userSchema } from "@/schemas/user";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
+import { completeOnboarding } from "@/services/onboarding/actions";
 
 interface FormData {
   inviteCode: string;
@@ -21,7 +28,7 @@ export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
   const t = useTranslations("OnboardingPage.finalPage");
   const formNavigation = useFormNavigation({
-    nextPage: "/dashboard", // strona po zakończeniu onboardingu
+    nextPage: "/dashboard", // after onboarding is completed, redirect to dashboard
     prevPage: "/onboarding/3",
   });
   const onboardingContext = useOnboardingFormData();
@@ -49,8 +56,34 @@ export default function FinalPage() {
       page: "final",
       data: data,
     });
-    alert(JSON.stringify(onboardingContext.formData));
-    formNavigation.handleNavigation();
+    const formToSend = onboardingContext.formData;
+    formToSend.finalPage = data; //issue with async setter of usestate
+    const typedForm = formToSend as {
+      // we have all data right now //TODO handle it better -> method in context?
+      firstPage: FirstPageType;
+      secondPage: SecondPageType;
+      thirdPage: ThirdPageType;
+      finalPage: FinalPageType;
+    };
+    completeOnboarding({
+      academy: typedForm.firstPage.university,
+      yearOfBirth: typedForm.firstPage.yearOfBirth,
+      startPlayingDate: typedForm.secondPage.startPlayingDate,
+      trainingGroup: typedForm.secondPage.trainingGroup,
+      hasRefereeLicence: typedForm.secondPage.hasRefereeLicence,
+      cezarId: typedForm.thirdPage.cezarId,
+      bboId: typedForm.thirdPage.bboId,
+      cuebidsId: typedForm.thirdPage.cuebidsId,
+    })
+      .then((d) => {
+        alert("Subbmitted successfully!" + JSON.stringify(d));
+        formNavigation.handleNextClickedRedirectNow();
+      })
+      .catch((e) => {
+        alert("Error while submitting: " + e.message);
+        console.error("Error while submitting onboarding data:", e);
+      });
+    // alert(JSON.stringify(onboardingContext.formData));
   }
 
   return (

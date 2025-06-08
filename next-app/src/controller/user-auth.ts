@@ -1,3 +1,5 @@
+"server-only";
+
 import User, { IUserDTO } from "@/models/user";
 import dbConnect from "@/util/connect-mongo";
 import bcrypt from "bcryptjs";

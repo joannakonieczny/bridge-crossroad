@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-import { getUserId } from "@/services/auth/server-only/user-id";
+import { requireUserId } from "@/services/auth/actions";
 
 // firewall for logged pages
 export default async function LoggedLayout({
@@ -7,17 +6,6 @@ export default async function LoggedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let isAuthenticated = false;
-
-  await getUserId({
-    onAuthenticated: async () => {
-      isAuthenticated = true;
-    },
-  });
-
-  if (!isAuthenticated) {
-    redirect("/auth");
-  }
-
+  await requireUserId();
   return <>{children}</>;
 }

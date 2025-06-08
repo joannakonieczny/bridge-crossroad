@@ -7,7 +7,7 @@ import {
   createNewUser,
   CreateUserParams,
   findExisting,
-} from "@/controller/user";
+} from "@/controller/user-auth";
 
 export type LoginFormValues = {
   nicknameOrEmail: string;
@@ -30,7 +30,7 @@ export async function login(formData: LoginFormValues) {
   }
 
   await createSession(user._id.toString());
-  redirect("/onboarding"); //TODO
+  redirect("/dashboard"); //TODO here?
 }
 
 export type RegisterFormValues = CreateUserParams & {
@@ -41,7 +41,7 @@ export type RegisterFormValues = CreateUserParams & {
 export async function register(formData: RegisterFormValues) {
   const user = await createNewUser(formData);
   await createSession(user._id.toString());
-  redirect("/onboarding"); //TODO
+  redirect("/dashboard"); //TODO here?
 }
 
 export async function logout() {
