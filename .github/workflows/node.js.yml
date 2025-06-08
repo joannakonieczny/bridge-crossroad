@@ -29,6 +29,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
         working-directory: next-app
+      - name: Create dummy .env file 
+        run: |
+          echo "MONGODB_URI=MONGODB_URI" >> .env
+          echo "MONGODB_DB_NAME=MONGODB_DB_NAME" >> .env
+        working-directory: next-app
       - name: Build
         run: npm run build
         working-directory: next-app
