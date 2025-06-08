@@ -1,6 +1,6 @@
 "use client";
 
-import { PageId } from "@/app/onboarding/[page]/page";
+import { PageId } from "@/app/(logged)/onboarding/[page]/page";
 import { KrakowAcademy, TrainingGroup } from "@/schemas/user";
 import React, {
   createContext,

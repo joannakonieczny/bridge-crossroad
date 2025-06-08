@@ -10,30 +10,17 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { userSchema } from "@/schemas/user";
-
-type FormValues = {
-  firstName: string;
-  lastName: string;
-  nickname?: string;
-  email: string;
-  password: string;
-  repeatPassword: string;
-  rememberMe: boolean;
-};
+import { register, RegisterFormValues } from "@/services/auth/actions";
 
 export default function RegisterForm() {
   const t = useTranslations("Auth.RegisterPage");
-  const { handleSubmit, control, watch } = useForm<FormValues>();
-
-  const onSubmit = (data: FormValues) => {
-    alert(JSON.stringify(data));
-  };
+  const { handleSubmit, control, watch } = useForm<RegisterFormValues>();
 
   const passwordValue = watch("password");
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(register)}>
         <Stack spacing={3} mt={8}>
           <FormHeading
             title={t("title")}
