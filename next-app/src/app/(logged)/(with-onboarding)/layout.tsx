@@ -1,6 +1,7 @@
 // TODO firewall
 
 import { requireUserOnboarding } from "@/services/onboarding/actions";
+import Navbar from "@/components/with-onboarding/Navbar";
 
 export default async function WithOnboardingLayout({
   children,
@@ -8,5 +9,10 @@ export default async function WithOnboardingLayout({
   children: React.ReactNode;
 }) {
   await requireUserOnboarding();
-  return <>{children}</>;
+  return(
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 }
