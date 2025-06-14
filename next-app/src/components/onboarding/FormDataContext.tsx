@@ -1,7 +1,9 @@
 "use client";
 
 import { PageId } from "@/app/(logged)/onboarding/[page]/page";
-import { KrakowAcademy, TrainingGroup } from "@/schemas/user";
+import { TrainingGroup } from "@/club-preset/training-group";
+import { University } from "@/club-preset/univercity";
+
 import React, {
   createContext,
   useContext,
@@ -11,7 +13,7 @@ import React, {
 } from "react";
 
 export interface FirstPage {
-  university: KrakowAcademy; // enum key exacly
+  university: University; // enum key exacly
   yearOfBirth: number;
 }
 

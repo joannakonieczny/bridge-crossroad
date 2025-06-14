@@ -13,7 +13,6 @@ import {
   useOnboardingFormData,
 } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
-import { userSchema } from "@/schemas/user";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
@@ -112,7 +111,7 @@ export default function FinalPage() {
           rules={{
             required: t("inviteCode.noneSelected"),
             pattern: {
-              value: userSchema.inviteCodeSchema.regex,
+              value: /^[A-Z0-9]{8}$/,
               message: t("inviteCode.errorMessage"),
             },
           }}
@@ -120,7 +119,7 @@ export default function FinalPage() {
             <InviteCodeInput
               isInvalid={!!errors.inviteCode}
               errorMessage={errors.inviteCode?.message}
-              length={userSchema.inviteCodeSchema.length}
+              length={8}
               onPinInputProps={{
                 value: value,
                 onChange: (val) => onChange(val.toUpperCase()),

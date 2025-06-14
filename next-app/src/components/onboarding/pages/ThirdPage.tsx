@@ -7,7 +7,6 @@ import DefaultInput from "../inputs/DefaultInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
-import { casualString } from "@/schemas/user";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 
@@ -76,9 +75,9 @@ export default function ThirdPage() {
           control={control}
           rules={{
             maxLength: {
-              value: casualString.maxLength,
+              value: 50,
               message: t("cezarId.maxLenght", {
-                maxLength: casualString.maxLength,
+                maxLength: 50,
               }),
             },
           }}
@@ -99,9 +98,9 @@ export default function ThirdPage() {
           control={control}
           rules={{
             maxLength: {
-              value: casualString.maxLength,
+              value: 50,
               message: t("bboId.maxLenght", {
-                maxLength: casualString.maxLength,
+                maxLength: 50,
               }),
             },
           }}
@@ -122,9 +121,9 @@ export default function ThirdPage() {
           control={control}
           rules={{
             maxLength: {
-              value: casualString.maxLength,
+              value: 50,
               message: t("cuebidsId.maxLenght", {
-                maxLength: casualString.maxLength,
+                maxLength: 50,
               }),
             },
           }}

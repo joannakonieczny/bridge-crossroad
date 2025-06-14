@@ -8,10 +8,11 @@ import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
 import MonthYearInput from "../inputs/MonthYearInput";
-import { TrainingGroup } from "@/schemas/user";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
+import { TrainingGroup } from "@/club-preset/training-group";
 
+// TODO: use Translations
 function generateSkillLevelOptions() {
   return Object.entries(TrainingGroup).map(([key, value]) => ({
     value: key,

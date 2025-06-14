@@ -1,63 +1,115 @@
-export const casualString = {
-  maxLength: 50,
-};
+import { useTranslations } from "next-intl";
+import z from "zod";
+import { University } from "../club-preset/univercity";
+import { TrainingGroup as TrainingGroupp } from "../club-preset/training-group";
 
-export const userSchema = {
-  emailSchema: {
-    regex: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-  },
-  nicknameSchema: {
-    minLength: 3,
-    maxLength: 16,
-    regex: /^[a-zA-Z0-9_-]+$/,
-  },
-  passwordSchema: {
-    minLength: 6,
-    maxLength: 16,
-    upperCaseRegex: /(?=.*[A-Z])/,
-    lowerCaseRegex: /(?=.*[a-z])/,
-    digitRegex: /(?=.*\d)/,
-    specialCharRegex: /(?=.*[!@#$%^&*(),.?":{}|<>])/,
-  },
-  firstNameSchema: {
-    minLength: 2,
-    maxLength: 50,
-    regex: /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/,
-  },
-  lastNameSchema: {
-    minLength: 2,
-    maxLength: 50,
-    regex: /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/,
-  },
-  yearOfBirthSchema: {
-    min: 1900,
-    max: new Date().getFullYear(),
-  },
-  inviteCodeSchema: {
-    regex: /^[A-Z0-9]{8}$/,
-    length: 8,
-  },
-};
+export function UserNameSchemaProvider() {
+  const t = useTranslations("validation.user.name"); //TODO add translations
 
-export enum KrakowAcademy {
-  UNIWERSYTET_JAGIELLONSKI = "Uniwersytet Jagielloński",
-  AGH = "Akademia Górniczo-Hutnicza im. Stanisława Staszica",
-  POLITECHNIKA_KRAKOWSKA = "Politechnika Krakowska im. Tadeusza Kościuszki",
-  UNIWERSYTET_EKONOMICZNY = "Uniwersytet Ekonomiczny w Krakowie",
-  UNIWERSYTET_PEDAGOGICZNY = "Uniwersytet Pedagogiczny im. Komisji Edukacji Narodowej",
-  UNIWERSYTET_ROLNICZY = "Uniwersytet Rolniczy im. Hugona Kołłątaja",
-  AKADEMIA_SZTUK_PIEKNYCH = "Akademia Sztuk Pięknych im. Jana Matejki",
-  AKADEMIA_MUZYCZNA = "Akademia Muzyczna w Krakowie",
-  AKADEMIA_WYCHOWANIA_FIZYCZNEGO = "Akademia Wychowania Fizycznego im. Bronisława Czecha",
-  AKADEMIA_TEOLOGICZNA = "Uniwersytet Papieski Jana Pawła II",
-  AKADEMIA_IGNATIANUM = "Uniwersytet Ignatianum w Krakowie",
-  INNA = "Inna",
+  const firstNameSchema = z
+    .string()
+    .min(2, t("firstName.min", { min: 2 }))
+    .max(50, t("firstName.max", { max: 50 }))
+    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/, t("firstName.regex"));
+
+  const lastNameSchema = z
+    .string()
+    .min(2, t("lastName.min", { min: 2 }))
+    .max(50, t("lastName.max", { max: 50 }))
+    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/, t("lastName.regex"));
+
+  const nameSchema = z.object({
+    firstName: firstNameSchema,
+    lastName: lastNameSchema,
+  });
+
+  return { firstNameSchema, lastNameSchema, nameSchema };
 }
 
-export enum TrainingGroup {
-  PODSTAWOWA = "grupa podstawowa",
-  SREDNIOZAAWANSOWANA = "średniozaawansowana",
-  ZAAWANSOWANA = "zaawansowana",
-  TRENER = "Jestem trenerem!",
-  NIE_UCZESTNICZE = "Nie chodzę na zajęcia z brydża na AGH",
+export function UserOnboardingSchemaProvider() {
+  const t = useTranslations("validation.user.onboarding"); //TODO add translations
+
+  const academySchema = z.nativeEnum(University, {
+    errorMap: () => ({ message: t("academy.invalid") }),
+  });
+
+  const yearOfBirthSchema = z
+    .number()
+    .int()
+    .min(1900, t("yearOfBirth.min", { min: 1900 }))
+    .max(
+      new Date().getFullYear(),
+      t("yearOfBirth.max", { max: new Date().getFullYear() })
+    );
+
+  const startPlayingDateSchema = z.date();
+
+  const trainingGroupSchema = z.nativeEnum(TrainingGroupp, {
+    errorMap: () => ({ message: t("trainingGroup.invalid") }),
+  });
+
+  const hasRefereeLicenseSchema = z.boolean();
+
+  const cezarIdSchema = z
+    .string()
+    .regex(/^\d{8}$/, t("cezarId.regexLenght", { lenght: 8 }));
+
+  const bboIdSchema = z
+    .string()
+    .nonempty("bboId.invalid")
+    .max(20, t("bboId.max", { max: 20 }));
+
+  const cuebidsIdSchema = z
+    .string()
+    .nonempty("cuebidsId.invalid")
+    .max(20, t("cuebidsId.max", { max: 20 }));
+
+  const onboardingDataSchema = z.object({
+    academy: academySchema,
+    yearOfBirth: yearOfBirthSchema,
+    startPlayingDate: startPlayingDateSchema,
+    trainingGroup: trainingGroupSchema,
+    hasRefereeLicense: hasRefereeLicenseSchema,
+    cezarId: cezarIdSchema.optional(),
+    bboId: bboIdSchema.optional(),
+    cuebidsId: cuebidsIdSchema.optional(),
+  });
+
+  return {
+    academySchema,
+    yearOfBirthSchema,
+    startPlayingDateSchema,
+    trainingGroupSchema,
+    hasRefereeLicenseSchema,
+    cezarIdSchema,
+    bboIdSchema,
+    cuebidsIdSchema,
+    onboardingDataSchema,
+  };
+}
+
+export function UserSchemaProvider() {
+  const t = useTranslations("validation.user"); //TODO add translations
+  const { nameSchema } = UserNameSchemaProvider();
+  const { onboardingDataSchema } = UserOnboardingSchemaProvider();
+
+  const emailSchema = z
+    .string()
+    .max(50, t("email.max"))
+    .email(t("email.regex"));
+
+  const nicknameSchema = z
+    .string()
+    .min(3, t("nickname.min", { min: 3 }))
+    .max(16, t("nickname.max", { max: 16 }))
+    .regex(/^[a-zA-Z0-9_-]+$/, t("nickname.regex"));
+
+  const userSchema = z.object({
+    email: emailSchema,
+    nickname: nicknameSchema,
+    name: nameSchema,
+    onboardingdata: onboardingDataSchema,
+  });
+
+  return { nicknameSchema, emailSchema, userSchema };
 }

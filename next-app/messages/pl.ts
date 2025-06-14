@@ -25,9 +25,6 @@ const authForm = {
   nicknameField: {
     placeholder: "Nick lub przezwisko (opcjonalne)",
     errorMessage: "Podaj poprawny nick",
-    invalidSyntax: "Nick może zawierać tylko litery, cyfry, _ i -",
-    minLength: "Nick musi mieć co najmniej {minLength} znaki",
-    maxLength: "Nick nie może być dłuższy niż {maxLength} znaków",
   },
   passwordField: {
     placeholder: "Hasło",
@@ -44,21 +41,14 @@ const authForm = {
   emailField: {
     placeholder: "E-mail",
     errorMessage: "Podaj poprawny adres e-mail",
-    maxLength: "E-mail nie może być dłuższy niż {maxLength} znaków",
   },
   firstNameField: {
     placeholder: "Imię",
     errorMessage: "Podaj poprawne imię",
-    minLength: nameFields.minLength,
-    maxLength: nameFields.maxLength,
-    invalidSyntax: nameFields.invalidSyntax,
   },
   lastNameField: {
     placeholder: "Nazwisko",
     errorMessage: "Podaj poprawne nazwisko",
-    minLength: nameFields.minLength,
-    maxLength: nameFields.maxLength,
-    invalidSyntax: nameFields.invalidSyntax,
   },
   repeatPasswordField: {
     placeholder: "Powtórz hasło",
@@ -76,14 +66,6 @@ const loginPage = {
     nicknameOrEmailField: {
       placeholder: "Nick lub email",
       errorMessage: "Podaj poprawny nick lub email",
-      emailField: {
-        errorMessage: authForm.emailField.errorMessage,
-      },
-      nicknameField: {
-        invalidSyntax: authForm.nicknameField.invalidSyntax,
-        minLength: authForm.nicknameField.minLength,
-        maxLength: authForm.nicknameField.maxLength,
-      },
     },
     passwordField: authForm.passwordField,
   },
@@ -214,6 +196,46 @@ const messages = {
     },
     date: {
       months: MONTHS,
+    },
+  },
+  validation: {
+    user: {
+      name: {
+        firstName: nameFields,
+        lastName: nameFields,
+      },
+      onboarding: {
+        academy: {
+          invalid: "Nieprawidłowa uczelnia",
+        },
+        yearOfBirth: {
+          min: "Rok urodzenia nie może być wcześniejszy niż {min}",
+          max: "Rok urodzenia nie może być późniejszy niż {max}",
+        },
+        trainingGroup: {
+          invalid: "Nieprawidłowa grupa treningowa",
+        },
+        cezarId: {
+          regexLenght: "Numer Cezar musi składać się z {lenght} cyfr",
+        },
+        bboId: {
+          invalid: "Niepoprawny nick na BBO",
+          max: "Max. {max} znaków",
+        },
+        cuebidsId: {
+          invalid: "Niepoprawny kod użytkownika na Cuebids",
+          max: "Max. {max} znaków",
+        },
+      },
+      email: {
+        regex: "Podaj poprawny adres e-mail",
+        max: "E-mail nie może być dłuższy niż {max} znaków",
+      },
+      nickname: {
+        min: "Nick musi mieć co najmniej {min} znaki",
+        max: "Nick nie może być dłuższy niż {max} znaków",
+        regex: "Nick może zawierać tylko litery, cyfry, _ i -",
+      },
     },
   },
   Auth: {

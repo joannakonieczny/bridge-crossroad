@@ -6,18 +6,14 @@ import { useTranslations } from "next-intl";
 import SelectInput from "../inputs/SelectInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
-import { KrakowAcademy, userSchema } from "@/schemas/user";
 import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
+import { University } from "@/club-preset/univercity";
 
 function generateYearOptions() {
   const years = [];
-  for (
-    let year = userSchema.yearOfBirthSchema.max;
-    year >= userSchema.yearOfBirthSchema.min;
-    year--
-  ) {
+  for (let year = new Date().getFullYear(); year >= 1900; year--) {
     years.push({
       value: year.toString(),
       label: year.toString(),
@@ -27,8 +23,9 @@ function generateYearOptions() {
   return years;
 }
 
+// TODO: use Translations
 function generateUniversityOptions() {
-  return Object.entries(KrakowAcademy).map(([key, value]) => ({
+  return Object.entries(University).map(([key, value]) => ({
     value: key,
     label: value,
   }));
@@ -73,7 +70,7 @@ export default function FirstPage() {
     onboardingContext.setData({
       page: "1",
       data: {
-        university: data.university as KrakowAcademy,
+        university: data.university as University, // TODO change to key!
         yearOfBirth: parseInt(data.yearOfBirth, 10),
       },
     });
