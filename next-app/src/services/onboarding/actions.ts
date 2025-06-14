@@ -5,6 +5,7 @@ import {
   getUserData,
   OnboardingDataParams,
 } from "@/controller/onboarding";
+import { joinGroup } from "@/controller/user-groups";
 import { requireUserId } from "../auth/actions";
 import { redirect } from "next/navigation";
 import {
@@ -16,14 +17,16 @@ import {
 type OnboardingFormValues = OnboardingDataParams;
 
 export async function completeOnboarding(
-  onboardingData: OnboardingFormValues
+  onboardingData: OnboardingFormValues,
+  invitationCode: string
 ): Promise<SanitizedUser> {
   const userId = await requireUserId(); // TODO maybe throw error if user is not authenticated?
-  const updatedUser = await addOnboardingData(userId, onboardingData);
-  if (!updatedUser) {
+  await addOnboardingData(userId, onboardingData);
+  const finalUser = await joinGroup(userId, invitationCode)
+  if (!finalUser) {
     throw new Error("Failed to update onboarding data");
   }
-  return sanitizeUser(updatedUser);
+  return sanitizeUser(finalUser);
 }
 
 export async function getUser(): Promise<SanitizedUser> {
