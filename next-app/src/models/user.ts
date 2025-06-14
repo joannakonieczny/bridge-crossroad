@@ -21,6 +21,7 @@ export interface IUserDTO extends Document {
   };
   createdAt: Date;
   updatedAt: Date;
+  groups: Types.ObjectId[];
 }
 
 const UserSchema = new Schema<IUserDTO>(
@@ -64,6 +65,14 @@ const UserSchema = new Schema<IUserDTO>(
       minLength: [2, "Nickname must be at least 2 characters"],
       maxLength: [30, "Nickname cannot exceed 30 characters"],
     },
+    groups: [
+      { 
+        type: Schema.Types.ObjectId, 
+        ref: 'Group',
+        required: false,
+        default: []
+      }
+    ],
     onboardingData: {
       type: {
         academy: {
@@ -122,7 +131,7 @@ const UserSchema = new Schema<IUserDTO>(
     },
   },
   // Dodaj automatyczne timestampy dla createdAt i updatedAt
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Zapobieganie ponownemu rejestracji modelu (problem w hot reloadzie Next.js)

@@ -74,7 +74,9 @@ export default function FinalPage() {
       cezarId: typedForm.thirdPage.cezarId,
       bboId: typedForm.thirdPage.bboId,
       cuebidsId: typedForm.thirdPage.cuebidsId,
-    })
+      },
+      data.inviteCode
+    )
       .then((d) => {
         alert("Subbmitted successfully!" + JSON.stringify(d));
         formNavigation.handleNextClickedRedirectNow();

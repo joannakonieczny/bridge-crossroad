@@ -11,6 +11,7 @@ export type SanitizedUser = {
     lastName: string;
   };
   nickname?: string;
+  groups: string[];
   onboardingData?: {
     academy: string;
     yearOfBirth: number;
@@ -34,6 +35,7 @@ export function sanitizeUser(user: IUserDTO): SanitizedUser {
       lastName: user.name.lastName,
     },
     nickname: user.nickname,
+    groups: user.groups.map(id => id.toString()) ?? [],
     onboardingData: user.onboardingData
       ? {
           academy: user.onboardingData.academy,
