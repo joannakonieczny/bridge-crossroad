@@ -3,7 +3,7 @@ import { requireUserId } from "@/services/auth/actions";
 import { Box, Flex } from "@chakra-ui/react";
 import PeopleList from "@/components/with-onboarding/groups/PeopleList";
 
-export default async function DashboardPage() {
+export default async function GroupsPage() {
   const userId = await requireUserId();
 
   return (
