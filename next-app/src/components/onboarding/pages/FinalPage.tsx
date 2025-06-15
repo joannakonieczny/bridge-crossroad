@@ -10,7 +10,7 @@ import { useFormNavigation } from "../FormNavigationHook";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
-// import { completeOnboarding } from "@/services/onboarding/actions";
+import { completeOnboarding } from "@/services/onboarding/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   OnboardingFinalPageSchema,
@@ -66,26 +66,26 @@ export default function FinalPage() {
       thirdPage: OnboardingThirdPageSchema;
       finalPage: OnboardingFinalPageSchema;
     };
-    alert("Submitting data: " + JSON.stringify(typedForm));
-    // completeOnboarding({
-    //   academy: typedForm.firstPage.academy,
-    //   yearOfBirth: typedForm.firstPage.yearOfBirth,
-    //   startPlayingDate: typedForm.secondPage.startPlayingDate,
-    //   trainingGroup: typedForm.secondPage.trainingGroup,
-    //   hasRefereeLicense: typedForm.secondPage.hasRefereeLicense,
-    //   cezarId: typedForm.thirdPage.cezarId,
-    //   bboId: typedForm.thirdPage.bboId,
-    //   cuebidsId: typedForm.thirdPage.cuebidsId,
-    // })
-    //   .then((d) => {
-    //     alert("Subbmitted successfully!" + JSON.stringify(d));
-    //     formNavigation.handleNextClickedRedirectNow();
-    //   })
-    //   .catch((e) => {
-    //     alert("Error while submitting: " + e.message);
-    //     console.error("Error while submitting onboarding data:", e);
-    //   });
-    // alert(JSON.stringify(onboardingContext.formData));
+    // alert("Submitting data: " + JSON.stringify(typedForm));
+    completeOnboarding({
+      academy: typedForm.firstPage.academy,
+      yearOfBirth: typedForm.firstPage.yearOfBirth,
+      startPlayingDate: typedForm.secondPage.startPlayingDate,
+      trainingGroup: typedForm.secondPage.trainingGroup,
+      hasRefereeLicense: typedForm.secondPage.hasRefereeLicense,
+      cezarId: typedForm.thirdPage.cezarId,
+      bboId: typedForm.thirdPage.bboId,
+      cuebidsId: typedForm.thirdPage.cuebidsId,
+    })
+      .then((d) => {
+        alert("Subbmitted successfully!" + JSON.stringify(d));
+        formNavigation.handleNextClickedRedirectNow();
+      })
+      .catch((e) => {
+        alert("Error while submitting: " + e.message);
+        console.error("Error while submitting onboarding data:", e);
+      });
+    alert(JSON.stringify(onboardingContext.formData));
   }
 
   return (

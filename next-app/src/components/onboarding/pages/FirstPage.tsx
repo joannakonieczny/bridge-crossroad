@@ -15,7 +15,7 @@ import {
   OnboardingFirstPageSchema,
   OnboardingFirstPageSchemaProvider,
 } from "@/schemas/pages/onboarding/first-page-schema";
-import { UserValidationConstants } from "@/schemas/model/user-schema";
+import { UserValidationConstants } from "@/schemas/model/user/user-const";
 
 function generateYearOptions() {
   const years = [];

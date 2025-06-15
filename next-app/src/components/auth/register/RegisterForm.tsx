@@ -10,7 +10,7 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { register } from "@/services/auth/actions";
-import { RegisterFormSchemaProvider } from "@/schemas/pages/auth/register-schema";
+import { RegisterFormSchemaProvider } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function RegisterForm() {

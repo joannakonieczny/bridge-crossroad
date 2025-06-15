@@ -1,5 +1,5 @@
 import { Schema, Document, model, models, Types } from "mongoose";
-import { UserValidationConstants } from "@/schemas/model/user-schema";
+import { UserValidationConstants } from "@/schemas/model/user/user-const";
 
 export interface IUserDTO extends Document {
   _id: Types.ObjectId;

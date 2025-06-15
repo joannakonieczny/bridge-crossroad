@@ -11,7 +11,7 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { login } from "@/services/auth/actions";
-import { LoginFormSchemaProvider } from "@/schemas/pages/auth/login-schema";
+import { LoginFormSchemaProvider } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function LoginForm() {

@@ -24,7 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { FiCalendar, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useGetMonths } from "@/util/date";
-import { UserValidationConstants } from "@/schemas/model/user-schema";
+import { UserValidationConstants } from "@/schemas/model/user/user-const";
 
 interface IMonthYearInputProps {
   value: string | Date | null | undefined;

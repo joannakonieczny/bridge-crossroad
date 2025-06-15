@@ -223,6 +223,9 @@ const messages = {
       [TrainingGroup.COACH]: "Jestem trenerem!",
       [TrainingGroup.NONE]: "Nie chodzę na zajęcia z brydża na AGH",
     },
+    error: {
+      general: "Wystąpił błąd dla {error}. Spróbuj ponownie później.",
+    },
   },
   validation: {
     user: {

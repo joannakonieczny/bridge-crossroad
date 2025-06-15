@@ -6,6 +6,7 @@ export const InviteCodeValidationConstants = {
   inviteCodeRegex: /^[A-Z0-9]{8}$/,
 };
 
+// client only
 export function OnboardingFinalPageSchemaProvider() {
   const t = useTranslations("OnboardingPage.finalPage");
   const inviteCodeSchema = z

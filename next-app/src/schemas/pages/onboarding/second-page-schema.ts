@@ -1,7 +1,8 @@
 import z from "zod";
-import { UserOnboardingSchemaProvider } from "@/schemas/model/user-schema";
+import { UserOnboardingSchemaProvider } from "@/schemas/model/user/user-schema";
 import { useTranslations } from "next-intl";
 
+// client only
 export function OnboardingSecondPageSchemaProvider() {
   const {
     startPlayingDateSchema,

@@ -8,25 +8,26 @@ import {
 import { requireUserId } from "../auth/actions";
 import { redirect } from "next/navigation";
 import {
-  SanitizedUser,
   sanitizeOnboardingData,
   sanitizeUser,
 } from "../../sanitizers/server-only/user-sanitize";
+import { action } from "../action-lib";
+import { UserOnboardingSchemaProviderServer } from "@/schemas/model/user/user-schema";
 
-type OnboardingFormValues = OnboardingDataParams;
+export const completeOnboarding = action
+  .inputSchema(
+    (await UserOnboardingSchemaProviderServer()).onboardingDataSchema
+  )
+  .action(async ({ parsedInput: onboardingData }) => {
+    const userId = await requireUserId(); // redirects if user is not authenticated
+    const updatedUser = await addOnboardingData(userId, onboardingData);
+    if (!updatedUser) {
+      throw new Error("Failed to update onboarding data");
+    }
+    return sanitizeUser(updatedUser);
+  });
 
-export async function completeOnboarding(
-  onboardingData: OnboardingFormValues
-): Promise<SanitizedUser> {
-  const userId = await requireUserId(); // redirects if user is not authenticated
-  const updatedUser = await addOnboardingData(userId, onboardingData);
-  if (!updatedUser) {
-    throw new Error("Failed to update onboarding data");
-  }
-  return sanitizeUser(updatedUser);
-}
-
-export async function getUser(): Promise<SanitizedUser> {
+export const getUser = action.action(async () => {
   //TODO return less data
   const userId = await requireUserId(); // redirects if user is not authenticated
   const user = await getUserData(userId);
@@ -34,7 +35,9 @@ export async function getUser(): Promise<SanitizedUser> {
     throw new Error("User not found");
   }
   return sanitizeUser(user);
-}
+});
+
+// TODO: change to safe server-action if needed
 
 type OnboardingData = OnboardingDataParams;
 
