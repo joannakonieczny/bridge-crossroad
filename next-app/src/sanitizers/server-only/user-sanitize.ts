@@ -14,7 +14,7 @@ export type SanitizedUser = {
   onboardingData?: {
     academy: string;
     yearOfBirth: number;
-    startPlayingDate: string; // format MM-YYYY
+    startPlayingDate: Date; // format MM-YYYY
     trainingGroup: string;
     hasRefereeLicense: boolean;
     cezarId?: string;

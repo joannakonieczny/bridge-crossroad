@@ -1,5 +1,3 @@
-// TODO firewall
-
 import { requireUserOnboarding } from "@/services/onboarding/actions";
 
 export default async function WithOnboardingLayout({

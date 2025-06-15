@@ -30,7 +30,7 @@ export async function login(formData: LoginFormValues) {
   }
 
   await createSession(user._id.toString());
-  redirect("/dashboard"); //TODO here?
+  redirect("/dashboard"); //auto redirect
 }
 
 export type RegisterFormValues = CreateUserParams & {
@@ -41,7 +41,7 @@ export type RegisterFormValues = CreateUserParams & {
 export async function register(formData: RegisterFormValues) {
   const user = await createNewUser(formData);
   await createSession(user._id.toString());
-  redirect("/dashboard"); //TODO here?
+  redirect("/dashboard"); //auto redirect
 }
 
 export async function logout() {

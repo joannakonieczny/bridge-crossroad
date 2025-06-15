@@ -22,6 +22,7 @@ export const UserValidationConstants = {
   },
   email: {
     max: 50,
+    additionalRegex: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
   },
   nickname: {
     min: 3,

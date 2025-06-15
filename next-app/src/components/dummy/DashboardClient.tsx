@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { logout } from "@/services/auth/actions";
 import { UserId } from "@/services/auth/server-only/user-id";
 import { getUser } from "@/services/onboarding/actions";
-import { SanitizedUser } from "@/services/onboarding/server-only/sanitize";
+import { SanitizedUser } from "@/sanitizers/server-only/user-sanitize";
 
 export default function DashboardClient({ userId }: { userId: UserId }) {
   const [serverUser, setServerUser] = useState<SanitizedUser | null>(null);

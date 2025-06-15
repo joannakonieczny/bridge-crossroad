@@ -11,14 +11,14 @@ import {
   SanitizedUser,
   sanitizeOnboardingData,
   sanitizeUser,
-} from "./server-only/sanitize";
+} from "../../sanitizers/server-only/user-sanitize";
 
 type OnboardingFormValues = OnboardingDataParams;
 
 export async function completeOnboarding(
   onboardingData: OnboardingFormValues
 ): Promise<SanitizedUser> {
-  const userId = await requireUserId(); // TODO maybe throw error if user is not authenticated?
+  const userId = await requireUserId(); // redirects if user is not authenticated
   const updatedUser = await addOnboardingData(userId, onboardingData);
   if (!updatedUser) {
     throw new Error("Failed to update onboarding data");
@@ -28,7 +28,7 @@ export async function completeOnboarding(
 
 export async function getUser(): Promise<SanitizedUser> {
   //TODO return less data
-  const userId = await requireUserId(); // TODO maybe throw error if user is not authenticated?
+  const userId = await requireUserId(); // redirects if user is not authenticated
   const user = await getUserData(userId);
   if (!user) {
     throw new Error("User not found");
@@ -39,7 +39,7 @@ export async function getUser(): Promise<SanitizedUser> {
 type OnboardingData = OnboardingDataParams;
 
 export async function requireUserOnboarding(): Promise<OnboardingData> {
-  const userId = await requireUserId(); // TODO maybe throw error if user is not authenticated?
+  const userId = await requireUserId(); // redirects if user is not authenticated
   const user = await getUserData(userId);
 
   if (!user || !user.onboardingData) {
