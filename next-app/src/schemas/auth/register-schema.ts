@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { UserNameSchemaProvider, UserSchemaProvider } from "../user";
 import { z } from "zod";
+import { emptyStringToUndefined } from "../common";
 
 export function RegisterFormSchemaProvider() {
   const t = useTranslations("Auth.RegisterPage.form");
@@ -9,7 +10,7 @@ export function RegisterFormSchemaProvider() {
 
   const passwordSchema = z
     .string()
-    .nonempty(t("passwordField.errorMessage"))
+    .nonempty(t("passwordField.required"))
     .min(6, t("passwordField.minLength", { minLength: 6 }))
     .max(16, t("passwordField.maxLength", { maxLength: 16 }))
     .regex(/(?=.*[A-Z])/, t("passwordField.noUpperCase"))
@@ -19,18 +20,16 @@ export function RegisterFormSchemaProvider() {
 
   const repeatPasswordSchema = z
     .string()
-    .min(1, t("repeatPasswordField.errorMessage"));
+    .nonempty(t("repeatPasswordField.errorMessage"));
 
   const registerFormSchema = z
     .object({
       firstName: firstNameSchema,
       lastName: lastNameSchema,
       nickname: z
-        .union([
-          z.string().length(0, t("nicknameField.errorMessage")),
-          nicknameSchema,
-        ])
-        .transform((val) => (val === "" ? undefined : val)),
+        .string()
+        .transform(emptyStringToUndefined)
+        .pipe(nicknameSchema),
       email: emailSchema,
       password: passwordSchema,
       repeatPassword: repeatPasswordSchema,

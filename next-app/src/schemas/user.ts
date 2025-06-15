@@ -8,12 +8,14 @@ export function UserNameSchemaProvider() {
 
   const firstNameSchema = z
     .string()
+    .nonempty(t("firstName.required"))
     .min(2, t("firstName.min", { min: 2 }))
     .max(50, t("firstName.max", { max: 50 }))
     .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/, t("firstName.regex"));
 
   const lastNameSchema = z
     .string()
+    .nonempty(t("lastName.required"))
     .min(2, t("lastName.min", { min: 2 }))
     .max(50, t("lastName.max", { max: 50 }))
     .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/, t("lastName.regex"));
@@ -98,6 +100,7 @@ export function UserSchemaProvider() {
 
   const emailSchema = z
     .string()
+    .nonempty(t("email.required"))
     .max(50, t("email.max", { max: 50 }))
     .email(t("email.regex"));
 
@@ -105,7 +108,8 @@ export function UserSchemaProvider() {
     .string()
     .min(3, t("nickname.min", { min: 3 }))
     .max(16, t("nickname.max", { max: 16 }))
-    .regex(/^[a-zA-Z0-9_-]+$/, t("nickname.regex"));
+    .regex(/^[a-zA-Z0-9_-]+$/, t("nickname.regex"))
+    .optional();
 
   const userSchema = z.object({
     email: emailSchema,

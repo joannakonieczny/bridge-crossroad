@@ -14,22 +14,22 @@ export function OnboardingSecondPageSchemaProvider() {
     startPlayingDate: z.union([
       z
         .instanceof(Date, {
-          message: t("monthYear.noneSelected"),
+          message: t("startPlayingDate.required"),
         })
         .pipe(startPlayingDateSchema),
 
       z
         .string()
-        .min(1, t("monthYear.noneSelected"))
+        .nonempty(t("startPlayingDate.required"))
         .transform((val) => {
           try {
             const parsedDate = new Date(val);
             if (isNaN(parsedDate.getTime())) {
-              throw new Error(t("monthYear.noneSelected"));
+              throw new Error(t("startPlayingDate.required"));
             }
             return parsedDate;
           } catch {
-            throw new Error(t("monthYear.noneSelected"));
+            throw new Error(t("startPlayingDate.required"));
           }
         })
         .pipe(startPlayingDateSchema),
@@ -37,7 +37,7 @@ export function OnboardingSecondPageSchemaProvider() {
 
     trainingGroup: z
       .string()
-      .min(1, t("skillLevel.noneSelected"))
+      .nonempty(t("skillLevel.required"))
       .pipe(trainingGroupSchema),
 
     hasRefereeLicense: hasRefereeLicenseSchema,

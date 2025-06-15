@@ -9,7 +9,7 @@ export function LoginFormSchemaProvider() {
   // const nicknameOrEmailSchema = z.union([emailSchema, nicknameSchema]);
   const nicknameOrEmailSchema = z
     .string()
-    .min(1, t("nicknameOrEmailField.errorMessage"))
+    .nonempty(t("nicknameOrEmailField.required"))
     .superRefine((value, ctx) => {
       if (value.includes("@")) {
         const result = emailSchema.safeParse(value);
@@ -36,12 +36,12 @@ export function LoginFormSchemaProvider() {
       }
     });
 
-  const passwordSchema = z.string().min(1, t("passwordField.errorMessage"));
+  const passwordSchema = z.string().nonempty(t("passwordField.required"));
 
   const loginFormSchema = z.object({
     nicknameOrEmail: nicknameOrEmailSchema,
     password: passwordSchema,
-    rememberMe: z.boolean().default(true),
+    rememberMe: z.boolean(),
   });
 
   return { nicknameOrEmailSchema, passwordSchema, loginFormSchema };

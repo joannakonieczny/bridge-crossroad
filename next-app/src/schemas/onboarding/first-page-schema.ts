@@ -6,14 +6,14 @@ export function OnboardingFirstPageSchemaProvider() {
   const { academySchema, yearOfBirthSchema } = UserOnboardingSchemaProvider();
   const t = useTranslations("OnboardingPage.firstPage");
   const formSchema = z.object({
-    academy: z.string().min(1, t("academy.noneSelected")).pipe(academySchema),
+    academy: z.string().nonempty(t("academy.required")).pipe(academySchema),
     yearOfBirth: z
       .string()
-      .min(1, t("yearOfBirth.noneSelected"))
+      .nonempty(t("yearOfBirth.required"))
       .transform((val) => {
         const parsed = parseInt(val, 10);
         if (isNaN(parsed)) {
-          throw new Error(t("yearOfBirth.noneSelected"));
+          throw new Error(t("yearOfBirth.required"));
         }
         return parsed;
       })

@@ -1,11 +1,10 @@
 import z from "zod";
 import { UserOnboardingSchemaProvider } from "@/schemas/user";
+import { emptyStringToUndefined } from "@/schemas/common";
 
 export function OnboardingThirdPageSchemaProvider() {
   const { cezarIdSchema, bboIdSchema, cuebidsIdSchema } =
     UserOnboardingSchemaProvider();
-  const emptyStringToUndefined = (value: string | undefined) =>
-    value === "" ? undefined : value;
 
   const formSchema = z.object({
     cezarId: z.string().transform(emptyStringToUndefined).pipe(cezarIdSchema),

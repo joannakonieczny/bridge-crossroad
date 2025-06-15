@@ -96,7 +96,7 @@ export default function SecondPage() {
               <MonthYearInput
                 value={field.value}
                 onChange={field.onChange}
-                placeholder={t("monthYear.placeholder")}
+                placeholder={t("startPlayingDate.placeholder")}
                 errorMessage={errors.startPlayingDate?.message}
                 isInvalid={!!errors.startPlayingDate}
                 onElementProps={{

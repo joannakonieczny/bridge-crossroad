@@ -40,6 +40,7 @@ const authForm = {
     noUpperCase: "Hasło musi zawierać wielkie litery",
     noDigit: "Hasło musi zawierać cyfry",
     noSpecialChar: "Hasło musi zawierać znaki specjalne",
+    required: "Podaj hasło",
   },
   emailField: {
     placeholder: "E-mail",
@@ -69,6 +70,7 @@ const loginPage = {
     nicknameOrEmailField: {
       placeholder: "Nick lub email",
       errorMessage: "Podaj poprawny nick lub email",
+      required: "Podaj nick lub email",
     },
     passwordField: authForm.passwordField,
   },
@@ -118,11 +120,11 @@ const onboardingPage = {
     subHeading: "Ważne dane personalne",
     academy: {
       placeholder: "Wybierz uczelnię",
-      noneSelected: "Nie wybrano uczelni",
+      required: "Nie wybrano uczelni",
     },
     yearOfBirth: {
       placeholder: "Wybierz rok urodzenia",
-      noneSelected: "Nie wybrano roku urodzenia",
+      required: "Nie wybrano roku urodzenia",
     },
   },
   secondPage: {
@@ -133,14 +135,14 @@ const onboardingPage = {
     subHeading: "Kilka rzeczy o Twoim doświadczeniu!",
     skillLevel: {
       placeholder: "Grupa zaawansowania, początkujący, trener?",
-      noneSelected: "Nie wybrano grupy zaawansowania",
+      required: "Nie wybrano grupy zaawansowania",
     },
     hasRefereeLicense: {
       label: "Czy skończyłeś kurs sędziowski?",
     },
-    monthYear: {
+    startPlayingDate: {
       placeholder: "Kiedy zacząłeś grać w brydża?",
-      noneSelected: "Nie wybrano daty",
+      required: "Nie wybrano daty",
     },
   },
   thirdPage: {
@@ -225,8 +227,8 @@ const messages = {
   validation: {
     user: {
       name: {
-        firstName: nameFields,
-        lastName: nameFields,
+        firstName: { ...nameFields, required: "Podaj imię" },
+        lastName: { ...nameFields, required: "Podaj nazwisko" },
       },
       onboarding: {
         academy: {
@@ -254,6 +256,7 @@ const messages = {
       email: {
         regex: "Podaj poprawny adres e-mail",
         max: "E-mail nie może być dłuższy niż {max} znaków",
+        required: "E-mail jest wymagany",
       },
       nickname: {
         min: "Nick musi mieć co najmniej {min} znaki",
