@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, IconButton, Text, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
@@ -30,9 +30,10 @@ export default function CarouselList() {
   const visibleItems = contests.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
-    <Box>
+    <Flex direction="column" width="100%">
     <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>Nadchodzące wydarzenia</Text>
-    <HStack align="center" spacing={4}>
+    <HStack align="center" spacing={4} width="100%">
+
         <IconButton
           icon={<ChevronLeftIcon />}
           aria-label="Poprzednie"
@@ -40,8 +41,7 @@ export default function CarouselList() {
           isDisabled={startIndex === 0}
         />
         
-
-      <HStack spacing={8}>
+      <HStack spacing={8} width="100%">
         {visibleItems.map((contest, i) => (
           <Box
             key={i}
@@ -49,7 +49,8 @@ export default function CarouselList() {
             borderColor="gray.300"
             borderRadius="md"
             p={4}
-            width="300px"
+            //width="300px"
+            width="100%"
           >
             <Text fontWeight="bold">{contest.name}</Text>
             <Text color="gray.500">{contest.date}</Text>
@@ -65,6 +66,6 @@ export default function CarouselList() {
         />
 
     </HStack>
-    </Box>
+    </Flex>
   );
 }

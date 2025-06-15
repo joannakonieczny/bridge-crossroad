@@ -11,7 +11,7 @@ export default function PastContests() {
     {name: "II Turnej Czwartkowy - semestr zimowy", date: "17 Grudnia 2020"},
   ]
   return (
-    <VStack mt="5" width="800px" align="start">
+    <VStack mt="5" width="100%" align="start">
       <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>Ostatnie Turnieje</Text>
       <Box ms="5">
       <List spacing={3}>

@@ -19,6 +19,7 @@ export default function InfoTable() {
   ];
 
   return (
+    <Flex justify="start">
     <Box
       borderRadius="md"
       overflow="hidden"
@@ -27,7 +28,6 @@ export default function InfoTable() {
       width="800px"
       height="284px"
       mx="auto"
-      justifyContent="center"
     >
       <Flex justify="center" mt="12px">
       <Box
@@ -47,10 +47,18 @@ export default function InfoTable() {
                 key={row.label}
                 bg={index % 2 === 0 ? "gray.100" : "white"}
               >
-                <Td fontWeight="semibold" fontSize="sm" width="390px" height="52px">
+                <Td 
+                  fontWeight="semibold" 
+                  fontSize="sm" 
+                  //width="390px"
+                  width="50%"
+                  height="52px">
+
                   {row.label}
                 </Td>
-                <Td width="390px" height="52px">
+                <Td 
+                  width="50%" 
+                  height="52px">
                   {row.value}
                 </Td>
               </Tr>
@@ -60,6 +68,7 @@ export default function InfoTable() {
       </Box>
       </Flex>
     </Box>
+    </Flex>
   );
 }
 

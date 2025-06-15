@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, VStack, Text, Image } from '@chakra-ui/react';
+import { Box, Flex,  VStack, Image } from '@chakra-ui/react';
 import * as React from 'react';
 import InfoTable from "./InfoTable";
 import ProfileBanner from './ProfileBanner';
@@ -23,23 +23,21 @@ export default function App(props: IAppProps) {
           align="start"
           width="100%"
         >
-          <VStack align="center" width="100%" spacing="2rem">
+          <VStack align="start" width="100%" spacing="2rem">
             <ProfileBanner />
             <InfoTable />
             <PastContests />
-            
           </VStack>
 
-          <VStack align="center" width="100%" spacing="2rem">
-          
+          <VStack align="end" width="100%" spacing="2rem">
             <Image
               src="/dashboard/splash-art.svg"
               alt="Splash Art Left"
-              objectFit="contain"
-              objectPosition="center"
+              //objectFit="contain"
+              objectPosition="end"
               width="100%"
               height="auto"
-              maxH="28rem"
+              //maxH="28rem"
             />
           <UpcomingEvents />
           </VStack>
