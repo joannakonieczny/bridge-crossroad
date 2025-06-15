@@ -52,17 +52,20 @@ export function UserOnboardingSchemaProvider() {
 
   const cezarIdSchema = z
     .string()
-    .regex(/^\d{8}$/, t("cezarId.regexLenght", { lenght: 8 }));
+    .regex(/^\d{8}$/, t("cezarId.regexLenght", { lenght: 8 }))
+    .optional();
 
   const bboIdSchema = z
     .string()
     .nonempty("bboId.invalid")
-    .max(20, t("bboId.max", { max: 20 }));
+    .max(20, t("bboId.max", { max: 20 }))
+    .optional();
 
   const cuebidsIdSchema = z
     .string()
     .nonempty("cuebidsId.invalid")
-    .max(20, t("cuebidsId.max", { max: 20 }));
+    .max(20, t("cuebidsId.max", { max: 20 }))
+    .optional();
 
   const onboardingDataSchema = z.object({
     academy: academySchema,

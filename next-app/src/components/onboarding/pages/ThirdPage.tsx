@@ -9,12 +9,11 @@ import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
-
-interface FormData {
-  cezarId?: string;
-  bboId?: string;
-  cuebidsId?: string;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  OnboardingThirdPageSchema,
+  OnboardingThirdPageSchemaProvider,
+} from "@/schemas/onboarding/third-page-schema";
 
 export default function ThirdPage() {
   useFormSkippingValidation({ currentPage: "3" });
@@ -25,6 +24,9 @@ export default function ThirdPage() {
   });
   const onboardingContext = useOnboardingFormData();
   const thirdPageData = onboardingContext.formData.thirdPage;
+
+  const { formSchema } = OnboardingThirdPageSchemaProvider();
+
   const defaultValues = React.useMemo(
     () => ({
       cezarId: thirdPageData?.cezarId || "",
@@ -38,17 +40,17 @@ export default function ThirdPage() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({ defaultValues: defaultValues });
+  } = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues,
+  });
 
-  function onSubmit(data: FormData) {
+  function onSubmit(data: OnboardingThirdPageSchema) {
     onboardingContext.setData({
       page: "3",
-      data: {
-        cezarId: data.cezarId?.trim() || undefined,
-        bboId: data.bboId?.trim() || undefined,
-        cuebidsId: data.cuebidsId?.trim() || undefined,
-      },
+      data: data,
     });
+    alert(`submitted data: ${JSON.stringify(data)}`);
     formNavigation.handleNavigation();
   }
 
@@ -73,14 +75,6 @@ export default function ThirdPage() {
         <Controller
           name="cezarId"
           control={control}
-          rules={{
-            maxLength: {
-              value: 50,
-              message: t("cezarId.maxLenght", {
-                maxLength: 50,
-              }),
-            },
-          }}
           render={({ field }) => (
             <DefaultInput
               placeholder={t("cezarId.placeholder")}
@@ -96,14 +90,6 @@ export default function ThirdPage() {
         <Controller
           name="bboId"
           control={control}
-          rules={{
-            maxLength: {
-              value: 50,
-              message: t("bboId.maxLenght", {
-                maxLength: 50,
-              }),
-            },
-          }}
           render={({ field }) => (
             <DefaultInput
               placeholder={t("bboId.placeholder")}
@@ -119,14 +105,6 @@ export default function ThirdPage() {
         <Controller
           name="cuebidsId"
           control={control}
-          rules={{
-            maxLength: {
-              value: 50,
-              message: t("cuebidsId.maxLenght", {
-                maxLength: 50,
-              }),
-            },
-          }}
           render={({ field }) => (
             <DefaultInput
               placeholder={t("cuebidsId.placeholder")}
