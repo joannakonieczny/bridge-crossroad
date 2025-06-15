@@ -10,6 +10,11 @@ import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { Academy } from "@/club-preset/academy";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  OnboardingFirstPageSchema,
+  OnboardingFirstPageSchemaProvider,
+} from "@/schemas/onboarding/first-page-schema";
 
 function generateYearOptions() {
   const years = [];
@@ -23,11 +28,6 @@ function generateYearOptions() {
   return years;
 }
 
-interface FormData {
-  academy: string;
-  yearOfBirth: string;
-}
-
 export default function FirstPage() {
   useFormSkippingValidation({ currentPage: "1" });
   const t = useTranslations("OnboardingPage.firstPage");
@@ -35,6 +35,9 @@ export default function FirstPage() {
   const formNavigation = useFormNavigation({ nextPage: "/onboarding/2" });
   const onboardingContext = useOnboardingFormData();
   const firstPageData = onboardingContext.formData.firstPage;
+
+  const { formSchema } = OnboardingFirstPageSchemaProvider();
+
   const defaultValues = React.useMemo(
     () => ({
       academy: firstPageData?.academy || "",
@@ -49,7 +52,8 @@ export default function FirstPage() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
   });
 
@@ -63,13 +67,10 @@ export default function FirstPage() {
   );
   const yearOptions = React.useMemo(() => generateYearOptions(), []);
 
-  function onSubmit(data: FormData) {
+  function onSubmit(data: OnboardingFirstPageSchema) {
     onboardingContext.setData({
       page: "1",
-      data: {
-        academy: data.academy as Academy, // TODO change to key!
-        yearOfBirth: parseInt(data.yearOfBirth, 10),
-      },
+      data: data,
     });
     formNavigation.handleNavigation();
   }
@@ -95,7 +96,6 @@ export default function FirstPage() {
         <Controller
           name="academy"
           control={control}
-          rules={{ required: t("academy.noneSelected") }}
           render={({ field }) => (
             <SelectInput
               placeholder={t("academy.placeholder")}
@@ -111,7 +111,6 @@ export default function FirstPage() {
         <Controller
           name="yearOfBirth"
           control={control}
-          rules={{ required: t("yearOfBirth.noneSelected") }}
           render={({ field }) => (
             <SelectInput
               placeholder={t("yearOfBirth.placeholder")}

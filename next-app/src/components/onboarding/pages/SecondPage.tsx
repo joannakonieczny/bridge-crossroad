@@ -11,12 +11,11 @@ import MonthYearInput from "../inputs/MonthYearInput";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { TrainingGroup } from "@/club-preset/training-group";
-
-interface FormData {
-  monthYear: string; // format: "MM-YYYY" //TODO change to date
-  skillLevel: string; // key of TrainingGroup enum
-  hasRefereeLicense: boolean;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  OnboardingSecondPageSchema,
+  OnboardingSecondPageSchemaProvider,
+} from "@/schemas/onboarding/second-page-schema";
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
@@ -28,10 +27,13 @@ export default function SecondPage() {
   });
   const onboardingContext = useOnboardingFormData();
   const secondPageData = onboardingContext.formData.secondPage;
+
+  const { formSchema } = OnboardingSecondPageSchemaProvider();
+
   const defaultValues = React.useMemo(
     () => ({
-      monthYear: secondPageData?.startPlayingDate || "",
-      skillLevel: secondPageData?.trainingGroup || "",
+      startPlayingDate: secondPageData?.startPlayingDate || "",
+      trainingGroup: secondPageData?.trainingGroup || "",
       hasRefereeLicense: secondPageData?.hasRefereeLicense || false,
     }),
     [secondPageData]
@@ -41,11 +43,12 @@ export default function SecondPage() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
   });
 
-  const skillLevelOptions = React.useMemo(
+  const trainingGroupOptions = React.useMemo(
     () =>
       Object.values(TrainingGroup).map((value) => ({
         value,
@@ -54,15 +57,16 @@ export default function SecondPage() {
     [tTrainingGroup]
   );
 
-  function onSubmit(data: FormData) {
+  function onSubmit(data: OnboardingSecondPageSchema) {
     onboardingContext.setData({
       page: "2",
       data: {
-        startPlayingDate: data.monthYear,
-        trainingGroup: data.skillLevel as TrainingGroup,
+        startPlayingDate: data.startPlayingDate,
+        trainingGroup: data.trainingGroup as TrainingGroup,
         hasRefereeLicense: data.hasRefereeLicense,
       },
     });
+    alert(`Submitting data: ${JSON.stringify(data)}`);
     formNavigation.handleNavigation();
   }
 
@@ -84,18 +88,17 @@ export default function SecondPage() {
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">
-        <FormControl isInvalid={!!errors.monthYear}>
+        <FormControl isInvalid={!!errors.startPlayingDate}>
           <Controller
-            name="monthYear"
+            name="startPlayingDate"
             control={control}
-            rules={{ required: t("monthYear.noneSelected") }}
             render={({ field }) => (
               <MonthYearInput
                 value={field.value}
                 onChange={field.onChange}
                 placeholder={t("monthYear.placeholder")}
-                errorMessage={errors.monthYear?.message}
-                isInvalid={!!errors.monthYear}
+                errorMessage={errors.startPlayingDate?.message}
+                isInvalid={!!errors.startPlayingDate}
                 onElementProps={{
                   ...field,
                 }}
@@ -105,15 +108,14 @@ export default function SecondPage() {
         </FormControl>
 
         <Controller
-          name="skillLevel"
+          name="trainingGroup"
           control={control}
-          rules={{ required: t("skillLevel.noneSelected") }}
           render={({ field }) => (
             <SelectInput
               placeholder={t("skillLevel.placeholder")}
-              isInvalid={!!errors.skillLevel}
-              errorMessage={errors.skillLevel?.message}
-              options={skillLevelOptions}
+              isInvalid={!!errors.trainingGroup}
+              errorMessage={errors.trainingGroup?.message}
+              options={trainingGroupOptions}
               onSelectProps={{
                 ...field,
               }}

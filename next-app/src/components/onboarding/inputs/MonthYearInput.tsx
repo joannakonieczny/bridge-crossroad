@@ -26,8 +26,8 @@ import { FiCalendar, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useGetMonths } from "@/util/date";
 
 interface IMonthYearInputProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: string | Date | null | undefined;
+  onChange: (value: Date) => void;
   placeholder: string;
 }
 
@@ -83,35 +83,75 @@ function MonthYearInput(props: IMonthYearInputProps) {
   };
 
   const selectMonthYear = (month: number) => {
-    const monthStr = (month + 1).toString().padStart(2, "0");
-    // Format: MM-YYYY
-    const formatted = `${monthStr}-${selectedYear}`;
-    props.onChange(formatted);
-    onClose(); // Używamy onClose z useDisclosure
+    // Tworzymy obiekt Date z wybranym miesiącem i rokiem, dzień ustawiony na 1
+    // Ustawiamy godzinę na 12 w południe, aby uniknąć problemów ze strefą czasową
+    const selectedDate = new Date(selectedYear, month, 1, 12, 0, 0, 0);
+    props.onChange(selectedDate);
+    onClose();
   };
 
   // Parsuj wartość na miesiąc i rok do wyświetlenia
   const displayValue = React.useMemo(() => {
     if (!props.value) return "";
 
-    const [month, year] = props.value.split("-");
-    if (!month || !year) return "";
+    let month: number;
+    let year: number;
 
-    return `${months[parseInt(month, 10) - 1]} ${year}`;
+    if (props.value instanceof Date) {
+      month = props.value.getMonth(); // 0-11
+      year = props.value.getFullYear();
+    } else {
+      // Zakładamy format "MM-YYYY"
+      const [monthStr, yearStr] = props.value.split("-");
+      if (!monthStr || !yearStr) return "";
+
+      month = parseInt(monthStr, 10) - 1; // Konwersja z 1-12 na 0-11
+      year = parseInt(yearStr, 10);
+
+      if (isNaN(month) || isNaN(year)) return "";
+    }
+
+    return `${months[month]} ${year}`;
   }, [props.value, months]);
+
+  // Konwersja wartości do obiektu Date dla wewnętrznego użytku
+  const valueAsDate = React.useMemo((): Date | null => {
+    if (!props.value) return null;
+
+    if (props.value instanceof Date) {
+      // Upewniamy się, że dzień jest ustawiony na 1
+      const year = props.value.getFullYear();
+      const month = props.value.getMonth();
+      return new Date(year, month, 1, 12, 0, 0, 0);
+    }
+
+    // Zakładamy format "MM-YYYY"
+    const [monthStr, yearStr] = props.value.split("-");
+    if (!monthStr || !yearStr) return null;
+
+    const month = parseInt(monthStr, 10) - 1; // Konwersja z 1-12 na 0-11
+    const year = parseInt(yearStr, 10);
+
+    if (isNaN(month) || isNaN(year)) return null;
+
+    return new Date(year, month, 1, 12, 0, 0, 0);
+  }, [props.value]);
 
   // Aktualizuj rok w useNumberInput gdy otwieramy modal
   React.useEffect(() => {
-    if (isOpen && props.value) {
-      const [, year] = props.value.split("-");
-      if (year) {
-        const parsedYear = parseInt(year, 10);
-        if (!isNaN(parsedYear)) {
-          setSelectedYear(parsedYear);
-        }
-      }
+    if (isOpen && valueAsDate) {
+      setSelectedYear(valueAsDate.getFullYear());
     }
-  }, [isOpen, props.value]);
+  }, [isOpen, valueAsDate]);
+
+  // Sprawdź czy dana data jest aktualnie wybrana
+  const isDateSelected = (year: number, month: number): boolean => {
+    if (!valueAsDate) return false;
+
+    return (
+      valueAsDate.getFullYear() === year && valueAsDate.getMonth() === month
+    );
+  };
 
   return (
     <>
@@ -172,17 +212,9 @@ function MonthYearInput(props: IMonthYearInputProps) {
                     variant="outline"
                     _hover={{ bg: "accent.100" }}
                     _active={{ bg: "accent.200" }}
-                    isActive={
-                      props.value ===
-                      `${(index + 1)
-                        .toString()
-                        .padStart(2, "0")}-${selectedYear}`
-                    }
+                    isActive={isDateSelected(selectedYear, index)}
                     bg={
-                      props.value ===
-                      `${(index + 1)
-                        .toString()
-                        .padStart(2, "0")}-${selectedYear}`
+                      isDateSelected(selectedYear, index)
                         ? "accent.100"
                         : undefined
                     }
