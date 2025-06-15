@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import z from "zod";
-import { University } from "../club-preset/univercity";
+import { Academy } from "../club-preset/academy";
 import { TrainingGroup as TrainingGroupp } from "../club-preset/training-group";
 
 export function UserNameSchemaProvider() {
@@ -29,7 +29,7 @@ export function UserNameSchemaProvider() {
 export function UserOnboardingSchemaProvider() {
   const t = useTranslations("validation.user.onboarding"); //TODO add translations
 
-  const academySchema = z.nativeEnum(University, {
+  const academySchema = z.nativeEnum(Academy, {
     errorMap: () => ({ message: t("academy.invalid") }),
   });
 
@@ -95,7 +95,7 @@ export function UserSchemaProvider() {
 
   const emailSchema = z
     .string()
-    .max(50, t("email.max"))
+    .max(50, t("email.max", { max: 50 }))
     .email(t("email.regex"));
 
   const nicknameSchema = z

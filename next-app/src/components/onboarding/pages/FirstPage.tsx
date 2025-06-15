@@ -9,7 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
-import { University } from "@/club-preset/univercity";
+import { Academy } from "@/club-preset/academy";
 
 function generateYearOptions() {
   const years = [];
@@ -23,28 +23,21 @@ function generateYearOptions() {
   return years;
 }
 
-// TODO: use Translations
-function generateUniversityOptions() {
-  return Object.entries(University).map(([key, value]) => ({
-    value: key,
-    label: value,
-  }));
-}
-
 interface FormData {
-  university: string;
+  academy: string;
   yearOfBirth: string;
 }
 
 export default function FirstPage() {
   useFormSkippingValidation({ currentPage: "1" });
   const t = useTranslations("OnboardingPage.firstPage");
+  const tAcademy = useTranslations("common.academy");
   const formNavigation = useFormNavigation({ nextPage: "/onboarding/2" });
   const onboardingContext = useOnboardingFormData();
   const firstPageData = onboardingContext.formData.firstPage;
   const defaultValues = React.useMemo(
     () => ({
-      university: firstPageData?.university || "",
+      academy: firstPageData?.academy || "",
       yearOfBirth: firstPageData?.yearOfBirth
         ? firstPageData.yearOfBirth.toString()
         : "",
@@ -60,9 +53,13 @@ export default function FirstPage() {
     defaultValues: defaultValues,
   });
 
-  const universityOptions = React.useMemo(
-    () => generateUniversityOptions(),
-    []
+  const academyOptions = React.useMemo(
+    () =>
+      Object.values(Academy).map((value) => ({
+        value,
+        label: tAcademy(value),
+      })),
+    [tAcademy]
   );
   const yearOptions = React.useMemo(() => generateYearOptions(), []);
 
@@ -70,7 +67,7 @@ export default function FirstPage() {
     onboardingContext.setData({
       page: "1",
       data: {
-        university: data.university as University, // TODO change to key!
+        academy: data.academy as Academy, // TODO change to key!
         yearOfBirth: parseInt(data.yearOfBirth, 10),
       },
     });
@@ -96,15 +93,15 @@ export default function FirstPage() {
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">
         <Controller
-          name="university"
-          control={control} // usunięto defaultValue, bo jest już w useForm
-          rules={{ required: t("university.noneSelected") }}
+          name="academy"
+          control={control}
+          rules={{ required: t("academy.noneSelected") }}
           render={({ field }) => (
             <SelectInput
-              placeholder={t("university.placeholder")}
-              isInvalid={!!errors.university}
-              errorMessage={errors.university?.message}
-              options={universityOptions}
+              placeholder={t("academy.placeholder")}
+              isInvalid={!!errors.academy}
+              errorMessage={errors.academy?.message}
+              options={academyOptions}
               onSelectProps={{
                 ...field,
               }}
@@ -113,7 +110,7 @@ export default function FirstPage() {
         />
         <Controller
           name="yearOfBirth"
-          control={control} // usunięto defaultValue, bo jest już w useForm
+          control={control}
           rules={{ required: t("yearOfBirth.noneSelected") }}
           render={({ field }) => (
             <SelectInput

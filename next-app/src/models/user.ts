@@ -14,7 +14,7 @@ export interface IUserDTO extends Document {
     yearOfBirth: number;
     startPlayingDate: string; // format MM-YYYY
     trainingGroup: string;
-    hasRefereeLicence: boolean;
+    hasRefereeLicense: boolean;
     cezarId?: string;
     bboId?: string;
     cuebidsId?: string;
@@ -97,9 +97,9 @@ const UserSchema = new Schema<IUserDTO>(
           type: String,
           required: [true, "Training group is required"],
         },
-        hasRefereeLicence: {
+        hasRefereeLicense: {
           type: Boolean,
-          required: [true, "Referee licence status is required"],
+          required: [true, "Referee license status is required"],
           default: false,
         },
         cezarId: {

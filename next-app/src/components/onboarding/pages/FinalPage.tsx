@@ -6,10 +6,10 @@ import { useTranslations } from "next-intl";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import {
-  FirstPage as FirstPageType,
-  SecondPage as SecondPageType,
-  ThirdPage as ThirdPageType,
-  FinalPage as FinalPageType,
+  OnboardingFirstPageSchema as FirstPageType,
+  OnboardingSecondPageSchema as SecondPageType,
+  OnboardingThirdPageSchema as ThirdPageType,
+  OnboardingFinalPageSchema as FinalPageType,
   useOnboardingFormData,
 } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
@@ -64,24 +64,25 @@ export default function FinalPage() {
       thirdPage: ThirdPageType;
       finalPage: FinalPageType;
     };
-    completeOnboarding({
-      academy: typedForm.firstPage.university,
-      yearOfBirth: typedForm.firstPage.yearOfBirth,
-      startPlayingDate: typedForm.secondPage.startPlayingDate,
-      trainingGroup: typedForm.secondPage.trainingGroup,
-      hasRefereeLicence: typedForm.secondPage.hasRefereeLicence,
-      cezarId: typedForm.thirdPage.cezarId,
-      bboId: typedForm.thirdPage.bboId,
-      cuebidsId: typedForm.thirdPage.cuebidsId,
-    })
-      .then((d) => {
-        alert("Subbmitted successfully!" + JSON.stringify(d));
-        formNavigation.handleNextClickedRedirectNow();
-      })
-      .catch((e) => {
-        alert("Error while submitting: " + e.message);
-        console.error("Error while submitting onboarding data:", e);
-      });
+    alert("Submitting data: " + JSON.stringify(typedForm));
+    // completeOnboarding({
+    //   academy: typedForm.firstPage.academy,
+    //   yearOfBirth: typedForm.firstPage.yearOfBirth,
+    //   startPlayingDate: typedForm.secondPage.startPlayingDate,
+    //   trainingGroup: typedForm.secondPage.trainingGroup,
+    //   hasRefereeLicense: typedForm.secondPage.hasRefereeLicense,
+    //   cezarId: typedForm.thirdPage.cezarId,
+    //   bboId: typedForm.thirdPage.bboId,
+    //   cuebidsId: typedForm.thirdPage.cuebidsId,
+    // })
+    //   .then((d) => {
+    //     alert("Subbmitted successfully!" + JSON.stringify(d));
+    //     formNavigation.handleNextClickedRedirectNow();
+    //   })
+    //   .catch((e) => {
+    //     alert("Error while submitting: " + e.message);
+    //     console.error("Error while submitting onboarding data:", e);
+    //   });
     // alert(JSON.stringify(onboardingContext.formData));
   }
 

@@ -16,7 +16,7 @@ export type SanitizedUser = {
     yearOfBirth: number;
     startPlayingDate: string; // format MM-YYYY
     trainingGroup: string;
-    hasRefereeLicence: boolean;
+    hasRefereeLicense: boolean;
     cezarId?: string;
     bboId?: string;
     cuebidsId?: string;
@@ -40,7 +40,7 @@ export function sanitizeUser(user: IUserDTO): SanitizedUser {
           yearOfBirth: user.onboardingData.yearOfBirth,
           startPlayingDate: user.onboardingData.startPlayingDate,
           trainingGroup: user.onboardingData.trainingGroup,
-          hasRefereeLicence: user.onboardingData.hasRefereeLicence,
+          hasRefereeLicense: user.onboardingData.hasRefereeLicense,
           cezarId: user.onboardingData.cezarId,
           bboId: user.onboardingData.bboId,
           cuebidsId: user.onboardingData.cuebidsId,
@@ -63,7 +63,7 @@ export function sanitizeOnboardingData(
     yearOfBirth: onboardingData.yearOfBirth,
     startPlayingDate: onboardingData.startPlayingDate,
     trainingGroup: onboardingData.trainingGroup,
-    hasRefereeLicence: onboardingData.hasRefereeLicence,
+    hasRefereeLicense: onboardingData.hasRefereeLicense,
     cezarId: onboardingData.cezarId,
     bboId: onboardingData.bboId,
     cuebidsId: onboardingData.cuebidsId,

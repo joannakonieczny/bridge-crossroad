@@ -1,4 +1,4 @@
-export enum University {
+export enum Academy {
   UJ = "UJ",
   AGH = "AGH",
   PK = "PK",

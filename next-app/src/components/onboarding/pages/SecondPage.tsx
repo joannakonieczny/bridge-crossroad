@@ -12,23 +12,16 @@ import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { TrainingGroup } from "@/club-preset/training-group";
 
-// TODO: use Translations
-function generateSkillLevelOptions() {
-  return Object.entries(TrainingGroup).map(([key, value]) => ({
-    value: key,
-    label: value,
-  }));
-}
-
 interface FormData {
-  monthYear: string; // format: "MM-YYYY"
+  monthYear: string; // format: "MM-YYYY" //TODO change to date
   skillLevel: string; // key of TrainingGroup enum
-  hasRefereeLicence: boolean;
+  hasRefereeLicense: boolean;
 }
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
   const t = useTranslations("OnboardingPage.secondPage");
+  const tTrainingGroup = useTranslations("common.trainingGroup");
   const formNavigation = useFormNavigation({
     nextPage: "/onboarding/3",
     prevPage: "/onboarding/1",
@@ -39,7 +32,7 @@ export default function SecondPage() {
     () => ({
       monthYear: secondPageData?.startPlayingDate || "",
       skillLevel: secondPageData?.trainingGroup || "",
-      hasRefereeLicence: secondPageData?.hasRefereeLicence || false,
+      hasRefereeLicense: secondPageData?.hasRefereeLicense || false,
     }),
     [secondPageData]
   );
@@ -53,8 +46,12 @@ export default function SecondPage() {
   });
 
   const skillLevelOptions = React.useMemo(
-    () => generateSkillLevelOptions(),
-    []
+    () =>
+      Object.values(TrainingGroup).map((value) => ({
+        value,
+        label: tTrainingGroup(value.toLowerCase()),
+      })),
+    [tTrainingGroup]
   );
 
   function onSubmit(data: FormData) {
@@ -63,7 +60,7 @@ export default function SecondPage() {
       data: {
         startPlayingDate: data.monthYear,
         trainingGroup: data.skillLevel as TrainingGroup,
-        hasRefereeLicence: data.hasRefereeLicence,
+        hasRefereeLicense: data.hasRefereeLicense,
       },
     });
     formNavigation.handleNavigation();
@@ -125,7 +122,7 @@ export default function SecondPage() {
         />
 
         <Controller
-          name="hasRefereeLicence"
+          name="hasRefereeLicense"
           control={control}
           render={({ field: { onChange, value } }) => (
             <FormControl>
@@ -134,7 +131,7 @@ export default function SecondPage() {
                 isChecked={value}
                 onChange={(e) => onChange(e.target.checked)}
               >
-                {t("hasRefereeLicence.label")}
+                {t("hasRefereeLicense.label")}
               </Checkbox>
             </FormControl>
           )}

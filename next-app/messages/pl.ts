@@ -1,3 +1,6 @@
+import { TrainingGroup } from "@/club-preset/training-group";
+import { Academy } from "@/club-preset/academy";
+
 const MONTHS = {
   jan: "Styczeń",
   feb: "Luty",
@@ -14,9 +17,9 @@ const MONTHS = {
 };
 
 const nameFields = {
-  minLength: "Min. {minLength} znaki",
-  maxLength: "Max. {maxLength} znaków",
-  invalidSyntax: "Tylko litery",
+  min: "Min. {min} znaki",
+  max: "Max. {max} znaków",
+  regex: "Tylko litery",
 };
 
 const tooLongString = "Max. {maxLength} znaków";
@@ -113,7 +116,7 @@ const onboardingPage = {
       highlight: "sobie",
     },
     subHeading: "Ważne dane personalne",
-    university: {
+    academy: {
       placeholder: "Wybierz uczelnię",
       noneSelected: "Nie wybrano uczelni",
     },
@@ -132,7 +135,7 @@ const onboardingPage = {
       placeholder: "Grupa zaawansowania, początkujący, trener?",
       noneSelected: "Nie wybrano grupy zaawansowania",
     },
-    hasRefereeLicence: {
+    hasRefereeLicense: {
       label: "Czy skończyłeś kurs sędziowski?",
     },
     monthYear: {
@@ -197,6 +200,27 @@ const messages = {
     date: {
       months: MONTHS,
     },
+    academy: {
+      [Academy.UJ]: "Uniwersytet Jagielloński",
+      [Academy.AGH]: "Akademia Górniczo-Hutnicza",
+      [Academy.PK]: "Politechnika Krakowska",
+      [Academy.UEK]: "Uniwersytet Ekonomiczny w Krakowie",
+      [Academy.UP]: "Uniwersytet Pedagogiczny w Krakowie",
+      [Academy.UR]: "Uniwersytet Rolniczy w Krakowie",
+      [Academy.ASP]: "Akademia Sztuk Pięknych w Krakowie",
+      [Academy.AM]: "Akademia Muzyczna w Krakowie",
+      [Academy.AWF]: "Akademia Wychowania Fizycznego w Krakowie",
+      [Academy.UPJPII]: "Uniwersytet Papieski Jana Pawła II w Krakowie",
+      [Academy.IGNATIANUM]: "Ignatianum - Akademia Ignatianum w Krakowie",
+      [Academy.INNA]: "inna uczelnia",
+    },
+    trainingGroup: {
+      [TrainingGroup.BASIC]: "Podstawowa",
+      [TrainingGroup.INTERMEDIATE]: "Średniozaawansowana",
+      [TrainingGroup.ADVANCED]: "Zaawansowana",
+      [TrainingGroup.COACH]: "Jestem trenerem!",
+      [TrainingGroup.NONE]: "Nie chodzę na zajęcia z brydża na AGH",
+    },
   },
   validation: {
     user: {
@@ -235,6 +259,14 @@ const messages = {
         min: "Nick musi mieć co najmniej {min} znaki",
         max: "Nick nie może być dłuższy niż {max} znaków",
         regex: "Nick może zawierać tylko litery, cyfry, _ i -",
+      },
+    },
+    onboarding: {
+      inviteCode: {
+        invalid: "Podaj poprawny kod zaproszenia",
+      },
+      terms: {
+        required: "Musisz zaakceptować regulamin i politykę prywatności",
       },
     },
   },
