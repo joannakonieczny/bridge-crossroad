@@ -172,8 +172,8 @@ const onboardingPage = {
       "Twoja pierwsza grupa - podaj kod aby mieć dostęp do społeczności Just Bridge AGH",
     submitButton: "Zakończ",
     inviteCode: {
-      errorMessage: "Podaj poprawny kod zaproszenia",
-      noneSelected: "Nie podano kodu zaproszenia",
+      regex: "Podaj poprawny kod zaproszenia",
+      required: "Nie podano kodu zaproszenia",
     },
     terms: {
       acceptPrefix: "Akceptuję ",
@@ -259,14 +259,6 @@ const messages = {
         min: "Nick musi mieć co najmniej {min} znaki",
         max: "Nick nie może być dłuższy niż {max} znaków",
         regex: "Nick może zawierać tylko litery, cyfry, _ i -",
-      },
-    },
-    onboarding: {
-      inviteCode: {
-        invalid: "Podaj poprawny kod zaproszenia",
-      },
-      terms: {
-        required: "Musisz zaakceptować regulamin i politykę prywatności",
       },
     },
   },

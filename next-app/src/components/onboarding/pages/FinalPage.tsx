@@ -5,23 +5,20 @@ import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
-import {
-  OnboardingFirstPageSchema as FirstPageType,
-  OnboardingSecondPageSchema as SecondPageType,
-  OnboardingThirdPageSchema as ThirdPageType,
-  OnboardingFinalPageSchema as FinalPageType,
-  useOnboardingFormData,
-} from "../FormDataContext";
+import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
-import { completeOnboarding } from "@/services/onboarding/actions";
-
-interface FormData {
-  inviteCode: string;
-  termsAccepted: boolean;
-}
+// import { completeOnboarding } from "@/services/onboarding/actions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  OnboardingFinalPageSchema,
+  OnboardingFinalPageSchemaProvider,
+} from "@/schemas/onboarding/final-page-schema";
+import { OnboardingFirstPageSchema } from "@/schemas/onboarding/first-page-schema";
+import { OnboardingSecondPageSchema } from "@/schemas/onboarding/second-page-schema";
+import { OnboardingThirdPageSchema } from "@/schemas/onboarding/third-page-schema";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
@@ -32,6 +29,10 @@ export default function FinalPage() {
   });
   const onboardingContext = useOnboardingFormData();
   const finalPageData = onboardingContext.formData.finalPage;
+
+  // Pobieramy schemat formularza
+  const { formSchema } = OnboardingFinalPageSchemaProvider();
+
   const defaultValues = React.useMemo(
     () => ({
       inviteCode: finalPageData?.inviteCode || "",
@@ -45,12 +46,13 @@ export default function FinalPage() {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<FormData>({
+  } = useForm<OnboardingFinalPageSchema>({
+    resolver: zodResolver(formSchema), // Używamy zodResolver z naszym schematem
     defaultValues: defaultValues,
   });
   const termsAccepted = watch("termsAccepted");
 
-  function onSubmit(data: FormData) {
+  function onSubmit(data: OnboardingFinalPageSchema) {
     onboardingContext.setData({
       page: "final",
       data: data,
@@ -59,10 +61,10 @@ export default function FinalPage() {
     formToSend.finalPage = data; //issue with async setter of usestate
     const typedForm = formToSend as {
       // we have all data right now //TODO handle it better -> method in context?
-      firstPage: FirstPageType;
-      secondPage: SecondPageType;
-      thirdPage: ThirdPageType;
-      finalPage: FinalPageType;
+      firstPage: OnboardingFirstPageSchema;
+      secondPage: OnboardingSecondPageSchema;
+      thirdPage: OnboardingThirdPageSchema;
+      finalPage: OnboardingFinalPageSchema;
     };
     alert("Submitting data: " + JSON.stringify(typedForm));
     // completeOnboarding({
@@ -109,13 +111,6 @@ export default function FinalPage() {
         <Controller
           name="inviteCode"
           control={control}
-          rules={{
-            required: t("inviteCode.noneSelected"),
-            pattern: {
-              value: /^[A-Z0-9]{8}$/,
-              message: t("inviteCode.errorMessage"),
-            },
-          }}
           render={({ field: { onChange, value } }) => (
             <InviteCodeInput
               isInvalid={!!errors.inviteCode}
@@ -133,9 +128,6 @@ export default function FinalPage() {
         <Controller
           name="termsAccepted"
           control={control}
-          rules={{
-            required: t("terms.errorMessage"),
-          }}
           render={({ field: { onChange, value } }) => (
             <CheckBoxInput
               label={t("terms.acceptPrefix")}

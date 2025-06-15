@@ -4,20 +4,23 @@ import z from "zod";
 export const inviteCodeLength = 8;
 
 export function OnboardingFinalPageSchemaProvider() {
-  const t = useTranslations("validation.onboarding");
+  const t = useTranslations("OnboardingPage.finalPage");
   const inviteCodeSchema = z
     .string()
-    .regex(/^[A-Z0-9]{8}$/, t("inviteCode.invalid"));
+    .regex(/^[A-Z0-9]{8}$/, t("inviteCode.regex"));
 
   const termsAcceptedSchema = z.boolean();
 
   const formSchema = z
     .object({
-      inviteCode: inviteCodeSchema,
+      inviteCode: z
+        .string()
+        .nonempty(t("inviteCode.required"))
+        .pipe(inviteCodeSchema),
       termsAccepted: termsAcceptedSchema,
     })
     .refine((data) => data.termsAccepted, {
-      message: t("termsAccepted.required"),
+      message: t("terms.errorMessage"),
     });
 
   return {
