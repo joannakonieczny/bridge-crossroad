@@ -1,22 +1,33 @@
 import { useTranslations } from "next-intl";
-import { UserNameSchemaProvider, UserSchemaProvider } from "../user";
+import {
+  UserNameSchemaProvider,
+  UserSchemaProvider,
+  UserValidationConstants,
+} from "../../model/user-schema";
 import { z } from "zod";
-import { emptyStringToUndefined } from "../common";
+import { emptyStringToUndefined } from "../../common";
 
 export function RegisterFormSchemaProvider() {
   const t = useTranslations("Auth.RegisterPage.form");
   const { emailSchema, nicknameSchema } = UserSchemaProvider();
   const { firstNameSchema, lastNameSchema } = UserNameSchemaProvider();
+  const { password } = UserValidationConstants;
 
   const passwordSchema = z
     .string()
     .nonempty(t("passwordField.required"))
-    .min(6, t("passwordField.minLength", { minLength: 6 }))
-    .max(16, t("passwordField.maxLength", { maxLength: 16 }))
-    .regex(/(?=.*[A-Z])/, t("passwordField.noUpperCase"))
-    .regex(/(?=.*[a-z])/, t("passwordField.noLowerCase"))
-    .regex(/(?=.*\d)/, t("passwordField.noDigit"))
-    .regex(/(?=.*[!@#$%^&*(),.?":{}|<>])/, t("passwordField.noSpecialChar"));
+    .min(
+      password.min,
+      t("passwordField.minLength", { minLength: password.min })
+    )
+    .max(
+      password.max,
+      t("passwordField.maxLength", { maxLength: password.max })
+    )
+    .regex(password.noUpperCaseRegex, t("passwordField.noUpperCase"))
+    .regex(password.noLowerCaseRegex, t("passwordField.noLowerCase"))
+    .regex(password.noDigitRegex, t("passwordField.noDigit"))
+    .regex(password.noSpecialCharRegex, t("passwordField.noSpecialChar"));
 
   const repeatPasswordSchema = z
     .string()

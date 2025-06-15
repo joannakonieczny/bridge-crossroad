@@ -8,10 +8,10 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { OnboardingFirstPageSchema } from "@/schemas/onboarding/first-page-schema";
-import { OnboardingSecondPageSchema } from "@/schemas/onboarding/second-page-schema";
-import { OnboardingThirdPageSchema } from "@/schemas/onboarding/third-page-schema";
-import { OnboardingFinalPageSchema } from "@/schemas/onboarding/final-page-schema";
+import { OnboardingFirstPageSchema } from "@/schemas/pages/onboarding/first-page-schema";
+import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
+import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
+import { OnboardingFinalPageSchema } from "@/schemas/pages/onboarding/final-page-schema";
 
 export type FormData = {
   firstPage?: OnboardingFirstPageSchema;

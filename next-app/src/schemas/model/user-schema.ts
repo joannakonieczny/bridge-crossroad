@@ -1,24 +1,60 @@
 import { useTranslations } from "next-intl";
-import z from "zod";
-import { Academy } from "../club-preset/academy";
-import { TrainingGroup as TrainingGroupp } from "../club-preset/training-group";
+import { z } from "zod";
+import { Academy } from "../../club-preset/academy";
+import { TrainingGroup as TrainingGroupp } from "../../club-preset/training-group";
+
+export const UserValidationConstants = {
+  name: {
+    min: 2,
+    max: 50,
+    regex: /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/,
+  },
+  yearOfBirth: {
+    min: 1900,
+    max: new Date().getFullYear(),
+  },
+  cezarId: {
+    length: 8,
+    regex: /^\d{8}$/,
+  },
+  platformIds: {
+    max: 20,
+  },
+  email: {
+    max: 50,
+  },
+  nickname: {
+    min: 3,
+    max: 16,
+    regex: /^[a-zA-Z0-9_-]+$/,
+  },
+  password: {
+    min: 6,
+    max: 16,
+    noUpperCaseRegex: /(?=.*[A-Z])/,
+    noLowerCaseRegex: /(?=.*[a-z])/,
+    noDigitRegex: /(?=.*\d)/,
+    noSpecialCharRegex: /(?=.*[!@#$%^&*(),.?":{}|<>])/,
+  },
+};
 
 export function UserNameSchemaProvider() {
-  const t = useTranslations("validation.user.name"); //TODO add translations
+  const t = useTranslations("validation.user.name");
+  const { name } = UserValidationConstants;
 
   const firstNameSchema = z
     .string()
     .nonempty(t("firstName.required"))
-    .min(2, t("firstName.min", { min: 2 }))
-    .max(50, t("firstName.max", { max: 50 }))
-    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/, t("firstName.regex"));
+    .min(name.min, t("firstName.min", { min: name.min }))
+    .max(name.max, t("firstName.max", { max: name.max }))
+    .regex(name.regex, t("firstName.regex"));
 
   const lastNameSchema = z
     .string()
     .nonempty(t("lastName.required"))
-    .min(2, t("lastName.min", { min: 2 }))
-    .max(50, t("lastName.max", { max: 50 }))
-    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/, t("lastName.regex"));
+    .min(name.min, t("lastName.min", { min: name.min }))
+    .max(name.max, t("lastName.max", { max: name.max }))
+    .regex(name.regex, t("lastName.regex"));
 
   const nameSchema = z.object({
     firstName: firstNameSchema,
@@ -29,7 +65,8 @@ export function UserNameSchemaProvider() {
 }
 
 export function UserOnboardingSchemaProvider() {
-  const t = useTranslations("validation.user.onboarding"); //TODO add translations
+  const t = useTranslations("validation.user.onboarding");
+  const { yearOfBirth, cezarId, platformIds } = UserValidationConstants;
 
   const academySchema = z.nativeEnum(Academy, {
     errorMap: () => ({ message: t("academy.invalid") }),
@@ -38,11 +75,8 @@ export function UserOnboardingSchemaProvider() {
   const yearOfBirthSchema = z
     .number()
     .int()
-    .min(1900, t("yearOfBirth.min", { min: 1900 }))
-    .max(
-      new Date().getFullYear(),
-      t("yearOfBirth.max", { max: new Date().getFullYear() })
-    );
+    .min(yearOfBirth.min, t("yearOfBirth.min", { min: yearOfBirth.min }))
+    .max(yearOfBirth.max, t("yearOfBirth.max", { max: yearOfBirth.max }));
 
   const startPlayingDateSchema = z.date();
 
@@ -54,19 +88,19 @@ export function UserOnboardingSchemaProvider() {
 
   const cezarIdSchema = z
     .string()
-    .regex(/^\d{8}$/, t("cezarId.regexLenght", { lenght: 8 }))
+    .regex(cezarId.regex, t("cezarId.regexLenght", { lenght: cezarId.length }))
     .optional();
 
   const bboIdSchema = z
     .string()
     .nonempty("bboId.invalid")
-    .max(20, t("bboId.max", { max: 20 }))
+    .max(platformIds.max, t("bboId.max", { max: platformIds.max }))
     .optional();
 
   const cuebidsIdSchema = z
     .string()
     .nonempty("cuebidsId.invalid")
-    .max(20, t("cuebidsId.max", { max: 20 }))
+    .max(platformIds.max, t("cuebidsId.max", { max: platformIds.max }))
     .optional();
 
   const onboardingDataSchema = z.object({
@@ -94,21 +128,22 @@ export function UserOnboardingSchemaProvider() {
 }
 
 export function UserSchemaProvider() {
-  const t = useTranslations("validation.user"); //TODO add translations
+  const t = useTranslations("validation.user");
   const { nameSchema } = UserNameSchemaProvider();
   const { onboardingDataSchema } = UserOnboardingSchemaProvider();
+  const { email, nickname } = UserValidationConstants;
 
   const emailSchema = z
     .string()
     .nonempty(t("email.required"))
-    .max(50, t("email.max", { max: 50 }))
+    .max(email.max, t("email.max", { max: email.max }))
     .email(t("email.regex"));
 
   const nicknameSchema = z
     .string()
-    .min(3, t("nickname.min", { min: 3 }))
-    .max(16, t("nickname.max", { max: 16 }))
-    .regex(/^[a-zA-Z0-9_-]+$/, t("nickname.regex"))
+    .min(nickname.min, t("nickname.min", { min: nickname.min }))
+    .max(nickname.max, t("nickname.max", { max: nickname.max }))
+    .regex(nickname.regex, t("nickname.regex"))
     .optional();
 
   const userSchema = z.object({

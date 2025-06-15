@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   OnboardingThirdPageSchema,
   OnboardingThirdPageSchemaProvider,
-} from "@/schemas/onboarding/third-page-schema";
+} from "@/schemas/pages/onboarding/third-page-schema";
 
 export default function ThirdPage() {
   useFormSkippingValidation({ currentPage: "3" });
@@ -50,7 +50,6 @@ export default function ThirdPage() {
       page: "3",
       data: data,
     });
-    alert(`submitted data: ${JSON.stringify(data)}`);
     formNavigation.handleNavigation();
   }
 

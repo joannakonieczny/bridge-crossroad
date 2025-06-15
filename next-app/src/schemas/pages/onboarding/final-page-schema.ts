@@ -1,13 +1,19 @@
 import { useTranslations } from "next-intl";
 import z from "zod";
 
-export const inviteCodeLength = 8;
+export const InviteCodeValidationConstants = {
+  inviteCodeLength: 8,
+  inviteCodeRegex: /^[A-Z0-9]{8}$/,
+};
 
 export function OnboardingFinalPageSchemaProvider() {
   const t = useTranslations("OnboardingPage.finalPage");
   const inviteCodeSchema = z
     .string()
-    .regex(/^[A-Z0-9]{8}$/, t("inviteCode.regex"));
+    .regex(
+      InviteCodeValidationConstants.inviteCodeRegex,
+      t("inviteCode.regex")
+    );
 
   const termsAcceptedSchema = z.boolean();
 

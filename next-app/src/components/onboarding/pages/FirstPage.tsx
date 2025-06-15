@@ -14,11 +14,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   OnboardingFirstPageSchema,
   OnboardingFirstPageSchemaProvider,
-} from "@/schemas/onboarding/first-page-schema";
+} from "@/schemas/pages/onboarding/first-page-schema";
+import { UserValidationConstants } from "@/schemas/model/user-schema";
 
 function generateYearOptions() {
   const years = [];
-  for (let year = new Date().getFullYear(); year >= 1900; year--) {
+  for (
+    let year = UserValidationConstants.yearOfBirth.max;
+    year >= UserValidationConstants.yearOfBirth.min;
+    year--
+  ) {
     years.push({
       value: year.toString(),
       label: year.toString(),

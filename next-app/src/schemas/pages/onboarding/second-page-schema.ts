@@ -1,5 +1,5 @@
 import z from "zod";
-import { UserOnboardingSchemaProvider } from "@/schemas/user";
+import { UserOnboardingSchemaProvider } from "@/schemas/model/user-schema";
 import { useTranslations } from "next-intl";
 
 export function OnboardingSecondPageSchemaProvider() {

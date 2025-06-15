@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { UserSchemaProvider } from "../user";
+import { UserSchemaProvider } from "../../model/user-schema";
 import z from "zod";
 
 export function LoginFormSchemaProvider() {

@@ -15,10 +15,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   OnboardingFinalPageSchema,
   OnboardingFinalPageSchemaProvider,
-} from "@/schemas/onboarding/final-page-schema";
-import { OnboardingFirstPageSchema } from "@/schemas/onboarding/first-page-schema";
-import { OnboardingSecondPageSchema } from "@/schemas/onboarding/second-page-schema";
-import { OnboardingThirdPageSchema } from "@/schemas/onboarding/third-page-schema";
+} from "@/schemas/pages/onboarding/final-page-schema";
+import { OnboardingFirstPageSchema } from "@/schemas/pages/onboarding/first-page-schema";
+import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
+import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });

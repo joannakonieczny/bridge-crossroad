@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   OnboardingSecondPageSchema,
   OnboardingSecondPageSchemaProvider,
-} from "@/schemas/onboarding/second-page-schema";
+} from "@/schemas/pages/onboarding/second-page-schema";
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
@@ -66,7 +66,6 @@ export default function SecondPage() {
         hasRefereeLicense: data.hasRefereeLicense,
       },
     });
-    alert(`Submitting data: ${JSON.stringify(data)}`);
     formNavigation.handleNavigation();
   }
 

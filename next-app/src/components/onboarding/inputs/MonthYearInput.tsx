@@ -24,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { FiCalendar, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useGetMonths } from "@/util/date";
+import { UserValidationConstants } from "@/schemas/model/user-schema";
 
 interface IMonthYearInputProps {
   value: string | Date | null | undefined;
@@ -55,7 +56,7 @@ function MonthYearInput(props: IMonthYearInputProps) {
   } = useNumberInput({
     step: 1,
     defaultValue: selectedYear,
-    min: 1900, // Sensowny minimalny rok
+    min: UserValidationConstants.yearOfBirth.min,
     max: currentYearNumber, // Maksymalny rok to obecny rok
     precision: 0, // Tylko liczby całkowite
     onChange: (valueAsString) => {
