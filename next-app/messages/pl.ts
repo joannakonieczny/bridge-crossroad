@@ -82,6 +82,9 @@ const loginPage = {
     loginWithGoogle: "Zaloguj się z Google",
     login: "Zaloguj się",
   },
+  errors: {
+    invalidCredentials: "Nieprawidłowe dane logowania",
+  },
 };
 
 const registerPage = {
@@ -104,6 +107,10 @@ const registerPage = {
   submitButtons: {
     registerWithGoogle: "Zarejestruj się z Google",
     register: "Zarejestruj się",
+  },
+  errors: {
+    emailExists: "Konto z tym adresem e-mail już istnieje",
+    nicknameExists: "Konto z tym nickiem już istnieje",
   },
 };
 

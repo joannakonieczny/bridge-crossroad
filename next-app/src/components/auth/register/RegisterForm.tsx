@@ -1,6 +1,6 @@
 "use client";
 
-import { HStack, Stack } from "@chakra-ui/react";
+import { HStack, Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import FormLayout from "../FormLayout";
 import { useTranslations } from "next-intl";
@@ -12,6 +12,7 @@ import FormCheckbox from "../FormCheckbox";
 import { register } from "@/services/auth/actions";
 import { RegisterFormSchemaProvider } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 
 export default function RegisterForm() {
   const t = useTranslations("Auth.RegisterPage");
@@ -29,9 +30,29 @@ export default function RegisterForm() {
     },
   });
 
+  const toast = useToast();
+
+  const registerAction = useAction(register, {
+    onError: (e) => {
+      const errorMessages = e.error.validationErrors?._errors;
+      console.log("register error:", JSON.stringify(errorMessages));
+      // alert("Login error:" + JSON.stringify(errorMessages));
+      if (errorMessages && errorMessages.length > 0) {
+        toast({
+          title: errorMessages[0],
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    },
+  });
+
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit((data) => register(data))}>
+      <form
+        onSubmit={handleSubmit((data) => registerAction.executeAsync(data))}
+      >
         <Stack spacing={3} mt={8}>
           <FormHeading
             title={t("title")}
