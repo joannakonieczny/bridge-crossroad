@@ -21,9 +21,10 @@ import ProfilePicture from '@/components/util/ProfilePicture';
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 
-export interface IAppProps {}
+//export interface IAppProps {}
 
-export default function App(props: IAppProps) {
+//export default function App(props: IAppProps) {
+export default function App() {
   const pathname = usePathname();
 
   const tabs = [

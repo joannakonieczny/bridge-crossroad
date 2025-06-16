@@ -5,9 +5,10 @@ import ProfileBanner from './ProfileBanner';
 import PastContests from './PastContests';
 import UpcomingEvents from './UpcomingEvents';
 
-export interface IAppProps {}
+//export interface IAppProps {}
 
-export default function App(props: IAppProps) {
+//export default function App(props: IAppProps) {
+export default function App() {
   return (
     <Flex
       minHeight="100vh"

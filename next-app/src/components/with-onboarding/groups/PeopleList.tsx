@@ -6,9 +6,10 @@ import MainHeading from '@/components/util/texts/MainHeading';
 import SearchInput from '@/components/util/SearchInput';
 import UserTableRow from './UserTableRow';
 
-export interface IAppProps {}
+//export interface IAppProps {}
 
-export default function PeopleList(props: IAppProps) {
+//export default function PeopleList(props: IAppProps) {
+export default function PeopleList() {
   const [search, setSearch] = React.useState('');
 
   const sampleData = [
