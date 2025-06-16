@@ -1,48 +1,42 @@
 "use server";
 
-import {
-  addOnboardingData,
-  getUserData,
-  OnboardingDataParams,
-} from "@/controller/onboarding";
-import { joinGroup } from "@/controller/user-groups";
+import { addOnboardingData, getUserData } from "@/controller/onboarding";
 import { requireUserId } from "../auth/actions";
 import { redirect } from "next/navigation";
 import {
-  SanitizedUser,
   sanitizeOnboardingData,
   sanitizeUser,
-} from "./server-only/sanitize";
+} from "../../sanitizers/server-only/user-sanitize";
+import { action } from "../action-lib";
+import { UserOnboardingSchemaProviderServer } from "@/schemas/model/user/user-schema";
 
-type OnboardingFormValues = OnboardingDataParams;
+export const completeOnboarding = action
+  .inputSchema(
+    (await UserOnboardingSchemaProviderServer()).onboardingDataSchema
+  )
+  .action(async ({ parsedInput: onboardingData }) => {
+    const userId = await requireUserId(); // redirects if user is not authenticated
+    const updatedUser = await addOnboardingData(userId, onboardingData);
+    if (!updatedUser) {
+      throw new Error("Failed to update onboarding data");
+    }
+    return sanitizeUser(updatedUser);
+  });
 
-export async function completeOnboarding(
-  onboardingData: OnboardingFormValues,
-  invitationCode: string
-): Promise<SanitizedUser> {
-  const userId = await requireUserId(); // TODO maybe throw error if user is not authenticated?
-  await addOnboardingData(userId, onboardingData);
-  const finalUser = await joinGroup(userId, invitationCode)
-  if (!finalUser) {
-    throw new Error("Failed to update onboarding data");
-  }
-  return sanitizeUser(finalUser);
-}
-
-export async function getUser(): Promise<SanitizedUser> {
+export const getUser = action.action(async () => {
   //TODO return less data
-  const userId = await requireUserId(); // TODO maybe throw error if user is not authenticated?
+  const userId = await requireUserId(); // redirects if user is not authenticated
   const user = await getUserData(userId);
   if (!user) {
     throw new Error("User not found");
   }
   return sanitizeUser(user);
-}
+});
 
-type OnboardingData = OnboardingDataParams;
+// TODO: change to safe server-action if needed
 
-export async function requireUserOnboarding(): Promise<OnboardingData> {
-  const userId = await requireUserId(); // TODO maybe throw error if user is not authenticated?
+export async function requireUserOnboarding() {
+  const userId = await requireUserId(); // redirects if user is not authenticated
   const user = await getUserData(userId);
 
   if (!user || !user.onboardingData) {

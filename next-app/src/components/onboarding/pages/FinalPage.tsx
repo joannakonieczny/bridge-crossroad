@@ -13,16 +13,18 @@ import {
   useOnboardingFormData,
 } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
-import { userSchema } from "@/schemas/user";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { completeOnboarding } from "@/services/onboarding/actions";
-
-interface FormData {
-  inviteCode: string;
-  termsAccepted: boolean;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  OnboardingFinalPageSchema,
+  OnboardingFinalPageSchemaProvider,
+} from "@/schemas/pages/onboarding/final-page-schema";
+import { OnboardingFirstPageSchema } from "@/schemas/pages/onboarding/first-page-schema";
+import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
+import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
@@ -33,6 +35,10 @@ export default function FinalPage() {
   });
   const onboardingContext = useOnboardingFormData();
   const finalPageData = onboardingContext.formData.finalPage;
+
+  // Pobieramy schemat formularza
+  const { formSchema } = OnboardingFinalPageSchemaProvider();
+
   const defaultValues = React.useMemo(
     () => ({
       inviteCode: finalPageData?.inviteCode || "",
@@ -46,12 +52,13 @@ export default function FinalPage() {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<FormData>({
+  } = useForm<OnboardingFinalPageSchema>({
+    resolver: zodResolver(formSchema), // Używamy zodResolver z naszym schematem
     defaultValues: defaultValues,
   });
   const termsAccepted = watch("termsAccepted");
 
-  function onSubmit(data: FormData) {
+  function onSubmit(data: OnboardingFinalPageSchema) {
     onboardingContext.setData({
       page: "final",
       data: data,
@@ -60,23 +67,22 @@ export default function FinalPage() {
     formToSend.finalPage = data; //issue with async setter of usestate
     const typedForm = formToSend as {
       // we have all data right now //TODO handle it better -> method in context?
-      firstPage: FirstPageType;
-      secondPage: SecondPageType;
-      thirdPage: ThirdPageType;
-      finalPage: FinalPageType;
+      firstPage: OnboardingFirstPageSchema;
+      secondPage: OnboardingSecondPageSchema;
+      thirdPage: OnboardingThirdPageSchema;
+      finalPage: OnboardingFinalPageSchema;
     };
+    // alert("Submitting data: " + JSON.stringify(typedForm));
     completeOnboarding({
-      academy: typedForm.firstPage.university,
+      academy: typedForm.firstPage.academy,
       yearOfBirth: typedForm.firstPage.yearOfBirth,
       startPlayingDate: typedForm.secondPage.startPlayingDate,
       trainingGroup: typedForm.secondPage.trainingGroup,
-      hasRefereeLicence: typedForm.secondPage.hasRefereeLicence,
+      hasRefereeLicense: typedForm.secondPage.hasRefereeLicense,
       cezarId: typedForm.thirdPage.cezarId,
       bboId: typedForm.thirdPage.bboId,
       cuebidsId: typedForm.thirdPage.cuebidsId,
-      },
-      data.inviteCode
-    )
+    })
       .then((d) => {
         alert("Subbmitted successfully!" + JSON.stringify(d));
         formNavigation.handleNextClickedRedirectNow();
@@ -85,7 +91,6 @@ export default function FinalPage() {
         alert("Error while submitting: " + e.message);
         console.error("Error while submitting onboarding data:", e);
       });
-    // alert(JSON.stringify(onboardingContext.formData));
   }
 
   return (
@@ -111,18 +116,11 @@ export default function FinalPage() {
         <Controller
           name="inviteCode"
           control={control}
-          rules={{
-            required: t("inviteCode.noneSelected"),
-            pattern: {
-              value: userSchema.inviteCodeSchema.regex,
-              message: t("inviteCode.errorMessage"),
-            },
-          }}
           render={({ field: { onChange, value } }) => (
             <InviteCodeInput
               isInvalid={!!errors.inviteCode}
               errorMessage={errors.inviteCode?.message}
-              length={userSchema.inviteCodeSchema.length}
+              length={8}
               onPinInputProps={{
                 value: value,
                 onChange: (val) => onChange(val.toUpperCase()),
@@ -135,9 +133,6 @@ export default function FinalPage() {
         <Controller
           name="termsAccepted"
           control={control}
-          rules={{
-            required: t("terms.errorMessage"),
-          }}
           render={({ field: { onChange, value } }) => (
             <CheckBoxInput
               label={t("terms.acceptPrefix")}

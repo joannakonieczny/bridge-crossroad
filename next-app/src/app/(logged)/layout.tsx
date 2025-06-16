@@ -7,7 +7,5 @@ export default async function LoggedLayout({
   children: React.ReactNode;
 }) {
   await requireUserId();
-  return <>{
-    children}
-  </>;
+  return <>{children}</>;
 }

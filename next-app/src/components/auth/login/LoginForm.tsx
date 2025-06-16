@@ -1,25 +1,52 @@
 "use client";
 
-import { HStack, Stack } from "@chakra-ui/react";
+import { HStack, Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import FormLayout from "../FormLayout";
 import { useTranslations } from "next-intl";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 import FormHeading from "../FormHeading";
 import FormInput from "../FormInput";
-import { userSchema } from "@/schemas/user";
 import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
-import { login, LoginFormValues } from "@/services/auth/actions";
+import { login } from "@/services/auth/actions";
+import { LoginFormSchemaProvider } from "@/schemas/pages/auth/login/login-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 
 export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
-  const { handleSubmit, control } = useForm<LoginFormValues>();
+  const { loginFormSchema } = LoginFormSchemaProvider();
+  const { handleSubmit, control } = useForm({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      nicknameOrEmail: "",
+      password: "",
+      rememberMe: true,
+    },
+  });
+  const toast = useToast();
+
+  const loginAction = useAction(login, {
+    onError: (e) => {
+      const errorMessages = e.error.validationErrors?._errors;
+      console.log("Login error:", JSON.stringify(errorMessages));
+      // alert("Login error:" + JSON.stringify(errorMessages));
+      if (errorMessages && errorMessages.length > 0) {
+        toast({
+          title: errorMessages[0],
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    },
+  });
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(login)}>
+      <form onSubmit={handleSubmit((data) => loginAction.executeAsync(data))}>
         <Stack spacing={2} mt={8}>
           <FormHeading
             title={t("title")}
@@ -31,43 +58,6 @@ export default function LoginForm() {
           <Controller
             control={control}
             name="nicknameOrEmail"
-            defaultValue=""
-            rules={{
-              required: t("form.nicknameOrEmailField.errorMessage"),
-              validate: (value: string) => {
-                if (value.includes("@")) {
-                  // as email
-                  return (
-                    userSchema.emailSchema.regex.test(value) ||
-                    t("form.nicknameOrEmailField.emailField.errorMessage")
-                  );
-                } else {
-                  // as nickname
-                  if (value.length < userSchema.nicknameSchema.minLength) {
-                    return t(
-                      "form.nicknameOrEmailField.nicknameField.minLength",
-                      {
-                        minLength: userSchema.nicknameSchema.minLength,
-                      }
-                    );
-                  }
-                  if (value.length > userSchema.nicknameSchema.maxLength) {
-                    return t(
-                      "form.nicknameOrEmailField.nicknameField.maxLength",
-                      {
-                        maxLength: userSchema.nicknameSchema.maxLength,
-                      }
-                    );
-                  }
-                  if (!userSchema.nicknameSchema.regex.test(value)) {
-                    return t(
-                      "form.nicknameOrEmailField.nicknameField.invalidSyntax"
-                    );
-                  }
-                  return true;
-                }
-              },
-            }}
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.nicknameOrEmailField.placeholder")}
@@ -86,10 +76,6 @@ export default function LoginForm() {
           <Controller
             control={control}
             name="password"
-            defaultValue=""
-            rules={{
-              required: t("form.passwordField.errorMessage"),
-            }}
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.passwordField.placeholder")}
@@ -109,7 +95,6 @@ export default function LoginForm() {
             <Controller
               control={control}
               name="rememberMe"
-              defaultValue={true}
               render={({ field }) => (
                 <FormCheckbox
                   text={t("utilities.rememberMe")}
