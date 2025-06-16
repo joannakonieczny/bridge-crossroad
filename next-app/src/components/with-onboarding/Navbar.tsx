@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   Flex,
   Tabs,
@@ -14,31 +14,26 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-} from '@chakra-ui/react';
-import Image from 'next/image';
-import Link from 'next/link';
-import ProfilePicture from '@/components/util/ProfilePicture';
-import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
-import { usePathname } from 'next/navigation';
+} from "@chakra-ui/react";
+import Image from "next/image";
+import Link from "next/link";
+import ProfilePicture from "@/components/util/ProfilePicture";
+import { FaAngleDown, FaAngleRight } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
-//export interface IAppProps {}
-
-//export default function App(props: IAppProps) {
 export default function App() {
   const pathname = usePathname();
 
   const tabs = [
-    '/dashboard',
-    '/calendar',
-    '/groups',
-    '/find-partner',
-    '/tools',
+    "/dashboard",
+    "/calendar",
+    "/groups",
+    "/find-partner",
+    "/tools",
   ];
 
   const defaultIndex = React.useMemo(() => {
-    const match = tabs.findIndex((path) =>
-      pathname.startsWith(path)
-    );
+    const match = tabs.findIndex((path) => pathname.startsWith(path));
     return match === -1 ? 0 : match;
   }, [pathname]);
 
@@ -60,10 +55,10 @@ export default function App() {
         </Heading>
         <Box
           style={{
-            width: '1.875rem',
-            height: '1.75rem',
-            position: 'relative',
-            marginRight: '1rem',
+            width: "1.875rem",
+            height: "1.75rem",
+            position: "relative",
+            marginRight: "1rem",
           }}
         >
           <Image
@@ -71,7 +66,7 @@ export default function App() {
             alt="Logo"
             priority
             fill
-            style={{ objectFit: 'contain', objectPosition: 'left top' }}
+            style={{ objectFit: "contain", objectPosition: "left top" }}
           />
         </Box>
       </Flex>
@@ -83,19 +78,44 @@ export default function App() {
         defaultIndex={defaultIndex}
       >
         <TabList gap={8} color="accent.500">
-          <Tab as={Link} href="/dashboard" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab
+            as={Link}
+            href="/dashboard"
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
             Strona główna
           </Tab>
-          <Tab as={Link} href="/calendar" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab
+            as={Link}
+            href="/calendar"
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
             Kalendarz
           </Tab>
-          <Tab as={Link} href="/groups" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab
+            as={Link}
+            href="/groups"
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
             Grupy
           </Tab>
-          <Tab as={Link} href="/find-partner" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab
+            as={Link}
+            href="/find-partner"
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
             Szukaj Partnera
           </Tab>
-          <Tab as={Link} href="/tools" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab
+            as={Link}
+            href="/tools"
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
             Przydatne narzędzia
           </Tab>
         </TabList>
@@ -105,16 +125,22 @@ export default function App() {
       <Flex flex={1} justifyContent="flex-end" alignItems="center" gap={4}>
         <ProfilePicture size={3.75} />
         <Menu>
-           {({ isOpen }) => (
+          {({ isOpen }) => (
             <>
               <MenuButton
                 as={IconButton}
                 aria-label="Options"
-                icon={isOpen ? <FaAngleDown size="1.5rem" /> : <FaAngleRight size="1.5rem" />}
+                icon={
+                  isOpen ? (
+                    <FaAngleDown size="1.5rem" />
+                  ) : (
+                    <FaAngleRight size="1.5rem" />
+                  )
+                }
                 variant="unstyled"
-                _hover={{ bg: 'transparent' }}
-                _active={{ bg: 'transparent' }}
-                _focus={{ boxShadow: 'none' }}
+                _hover={{ bg: "transparent" }}
+                _active={{ bg: "transparent" }}
+                _focus={{ boxShadow: "none" }}
               />
               <MenuList
                 minWidth="240px"

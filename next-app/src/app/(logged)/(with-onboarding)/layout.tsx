@@ -10,7 +10,7 @@ export default async function WithOnboardingLayout({
   children: React.ReactNode;
 }) {
   await requireUserOnboarding();
-  return(
+  return (
     <Flex direction={"column"} height="100vh">
       <Navbar />
       {children}

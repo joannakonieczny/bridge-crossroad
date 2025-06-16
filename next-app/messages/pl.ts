@@ -1,3 +1,6 @@
+import { TrainingGroup } from "@/club-preset/training-group";
+import { Academy } from "@/club-preset/academy";
+
 const MONTHS = {
   jan: "Styczeń",
   feb: "Luty",
@@ -14,9 +17,9 @@ const MONTHS = {
 };
 
 const nameFields = {
-  minLength: "Min. {minLength} znaki",
-  maxLength: "Max. {maxLength} znaków",
-  invalidSyntax: "Tylko litery",
+  min: "Min. {min} znaki",
+  max: "Max. {max} znaków",
+  regex: "Tylko litery",
 };
 
 const tooLongString = "Max. {maxLength} znaków";
@@ -25,9 +28,6 @@ const authForm = {
   nicknameField: {
     placeholder: "Nick lub przezwisko (opcjonalne)",
     errorMessage: "Podaj poprawny nick",
-    invalidSyntax: "Nick może zawierać tylko litery, cyfry, _ i -",
-    minLength: "Nick musi mieć co najmniej {minLength} znaki",
-    maxLength: "Nick nie może być dłuższy niż {maxLength} znaków",
   },
   passwordField: {
     placeholder: "Hasło",
@@ -40,25 +40,19 @@ const authForm = {
     noUpperCase: "Hasło musi zawierać wielkie litery",
     noDigit: "Hasło musi zawierać cyfry",
     noSpecialChar: "Hasło musi zawierać znaki specjalne",
+    required: "Podaj hasło",
   },
   emailField: {
     placeholder: "E-mail",
     errorMessage: "Podaj poprawny adres e-mail",
-    maxLength: "E-mail nie może być dłuższy niż {maxLength} znaków",
   },
   firstNameField: {
     placeholder: "Imię",
     errorMessage: "Podaj poprawne imię",
-    minLength: nameFields.minLength,
-    maxLength: nameFields.maxLength,
-    invalidSyntax: nameFields.invalidSyntax,
   },
   lastNameField: {
     placeholder: "Nazwisko",
     errorMessage: "Podaj poprawne nazwisko",
-    minLength: nameFields.minLength,
-    maxLength: nameFields.maxLength,
-    invalidSyntax: nameFields.invalidSyntax,
   },
   repeatPasswordField: {
     placeholder: "Powtórz hasło",
@@ -76,14 +70,7 @@ const loginPage = {
     nicknameOrEmailField: {
       placeholder: "Nick lub email",
       errorMessage: "Podaj poprawny nick lub email",
-      emailField: {
-        errorMessage: authForm.emailField.errorMessage,
-      },
-      nicknameField: {
-        invalidSyntax: authForm.nicknameField.invalidSyntax,
-        minLength: authForm.nicknameField.minLength,
-        maxLength: authForm.nicknameField.maxLength,
-      },
+      required: "Podaj nick lub email",
     },
     passwordField: authForm.passwordField,
   },
@@ -94,6 +81,9 @@ const loginPage = {
   submitButtons: {
     loginWithGoogle: "Zaloguj się z Google",
     login: "Zaloguj się",
+  },
+  errors: {
+    invalidCredentials: "Nieprawidłowe dane logowania",
   },
 };
 
@@ -118,6 +108,10 @@ const registerPage = {
     registerWithGoogle: "Zarejestruj się z Google",
     register: "Zarejestruj się",
   },
+  errors: {
+    emailExists: "Konto z tym adresem e-mail już istnieje",
+    nicknameExists: "Konto z tym nickiem już istnieje",
+  },
 };
 
 const onboardingPage = {
@@ -131,13 +125,13 @@ const onboardingPage = {
       highlight: "sobie",
     },
     subHeading: "Ważne dane personalne",
-    university: {
+    academy: {
       placeholder: "Wybierz uczelnię",
-      noneSelected: "Nie wybrano uczelni",
+      required: "Nie wybrano uczelni",
     },
     yearOfBirth: {
       placeholder: "Wybierz rok urodzenia",
-      noneSelected: "Nie wybrano roku urodzenia",
+      required: "Nie wybrano roku urodzenia",
     },
   },
   secondPage: {
@@ -148,14 +142,14 @@ const onboardingPage = {
     subHeading: "Kilka rzeczy o Twoim doświadczeniu!",
     skillLevel: {
       placeholder: "Grupa zaawansowania, początkujący, trener?",
-      noneSelected: "Nie wybrano grupy zaawansowania",
+      required: "Nie wybrano grupy zaawansowania",
     },
-    hasRefereeLicence: {
+    hasRefereeLicense: {
       label: "Czy skończyłeś kurs sędziowski?",
     },
-    monthYear: {
+    startPlayingDate: {
       placeholder: "Kiedy zacząłeś grać w brydża?",
-      noneSelected: "Nie wybrano daty",
+      required: "Nie wybrano daty",
     },
   },
   thirdPage: {
@@ -187,8 +181,8 @@ const onboardingPage = {
       "Twoja pierwsza grupa - podaj kod aby mieć dostęp do społeczności Just Bridge AGH",
     submitButton: "Zakończ",
     inviteCode: {
-      errorMessage: "Podaj poprawny kod zaproszenia",
-      noneSelected: "Nie podano kodu zaproszenia",
+      regex: "Podaj poprawny kod zaproszenia",
+      required: "Nie podano kodu zaproszenia",
     },
     terms: {
       acceptPrefix: "Akceptuję ",
@@ -214,6 +208,71 @@ const messages = {
     },
     date: {
       months: MONTHS,
+    },
+    academy: {
+      [Academy.UJ]: "Uniwersytet Jagielloński",
+      [Academy.AGH]: "Akademia Górniczo-Hutnicza",
+      [Academy.PK]: "Politechnika Krakowska",
+      [Academy.UEK]: "Uniwersytet Ekonomiczny w Krakowie",
+      [Academy.UP]: "Uniwersytet Pedagogiczny w Krakowie",
+      [Academy.UR]: "Uniwersytet Rolniczy w Krakowie",
+      [Academy.ASP]: "Akademia Sztuk Pięknych w Krakowie",
+      [Academy.AM]: "Akademia Muzyczna w Krakowie",
+      [Academy.AWF]: "Akademia Wychowania Fizycznego w Krakowie",
+      [Academy.UPJPII]: "Uniwersytet Papieski Jana Pawła II w Krakowie",
+      [Academy.IGNATIANUM]: "Ignatianum - Akademia Ignatianum w Krakowie",
+      [Academy.INNA]: "inna uczelnia",
+    },
+    trainingGroup: {
+      [TrainingGroup.BASIC]: "Podstawowa",
+      [TrainingGroup.INTERMEDIATE]: "Średniozaawansowana",
+      [TrainingGroup.ADVANCED]: "Zaawansowana",
+      [TrainingGroup.COACH]: "Jestem trenerem!",
+      [TrainingGroup.NONE]: "Nie chodzę na zajęcia z brydża na AGH",
+    },
+    error: {
+      general: "Wystąpił błąd dla {error}. Spróbuj ponownie później.",
+    },
+  },
+  validation: {
+    user: {
+      name: {
+        firstName: { ...nameFields, required: "Podaj imię" },
+        lastName: { ...nameFields, required: "Podaj nazwisko" },
+      },
+      onboarding: {
+        academy: {
+          invalid: "Nieprawidłowa uczelnia",
+        },
+        yearOfBirth: {
+          min: "Rok urodzenia nie może być wcześniejszy niż {min}",
+          max: "Rok urodzenia nie może być późniejszy niż {max}",
+        },
+        trainingGroup: {
+          invalid: "Nieprawidłowa grupa treningowa",
+        },
+        cezarId: {
+          regexLenght: "Numer Cezar musi składać się z {lenght} cyfr",
+        },
+        bboId: {
+          invalid: "Niepoprawny nick na BBO",
+          max: "Max. {max} znaków",
+        },
+        cuebidsId: {
+          invalid: "Niepoprawny kod użytkownika na Cuebids",
+          max: "Max. {max} znaków",
+        },
+      },
+      email: {
+        regex: "Podaj poprawny adres e-mail",
+        max: "E-mail nie może być dłuższy niż {max} znaków",
+        required: "E-mail jest wymagany",
+      },
+      nickname: {
+        min: "Nick musi mieć co najmniej {min} znaki",
+        max: "Nick nie może być dłuższy niż {max} znaków",
+        regex: "Nick może zawierać tylko litery, cyfry, _ i -",
+      },
     },
   },
   Auth: {
