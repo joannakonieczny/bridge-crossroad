@@ -1,13 +1,22 @@
+"server-only";
+
 import User, { IUserDTO } from "@/models/user";
+import {
+  EmailType,
+  FirstNameType,
+  LastNameType,
+  NicknameType,
+  PasswordTypeGeneric,
+} from "@/schemas/model/user/user-types";
 import dbConnect from "@/util/connect-mongo";
 import bcrypt from "bcryptjs";
 
 export type CreateUserParams = {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  nickname?: string;
+  email: EmailType;
+  password: PasswordTypeGeneric;
+  firstName: FirstNameType;
+  lastName: LastNameType;
+  nickname?: NicknameType;
 };
 
 const hashingRounds = 10;
@@ -37,13 +46,13 @@ export async function createNewUser(
 }
 
 type FindIfExistByEmailParams = {
-  email: string;
-  password: string;
+  email: EmailType;
+  password: PasswordTypeGeneric;
 };
 
 type FindIfExistByNicknameParams = {
-  nickname: string;
-  password: string;
+  nickname: NicknameType;
+  password: PasswordTypeGeneric;
 };
 
 export type FindIfExistParams =

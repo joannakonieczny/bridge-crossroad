@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { logout, requireUserId } from "@/services/auth/actions";
+import { logout } from "@/services/auth/actions";
 import { UserId } from "@/services/auth/server-only/user-id";
+import { getUser } from "@/services/onboarding/actions";
 
 export default function DashboardClient({ userId }: { userId: UserId }) {
-  const [serverUserId, setServerUserId] = useState<string | null>(null);
+  const [serverUser, setServerUser] = useState<unknown | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,8 +15,9 @@ export default function DashboardClient({ userId }: { userId: UserId }) {
     const fetchUserId = async () => {
       try {
         setIsLoading(true);
-        const result = await requireUserId();
-        setServerUserId(result);
+        const result = await getUser();
+        console.log("Fetched user data:", result);
+        setServerUser(result);
       } catch (err) {
         setError("Nie udało się pobrać ID użytkownika");
         console.error("Error fetching user ID:", err);
@@ -50,8 +52,8 @@ export default function DashboardClient({ userId }: { userId: UserId }) {
           <p style={{ color: "red" }}>{error}</p>
         ) : (
           <p style={{ fontWeight: "bold" }}>
-            {serverUserId
-              ? `ID z Server Action: ${serverUserId}`
+            {serverUser
+              ? `User z Server Action: ${JSON.stringify(serverUser)}`
               : "Brak ID z Server Action"}
           </p>
         )}
@@ -66,7 +68,7 @@ export default function DashboardClient({ userId }: { userId: UserId }) {
           borderRadius: "4px",
           cursor: "pointer",
         }}
-        onClick={logout}
+        onClick={() => logout()}
       >
         {userId ? "Wyloguj się" : "Zaloguj się"}
       </button>
