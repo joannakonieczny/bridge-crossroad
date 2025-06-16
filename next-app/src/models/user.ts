@@ -22,6 +22,7 @@ export interface IUserDTO extends Document {
   };
   createdAt: Date;
   updatedAt: Date;
+  groups: Types.ObjectId[];
 }
 
 // Pobierz stałe walidacji
@@ -85,6 +86,14 @@ const UserSchema = new Schema<IUserDTO>(
       ],
       match: [nickname.regex, "Nickname contains invalid characters"],
     },
+    groups: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Group",
+        required: false,
+        default: [],
+      },
+    ],
     onboardingData: {
       type: {
         academy: {

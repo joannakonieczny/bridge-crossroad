@@ -7,6 +7,7 @@ import { getUser } from "@/services/onboarding/actions";
 
 export default function DashboardClient({ userId }: { userId: UserId }) {
   const [serverUser, setServerUser] = useState<unknown | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
