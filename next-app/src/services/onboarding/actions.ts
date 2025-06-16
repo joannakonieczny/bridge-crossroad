@@ -1,10 +1,6 @@
 "use server";
 
-import {
-  addOnboardingData,
-  getUserData,
-  OnboardingDataParams,
-} from "@/controller/onboarding";
+import { addOnboardingData, getUserData } from "@/controller/onboarding";
 import { requireUserId } from "../auth/actions";
 import { redirect } from "next/navigation";
 import {
@@ -39,9 +35,7 @@ export const getUser = action.action(async () => {
 
 // TODO: change to safe server-action if needed
 
-type OnboardingData = OnboardingDataParams;
-
-export async function requireUserOnboarding(): Promise<OnboardingData> {
+export async function requireUserOnboarding() {
   const userId = await requireUserId(); // redirects if user is not authenticated
   const user = await getUserData(userId);
 

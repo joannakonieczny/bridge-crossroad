@@ -85,7 +85,6 @@ export default function FinalPage() {
         alert("Error while submitting: " + e.message);
         console.error("Error while submitting onboarding data:", e);
       });
-    alert(JSON.stringify(onboardingContext.formData));
   }
 
   return (

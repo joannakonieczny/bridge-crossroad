@@ -39,3 +39,4 @@ export type EmailType = z.infer<Z_EmailSchema>;
 export type NicknameType = z.infer<Z_NicknameSchema>;
 
 export type PasswordTypeGeneric = string;
+export type UserIdType = string;

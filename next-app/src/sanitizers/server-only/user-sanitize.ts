@@ -1,29 +1,38 @@
 "server-only";
 
 import { IUserDTO } from "@/models/user";
-import { UserId } from "@/services/auth/server-only/user-id";
+import {
+  AcademyType,
+  TrainingGroupType,
+  UserIdType,
+  UserOnboardingType,
+  UserType,
+} from "@/schemas/model/user/user-types";
 
-export type SanitizedUser = {
-  _id: UserId;
-  email: string;
-  name: {
-    firstName: string;
-    lastName: string;
-  };
-  nickname?: string;
-  onboardingData?: {
-    academy: string;
-    yearOfBirth: number;
-    startPlayingDate: Date; // format MM-YYYY
-    trainingGroup: string;
-    hasRefereeLicense: boolean;
-    cezarId?: string;
-    bboId?: string;
-    cuebidsId?: string;
-  };
+export type SanitizedUser = UserType & {
+  _id: UserIdType;
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type SanitizedOnboardingData = UserOnboardingType | undefined;
+
+export function sanitizeOnboardingData(
+  onboardingData: IUserDTO["onboardingData"]
+): SanitizedOnboardingData {
+  if (!onboardingData) return undefined;
+
+  return {
+    academy: onboardingData.academy as AcademyType,
+    yearOfBirth: onboardingData.yearOfBirth,
+    startPlayingDate: onboardingData.startPlayingDate,
+    trainingGroup: onboardingData.trainingGroup as TrainingGroupType,
+    hasRefereeLicense: onboardingData.hasRefereeLicense,
+    cezarId: onboardingData.cezarId,
+    bboId: onboardingData.bboId,
+    cuebidsId: onboardingData.cuebidsId,
+  };
+}
 
 export function sanitizeUser(user: IUserDTO): SanitizedUser {
   return {
@@ -34,38 +43,8 @@ export function sanitizeUser(user: IUserDTO): SanitizedUser {
       lastName: user.name.lastName,
     },
     nickname: user.nickname,
-    onboardingData: user.onboardingData
-      ? {
-          academy: user.onboardingData.academy,
-          yearOfBirth: user.onboardingData.yearOfBirth,
-          startPlayingDate: user.onboardingData.startPlayingDate,
-          trainingGroup: user.onboardingData.trainingGroup,
-          hasRefereeLicense: user.onboardingData.hasRefereeLicense,
-          cezarId: user.onboardingData.cezarId,
-          bboId: user.onboardingData.bboId,
-          cuebidsId: user.onboardingData.cuebidsId,
-        }
-      : undefined,
+    onboardingData: sanitizeOnboardingData(user.onboardingData),
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
-  };
-}
-
-export type SanitizedOnboardingData = IUserDTO["onboardingData"];
-
-export function sanitizeOnboardingData(
-  onboardingData: IUserDTO["onboardingData"]
-): SanitizedOnboardingData {
-  if (!onboardingData) return undefined;
-
-  return {
-    academy: onboardingData.academy,
-    yearOfBirth: onboardingData.yearOfBirth,
-    startPlayingDate: onboardingData.startPlayingDate,
-    trainingGroup: onboardingData.trainingGroup,
-    hasRefereeLicense: onboardingData.hasRefereeLicense,
-    cezarId: onboardingData.cezarId,
-    bboId: onboardingData.bboId,
-    cuebidsId: onboardingData.cuebidsId,
   };
 }

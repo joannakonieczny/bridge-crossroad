@@ -194,7 +194,7 @@ function _UserSchemaProvider(
     email: emailSchema,
     nickname: nicknameSchema.optional(),
     name: nameSchema,
-    onboardingdata: onboardingDataSchema,
+    onboardingData: onboardingDataSchema.optional(),
   });
 
   return { nicknameSchema, emailSchema, userSchema };
