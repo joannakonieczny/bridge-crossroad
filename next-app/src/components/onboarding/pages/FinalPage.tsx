@@ -5,13 +5,7 @@ import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
-import {
-  FirstPage as FirstPageType,
-  SecondPage as SecondPageType,
-  ThirdPage as ThirdPageType,
-  FinalPage as FinalPageType,
-  useOnboardingFormData,
-} from "../FormDataContext";
+import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";

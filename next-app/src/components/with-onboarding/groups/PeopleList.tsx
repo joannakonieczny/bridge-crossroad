@@ -1,37 +1,35 @@
-'use client';
+"use client";
 
-import { Flex, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react';
-import * as React from 'react';
-import MainHeading from '@/components/util/texts/MainHeading';
-import SearchInput from '@/components/util/SearchInput';
-import UserTableRow from './UserTableRow';
+import { Flex, Table, Thead, Tbody, Tr, Th } from "@chakra-ui/react";
+import * as React from "react";
+import MainHeading from "@/components/util/texts/MainHeading";
+import SearchInput from "@/components/util/SearchInput";
+import UserTableRow from "./UserTableRow";
 
-export interface IAppProps {}
-
-export default function PeopleList(props: IAppProps) {
-  const [search, setSearch] = React.useState('');
+export default function PeopleList() {
+  const [search, setSearch] = React.useState("");
 
   const sampleData = [
     {
-      fullName: 'Jan Kowalski',
-      nickname: 'jan123',
-      pzbsId: '123456',
-      bboId: 'jk_bbo',
-      cuebidsId: 'ABCABC',
+      fullName: "Jan Kowalski",
+      nickname: "jan123",
+      pzbsId: "123456",
+      bboId: "jk_bbo",
+      cuebidsId: "ABCABC",
     },
     {
-      fullName: 'Michał Wiśniewski',
-      nickname: 'MWisnia',
-      pzbsId: '654321',
-      bboId: 'michal_wisnia',
-      cuebidsId: 'XYZXYZ',
+      fullName: "Michał Wiśniewski",
+      nickname: "MWisnia",
+      pzbsId: "654321",
+      bboId: "michal_wisnia",
+      cuebidsId: "XYZXYZ",
     },
     {
-      fullName: 'Piotr Nowak',
-      nickname: 'pionowak',
-      pzbsId: '',
-      bboId: '',
-      cuebidsId: '',
+      fullName: "Piotr Nowak",
+      nickname: "pionowak",
+      pzbsId: "",
+      bboId: "",
+      cuebidsId: "",
     },
   ];
 
@@ -47,7 +45,13 @@ export default function PeopleList(props: IAppProps) {
   });
 
   return (
-    <Flex flex={1} backgroundColor="white" padding="2rem" direction="column" gap={6}>
+    <Flex
+      flex={1}
+      backgroundColor="white"
+      padding="2rem"
+      direction="column"
+      gap={6}
+    >
       <MainHeading text="Członkowie Klubu" />
       <SearchInput
         value={search}

@@ -1,8 +1,8 @@
 // app/(logged)/dashboard/page.tsx
-import { requireUserId } from "@/services/auth/actions";
+// import { requireUserId } from "@/services/auth/actions";
 
 export default async function DashboardPage() {
-  const userId = await requireUserId();
+  // const userId = await requireUserId();
 
   return <>przydatne narzędzia</>;
 }

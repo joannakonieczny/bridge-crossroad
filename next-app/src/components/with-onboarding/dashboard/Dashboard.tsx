@@ -1,13 +1,11 @@
-import { Box, Flex,  VStack, Image } from '@chakra-ui/react';
-import * as React from 'react';
+import { Box, Flex, VStack, Image } from "@chakra-ui/react";
+import * as React from "react";
 import InfoTable from "./InfoTable";
-import ProfileBanner from './ProfileBanner';
-import PastContests from './PastContests';
-import UpcomingEvents from './UpcomingEvents';
+import ProfileBanner from "./ProfileBanner";
+import PastContests from "./PastContests";
+import UpcomingEvents from "./UpcomingEvents";
 
-export interface IAppProps {}
-
-export default function App(props: IAppProps) {
+export default function App() {
   return (
     <Flex
       minHeight="100vh"
@@ -39,7 +37,7 @@ export default function App(props: IAppProps) {
               height="auto"
               //maxH="28rem"
             />
-          <UpcomingEvents />
+            <UpcomingEvents />
           </VStack>
         </Flex>
       </Box>
