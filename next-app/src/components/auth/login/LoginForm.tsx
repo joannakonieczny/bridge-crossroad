@@ -1,34 +1,52 @@
 "use client";
 
-import { HStack, Stack } from "@chakra-ui/react";
+import { HStack, Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import FormLayout from "../FormLayout";
 import { useTranslations } from "next-intl";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 import FormHeading from "../FormHeading";
 import FormInput from "../FormInput";
-import { userSchema } from "@/schemas/user";
 import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
-
-type FormValues = {
-  loginOrEmail: string;
-  password: string;
-  rememberMe: boolean;
-};
+import { login } from "@/services/auth/actions";
+import { LoginFormSchemaProvider } from "@/schemas/pages/auth/login/login-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 
 export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
-  const { handleSubmit, control } = useForm<FormValues>();
+  const { loginFormSchema } = LoginFormSchemaProvider();
+  const { handleSubmit, control } = useForm({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      nicknameOrEmail: "",
+      password: "",
+      rememberMe: true,
+    },
+  });
+  const toast = useToast();
 
-  const onSubmit = (data: FormValues) => {
-    alert(JSON.stringify(data));
-  };
+  const loginAction = useAction(login, {
+    onError: (e) => {
+      const errorMessages = e.error.validationErrors?._errors;
+      console.log("Login error:", JSON.stringify(errorMessages));
+      // alert("Login error:" + JSON.stringify(errorMessages));
+      if (errorMessages && errorMessages.length > 0) {
+        toast({
+          title: errorMessages[0],
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    },
+  });
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit((data) => loginAction.executeAsync(data))}>
         <Stack spacing={2} mt={8}>
           <FormHeading
             title={t("title")}
@@ -39,44 +57,15 @@ export default function LoginForm() {
 
           <Controller
             control={control}
-            name="loginOrEmail"
-            defaultValue=""
-            rules={{
-              required: t("form.loginOrEmailField.errorMessage"),
-              validate: (value: string) => {
-                if (value.includes("@")) {
-                  // as email
-                  return (
-                    userSchema.emailSchema.regex.test(value) ||
-                    t("form.loginOrEmailField.invalidEmail")
-                  );
-                } else {
-                  // as login
-                  if (value.length < userSchema.loginSchema.minLength) {
-                    return t("form.loginOrEmailField.minLengthLogin", {
-                      minLength: userSchema.loginSchema.minLength,
-                    });
-                  }
-                  if (value.length > userSchema.loginSchema.maxLength) {
-                    return t("form.loginOrEmailField.maxLengthLogin", {
-                      maxLength: userSchema.loginSchema.maxLength,
-                    });
-                  }
-                  if (!userSchema.loginSchema.regex.test(value)) {
-                    return t("form.loginOrEmailField.invalidLoginSyntax");
-                  }
-                  return true;
-                }
-              },
-            }}
+            name="nicknameOrEmail"
             render={({ field, fieldState: { error } }) => (
               <FormInput
-                placeholder={t("form.loginOrEmailField.placeholder")}
+                placeholder={t("form.nicknameOrEmailField.placeholder")}
                 errorMessage={
-                  error?.message ?? t("form.loginOrEmailField.errorMessage")
+                  error?.message ?? t("form.nicknameOrEmailField.errorMessage")
                 }
                 isInvalid={!!error}
-                id="loginOrEmail"
+                id="nicknameOrEmail"
                 type="text"
                 value={field.value}
                 onChange={field.onChange}
@@ -87,22 +76,6 @@ export default function LoginForm() {
           <Controller
             control={control}
             name="password"
-            defaultValue=""
-            rules={{
-              required: t("form.passwordField.errorMessage"),
-              minLength: {
-                value: userSchema.passwordSchema.minLength,
-                message: t("form.passwordField.minLength", {
-                  minLength: userSchema.passwordSchema.minLength,
-                }),
-              },
-              maxLength: {
-                value: userSchema.passwordSchema.maxLength,
-                message: t("form.passwordField.maxLength", {
-                  maxLength: userSchema.passwordSchema.maxLength,
-                }),
-              },
-            }}
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.passwordField.placeholder")}
@@ -122,7 +95,6 @@ export default function LoginForm() {
             <Controller
               control={control}
               name="rememberMe"
-              defaultValue={true}
               render={({ field }) => (
                 <FormCheckbox
                   text={t("utilities.rememberMe")}
