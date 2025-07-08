@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   FormControlWrapperProps,
   WithFormControlWrapper,
@@ -42,7 +42,7 @@ function MonthYearInput(props: IMonthYearInputProps) {
   const currentYearNumber = currentDate.getFullYear();
 
   // Stan dla roku pokazywanego w selektorze
-  const [selectedYear, setSelectedYear] = React.useState(currentYearNumber);
+  const [selectedYear, setSelectedYear] = useState(currentYearNumber);
 
   // Pobieramy nazwy miesięcy z hooka tłumaczeń
   const months = useGetMonths();
@@ -92,7 +92,7 @@ function MonthYearInput(props: IMonthYearInputProps) {
   };
 
   // Parsuj wartość na miesiąc i rok do wyświetlenia
-  const displayValue = React.useMemo(() => {
+  const displayValue = useMemo(() => {
     if (!props.value) return "";
 
     let month: number;
@@ -116,7 +116,7 @@ function MonthYearInput(props: IMonthYearInputProps) {
   }, [props.value, months]);
 
   // Konwersja wartości do obiektu Date dla wewnętrznego użytku
-  const valueAsDate = React.useMemo((): Date | null => {
+  const valueAsDate = useMemo((): Date | null => {
     if (!props.value) return null;
 
     if (props.value instanceof Date) {
@@ -139,7 +139,7 @@ function MonthYearInput(props: IMonthYearInputProps) {
   }, [props.value]);
 
   // Aktualizuj rok w useNumberInput gdy otwieramy modal
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen && valueAsDate) {
       setSelectedYear(valueAsDate.getFullYear());
     }

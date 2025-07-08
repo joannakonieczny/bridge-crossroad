@@ -1,8 +1,8 @@
 import { Box, Container, Flex, Image } from "@chakra-ui/react";
-import * as React from "react";
+import { ReactNode } from "react";
 
 export interface IAuthLayoutProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export default function AuthLayout({ children }: IAuthLayoutProps) {

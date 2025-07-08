@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 
-export default function SafeHydration({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SafeHydration({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

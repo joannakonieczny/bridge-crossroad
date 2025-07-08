@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
 import SelectInput from "../inputs/SelectInput";
@@ -43,7 +43,7 @@ export default function FirstPage() {
 
   const { formSchema } = OnboardingFirstPageSchemaProvider();
 
-  const defaultValues = React.useMemo(
+  const defaultValues = useMemo(
     () => ({
       academy: firstPageData?.academy || "",
       yearOfBirth: firstPageData?.yearOfBirth
@@ -62,7 +62,7 @@ export default function FirstPage() {
     defaultValues: defaultValues,
   });
 
-  const academyOptions = React.useMemo(
+  const academyOptions = useMemo(
     () =>
       Object.values(Academy).map((value) => ({
         value,
@@ -70,7 +70,7 @@ export default function FirstPage() {
       })),
     [tAcademy]
   );
-  const yearOptions = React.useMemo(() => generateYearOptions(), []);
+  const yearOptions = useMemo(() => generateYearOptions(), []);
 
   function onSubmit(data: OnboardingFirstPageSchema) {
     onboardingContext.setData({

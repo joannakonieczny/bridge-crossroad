@@ -1,4 +1,4 @@
-import * as React from "react";
+import { ReactNode, HTMLAttributes } from "react";
 import {
   Heading,
   Text,
@@ -25,7 +25,7 @@ interface FormButtonProps {
 }
 
 export interface IPagesLayoutProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   mainHeading?: {
     text: string;
     highlight?: {
@@ -41,7 +41,7 @@ export interface IPagesLayoutProps {
   prevButton?: FormButtonProps;
   nextButton?: FormButtonProps;
   onDividerProps?: DividerProps;
-  onFormProps?: React.HTMLAttributes<HTMLFormElement>;
+  onFormProps?: HTMLAttributes<HTMLFormElement>;
 }
 
 export default function PagesLayout(props: IPagesLayoutProps) {

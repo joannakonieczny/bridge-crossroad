@@ -1,24 +1,37 @@
 "use client";
 
-import React, { Suspense, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Spinner } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
 
 const AVAILABLE_PAGES = ["1", "2", "3", "final"] as const;
 export type PageId = (typeof AVAILABLE_PAGES)[number];
 
-// lazy importing for code splitting
-const FirstPage = React.lazy(
-  () => import("@/components/onboarding/pages/FirstPage")
+// Next.js dynamic imports with loading states
+const FirstPage = dynamic(
+  () => import("@/components/onboarding/pages/FirstPage"),
+  {
+    loading: () => <LoadingFallback />,
+  }
 );
-const SecondPage = React.lazy(
-  () => import("@/components/onboarding/pages/SecondPage")
+const SecondPage = dynamic(
+  () => import("@/components/onboarding/pages/SecondPage"),
+  {
+    loading: () => <LoadingFallback />,
+  }
 );
-const ThirdPage = React.lazy(
-  () => import("@/components/onboarding/pages/ThirdPage")
+const ThirdPage = dynamic(
+  () => import("@/components/onboarding/pages/ThirdPage"),
+  {
+    loading: () => <LoadingFallback />,
+  }
 );
-const FinalPage = React.lazy(
-  () => import("@/components/onboarding/pages/FinalPage")
+const FinalPage = dynamic(
+  () => import("@/components/onboarding/pages/FinalPage"),
+  {
+    loading: () => <LoadingFallback />,
+  }
 );
 
 const LoadingFallback = () => (
@@ -28,7 +41,7 @@ const LoadingFallback = () => (
     size="xl"
     thickness="5px"
   />
-); //TODO
+);
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -65,7 +78,5 @@ export default function OnboardingPage() {
     }
   };
 
-  return (
-    <Suspense fallback={<LoadingFallback />}>{renderPageContent()}</Suspense>
-  );
+  return renderPageContent();
 }

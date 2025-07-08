@@ -1,5 +1,4 @@
 import { Button, ButtonProps } from "@chakra-ui/react";
-import * as React from "react";
 
 export interface IFormMainButtonProps {
   text: string;

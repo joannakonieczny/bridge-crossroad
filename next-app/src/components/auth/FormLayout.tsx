@@ -1,11 +1,8 @@
 import { Box, HStack, Stack, Text, Image } from "@chakra-ui/react";
+import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
-export default function FormLayout({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
+export default function FormLayout({ children }: { children?: ReactNode }) {
   const t = useTranslations("common");
   return (
     <Stack mb={8}>
