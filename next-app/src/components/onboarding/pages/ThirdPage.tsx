@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
 import DefaultInput from "../inputs/DefaultInput";
@@ -27,7 +27,7 @@ export default function ThirdPage() {
 
   const { formSchema } = OnboardingThirdPageSchemaProvider();
 
-  const defaultValues = React.useMemo(
+  const defaultValues = useMemo(
     () => ({
       cezarId: thirdPageData?.cezarId || "",
       bboId: thirdPageData?.bboId || "",

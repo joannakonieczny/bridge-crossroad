@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "echo 'Custom rules activated!' && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "echo 'Custom rules activated!' && next lint",
-    "get_llm_context": "curl -o ./contexts/llm-full.txt https://chakra-ui.com/llms-full.txt && curl -o ./contexts/llms-components.txt.txt https://chakra-ui.com/llms-components.txt ",
+    "lint": "next lint",
     "test": "echo 'No tests specified' && exit 0"
   },
   "dependencies": {

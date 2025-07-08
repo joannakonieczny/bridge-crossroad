@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useCallback, useEffect } from "react";
+import { Suspense, useCallback, useEffect, lazy } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Spinner } from "@chakra-ui/react";
 
@@ -8,18 +8,12 @@ const AVAILABLE_PAGES = ["1", "2", "3", "final"] as const;
 export type PageId = (typeof AVAILABLE_PAGES)[number];
 
 // lazy importing for code splitting
-const FirstPage = React.lazy(
-  () => import("@/components/onboarding/pages/FirstPage")
-);
-const SecondPage = React.lazy(
+const FirstPage = lazy(() => import("@/components/onboarding/pages/FirstPage"));
+const SecondPage = lazy(
   () => import("@/components/onboarding/pages/SecondPage")
 );
-const ThirdPage = React.lazy(
-  () => import("@/components/onboarding/pages/ThirdPage")
-);
-const FinalPage = React.lazy(
-  () => import("@/components/onboarding/pages/FinalPage")
-);
+const ThirdPage = lazy(() => import("@/components/onboarding/pages/ThirdPage"));
+const FinalPage = lazy(() => import("@/components/onboarding/pages/FinalPage"));
 
 const LoadingFallback = () => (
   <Spinner
