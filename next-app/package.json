@@ -4,14 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "echo 'Custom rules activated!' && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "echo 'Custom rules activated!' && next lint",
-    "get_llm_context": "curl -o ./contexts/llm-full.txt https://chakra-ui.com/llms-full.txt && curl -o ./contexts/llms-components.txt.txt https://chakra-ui.com/llms-components.txt ",
-    "test": "echo 'No tests specified' && exit 0"
+    "lint": "next lint",
+    "test": "echo 'No tests specified' && exit 0",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
-    "@chakra-ui/next-js": "^2.4.2",
     "@chakra-ui/react": "^2.10.9",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -36,6 +35,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@next/bundle-analyzer": "^15.3.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "typescript": "^5"

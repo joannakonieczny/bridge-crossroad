@@ -7,12 +7,13 @@ import {
   Icon,
   useBoolean,
 } from "@chakra-ui/react";
+import { ChangeEventHandler } from "react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 export interface IPasswordInputProps {
   placeholder?: string;
   value?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
 }
 
 export default function PasswordInput(props: IPasswordInputProps) {

@@ -4,6 +4,7 @@ import {
   FormErrorMessage,
   Input,
 } from "@chakra-ui/react";
+import { ChangeEventHandler } from "react";
 import PasswordInput from "./PasswordInput";
 
 export interface IFormInputProps {
@@ -15,7 +16,7 @@ export interface IFormInputProps {
   type?: "password" | "text" | "email" | "number";
   onElementProps?: FormControlProps;
   value?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
 }
 
 export default function FormInput(props: IFormInputProps) {

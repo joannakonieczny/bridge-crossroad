@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
 import SelectInput from "../inputs/SelectInput";
@@ -30,7 +30,7 @@ export default function SecondPage() {
 
   const { formSchema } = OnboardingSecondPageSchemaProvider();
 
-  const defaultValues = React.useMemo(
+  const defaultValues = useMemo(
     () => ({
       startPlayingDate: secondPageData?.startPlayingDate || "",
       trainingGroup: secondPageData?.trainingGroup || "",
@@ -48,7 +48,7 @@ export default function SecondPage() {
     defaultValues: defaultValues,
   });
 
-  const trainingGroupOptions = React.useMemo(
+  const trainingGroupOptions = useMemo(
     () =>
       Object.values(TrainingGroup).map((value) => ({
         value,

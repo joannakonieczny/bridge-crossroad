@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
 import { useTranslations } from "next-intl";
 import { Stack } from "@chakra-ui/react";
@@ -33,7 +33,7 @@ export default function FinalPage() {
   // Pobieramy schemat formularza
   const { formSchema } = OnboardingFinalPageSchemaProvider();
 
-  const defaultValues = React.useMemo(
+  const defaultValues = useMemo(
     () => ({
       inviteCode: finalPageData?.inviteCode || "",
       termsAccepted: finalPageData?.termsAccepted || false,

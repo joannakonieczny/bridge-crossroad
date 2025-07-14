@@ -1,7 +1,7 @@
 "use client";
 
 import { PageId } from "@/app/(logged)/onboarding/[page]/page";
-import React, {
+import {
   createContext,
   useContext,
   useState,

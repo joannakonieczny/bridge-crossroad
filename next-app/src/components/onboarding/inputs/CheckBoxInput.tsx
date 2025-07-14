@@ -3,7 +3,7 @@ import {
   FormControlWrapperProps,
   WithFormControlWrapper,
 } from "./FormControlWrapper";
-import React from "react";
+import { ReactNode } from "react";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 
 interface LinkInfo {
@@ -12,7 +12,7 @@ interface LinkInfo {
 }
 
 interface ICheckBoxInputProps {
-  label?: string | React.ReactNode;
+  label?: string | ReactNode;
   isChecked?: boolean;
   onChange?: (checked: boolean) => void;
   linkInfo?: LinkInfo;

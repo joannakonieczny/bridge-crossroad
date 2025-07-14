@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode, ComponentType } from "react";
 import {
   FormControl,
   FormControlProps,
@@ -15,7 +15,7 @@ export interface FormControlWrapperProps {
 }
 
 export interface IFormControlWrapperProps extends FormControlWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function FormControlWrapper(props: IFormControlWrapperProps) {
@@ -36,7 +36,7 @@ export default function FormControlWrapper(props: IFormControlWrapperProps) {
 }
 
 export function WithFormControlWrapper<T extends FormControlWrapperProps>(
-  WrappedComponent: React.ComponentType<T>
+  WrappedComponent: ComponentType<T>
 ) {
   return function WithFormControl(props: T) {
     const {
