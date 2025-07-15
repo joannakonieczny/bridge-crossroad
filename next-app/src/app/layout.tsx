@@ -8,7 +8,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
-  title: "Bridge CrossRoad",
+  title: "Bridge Crossroad",
   description: "Authors: Szymon Kubiczek, Bartłomiej Szubiak, Joanna Konieczny",
 };
 
