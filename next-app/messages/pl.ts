@@ -282,11 +282,6 @@ const messages = {
   OnboardingPage: onboardingPage,
 };
 
-const searchInput = {
-  placeholder: "{placeholder}",
-  default: "Szukaj..."
-};
-
 export default messages;
 
 // This type is used to ensure that the messages object matches the expected structure

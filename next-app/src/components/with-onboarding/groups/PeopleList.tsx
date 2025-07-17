@@ -1,7 +1,7 @@
 'use client';
 
 import { Flex, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import MainHeading from '@/components/util/texts/MainHeading';
 import SearchInput from '@/components/util/SearchInput';
 import UserTableRow from './UserTableRow';

@@ -23,9 +23,7 @@ import { usePathname } from 'next/navigation';
 import { navbarTabs } from '../../../routes';
 import logo from '@/assets/common/logo-lightmode.svg';
 
-export interface IAppProps {}
-
-export default function App(props: IAppProps) {
+export default function App() {
   const pathname = usePathname();
   
   const defaultIndex = useMemo(() => {

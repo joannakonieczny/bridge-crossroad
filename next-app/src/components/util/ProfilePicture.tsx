@@ -1,6 +1,6 @@
 'use client';
 
-import { border, Flex, Icon } from '@chakra-ui/react';
+import { Flex, Icon } from '@chakra-ui/react';
 import Image from 'next/image';
 import { FaUserCircle } from "react-icons/fa";
 
