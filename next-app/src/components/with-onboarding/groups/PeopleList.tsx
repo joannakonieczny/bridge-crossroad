@@ -1,16 +1,15 @@
 'use client';
 
 import { Flex, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react';
-import * as React from 'react';
+import { useRef, useState } from 'react';
 import MainHeading from '@/components/util/texts/MainHeading';
 import SearchInput from '@/components/util/SearchInput';
 import UserTableRow from './UserTableRow';
 
-export interface IAppProps {}
+export default function PeopleList() {
+  const [search, setSearch] = useState('');
 
-export default function PeopleList(props: IAppProps) {
-  const [search, setSearch] = React.useState('');
-
+  // mock
   const sampleData = [
     {
       fullName: 'Jan Kowalski',
@@ -47,35 +46,41 @@ export default function PeopleList(props: IAppProps) {
   });
 
   return (
-    <Flex flex={1} backgroundColor="white" padding="2rem" direction="column" gap={6}>
-      <MainHeading text="Członkowie Klubu" />
-      <SearchInput
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Szukaj po imieniu, nazwisku, nicku..."
-      />
-      <Table variant="simple" width="100%">
-        <Thead>
-          <Tr>
-            <Th>Imię i nazwisko</Th>
-            <Th>Numer PZBS</Th>
-            <Th>Nickname na BBO</Th>
-            <Th>Kod zaproszenia na Cuebids</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {filteredData.map((user, index) => (
-            <UserTableRow
-              key={index}
-              fullName={user.fullName}
-              nickname={user.nickname}
-              pzbsId={user.pzbsId}
-              bboId={user.bboId}
-              cuebidsId={user.cuebidsId}
-            />
-          ))}
-        </Tbody>
-      </Table>
+    <Flex
+     flex={1}
+     direction={"column"}
+     backgroundColor={"gray.50"}
+     padding={"2rem"}>
+      <Flex flex={1} backgroundColor="white" padding="2rem" direction="column" gap={6}>
+        <MainHeading text="Członkowie Klubu" />
+        <SearchInput
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Szukaj po imieniu, nazwisku, nicku..."
+        />
+        <Table variant="simple" width="100%">
+          <Thead>
+            <Tr>
+              <Th>Imię i nazwisko</Th>
+              <Th>Numer PZBS</Th>
+              <Th>Nickname na BBO</Th>
+              <Th>Kod zaproszenia na Cuebids</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {filteredData.map((user, index) => (
+              <UserTableRow
+                key={index}
+                fullName={user.fullName}
+                nickname={user.nickname}
+                pzbsId={user.pzbsId}
+                bboId={user.bboId}
+                cuebidsId={user.cuebidsId}
+              />
+            ))}
+          </Tbody>
+        </Table>
+      </Flex>
     </Flex>
   );
 }

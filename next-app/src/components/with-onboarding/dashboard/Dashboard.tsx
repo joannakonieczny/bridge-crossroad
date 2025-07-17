@@ -1,11 +1,11 @@
 import { Box, Flex, VStack, Image } from "@chakra-ui/react";
-import * as React from "react";
 import InfoTable from "./InfoTable";
 import ProfileBanner from "./ProfileBanner";
 import PastContests from "./PastContests";
 import UpcomingEvents from "./UpcomingEvents";
+import dashboardSplashArt from "@/assets/dashboard/splash-art.svg";
 
-export default function App() {
+export default function Dashboard() {
   return (
     <Flex
       minHeight="100vh"
@@ -29,13 +29,11 @@ export default function App() {
 
           <VStack align="end" width="100%" spacing="2rem">
             <Image
-              src="/dashboard/splash-art.svg"
+              src={ dashboardSplashArt }
               alt="Splash Art Left"
-              //objectFit="contain"
               objectPosition="end"
               width="100%"
               height="auto"
-              //maxH="28rem"
             />
             <UpcomingEvents />
           </VStack>

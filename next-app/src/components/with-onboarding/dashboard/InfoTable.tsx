@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 export default function InfoTable() {
+  // mock
   const rows = [
     { label: "Imię i Nazwisko", value: "Jan Nowak" },
     { label: "PID Cezar", value: "23178" },
@@ -24,7 +25,7 @@ export default function InfoTable() {
       borderRadius="md"
       overflow="hidden"
       border="1px solid"
-      borderColor="gray.200"
+      borderColor="border.200"
       width="800px"
       height="284px"
       mx="auto"
@@ -34,7 +35,7 @@ export default function InfoTable() {
         borderRadius="md"
         overflow="hidden"
         border="1px solid"
-        borderColor="gray.200"
+        borderColor="border.200"
         width="780px"
         height="260px"
         mx="auto"
@@ -45,12 +46,11 @@ export default function InfoTable() {
             {rows.map((row, index) => (
               <Tr
                 key={row.label}
-                bg={index % 2 === 0 ? "gray.100" : "white"}
+                bg={index % 2 === 0 ? "border.100" : "white"}
               >
                 <Td 
                   fontWeight="semibold" 
                   fontSize="sm" 
-                  //width="390px"
                   width="50%"
                   height="52px">
 

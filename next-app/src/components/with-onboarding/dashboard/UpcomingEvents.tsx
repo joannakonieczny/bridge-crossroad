@@ -3,8 +3,8 @@
 import { Box, HStack, IconButton, Text, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-// import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
+// mock
 const contests = [
   { name: "Turniej 1", date: "1 stycznia" },
   { name: "Turniej 2", date: "2 lutego" },
@@ -37,7 +37,7 @@ export default function CarouselList() {
 
         <IconButton
           icon={<FaChevronLeft />}
-          aria-label="Poprzednie"
+          aria-label="Previous"
           onClick={showPrev}
           isDisabled={startIndex === 0}
         />
@@ -47,21 +47,20 @@ export default function CarouselList() {
           <Box
             key={i}
             border="1px solid"
-            borderColor="gray.300"
+            borderColor="border.300"
             borderRadius="md"
             p={4}
-            //width="300px"
             width="100%"
           >
             <Text fontWeight="bold">{contest.name}</Text>
-            <Text color="gray.500">{contest.date}</Text>
+            <Text color="border.500">{contest.date}</Text>
           </Box>
         ))}
       </HStack>
 
       <IconButton
           icon={<FaChevronRight />}
-          aria-label="Następne"
+          aria-label="Next"
           onClick={showNext}
           isDisabled={startIndex + ITEMS_PER_PAGE >= contests.length}
         />

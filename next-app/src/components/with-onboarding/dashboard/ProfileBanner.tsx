@@ -1,16 +1,14 @@
-"use client";
-
-import * as React from "react";
 import { HStack, VStack, Text } from "@chakra-ui/react";
 import ProfilePicture from "@/components/util/ProfilePicture";
 
 export default function ProfileBanner() {
+  //mock
   const name = "jasiu";
   const description = "Zawodnik Just Bridge AGH";
 
   return (
     <HStack width="100%">
-      <ProfilePicture size={7.25} />
+      <ProfilePicture size="7.25rem" />
       <VStack align="start">
         <Text
           fontSize={{ base: "2xl", md: "3xl" }}

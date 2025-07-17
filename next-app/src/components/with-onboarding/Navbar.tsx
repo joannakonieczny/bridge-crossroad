@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useMemo,  } from 'react';
 import {
   Flex,
   Tabs,
@@ -20,22 +20,16 @@ import Link from 'next/link';
 import ProfilePicture from '@/components/util/ProfilePicture';
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
+import { navbarTabs } from '../../../routes';
+import logo from '@/assets/common/logo-lightmode.svg';
 
 export interface IAppProps {}
 
 export default function App(props: IAppProps) {
   const pathname = usePathname();
-
-  const tabs = [
-    '/dashboard',
-    '/calendar',
-    '/groups',
-    '/find-partner',
-    '/tools',
-  ];
-
-  const defaultIndex = React.useMemo(() => {
-    const match = tabs.findIndex((path) =>
+  
+  const defaultIndex = useMemo(() => {
+    const match = navbarTabs.findIndex((path) =>
       pathname.startsWith(path)
     );
     return match === -1 ? 0 : match;
@@ -66,7 +60,7 @@ export default function App(props: IAppProps) {
           }}
         >
           <Image
-            src="/common/logo-lightmode.svg"
+            src={ logo }
             alt="Logo"
             priority
             fill
@@ -82,19 +76,19 @@ export default function App(props: IAppProps) {
         defaultIndex={defaultIndex}
       >
         <TabList gap={8} color="accent.500">
-          <Tab as={Link} href="/dashboard" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab as={Link} href={ navbarTabs[0] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
             Strona główna
           </Tab>
-          <Tab as={Link} href="/calendar" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab as={Link} href={ navbarTabs[1] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
             Kalendarz
           </Tab>
-          <Tab as={Link} href="/groups" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab as={Link} href={ navbarTabs[2] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
             Grupy
           </Tab>
-          <Tab as={Link} href="/find-partner" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab as={Link} href={ navbarTabs[3] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
             Szukaj Partnera
           </Tab>
-          <Tab as={Link} href="/tools" _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
+          <Tab as={Link} href={ navbarTabs[4] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
             Przydatne narzędzia
           </Tab>
         </TabList>
@@ -102,7 +96,7 @@ export default function App(props: IAppProps) {
       </Tabs>
 
       <Flex flex={1} justifyContent="flex-end" alignItems="center" gap={4}>
-        <ProfilePicture size={3.75} />
+        <ProfilePicture size="3.75rem" />
         <Menu>
            {({ isOpen }) => (
             <>
@@ -118,7 +112,7 @@ export default function App(props: IAppProps) {
               <MenuList
                 minWidth="240px"
                 bg="white"
-                borderColor="gray.200"
+                borderColor="border.200"
                 boxShadow="md"
                 borderRadius="md"
                 mt={4}

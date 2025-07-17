@@ -22,6 +22,18 @@ export const theme = extendTheme({
         800: { default: "purple.800", _dark: "blue.800" },
         900: { default: "purple.900", _dark: "blue.900" },
       },
+      border: {
+        50: { default: "gray.50" },
+        100: { default: "gray.100" },
+        200: { default: "gray.200" },
+        300: { default: "gray.300" },
+        400: { default: "gray.400" },
+        500: { default: "gray.500" },
+        600: { default: "gray.600" },
+        700: { default: "gray.700" },
+        800: { default: "gray.800" },
+        900: { default: "gray.900" },
+      }
     },
   },
   components: {},

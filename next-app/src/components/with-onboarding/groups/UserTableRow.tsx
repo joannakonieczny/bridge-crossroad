@@ -23,7 +23,7 @@ export default function UserTableRow({
             {fullName}
           </Text>
           {nickname && (
-            <Text fontSize="sm" color="gray.500" mt={2} fontStyle={'italic'}>
+            <Text fontSize="sm" color="border.500" mt={2} fontStyle={'italic'}>
               {nickname}
             </Text>
           )}
@@ -36,22 +36,23 @@ export default function UserTableRow({
             href={`https://msc.com.pl/cezar/?p=21&pid_search=${pzbsId}`}
             isExternal
             fontWeight="semibold"
-            color="blue.600"
+            //color="blue.600"
+            color="accent.600"
             fontSize="sm"
           >
             {pzbsId}
           </Link>
         ) : (
-          <Text color="gray.400">-</Text>
+          <Text color="border.400">-</Text>
         )}
       </Td>
 
       <Td>
-        <Text fontSize="sm">{bboId || <Text as="span" color="gray.400">-</Text>}</Text>
+        <Text fontSize="sm">{bboId || <Text as="span" color="border.400">-</Text>}</Text>
       </Td>
 
       <Td>
-        <Text fontSize="sm">{cuebidsId || <Text as="span" color="gray.400">-</Text>}</Text>
+        <Text fontSize="sm">{cuebidsId || <Text as="span" color="border.400">-</Text>}</Text>
       </Td>
     </Tr>
   );

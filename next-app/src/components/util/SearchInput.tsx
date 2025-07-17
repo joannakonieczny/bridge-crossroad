@@ -19,7 +19,7 @@ export default function SearchInput({ value, onChange, placeholder }: SearchInpu
         fontSize="md"
       />
       <InputRightElement pointerEvents="none">
-        <FaSearch color="gray" />
+        <FaSearch color="border.500" />
       </InputRightElement>
     </InputGroup>
   );
