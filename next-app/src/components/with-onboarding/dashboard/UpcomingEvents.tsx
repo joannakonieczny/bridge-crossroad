@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, HStack, IconButton, Text, Flex } from "@chakra-ui/react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -17,6 +18,7 @@ const ITEMS_PER_PAGE = 2;
 
 export default function CarouselList() {
   const [startIndex, setStartIndex] = useState(0);
+  const t = useTranslations("DashboardPage.headings");
 
   const showPrev = () => {
     setStartIndex((prev) => Math.max(prev - ITEMS_PER_PAGE, 0));
@@ -32,7 +34,7 @@ export default function CarouselList() {
 
   return (
     <Flex direction="column" width="100%">
-    <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>Nadchodzące wydarzenia</Text>
+    <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>{t("upcomingEvents")}</Text>
     <HStack align="center" spacing={4} width="100%">
 
         <IconButton

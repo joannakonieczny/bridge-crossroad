@@ -192,6 +192,22 @@ const onboardingPage = {
   },
 };
 
+const dashboardPage = {
+  headings: {
+    lastTournaments: "Ostatnie turnieje",
+    upcomingEvents: "Nadchodzące wydarzenia",
+    partnersPlot: "Twoi partnerzy na przestrzeni czasu",
+  },
+  PZBSInfo: {
+    nameAndLastName: "Imię i nazwisko",
+    PIDCezar: "PID Cezar",
+    WK: "WK",
+    team: "Drużyna",
+    region: "Okręg"
+  }
+}
+  
+
 const messages = {
   DummyPage: {
     text: "Witaj świecie!",
@@ -280,6 +296,7 @@ const messages = {
     RegisterPage: registerPage,
   },
   OnboardingPage: onboardingPage,
+  DashboardPage: dashboardPage
 };
 
 export default messages;
