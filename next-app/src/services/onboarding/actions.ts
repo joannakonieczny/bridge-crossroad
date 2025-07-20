@@ -1,6 +1,6 @@
 "use server";
 
-import { addOnboardingData, getUserData } from "@/controller/onboarding";
+import { addOnboardingData, getUserData } from "@/repositories/onboarding";
 import { requireUserId } from "../auth/actions";
 import { redirect } from "next/navigation";
 import {
