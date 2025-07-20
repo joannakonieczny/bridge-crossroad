@@ -1,9 +1,13 @@
 "use client";
 
 import { Box, Text, List, ListItem, ListIcon, VStack } from "@chakra-ui/react";
+import { useTranslations } from "next-intl";
 import { PiClubBold, PiHeartBold, PiSpadeBold, PiDiamondBold } from "react-icons/pi";
 
 export default function PastContests() {
+  
+  const t = useTranslations("DashboardPage");
+
   const contests = [
     {name: "III Turnej Czwartkowy - semestr letni", date: "13 Maja 2021"},
     {name: "Akademickie Mistrzostwa Małopolski - turniej drużynowy", date: "10 Kwietnia 2021"},
@@ -12,7 +16,7 @@ export default function PastContests() {
   ]
   return (
     <VStack mt="5" width="100%" align="start">
-      <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>Ostatnie Turnieje</Text>
+      <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>{t("headings.lastTournaments")}</Text>
       <Box ms="5">
       <List spacing={3}>
         <ListItem fontSize="lg">

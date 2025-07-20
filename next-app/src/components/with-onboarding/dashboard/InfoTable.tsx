@@ -8,15 +8,17 @@ import {
   Td,
   Flex,
 } from "@chakra-ui/react";
+import { useTranslations } from "next-intl";
 
 export default function InfoTable() {
   // mock
+  const t = useTranslations("DashboardPage.PZBSInfo");
   const rows = [
-    { label: "Imię i Nazwisko", value: "Jan Nowak" },
-    { label: "PID Cezar", value: "23178" },
-    { label: "WK", value: "1.0" },
-    { label: "Drużyna", value: "KS AGH I Kraków" },
-    { label: "Okrąg", value: "MP" },
+    { label: t("nameAndLastName"), value: "Jan Nowak" },
+    { label: t("PIDCezar"), value: "23178" },
+    { label: t("WK"), value: "1.0" },
+    { label: t("team"), value: "KS AGH I Kraków" },
+    { label: t("region"), value: "MP" },
   ];
 
   return (
