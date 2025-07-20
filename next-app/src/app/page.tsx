@@ -1,12 +1,19 @@
 // import Image from "next/image";
 // import styles from "./page.module.css";
 
-import DummyPageComponent from "@/components/dummy/dummy-page";
+import LandingPage1 from "@/components/landing-page/LandingPage1";
+import LandingPage2 from "@/components/landing-page/LandingPage2";
+import LandingPage3 from "@/components/landing-page/LandingPage3";
+import MinimalisticNavbar from "@/components/landing-page/MinimalisticNavbar";
+import { Flex } from "@chakra-ui/react";
 
 export default function Home() {
   return (
-    <>
-      <DummyPageComponent />
-    </>
+    <Flex direction="column" minHeight="100vh">
+      <MinimalisticNavbar />
+      <LandingPage1 />
+      <LandingPage2 />
+      <LandingPage3 />
+    </Flex>
   );
 }

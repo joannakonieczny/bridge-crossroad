@@ -7,20 +7,18 @@ import {
   TabList,
   Tab,
   TabIndicator,
-  Heading,
-  Box,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   IconButton,
 } from '@chakra-ui/react';
-import Image from 'next/image';
 import Link from 'next/link';
-import ProfilePicture from '@/components/util/ProfilePicture';
+import ProfilePicture from '@/components/common/ProfilePicture';
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import { navbarTabs } from '../../../routes';
+import Logo from '../common/Logo';
 
 export default function App() {
   const pathname = usePathname();
@@ -44,28 +42,7 @@ export default function App() {
       zIndex={1000}
       pl={8}
     >
-      <Flex gap={2} mr={100}>
-        <Heading as="h1" size="md">
-          Bridge Crossroad
-        </Heading>
-        <Box
-          style={{
-            width: '1.875rem',
-            height: '1.75rem',
-            position: 'relative',
-            marginRight: '1rem',
-          }}
-        >
-          <Image
-            src='/assets/common/logo-lightmode.svg'
-            alt="Logo"
-            priority
-            fill
-            style={{ objectFit: 'contain', objectPosition: 'left top' }}
-          />
-        </Box>
-      </Flex>
-
+      <Logo />
       <Tabs
         position="relative"
         variant="unstyled"

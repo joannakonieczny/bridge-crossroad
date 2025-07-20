@@ -1,5 +1,5 @@
 import { HStack, VStack, Text } from "@chakra-ui/react";
-import ProfilePicture from "@/components/util/ProfilePicture";
+import ProfilePicture from "@/components/common/ProfilePicture";
 
 export default function ProfileBanner() {
   //mock

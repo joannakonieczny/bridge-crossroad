@@ -2,8 +2,8 @@
 
 import { Flex, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react';
 import { useState } from 'react';
-import MainHeading from '@/components/util/texts/MainHeading';
-import SearchInput from '@/components/util/SearchInput';
+import MainHeading from '@/components/common/texts/MainHeading';
+import SearchInput from '@/components/common/SearchInput';
 import UserTableRow from './UserTableRow';
 
 export default function PeopleList() {
