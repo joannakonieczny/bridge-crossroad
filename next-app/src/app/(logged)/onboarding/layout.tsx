@@ -22,7 +22,7 @@ export default function OnboardingLayout({ children }: IOnboardingLayoutProps) {
       >
         <Box w="50%" h="100%">
           <Image
-            src="/onboarding/splash-art-lightmode-left.svg"
+            src="/assets/onboarding/splash-art-lightmode-left.svg"
             alt="Splash Art Left"
             fill
             style={{ objectFit: "contain", objectPosition: "left top" }}
@@ -32,7 +32,7 @@ export default function OnboardingLayout({ children }: IOnboardingLayoutProps) {
         </Box>
         <Box w="50%" h="100%">
           <Image
-            src="/onboarding/splash-art-lightmode-right.svg"
+            src="/assets/onboarding/splash-art-lightmode-right.svg"
             alt="Splash Art Right"
             fill
             style={{ objectFit: "contain", objectPosition: "right top" }}

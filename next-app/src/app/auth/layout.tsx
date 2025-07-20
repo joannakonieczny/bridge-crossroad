@@ -27,7 +27,7 @@ export default function AuthLayout({ children }: IAuthLayoutProps) {
         >
           <Box position="absolute" right={0} bottom={-1} zIndex={0} h="100%">
             <Image
-              src="/auth/splash-art-lightmode.svg"
+              src="/assets/auth/splash-art-lightmode.svg"
               alt="Background with a trophy"
               h="100%"
               objectFit="cover"

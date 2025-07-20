@@ -21,7 +21,6 @@ import ProfilePicture from '@/components/util/ProfilePicture';
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import { navbarTabs } from '../../../routes';
-import logo from '@/assets/common/logo-lightmode.svg';
 
 export default function App() {
   const pathname = usePathname();
@@ -58,7 +57,7 @@ export default function App() {
           }}
         >
           <Image
-            src={ logo }
+            src='/assets/common/logo-lightmode.svg'
             alt="Logo"
             priority
             fill
