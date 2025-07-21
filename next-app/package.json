@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "echo 'No tests specified' && exit 0",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "i18n:extract": "i18next",
+    "i18n:compare": "node scripts/sync-translation-keys.js",
+    "i18n:compare:full": "node scripts/sync-translation-keys.js -- --full",
+    "i18n:compare:save": "node scripts/sync-translation-keys.js -- --save"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.9",
@@ -32,12 +36,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.3.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@next/bundle-analyzer": "^15.3.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "i18next-parser": "^9.3.0",
     "typescript": "^5"
   }
 }
