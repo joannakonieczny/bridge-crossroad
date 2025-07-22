@@ -1,4 +1,5 @@
-import { Box, Container, Flex, Image } from "@chakra-ui/react";
+import { Box, Container, Flex } from "@chakra-ui/react";
+import Image from "next/image";
 import { ReactNode } from "react";
 
 export interface IAuthLayoutProps {
@@ -25,11 +26,11 @@ export default function AuthLayout({ children }: IAuthLayoutProps) {
           display={{ base: "none", md: "block" }}
           position="relative"
         >
-          <Box position="absolute" right={0} bottom={-1} zIndex={0} h="100%">
+          <Box position="absolute" right={0} bottom={-1} zIndex={0} h="110vh" width={"100%"}>
             <Image
               src="/assets/auth/splash-art-lightmode.svg"
               alt="Background with a trophy"
-              h="100%"
+              fill 
               objectFit="cover"
               objectPosition="right"
             />

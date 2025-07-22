@@ -16,7 +16,7 @@ export default function MinimalisticNavbar() {
           pl={8}
           justify="space-between"
         >
-          <Flex height={"3.75rem"} alignItems={"center"}>
+          <Flex height={"3rem"} alignItems={"center"}>
             <Logo />
           </Flex>
 
