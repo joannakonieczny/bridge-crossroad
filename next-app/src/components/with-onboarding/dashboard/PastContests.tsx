@@ -22,22 +22,22 @@ export default function PastContests() {
         <ListItem fontSize="lg">
           <ListIcon as={PiSpadeBold} color="accent.500" />
           {contests[0].name}
-          <Text ms="10" mt="1" color="gray.500"> {contests[0].date} </Text>
+          <Text ms="10" mt="1" color="border.500"> {contests[0].date} </Text>
         </ListItem>
         <ListItem fontSize="lg">
           <ListIcon as={PiHeartBold} color="accent.500" />
           {contests[1].name}
-          <Text ms="10" mt="1" color="gray.500"> {contests[1].date} </Text>
+          <Text ms="10" mt="1" color="border.500"> {contests[1].date} </Text>
         </ListItem>
         <ListItem fontSize="lg">
           <ListIcon as={PiDiamondBold} color="accent.500" />
           {contests[2].name}
-          <Text ms="10" mt="1" color="gray.500"> {contests[2].date} </Text>
+          <Text ms="10" mt="1" color="border.500"> {contests[2].date} </Text>
         </ListItem>
         <ListItem fontSize="lg">
           <ListIcon as={PiClubBold} color="accent.500" />
           {contests[3].name}
-          <Text ms="10" mt="1" color="gray.500"> {contests[3].date} </Text>
+          <Text ms="10" mt="1" color="border.500"> {contests[3].date} </Text>
         </ListItem>
       </List>
       </Box>

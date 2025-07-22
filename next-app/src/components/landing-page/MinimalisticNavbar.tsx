@@ -20,7 +20,7 @@ export default function MinimalisticNavbar() {
             <Logo />
           </Flex>
 
-          <Button colorScheme="accent" size="md">
+          <Button colorScheme="accent" size="md" marginRight={4}>
             <Link href="/auth/login" style={{ textDecoration: 'none' }}>
               Zaloguj się
             </Link>

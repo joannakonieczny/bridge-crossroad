@@ -1,3 +1,3 @@
-export default async function UsefulToolsPage() {
+export default function UsefulToolsPage() {
   return <>useful-tools</>;
 }

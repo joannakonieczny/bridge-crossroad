@@ -206,6 +206,16 @@ const dashboardPage = {
     region: "Okręg"
   }
 }
+
+const navbar = {
+  Tabs: {
+    dashboard: "Strona główna",
+    calendar: "Kalendarz",
+    groups: "Grupy",
+    findPartner: "Szukaj partnera",
+    tools: "Przydatne narzędzia",
+  },
+}
   
 
 const messages = {
@@ -295,6 +305,7 @@ const messages = {
     LoginPage: loginPage,
     RegisterPage: registerPage,
   },
+  Navbar: navbar,
   OnboardingPage: onboardingPage,
   DashboardPage: dashboardPage
 };

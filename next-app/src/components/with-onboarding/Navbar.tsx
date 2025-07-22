@@ -19,6 +19,7 @@ import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import { navbarTabs } from '../../../routes';
 import Logo from '../common/Logo';
+import { useTranslations } from 'next-intl';
 
 export default function App() {
   const pathname = usePathname();
@@ -29,6 +30,8 @@ export default function App() {
     );
     return match === -1 ? 0 : match;
   }, [pathname]);
+
+  const t = useTranslations("Navbar.Tabs");
 
   return (
     <Flex
@@ -51,26 +54,26 @@ export default function App() {
       >
         <TabList gap={8} color="accent.500">
           <Tab as={Link} href={ navbarTabs[0] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Strona główna
+            {t('dashboard')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[1] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Kalendarz
+            {t('calendar')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[2] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Grupy
+            {t('groups')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[3] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Szukaj Partnera
+            {t('findPartner')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[4] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Przydatne narzędzia
+            {t('tools')}
           </Tab>
         </TabList>
         <TabIndicator mt="-1.5px" height="2px" bg="black" borderRadius="1px" />
       </Tabs>
 
       <Flex flex={1} justifyContent="flex-end" alignItems="center" gap={4}>
-        <ProfilePicture size="3.75rem" />
+        <ProfilePicture size="3rem" />
         <Menu>
            {({ isOpen }) => (
             <>
