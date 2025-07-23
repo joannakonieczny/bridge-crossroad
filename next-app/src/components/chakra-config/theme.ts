@@ -33,6 +33,9 @@ export const theme = extendTheme({
         700: { default: "gray.700" },
         800: { default: "gray.800" },
         900: { default: "gray.900" },
+      },
+      landingBg: {
+        default: "#D5D5FF"
       }
     },
   },

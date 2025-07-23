@@ -8,7 +8,7 @@ export default function LandingPage1() {
         src="/assets/landing-page/landing-page-1.svg"
         alt="Logo"
         fill
-        style={{ position: 'absolute', objectFit: 'none', objectPosition: 'left -10rem' }}
+        style={{ position: 'absolute', objectFit: 'none', objectPosition: 'left -9rem' }}
       />
     </Box>  
   );

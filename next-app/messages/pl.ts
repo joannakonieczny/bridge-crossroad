@@ -216,6 +216,10 @@ const navbar = {
     tools: "Przydatne narzędzia",
   },
 }
+
+const landingPage = {
+  logInButton: "Zaloguj się"
+}
   
 
 const messages = {
@@ -307,7 +311,8 @@ const messages = {
   },
   Navbar: navbar,
   OnboardingPage: onboardingPage,
-  DashboardPage: dashboardPage
+  DashboardPage: dashboardPage,
+  LandingPage: landingPage,
 };
 
 export default messages;
