@@ -1,5 +1,6 @@
 import { redirect, RedirectType } from "next/navigation";
+import { ROUTES } from "@/routes";
 
 export default function AuthPage() {
-  redirect("/auth/login", RedirectType.replace);
+  redirect(ROUTES.auth.login, RedirectType.replace);
 }

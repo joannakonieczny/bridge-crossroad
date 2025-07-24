@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./server-only/session";
 import { getUserId, UserId } from "./server-only/user-id";
 import { createNewUser, findExisting } from "@/repositories/user-auth";
+import { ROUTES } from "@/routes";
 import { action } from "@/services/action-lib";
 import { LoginFormSchemaProviderServer } from "@/schemas/pages/auth/login/login-schema";
 import { RegisterFormSchemaProviderServer } from "@/schemas/pages/auth/register/register-schema";
@@ -35,7 +36,7 @@ export const login = action
     }
 
     await createSession(user._id.toString());
-    redirect("/dashboard"); //auto redirect
+    redirect(ROUTES.dashboard); //auto redirect
   });
 
 export const register = action
@@ -44,7 +45,7 @@ export const register = action
     try {
       const user = await createNewUser(formData);
       await createSession(user._id.toString());
-      redirect("/dashboard"); //auto redirect
+      redirect(ROUTES.dashboard); //auto redirect
     } catch (error) {
       console.error("Registration error:", error);
       const t = await getTranslations("Auth.RegisterPage.errors");
@@ -78,7 +79,7 @@ export const logout = action.action(async () => {
 
 // TODO: change to safe server-action if needed
 export async function requireUserId(): Promise<UserId> {
-  const redirectPath = "/auth";
+  const redirectPath = ROUTES.auth.login;
   const userId = await getUserId({
     onUnauthenticated: () => {
       redirect(redirectPath);

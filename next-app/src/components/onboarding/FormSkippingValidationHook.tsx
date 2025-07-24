@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { useOnboardingFormData } from "./FormDataContext";
 import { PageId } from "@/app/(logged)/onboarding/[page]/page";
 import { FormData } from "./FormDataContext";
+import { ROUTES } from "@/routes";
 
 // route : "/onboarding/[page]"
 const pageRoutes: Record<PageId, string> = {
-  "1": "/onboarding/1",
-  "2": "/onboarding/2",
-  "3": "/onboarding/3",
-  final: "/onboarding/final",
+  "1": ROUTES.onboarding.step_1,
+  "2": ROUTES.onboarding.step_2,
+  "3": ROUTES.onboarding.step_3,
+  final: ROUTES.onboarding.final,
 };
 const pageOrder: PageId[] = ["1", "2", "3", "final"];
 

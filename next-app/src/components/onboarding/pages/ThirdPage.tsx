@@ -14,13 +14,14 @@ import {
   OnboardingThirdPageSchema,
   OnboardingThirdPageSchemaProvider,
 } from "@/schemas/pages/onboarding/third-page-schema";
+import { ROUTES } from "@/routes";
 
 export default function ThirdPage() {
   useFormSkippingValidation({ currentPage: "3" });
   const t = useTranslations("OnboardingPage.thirdPage");
   const formNavigation = useFormNavigation({
-    nextPage: "/onboarding/final",
-    prevPage: "/onboarding/2",
+    nextPage: ROUTES.onboarding.final,
+    prevPage: ROUTES.onboarding.step_2,
   });
   const onboardingContext = useOnboardingFormData();
   const thirdPageData = onboardingContext.formData.thirdPage;

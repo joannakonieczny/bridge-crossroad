@@ -16,6 +16,7 @@ import {
   OnboardingFirstPageSchemaProvider,
 } from "@/schemas/pages/onboarding/first-page-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
+import { ROUTES } from "@/routes";
 
 function generateYearOptions() {
   const years = [];
@@ -37,7 +38,9 @@ export default function FirstPage() {
   useFormSkippingValidation({ currentPage: "1" });
   const t = useTranslations("OnboardingPage.firstPage");
   const tAcademy = useTranslations("common.academy");
-  const formNavigation = useFormNavigation({ nextPage: "/onboarding/2" });
+  const formNavigation = useFormNavigation({
+    nextPage: ROUTES.onboarding.step_2,
+  });
   const onboardingContext = useOnboardingFormData();
   const firstPageData = onboardingContext.formData.firstPage;
 

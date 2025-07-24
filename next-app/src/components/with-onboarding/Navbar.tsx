@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useMemo,  } from 'react';
+import { useMemo } from "react";
 import {
   Flex,
   Tabs,
@@ -12,22 +12,28 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-} from '@chakra-ui/react';
-import Link from 'next/link';
-import ProfilePicture from '@/components/common/ProfilePicture';
-import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
-import { usePathname } from 'next/navigation';
-import { navbarTabs } from '../../../routes';
-import Logo from '../common/Logo';
-import { useTranslations } from 'next-intl';
+} from "@chakra-ui/react";
+import Link from "next/link";
+import ProfilePicture from "@/components/common/ProfilePicture";
+import { FaAngleDown, FaAngleRight } from "react-icons/fa";
+import { usePathname } from "next/navigation";
+import { ROUTES } from "@/routes";
+import Logo from "../common/Logo";
+import { useTranslations } from "next-intl";
 
-export default function App() {
+const navbarTabs = [
+  ROUTES.dashboard,
+  ROUTES.calendar,
+  ROUTES.groups,
+  ROUTES.find_partner,
+  ROUTES.tools,
+];
+
+export default function Navbar() {
   const pathname = usePathname();
-  
+
   const defaultIndex = useMemo(() => {
-    const match = navbarTabs.findIndex((path) =>
-      pathname.startsWith(path)
-    );
+    const match = navbarTabs.findIndex((path) => pathname.startsWith(path));
     return match === -1 ? 0 : match;
   }, [pathname]);
 
@@ -53,20 +59,45 @@ export default function App() {
         defaultIndex={defaultIndex}
       >
         <TabList gap={8} color="accent.500">
-          <Tab as={Link} href={ navbarTabs[0] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            {t('dashboard')}
+          <Tab
+            as={Link}
+            href={navbarTabs[0]}
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
+            {t("dashboard")}
           </Tab>
-          <Tab as={Link} href={ navbarTabs[1] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            {t('calendar')}
+          <Tab
+            as={Link}
+            href={navbarTabs[1]}
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
+            {t("calendar")}
           </Tab>
-          <Tab as={Link} href={ navbarTabs[2] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            {t('groups')}
+          <Tab
+            as={Link}
+            href={navbarTabs[2]}
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
+            {t("groups")}
           </Tab>
-          <Tab as={Link} href={ navbarTabs[3] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            {t('findPartner')}
+          <Tab
+            as={Link}
+            href={navbarTabs[3]}
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
+            {t("findPartner")}
           </Tab>
-          <Tab as={Link} href={ navbarTabs[4] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            {t('tools')}
+          <Tab
+            as={Link}
+            href={navbarTabs[4]}
+            _selected={{ color: "black" }}
+            _focus={{ boxShadow: "none" }}
+          >
+            {t("tools")}
           </Tab>
         </TabList>
         <TabIndicator mt="-1.5px" height="2px" bg="black" borderRadius="1px" />
@@ -75,16 +106,22 @@ export default function App() {
       <Flex flex={1} justifyContent="flex-end" alignItems="center" gap={4}>
         <ProfilePicture size="3rem" />
         <Menu>
-           {({ isOpen }) => (
+          {({ isOpen }) => (
             <>
               <MenuButton
                 as={IconButton}
                 aria-label="Options"
-                icon={isOpen ? <FaAngleDown size="1.5rem" /> : <FaAngleRight size="1.5rem" />}
+                icon={
+                  isOpen ? (
+                    <FaAngleDown size="1.5rem" />
+                  ) : (
+                    <FaAngleRight size="1.5rem" />
+                  )
+                }
                 variant="unstyled"
-                _hover={{ bg: 'transparent' }}
-                _active={{ bg: 'transparent' }}
-                _focus={{ boxShadow: 'none' }}
+                _hover={{ bg: "transparent" }}
+                _active={{ bg: "transparent" }}
+                _focus={{ boxShadow: "none" }}
               />
               <MenuList
                 minWidth="240px"

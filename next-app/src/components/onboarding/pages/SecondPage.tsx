@@ -16,14 +16,15 @@ import {
   OnboardingSecondPageSchema,
   OnboardingSecondPageSchemaProvider,
 } from "@/schemas/pages/onboarding/second-page-schema";
+import { ROUTES } from "@/routes";
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
   const t = useTranslations("OnboardingPage.secondPage");
   const tTrainingGroup = useTranslations("common.trainingGroup");
   const formNavigation = useFormNavigation({
-    nextPage: "/onboarding/3",
-    prevPage: "/onboarding/1",
+    nextPage: ROUTES.onboarding.step_3,
+    prevPage: ROUTES.onboarding.step_1,
   });
   const onboardingContext = useOnboardingFormData();
   const secondPageData = onboardingContext.formData.secondPage;
