@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./server-only/session";
 import { getUserId, UserId } from "./server-only/user-id";
-import { createNewUser, findExisting } from "@/controller/user-auth";
+import { createNewUser, findExisting } from "@/repositories/user-auth";
 import { action } from "@/services/action-lib";
 import { LoginFormSchemaProviderServer } from "@/schemas/pages/auth/login/login-schema";
 import { RegisterFormSchemaProviderServer } from "@/schemas/pages/auth/register/register-schema";
