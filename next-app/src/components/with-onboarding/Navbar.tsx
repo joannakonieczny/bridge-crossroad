@@ -7,21 +7,19 @@ import {
   TabList,
   Tab,
   TabIndicator,
-  Heading,
-  Box,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   IconButton,
 } from '@chakra-ui/react';
-import Image from 'next/image';
 import Link from 'next/link';
-import ProfilePicture from '@/components/util/ProfilePicture';
+import ProfilePicture from '@/components/common/ProfilePicture';
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import { navbarTabs } from '../../../routes';
-import logo from '@/assets/common/logo-lightmode.svg';
+import Logo from '../common/Logo';
+import { useTranslations } from 'next-intl';
 
 export default function App() {
   const pathname = usePathname();
@@ -32,6 +30,8 @@ export default function App() {
     );
     return match === -1 ? 0 : match;
   }, [pathname]);
+
+  const t = useTranslations("Navbar.Tabs");
 
   return (
     <Flex
@@ -45,28 +45,7 @@ export default function App() {
       zIndex={1000}
       pl={8}
     >
-      <Flex gap={2} mr={100}>
-        <Heading as="h1" size="md">
-          Bridge Crossroad
-        </Heading>
-        <Box
-          style={{
-            width: '1.875rem',
-            height: '1.75rem',
-            position: 'relative',
-            marginRight: '1rem',
-          }}
-        >
-          <Image
-            src={ logo }
-            alt="Logo"
-            priority
-            fill
-            style={{ objectFit: 'contain', objectPosition: 'left top' }}
-          />
-        </Box>
-      </Flex>
-
+      <Logo />
       <Tabs
         position="relative"
         variant="unstyled"
@@ -75,26 +54,26 @@ export default function App() {
       >
         <TabList gap={8} color="accent.500">
           <Tab as={Link} href={ navbarTabs[0] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Strona główna
+            {t('dashboard')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[1] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Kalendarz
+            {t('calendar')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[2] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Grupy
+            {t('groups')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[3] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Szukaj Partnera
+            {t('findPartner')}
           </Tab>
           <Tab as={Link} href={ navbarTabs[4] } _selected={{ color: 'black' }} _focus={{ boxShadow: 'none' }}>
-            Przydatne narzędzia
+            {t('tools')}
           </Tab>
         </TabList>
         <TabIndicator mt="-1.5px" height="2px" bg="black" borderRadius="1px" />
       </Tabs>
 
       <Flex flex={1} justifyContent="flex-end" alignItems="center" gap={4}>
-        <ProfilePicture size="3.75rem" />
+        <ProfilePicture size="3rem" />
         <Menu>
            {({ isOpen }) => (
             <>

@@ -4,12 +4,12 @@ import { Flex, Icon } from '@chakra-ui/react';
 import Image from 'next/image';
 import { FaUserCircle } from "react-icons/fa";
 
-export interface IAppProps {
+export interface IProfilePictureProps {
   size: string; // size of the icon
   imageUrl?: string; // URL of the image to display, if any
 }
 
-export default function ProfilePicture(props: IAppProps) {
+export default function ProfilePicture(props: IProfilePictureProps) {
   return (
     <Flex  
       alignItems="center" 

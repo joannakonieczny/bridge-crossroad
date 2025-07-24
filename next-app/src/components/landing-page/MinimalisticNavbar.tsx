@@ -1,0 +1,34 @@
+import { Button, Flex } from "@chakra-ui/react";
+import Logo from "../common/Logo";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+
+export default function MinimalisticNavbar() {
+
+  const t = useTranslations("LandingPage");
+
+  return (
+    <Flex
+          as="nav"
+          bg="white"
+          p={4}
+          boxShadow="sm"
+          alignItems="center"
+          position="sticky"
+          top={0}
+          zIndex={1000}
+          pl={8}
+          justify="space-between"
+        >
+          <Flex height={"3rem"} alignItems={"center"}>
+            <Logo />
+          </Flex>
+
+          <Button colorScheme="accent" size="md" marginRight={4}>
+            <Link href="/auth/login" style={{ textDecoration: 'none' }}>
+              {t("logInButton")}
+            </Link>
+          </Button>
+        </Flex>
+  );
+}

@@ -1,10 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
 
-export interface IAppProps {
+export interface IMainHeadingProps {
     text: string;
 }
 
-export default function MainHeading(props: IAppProps) {
+export default function MainHeading(props: IMainHeadingProps) {
   return (
     <Flex direction="column" align="flex-start" pb={5}>
       <Box fontSize="xl" fontWeight="bold" position="relative" display="inline-block">

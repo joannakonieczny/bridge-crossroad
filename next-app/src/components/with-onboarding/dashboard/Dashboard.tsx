@@ -1,9 +1,9 @@
-import { Box, Flex, VStack, Image } from "@chakra-ui/react";
+import { Box, Flex, VStack } from "@chakra-ui/react";
+import Image from "next/image";
 import InfoTable from "./InfoTable";
 import ProfileBanner from "./ProfileBanner";
 import PastContests from "./PastContests";
 import UpcomingEvents from "./UpcomingEvents";
-import dashboardSplashArt from "@/assets/dashboard/splash-art.svg";
 
 export default function Dashboard() {
   return (
@@ -21,20 +21,21 @@ export default function Dashboard() {
           align="start"
           width="100%"
         >
-          <VStack align="start" width="100%" spacing="2rem">
+          <VStack align="start" width="50rem" spacing="2rem">
             <ProfileBanner />
             <InfoTable />
             <PastContests />
           </VStack>
 
           <VStack align="end" width="100%" spacing="2rem">
-            <Image
-              src={ dashboardSplashArt }
-              alt="Splash Art Left"
-              objectPosition="end"
-              width="100%"
-              height="auto"
-            />
+            <Box width={"100%"} position="relative" height={"36.62rem"}>
+              <Image
+                src="/assets/dashboard/splash-art.svg"
+                alt="Splash Art Left"
+                objectPosition="end"
+                fill
+              />
+            </Box>
             <UpcomingEvents />
           </VStack>
         </Flex>

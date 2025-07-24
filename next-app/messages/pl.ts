@@ -206,6 +206,20 @@ const dashboardPage = {
     region: "Okręg"
   }
 }
+
+const navbar = {
+  Tabs: {
+    dashboard: "Strona główna",
+    calendar: "Kalendarz",
+    groups: "Grupy",
+    findPartner: "Szukaj partnera",
+    tools: "Przydatne narzędzia",
+  },
+}
+
+const landingPage = {
+  logInButton: "Zaloguj się"
+}
   
 
 const messages = {
@@ -295,8 +309,10 @@ const messages = {
     LoginPage: loginPage,
     RegisterPage: registerPage,
   },
+  Navbar: navbar,
   OnboardingPage: onboardingPage,
-  DashboardPage: dashboardPage
+  DashboardPage: dashboardPage,
+  LandingPage: landingPage,
 };
 
 export default messages;

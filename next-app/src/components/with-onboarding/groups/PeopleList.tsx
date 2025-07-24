@@ -2,12 +2,13 @@
 
 import { Flex, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react';
 import { useState } from 'react';
-import MainHeading from '@/components/util/texts/MainHeading';
-import SearchInput from '@/components/util/SearchInput';
+import MainHeading from '@/components/common/texts/MainHeading';
+import SearchInput from '@/components/common/SearchInput';
 import UserTableRow from './UserTableRow';
 
 export default function PeopleList() {
   const [search, setSearch] = useState('');
+
 
   // mock
   const sampleData = [
@@ -49,7 +50,7 @@ export default function PeopleList() {
     <Flex
      flex={1}
      direction={"column"}
-     backgroundColor={"gray.50"}
+     backgroundColor={"border.50"}
      padding={"2rem"}>
       <Flex flex={1} backgroundColor="white" padding="2rem" direction="column" gap={6}>
         <MainHeading text="Członkowie Klubu" />

@@ -1,3 +1,3 @@
-export default async function CalendarPage() {
+export default function CalendarPage() {
   return <>calendar</>;
 }
