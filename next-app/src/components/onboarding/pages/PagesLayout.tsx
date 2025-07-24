@@ -14,7 +14,7 @@ import {
   ButtonProps,
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 
 interface FormButtonProps {
   onClick?: () => void;

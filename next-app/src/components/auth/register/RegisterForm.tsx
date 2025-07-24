@@ -3,7 +3,7 @@
 import { HStack, Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import FormLayout from "../FormLayout";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 import FormHeading from "../FormHeading";
 import FormInput from "../FormInput";
 import GoogleButton from "../FormGoogleButton";

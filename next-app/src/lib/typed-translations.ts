@@ -37,7 +37,7 @@ type ExtractNamespaceKeys<
 > = AllKeys extends `${Namespace}.${infer Rest}` ? Rest : never;
 
 // Type for namespace-scoped keys
-type NamespaceKeys<T extends string> = T extends ""
+export type NamespaceKeys<T extends string> = T extends ""
   ? TranslationKeys
   : ExtractNamespaceKeys<TranslationKeys, T>;
 

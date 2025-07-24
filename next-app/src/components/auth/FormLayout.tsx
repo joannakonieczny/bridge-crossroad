@@ -1,6 +1,6 @@
 import { Box, HStack, Stack, Text, Image } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function FormLayout({ children }: { children?: ReactNode }) {
   const t = useTranslations("common");

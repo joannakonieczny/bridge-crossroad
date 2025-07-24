@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 import DefaultInput from "../inputs/DefaultInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
