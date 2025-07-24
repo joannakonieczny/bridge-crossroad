@@ -1,5 +1,5 @@
 import { useTranslations as useNextIntlTranslations } from "next-intl";
-import { getTranslations } from "next-intl/server";
+import { getTranslations as getNextIntlTranslations } from "next-intl/server";
 import React from "react";
 
 // Import the messages object and its type
@@ -148,10 +148,10 @@ export function useTranslations<T extends ValidNamespaces = "">(
  * const title = authT("title"); // ✅ Typed
  * ```
  */
-export async function getTypedTranslations<T extends ValidNamespaces = "">(
+export async function getTranslations<T extends ValidNamespaces = "">(
   namespace?: T
 ): Promise<TypedTranslator<T>> {
-  const originalT = await getTranslations(namespace as string);
+  const originalT = await getNextIntlTranslations(namespace as string);
 
   const typedT = (key: string, values?: TranslationValues) => {
     return (originalT as (key: string, values?: TranslationValues) => string)(
