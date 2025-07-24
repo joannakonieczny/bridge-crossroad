@@ -1,14 +1,14 @@
-# 🌉 Bridge CrossRoad
+# 🌉 Bridge Crossroad
 
 > _Łączymy akademicki świat brydża w Polsce_ 🎴
 
-**Projekt Pracy Inżynierskiej** - Nowoczesna platforma internetowa dla społeczności brydżowej, stworzona specjalnie dla środowiska akademickiego. Bridge CrossRoad to miejsce, gdzie studenci, wykładowcy i entuzjaści brydża mogą się spotykać, uczyć i rozwijać swoją pasję!
+**Projekt Pracy Inżynierskiej** - Nowoczesna platforma internetowa dla społeczności brydżowej, stworzona specjalnie dla środowiska akademickiego. Bridge Crossroad to miejsce, gdzie studenci, wykładowcy i entuzjaści brydża mogą się spotykać, uczyć i rozwijać swoją pasję!
 
 **Autorzy**: Szymon Kubiczek, Bartłomiej Szubiak, Joanna Konieczny
 
 _Pierwotnie opracowano dla **Just Bridge AGH**, ale zaprojektowano tak, aby można było łatwo dostosować do dowolnego akademickiego klubu brydżowego._
 
-## ✨ Dlaczego Bridge CrossRoad?
+## ✨ Dlaczego Bridge Crossroad?
 
 🎯 **Misja**: Digitalizacja i modernizacja akademickiego brydża w Polsce  
 🚀 **Wizja**: Stworzenie centralnego centrum dla wszystkich entuzjastów brydża na uniwersytetach  

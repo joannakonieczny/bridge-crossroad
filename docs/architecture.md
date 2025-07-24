@@ -1,6 +1,6 @@
-# Development Guide - Bridge CrossRoad
+# Development Guide - Bridge Crossroad
 
-This document outlines the development practices, architecture, and coding standards for the Bridge CrossRoad project.
+This document outlines the development practices, architecture, and coding standards for the Bridge Crossroad project.
 
 ## 📖 Language Versions
 

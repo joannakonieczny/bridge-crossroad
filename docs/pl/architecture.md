@@ -1,6 +1,6 @@
-# Przewodnik Rozwoju - Bridge CrossRoad
+# Przewodnik Rozwoju - Bridge Crossroad
 
-Ten dokument opisuje praktyki deweloperskie, architekturę i standardy kodowania dla projektu Bridge CrossRoad.
+Ten dokument opisuje praktyki deweloperskie, architekturę i standardy kodowania dla projektu Bridge Crossroad.
 
 ## 📖 Wersje Językowe
 

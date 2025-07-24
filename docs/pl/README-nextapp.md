@@ -1,6 +1,6 @@
-# Bridge CrossRoad - Aplikacja Next.js
+# Bridge Crossroad - Aplikacja Next.js
 
-Dokumentacja techniczna dla komponentu aplikacji internetowej Next.js 15 platformy Bridge CrossRoad.
+Dokumentacja techniczna dla komponentu aplikacji internetowej Next.js 15 platformy Bridge Crossroad.
 
 ## 📖 Wersje Językowe
 
