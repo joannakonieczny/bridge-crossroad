@@ -15,7 +15,7 @@ export default function FormLayout({ children }: { children?: ReactNode }) {
           </Text>
         </HStack>
         <Image
-          src="/common/logo-lightmode.svg"
+          src="/assets/common/logo-lightmode.svg"
           alt="logo"
           objectFit="cover"
           objectPosition="right"

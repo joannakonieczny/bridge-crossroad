@@ -47,7 +47,7 @@ export default function LoginForm() {
   return (
     <FormLayout>
       <form onSubmit={handleSubmit((data) => loginAction.executeAsync(data))}>
-        <Stack spacing={2} mt={8}>
+        <Stack spacing={4} mt={8}>
           <FormHeading
             title={t("title")}
             href="/auth/register"

@@ -1,9 +1,5 @@
-// app/(logged)/dashboard/page.tsx
-import { requireUserId } from "@/services/auth/actions";
-import DashboardClient from "../../../../components/dummy/DashboardClient";
+import Dashboard from "@/components/with-onboarding/dashboard/Dashboard";
 
-export default async function DashboardPage() {
-  const userId = await requireUserId();
-
-  return <DashboardClient userId={userId} />;
+export default function DashboardPage() {
+  return <Dashboard/>;
 }

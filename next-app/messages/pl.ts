@@ -192,6 +192,36 @@ const onboardingPage = {
   },
 };
 
+const dashboardPage = {
+  headings: {
+    lastTournaments: "Ostatnie turnieje",
+    upcomingEvents: "Nadchodzące wydarzenia",
+    partnersPlot: "Twoi partnerzy na przestrzeni czasu",
+  },
+  PZBSInfo: {
+    nameAndLastName: "Imię i nazwisko",
+    PIDCezar: "PID Cezar",
+    WK: "WK",
+    team: "Drużyna",
+    region: "Okręg"
+  }
+}
+
+const navbar = {
+  Tabs: {
+    dashboard: "Strona główna",
+    calendar: "Kalendarz",
+    groups: "Grupy",
+    findPartner: "Szukaj partnera",
+    tools: "Przydatne narzędzia",
+  },
+}
+
+const landingPage = {
+  logInButton: "Zaloguj się"
+}
+  
+
 const messages = {
   DummyPage: {
     text: "Witaj świecie!",
@@ -279,7 +309,10 @@ const messages = {
     LoginPage: loginPage,
     RegisterPage: registerPage,
   },
+  Navbar: navbar,
   OnboardingPage: onboardingPage,
+  DashboardPage: dashboardPage,
+  LandingPage: landingPage,
 };
 
 export default messages;
