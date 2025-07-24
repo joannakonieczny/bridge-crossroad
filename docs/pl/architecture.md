@@ -287,6 +287,16 @@ i18n/
 https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
 https://next-intl.dev/docs/usage/messages
 
+### `/src/routes.ts` - Stałe Tras
+
+Scentralizowane definicje tras dla bezpiecznej nawigacji typów:
+
+**Wytyczne Użycia:**
+
+- Zawsze importuj i używaj `ROUTES` zamiast hardkodowanych stringów
+- Aktualizuj ten plik przy dodawaniu nowych tras
+- Używaj wnioskowania typów TypeScript do walidacji tras
+
 ### `/src/util` - Narzędzia
 
 Wspólne funkcje narzędziowe:

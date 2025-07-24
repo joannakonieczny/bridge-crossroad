@@ -1,4 +1,35 @@
-# Standardy Kodowania
+# Stand### Zarządzanie Trasami
+
+**Zawsze używaj scentralizowanego pliku tras:**
+
+```typescript
+// ❌ Nie używaj hardkodowanych stringów
+<ChakraLink href="/auth/login">Logowanie</ChakraLink>;
+redirect("/dashboard");
+
+// ✅ Używaj stałej ROUTES
+import { ROUTES } from "@/routes";
+
+<ChakraLink href={ROUTES.auth.login}>Logowanie</ChakraLink>;
+redirect(ROUTES.dashboard);
+```
+
+**Korzyści z używania ROUTES:**
+
+- **Bezpieczeństwo typów**: Zapobiega literówkom w stringach tras
+- **Refaktoryzowanie**: Łatwe aktualizowanie tras w całej aplikacji
+- **Wsparcie IDE**: Autouzupełnianie i IntelliSense dla ścieżek tras
+- **Spójność**: Pojedyncze źródło prawdy dla całej nawigacji
+- **Dokumentacja**: Przejrzysty przegląd wszystkich dostępnych tras
+
+**Przy dodawaniu nowych tras:**
+
+1. Dodaj trasę do obiektu `ROUTES` w `/src/routes.ts`
+2. Używaj opisowej struktury zagnieżdżonej dla powiązanych tras
+3. Zawsze dodawaj asercję `as const` dla wnioskowania typów
+4. Zaktualizuj typ `RouteKeys` jeśli potrzebne
+
+### Wytyczne TypeScriptrdy Kodowania
 
 ## 📖 Wersje Językowe
 

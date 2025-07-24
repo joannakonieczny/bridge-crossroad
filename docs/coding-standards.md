@@ -5,6 +5,37 @@
 - **🇺🇸 English** - This version
 - **🇵🇱 Polski** - [coding-standards.md](./pl/coding-standards.md)
 
+### Route Management
+
+**Always use the centralized routes file:**
+
+```typescript
+// ❌ Don't use hardcoded strings
+<ChakraLink href="/auth/login">Login</ChakraLink>;
+redirect("/dashboard");
+
+// ✅ Use the ROUTES constant
+import { ROUTES } from "@/routes";
+
+<ChakraLink href={ROUTES.auth.login}>Login</ChakraLink>;
+redirect(ROUTES.dashboard);
+```
+
+**Benefits of using ROUTES:**
+
+- **Type safety**: Prevents typos in route strings
+- **Refactoring**: Easy to update routes across the entire application
+- **IDE support**: Autocomplete and IntelliSense for route paths
+- **Consistency**: Single source of truth for all navigation
+- **Documentation**: Clear overview of all available routes
+
+**When adding new routes:**
+
+1. Add the route to the `ROUTES` object in `/src/routes.ts`
+2. Use descriptive nested structure for related routes
+3. Always add `as const` assertion for type inference
+4. Update the `RouteKeys` type if needed
+
 ### TypeScript Guidelines
 
 - Enable strict mode
