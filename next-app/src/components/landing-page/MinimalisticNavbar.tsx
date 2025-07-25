@@ -1,7 +1,7 @@
 import { Button, Flex } from "@chakra-ui/react";
 import Logo from "../common/Logo";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
 
 export default function MinimalisticNavbar() {

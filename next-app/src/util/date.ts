@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 
 export function useGetMonths() {
   const t = useTranslations("common.date.months");

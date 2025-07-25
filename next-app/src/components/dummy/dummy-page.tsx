@@ -11,7 +11,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 import { BsMoon, BsSun } from "react-icons/bs";
 
 function Toggle() {

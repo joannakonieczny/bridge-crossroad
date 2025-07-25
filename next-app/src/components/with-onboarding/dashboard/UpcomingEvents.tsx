@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, HStack, IconButton, Text, Flex } from "@chakra-ui/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -34,40 +34,40 @@ export default function CarouselList() {
 
   return (
     <Flex direction="column" width="100%">
-    <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>{t("upcomingEvents")}</Text>
-    <HStack align="center" spacing={4} width="100%">
-
+      <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>
+        {t("upcomingEvents")}
+      </Text>
+      <HStack align="center" spacing={4} width="100%">
         <IconButton
           icon={<FaChevronLeft />}
           aria-label="Previous"
           onClick={showPrev}
           isDisabled={startIndex === 0}
         />
-        
-      <HStack spacing={8} width="100%">
-        {visibleItems.map((contest, i) => (
-          <Box
-            key={i}
-            border="1px solid"
-            borderColor="border.300"
-            borderRadius="md"
-            p={4}
-            width="100%"
-          >
-            <Text fontWeight="bold">{contest.name}</Text>
-            <Text color="border.500">{contest.date}</Text>
-          </Box>
-        ))}
-      </HStack>
 
-      <IconButton
+        <HStack spacing={8} width="100%">
+          {visibleItems.map((contest, i) => (
+            <Box
+              key={i}
+              border="1px solid"
+              borderColor="border.300"
+              borderRadius="md"
+              p={4}
+              width="100%"
+            >
+              <Text fontWeight="bold">{contest.name}</Text>
+              <Text color="border.500">{contest.date}</Text>
+            </Box>
+          ))}
+        </HStack>
+
+        <IconButton
           icon={<FaChevronRight />}
           aria-label="Next"
           onClick={showNext}
           isDisabled={startIndex + ITEMS_PER_PAGE >= contests.length}
         />
-
-    </HStack>
+      </HStack>
     </Flex>
   );
 }
