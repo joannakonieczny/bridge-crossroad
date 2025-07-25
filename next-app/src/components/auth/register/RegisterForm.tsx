@@ -13,6 +13,7 @@ import { register } from "@/services/auth/actions";
 import { RegisterFormSchemaProvider } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
+import { ROUTES } from "@/routes";
 
 export default function RegisterForm() {
   const t = useTranslations("Auth.RegisterPage");
@@ -56,7 +57,7 @@ export default function RegisterForm() {
         <Stack spacing={3} mt={8}>
           <FormHeading
             title={t("title")}
-            href="/auth/login"
+            href={ROUTES.auth.login}
             AccountText={t("hasAccount.text")}
             AccountLink={t("hasAccount.link")}
           />

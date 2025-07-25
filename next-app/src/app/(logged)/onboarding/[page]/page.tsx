@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Spinner } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
+import { ROUTES } from "@/routes";
 
 const AVAILABLE_PAGES = ["1", "2", "3", "final"] as const;
 export type PageId = (typeof AVAILABLE_PAGES)[number];
@@ -58,7 +59,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (!isValidPage(pageParam)) {
       // redirect with not adding to browsing history
-      router.replace("/onboarding");
+      router.replace(ROUTES.onboarding.index);
     }
   }, [pageParam, router, isValidPage]);
 

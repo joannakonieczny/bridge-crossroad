@@ -14,6 +14,7 @@ import { login } from "@/services/auth/actions";
 import { LoginFormSchemaProvider } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
+import { ROUTES } from "@/routes";
 
 export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
@@ -50,7 +51,7 @@ export default function LoginForm() {
         <Stack spacing={4} mt={8}>
           <FormHeading
             title={t("title")}
-            href="/auth/register"
+            href={ROUTES.auth.register}
             AccountText={t("noAccount.text")}
             AccountLink={t("noAccount.link")}
           />
@@ -105,7 +106,7 @@ export default function LoginForm() {
                 />
               )}
             />
-            <ChakraLink color="accent.500" href="/auth/forgot-password">
+            <ChakraLink color="accent.500" href={ROUTES.auth.forgot_password}>
               {t("utilities.forgotPassword")}
             </ChakraLink>
           </HStack>

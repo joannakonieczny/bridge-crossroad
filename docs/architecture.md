@@ -338,6 +338,16 @@ i18n/
 https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
 https://next-intl.dev/docs/usage/messages
 
+### `/src/routes.ts` - Route Constants
+
+Centralized route definitions for type-safe navigation:
+
+**Usage Guidelines:**
+
+- Always import and use `ROUTES` instead of hardcoded strings
+- Update this file when adding new routes
+- Use TypeScript's type inference for route validation
+
 ### `/src/util` - Utilities
 
 Shared utility functions:

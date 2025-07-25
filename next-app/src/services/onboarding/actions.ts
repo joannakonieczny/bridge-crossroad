@@ -3,6 +3,7 @@
 import { addOnboardingData, getUserData } from "@/repositories/onboarding";
 import { requireUserId } from "../auth/actions";
 import { redirect } from "next/navigation";
+import { ROUTES } from "@/routes";
 import {
   sanitizeOnboardingData,
   sanitizeUser,
@@ -40,7 +41,7 @@ export async function requireUserOnboarding() {
   const user = await getUserData(userId);
 
   if (!user || !user.onboardingData) {
-    redirect("/onboarding");
+    redirect(ROUTES.onboarding.index);
   }
 
   return sanitizeOnboardingData(user.onboardingData);

@@ -19,13 +19,14 @@ import {
 import { OnboardingFirstPageSchema } from "@/schemas/pages/onboarding/first-page-schema";
 import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
 import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
+import { ROUTES } from "@/routes";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
   const t = useTranslations("OnboardingPage.finalPage");
   const formNavigation = useFormNavigation({
-    nextPage: "/dashboard", // after onboarding is completed, redirect to dashboard
-    prevPage: "/onboarding/3",
+    nextPage: ROUTES.dashboard, // after onboarding is completed, redirect to dashboard
+    prevPage: ROUTES.onboarding.step_3,
   });
   const onboardingContext = useOnboardingFormData();
   const finalPageData = onboardingContext.formData.finalPage;
