@@ -1,10 +1,7 @@
 import { useTranslations as useNextIntlTranslations } from "next-intl";
 import { getTranslations as getNextIntlTranslations } from "next-intl/server";
-import React from "react";
-
-// Import the messages object and its type
+import { ReactNode } from "react";
 import messages from "../../messages/pl";
-import type { IAppMessagesForLanguage } from "../../messages/pl";
 
 // Helper type to create dot-notation paths from nested objects
 type DotNotation<T, K extends keyof T = keyof T> = K extends string
@@ -16,7 +13,7 @@ type DotNotation<T, K extends keyof T = keyof T> = K extends string
   : never;
 
 // All available translation keys as dot-notation paths
-export type TranslationKeys = DotNotation<typeof messages>;
+type AllTranslationKeys = DotNotation<typeof messages>;
 
 // Helper type to get all possible namespace paths (including partial paths)
 type NamespacePaths<T, K extends keyof T = keyof T> = K extends string
@@ -28,7 +25,7 @@ type NamespacePaths<T, K extends keyof T = keyof T> = K extends string
   : never;
 
 // All available namespace paths
-export type ValidNamespaces = NamespacePaths<typeof messages> | "";
+type ValidNamespaces = NamespacePaths<typeof messages> | "";
 
 // Extract keys that start with a specific namespace
 type ExtractNamespaceKeys<
@@ -37,15 +34,18 @@ type ExtractNamespaceKeys<
 > = AllKeys extends `${Namespace}.${infer Rest}` ? Rest : never;
 
 // Type for namespace-scoped keys
-export type NamespaceKeys<T extends string> = T extends ""
-  ? TranslationKeys
-  : ExtractNamespaceKeys<TranslationKeys, T>;
+type NamespaceKeys<T extends string> = T extends ""
+  ? AllTranslationKeys
+  : ExtractNamespaceKeys<AllTranslationKeys, T>;
+
+// Type for namespace-scoped keys with validation
+// If the namespace doesn't exist in ValidNamespaces, TypeScript will show an error
+type TranslationKeys<T extends string> = T extends ValidNamespaces
+  ? NamespaceKeys<T>
+  : never;
 
 // Type for translation interpolation values
-type TranslationValues = Record<
-  string,
-  string | number | boolean | React.ReactNode
->;
+type TranslationValues = Record<string, string | number | boolean | ReactNode>;
 
 /**
  * Typed translation function interface that preserves all next-intl functionality
@@ -53,10 +53,7 @@ type TranslationValues = Record<
 interface TypedTranslator<Namespace extends string = ""> {
   (key: NamespaceKeys<Namespace>, values?: TranslationValues): string;
 
-  rich(
-    key: NamespaceKeys<Namespace>,
-    values?: TranslationValues
-  ): React.ReactNode;
+  rich(key: NamespaceKeys<Namespace>, values?: TranslationValues): ReactNode;
 
   raw(key: NamespaceKeys<Namespace>): string;
 
@@ -89,7 +86,7 @@ interface TypedTranslator<Namespace extends string = ""> {
  * validationT("email.max", { max: 255 }); // ✅ With values
  * ```
  */
-export function useTranslations<T extends ValidNamespaces = "">(
+function useTranslations<T extends ValidNamespaces = "">(
   namespace?: T
 ): TypedTranslator<T> {
   // Use the original hook with string literal type
@@ -105,10 +102,7 @@ export function useTranslations<T extends ValidNamespaces = "">(
 
   typedT.rich = (key: string, values?: TranslationValues) => {
     return (
-      originalT.rich as (
-        key: string,
-        values?: TranslationValues
-      ) => React.ReactNode
+      originalT.rich as (key: string, values?: TranslationValues) => ReactNode
     )(key, values);
   };
 
@@ -148,7 +142,7 @@ export function useTranslations<T extends ValidNamespaces = "">(
  * const title = authT("title"); // ✅ Typed
  * ```
  */
-export async function getTranslations<T extends ValidNamespaces = "">(
+async function getTranslations<T extends ValidNamespaces = "">(
   namespace?: T
 ): Promise<TypedTranslator<T>> {
   const originalT = await getNextIntlTranslations(namespace as string);
@@ -162,10 +156,7 @@ export async function getTranslations<T extends ValidNamespaces = "">(
 
   typedT.rich = (key: string, values?: TranslationValues) => {
     return (
-      originalT.rich as (
-        key: string,
-        values?: TranslationValues
-      ) => React.ReactNode
+      originalT.rich as (key: string, values?: TranslationValues) => ReactNode
     )(key, values);
   };
 
@@ -190,57 +181,7 @@ export async function getTranslations<T extends ValidNamespaces = "">(
   return typedT as TypedTranslator<T>;
 }
 
-/**
- * Utility type to extract all available top-level namespaces
- */
-export type AvailableNamespaces = keyof typeof messages;
+// ===== EXPORTS =====
 
-/**
- * Type helper to check if a string is a valid translation key
- */
-export const isTranslationKey = (key: string): key is TranslationKeys => {
-  // This is primarily for TypeScript - runtime validation would need implementation
-  return typeof key === "string";
-};
-
-/**
- * Type for extracting the type of a translation value at a given key path
- */
-export type TranslationValue = string;
-
-/**
- * Type guard to check if a key is a valid translation key (runtime check)
- */
-export function isValidTranslationKey(key: string): key is TranslationKeys {
-  // This is a runtime check - you could implement validation logic here
-  // For now, we'll assume any string could be valid
-  return typeof key === "string";
-}
-
-/**
- * Helper to get all available keys for a namespace (useful for debugging)
- * Note: This returns an empty array at runtime but provides correct typing
- *
- * @example
- * ```typescript
- * const keys = getNamespaceKeys<"Auth">();
- * // keys will have type ExtractNamespaceKeys<TranslationKeys, "Auth">[]
- * ```
- */
-export function getNamespaceKeys<
-  T extends AvailableNamespaces
->(): ExtractNamespaceKeys<TranslationKeys, T>[] {
-  // This would need runtime implementation to actually extract keys
-  // For TypeScript, the return type is what matters for autocomplete
-  return [] as ExtractNamespaceKeys<TranslationKeys, T>[];
-}
-
-/**
- * Re-export the messages object for convenience
- */
-export { messages };
-
-/**
- * Re-export the type for external usage
- */
-export type { IAppMessagesForLanguage };
+export { useTranslations, getTranslations };
+export type { TranslationKeys };

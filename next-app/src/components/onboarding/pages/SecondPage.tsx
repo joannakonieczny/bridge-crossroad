@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations, type NamespaceKeys } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  type TranslationKeys,
+} from "@/lib/typed-translations";
 import SelectInput from "../inputs/SelectInput";
 import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -18,7 +21,7 @@ import {
 } from "@/schemas/pages/onboarding/second-page-schema";
 import { ROUTES } from "@/routes";
 
-type fix_me_type = NamespaceKeys<"common.trainingGroup">;
+type fix_me_type = TranslationKeys<"common.trainingGroup">;
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
