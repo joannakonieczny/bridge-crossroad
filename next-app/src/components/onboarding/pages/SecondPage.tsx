@@ -2,10 +2,7 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import {
-  useTranslations,
-  type TranslationKeys,
-} from "@/lib/typed-translations";
+import { useTranslations } from "@/lib/typed-translations";
 import SelectInput from "../inputs/SelectInput";
 import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -20,8 +17,6 @@ import {
   OnboardingSecondPageSchemaProvider,
 } from "@/schemas/pages/onboarding/second-page-schema";
 import { ROUTES } from "@/routes";
-
-type fix_me_type = TranslationKeys<"common.trainingGroup">;
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
@@ -58,7 +53,7 @@ export default function SecondPage() {
     () =>
       Object.values(TrainingGroup).map((value) => ({
         value,
-        label: tTrainingGroup(value.toLowerCase() as fix_me_type),
+        label: tTrainingGroup(value),
       })),
     [tTrainingGroup]
   );
