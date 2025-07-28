@@ -90,11 +90,14 @@ export const actionName = action
 ## Wzorzec Walidacji Formularzy
 
 ```typescript
-// Definicja schematu
+// Definicja schematu z typowanymi tłumaczeniami
+import { useTranslations } from "@/lib/typed-translations";
+
 export function FormSchemaProvider() {
-  const t = useTranslations("form");
+  const t = useTranslations("validation.form"); // ✅ Type-safe namespace
 
   const schema = z.object({
+    email: z.string().email(t("email.invalid")), // ✅ Autouzupełnianie
     field: z.string().nonempty(t("field.required")),
   });
 
@@ -106,6 +109,18 @@ const { schema } = FormSchemaProvider();
 const { control, handleSubmit } = useForm({
   resolver: zodResolver(schema),
 });
+
+// Przykład z różnymi namespace dla różnych formularzy
+export function LoginFormSchemaProvider() {
+  const t = useTranslations("Auth.LoginPage.validation"); // ✅ Specyficzny namespace
+
+  return {
+    schema: z.object({
+      email: z.string().email(t("emailInvalid")),
+      password: z.string().min(8, t("passwordTooShort")),
+    }),
+  };
+}
 ```
 
 ## Uwierzytelnienie i Autoryzacja
@@ -394,12 +409,94 @@ function exampleFunction(param: string): boolean {
 
 ## Wytyczne Lokalizacji
 
+### System Typowanych Tłumaczeń
+
+Aplikacja wykorzystuje niestandardową nakładkę na next-intl (`src/lib/typed-translations.ts`), która zapewnia pełne bezpieczeństwo typów i walidację namespace:
+
+**Podstawowe użycie:**
+
+```typescript
+import { useTranslations, getTranslations } from "@/lib/typed-translations";
+
+// ✅ Komponenty klienta - automatyczne autouzupełnianie
+const t = useTranslations();
+t("common.appName"); // TypeScript sprawdza poprawność klucza
+
+// ✅ Komponenty serwera
+const t = await getTranslations();
+const message = t("Auth.LoginPage.title");
+```
+
+**Bezpieczne namespace z walidacją:**
+
+```typescript
+// ✅ Poprawne użycie - namespace istnieje
+const authT = useTranslations("Auth");
+authT("LoginPage.title"); // Autouzupełnianie dla kluczy Auth.*
+
+// ❌ Błąd kompilacji - nieprawidłowy namespace
+const invalidT = useTranslations("NonExistent"); // TypeScript error!
+```
+
+**Typ TranslationKeys dla walidacji namespace:**
+
+```typescript
+// Sprawdza poprawność namespace w czasie kompilacji
+type ValidKeys = TranslationKeys<"Auth">; // ✅ Zwraca klucze z Auth
+type InvalidKeys = TranslationKeys<"BadNamespace">; // ❌ never type
+
+// Użycie w funkcjach pomocniczych
+function getAuthMessage<T extends string>(
+  namespace: T,
+  key: TranslationKeys<T>
+): string {
+  const t = useTranslations(namespace);
+  return t(key);
+}
+
+// ✅ Działa poprawnie
+getAuthMessage("Auth", "LoginPage.title");
+
+// ❌ Błąd kompilacji
+getAuthMessage("Invalid", "some.key");
+```
+
+**Korzyści systemu typowanych tłumaczeń:**
+
+- **Autouzupełnianie**: Pełne wsparcie IDE dla kluczy tłumaczeń
+- **Walidacja namespace**: TypeScript wykrywa nieprawidłowe namespace
+- **Bezpieczeństwo refaktoryzacji**: Zmiana kluczy automatycznie wykrywa błędy
+- **Interpolacja wartości**: Type-safe wstawianie zmiennych do tekstów
+- **Wsparcie rich content**: Bezpieczne używanie komponentów React w tłumaczeniach
+
 ### Tłumaczenia
 
 - Wszystkie teksty interfejsu w messages/pl.ts
 - Klucze tłumaczeń w camelCase
 - Grupowanie według funkcjonalności
 - Placeholder values dla dynamicznych treści
+- **Zawsze używaj typed-translations zamiast next-intl bezpośrednio**
+
+**Przykład struktury tłumaczeń:**
+
+```typescript
+// messages/pl.ts
+export default {
+  common: {
+    appName: "Bridge Crossroad",
+    buttons: {
+      save: "Zapisz",
+      cancel: "Anuluj",
+    },
+  },
+  Auth: {
+    LoginPage: {
+      title: "Logowanie",
+      emailPlaceholder: "Wprowadź email",
+    },
+  },
+} as const; // Ważne: as const dla wnioskowania typów
+```
 
 ### Formatowanie Dat i Liczb
 

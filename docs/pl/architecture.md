@@ -242,38 +242,57 @@ schemas/
 
 ### `/src/i18n` - Internacjonalizacja
 
-Konfiguracja Next-intl i narzędzia dla tłumaczeń tekstu.
+Konfiguracja dla systemu tłumaczeń z pełnym bezpieczeństwem typów.
 
 Tłumaczenia znajdują się w `/messages/pl.ts`
 
 Tłumaczenia to obiekt, gdzie każda wartość musi być stringiem.
 
-**Przykład Użycia:**
+**⚠️ Ważne: Używaj zawsze nakładki `typed-translations` zamiast next-intl bezpośrednio**
+
+**Przykład Użycia z typed-translations:**
 
 ```typescript
-import { useTranslations } from "next-intl";
+import { useTranslations, getTranslations } from "@/lib/typed-translations";
 
 function MyComponent() {
-  const t = useTranslations("common.buttons");
-  );
+  const t = useTranslations("common.buttons"); // ✅ Type-safe namespace
+  return <button>{t("save")}</button>; // ✅ Autocomplete
 }
 
 // Przykład komponentu serwera
-import { getTranslations } from "next-intl/server";
-
 async function ServerComponent() {
   const t = await getTranslations("validation.user");
-  return <div>{t("emailRequired")}</div>;
+  return <div>{t("emailRequired")}</div>; // ✅ Type-safe
 }
 ```
+
+**Korzyści nakładki typed-translations:**
+
+- **Walidacja namespace**: TypeScript wykrywa nieprawidłowe namespace w czasie kompilacji
+- **Autouzupełnianie**: Pełne wsparcie IDE dla wszystkich kluczy tłumaczeń
+- **Bezpieczeństwo refaktoryzacji**: Zmiany kluczy automatycznie wykrywają błędy
+- **Type TranslationKeys<T>**: Pomocniczy typ do walidacji namespace w funkcjach
 
 **Struktura Pliku Tłumaczeń:**
 
 ```typescript
 // /messages/pl.ts
 export default {
-  common: {…},
-};
+  common: {
+    appName: "Bridge Crossroad",
+    buttons: {
+      save: "Zapisz",
+      cancel: "Anuluj",
+    },
+  },
+  Auth: {
+    LoginPage: {
+      title: "Logowanie",
+      emailPlaceholder: "Wprowadź email",
+    },
+  },
+} as const; // ⚠️ Ważne: as const dla wnioskowania typów
 ```
 
 ```
