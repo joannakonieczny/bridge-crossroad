@@ -90,11 +90,14 @@ export const actionName = action
 ### Form Validation Pattern
 
 ```typescript
-// Schema definition
+// Schema definition with typed translations
+import { useTranslations } from "@/lib/typed-translations";
+
 export function FormSchemaProvider() {
-  const t = useTranslations("form");
+  const t = useTranslations("validation.form"); // ✅ Type-safe namespace
 
   const schema = z.object({
+    email: z.string().email(t("email.invalid")), // ✅ Autocomplete works
     field: z.string().nonempty(t("field.required")),
   });
 
@@ -106,6 +109,18 @@ const { schema } = FormSchemaProvider();
 const { control, handleSubmit } = useForm({
   resolver: zodResolver(schema),
 });
+
+// Example with different namespaces for different forms
+export function LoginFormSchemaProvider() {
+  const t = useTranslations("Auth.LoginPage.validation"); // ✅ Specific namespace
+
+  return {
+    schema: z.object({
+      email: z.string().email(t("emailInvalid")),
+      password: z.string().min(8, t("passwordTooShort")),
+    }),
+  };
+}
 ```
 
 ## Authentication & Authorization
@@ -313,3 +328,94 @@ const isSecure = config.SECURE_COOKIES;
 ```
 
 If a variable is missing and has no fallback, the application will crash at startup with an appropriate message.
+
+## Localization Guidelines
+
+### Typed Translation System
+
+The application uses a custom wrapper over next-intl (`src/lib/typed-translations.ts`) that provides full type safety and namespace validation:
+
+**Basic usage:**
+
+```typescript
+import { useTranslations, getTranslations } from "@/lib/typed-translations";
+
+// ✅ Client components - automatic autocomplete
+const t = useTranslations();
+t("common.appName"); // TypeScript checks key validity
+
+// ✅ Server components
+const t = await getTranslations();
+const message = t("Auth.LoginPage.title");
+```
+
+**Safe namespace with validation:**
+
+```typescript
+// ✅ Correct usage - namespace exists
+const authT = useTranslations("Auth");
+authT("LoginPage.title"); // Autocomplete for Auth.* keys
+
+// ❌ Compilation error - invalid namespace
+const invalidT = useTranslations("NonExistent"); // TypeScript error!
+```
+
+**TranslationKeys type for namespace validation:**
+
+```typescript
+// Checks namespace validity at compile time
+type ValidKeys = TranslationKeys<"Auth">; // ✅ Returns keys from Auth
+type InvalidKeys = TranslationKeys<"BadNamespace">; // ❌ never type
+
+// Usage in helper functions
+function getAuthMessage<T extends string>(
+  namespace: T,
+  key: TranslationKeys<T>
+): string {
+  const t = useTranslations(namespace);
+  return t(key);
+}
+
+// ✅ Works correctly
+getAuthMessage("Auth", "LoginPage.title");
+
+// ❌ Compilation error
+getAuthMessage("Invalid", "some.key");
+```
+
+**Benefits of typed translation system:**
+
+- **Autocomplete**: Full IDE support for translation keys
+- **Namespace validation**: TypeScript detects invalid namespaces
+- **Refactoring safety**: Key changes automatically detect errors
+- **Value interpolation**: Type-safe variable insertion into texts
+- **Rich content support**: Safe usage of React components in translations
+
+### Translations
+
+- All interface text in messages/pl.ts
+- Translation keys in camelCase
+- Grouping by functionality
+- Placeholder values for dynamic content
+- **Always use typed-translations instead of next-intl directly**
+
+**Translation structure example:**
+
+```typescript
+// messages/pl.ts
+export default {
+  common: {
+    appName: "Bridge Crossroad",
+    buttons: {
+      save: "Save",
+      cancel: "Cancel",
+    },
+  },
+  Auth: {
+    LoginPage: {
+      title: "Login",
+      emailPlaceholder: "Enter email",
+    },
+  },
+} as const; // Important: as const for type inference
+```

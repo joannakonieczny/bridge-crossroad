@@ -279,34 +279,37 @@ schemas/
 
 ### `/src/i18n` - Internationalization
 
-Next-intl configuration and utilities for text translations.
+Translation system configuration with full type safety.
 
 Translations are located in `/messages/pl.ts`
 
 Translations are an object where each value must be a string.
 
-**Usage Example:**
+**⚠️ Important: Always use the `typed-translations` wrapper instead of next-intl directly**
+
+**Usage Example with typed-translations:**
 
 ```typescript
-import { useTranslations } from "next-intl";
+import { useTranslations, getTranslations } from "@/lib/typed-translations";
 
 function MyComponent() {
-  const t = useTranslations("common.buttons");
-
-  return (
-    <button>{t("save")}</button> // Renders: "Zapisz"
-  );
+  const t = useTranslations("common.buttons"); // ✅ Type-safe namespace
+  return <button>{t("save")}</button>; // ✅ Autocomplete works
 }
 
 // Server component example
-import { getTranslations } from "next-intl/server";
-
 async function ServerComponent() {
   const t = await getTranslations("validation.user");
-
-  return <div>{t("emailRequired")}</div>;
+  return <div>{t("emailRequired")}</div>; // ✅ Type-safe
 }
 ```
+
+**Benefits of typed-translations wrapper:**
+
+- **Namespace validation**: TypeScript detects invalid namespaces at compile time
+- **Autocomplete**: Full IDE support for all translation keys
+- **Refactoring safety**: Key changes automatically detect errors
+- **TranslationKeys<T> type**: Helper type for namespace validation in functions
 
 **Translation File Structure:**
 
@@ -314,17 +317,19 @@ async function ServerComponent() {
 // /messages/pl.ts
 export default {
   common: {
+    appName: "Bridge Crossroad",
     buttons: {
       save: "Zapisz",
       cancel: "Anuluj",
     },
   },
-  validation: {
-    user: {
-      emailRequired: "Email jest wymagany",
+  Auth: {
+    LoginPage: {
+      title: "Logowanie",
+      emailPlaceholder: "Wprowadź email",
     },
   },
-};
+} as const; // ⚠️ Important: as const for type inference
 ```
 
 ```

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 import SelectInput from "../inputs/SelectInput";
 import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -53,7 +53,7 @@ export default function SecondPage() {
     () =>
       Object.values(TrainingGroup).map((value) => ({
         value,
-        label: tTrainingGroup(value.toLowerCase()),
+        label: tTrainingGroup(value),
       })),
     [tTrainingGroup]
   );
