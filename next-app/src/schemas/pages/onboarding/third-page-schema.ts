@@ -1,12 +1,13 @@
 import z from "zod";
-import { UserOnboardingSchemaProvider } from "@/schemas/model/user/user-schema";
+import {
+  cezarIdSchema,
+  bboIdSchema,
+  cuebidsIdSchema,
+} from "@/schemas/model/user/user-schema";
 import { emptyStringToUndefined } from "@/schemas/common";
 
 // client only
 export function OnboardingThirdPageSchemaProvider() {
-  const { cezarIdSchema, bboIdSchema, cuebidsIdSchema } =
-    UserOnboardingSchemaProvider();
-
   const formSchema = z.object({
     cezarId: z
       .string()

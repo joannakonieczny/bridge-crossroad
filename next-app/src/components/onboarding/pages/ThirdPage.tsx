@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import DefaultInput from "../inputs/DefaultInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -19,6 +22,7 @@ import { ROUTES } from "@/routes";
 export default function ThirdPage() {
   useFormSkippingValidation({ currentPage: "3" });
   const t = useTranslations("OnboardingPage.thirdPage");
+  const tValidation = useTranslationsWithFallback(); // For validation messages, messages in zod are just strings
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.onboarding.final,
     prevPage: ROUTES.onboarding.step_2,
@@ -79,7 +83,7 @@ export default function ThirdPage() {
             <DefaultInput
               placeholder={t("cezarId.placeholder")}
               isInvalid={!!errors.cezarId}
-              errorMessage={errors.cezarId?.message}
+              errorMessage={tValidation(errors.cezarId?.message)}
               onInputProps={{
                 ...field,
               }}
@@ -94,7 +98,7 @@ export default function ThirdPage() {
             <DefaultInput
               placeholder={t("bboId.placeholder")}
               isInvalid={!!errors.bboId}
-              errorMessage={errors.bboId?.message}
+              errorMessage={tValidation(errors.bboId?.message)}
               onInputProps={{
                 ...field,
               }}
@@ -109,7 +113,7 @@ export default function ThirdPage() {
             <DefaultInput
               placeholder={t("cuebidsId.placeholder")}
               isInvalid={!!errors.cuebidsId}
-              errorMessage={errors.cuebidsId?.message}
+              errorMessage={tValidation(errors.cuebidsId?.message)}
               onInputProps={{
                 ...field,
               }}

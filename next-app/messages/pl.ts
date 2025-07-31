@@ -203,9 +203,9 @@ const dashboardPage = {
     PIDCezar: "PID Cezar",
     WK: "WK",
     team: "Drużyna",
-    region: "Okręg"
-  }
-}
+    region: "Okręg",
+  },
+};
 
 const navbar = {
   Tabs: {
@@ -215,12 +215,51 @@ const navbar = {
     findPartner: "Szukaj partnera",
     tools: "Przydatne narzędzia",
   },
-}
+};
 
 const landingPage = {
-  logInButton: "Zaloguj się"
-}
-  
+  logInButton: "Zaloguj się",
+};
+
+const userModelValidation = {
+  name: {
+    firstName: { ...nameFields, required: "Podaj imię" },
+    lastName: { ...nameFields, required: "Podaj nazwisko" },
+  },
+  onboarding: {
+    academy: {
+      invalid: "Nieprawidłowa uczelnia",
+    },
+    yearOfBirth: {
+      min: "Rok urodzenia nie może być wcześniejszy niż {min}",
+      max: "Rok urodzenia nie może być późniejszy niż {max}",
+    },
+    trainingGroup: {
+      invalid: "Nieprawidłowa grupa treningowa",
+    },
+    cezarId: {
+      regexLenght: "Numer Cezar musi składać się z {lenght} cyfr",
+    },
+    bboId: {
+      invalid: "Niepoprawny nick na BBO",
+      max: "Max. {max} znaków",
+    },
+    cuebidsId: {
+      invalid: "Niepoprawny kod użytkownika na Cuebids",
+      max: "Max. {max} znaków",
+    },
+  },
+  email: {
+    regex: "Podaj poprawny adres e-mail",
+    max: "E-mail nie może być dłuższy niż {max} znaków",
+    required: "E-mail jest wymagany",
+  },
+  nickname: {
+    min: "Nick musi mieć co najmniej {min} znaki",
+    max: "Nick nie może być dłuższy niż {max} znaków",
+    regex: "Nick może zawierać tylko litery, cyfry, _ i -",
+  },
+};
 
 const messages = {
   DummyPage: {
@@ -262,47 +301,12 @@ const messages = {
     },
     error: {
       general: "Wystąpił błąd dla {error}. Spróbuj ponownie później.",
+      messageKeyNonExisting: "Wystąpił błąd",
     },
   },
   validation: {
-    user: {
-      name: {
-        firstName: { ...nameFields, required: "Podaj imię" },
-        lastName: { ...nameFields, required: "Podaj nazwisko" },
-      },
-      onboarding: {
-        academy: {
-          invalid: "Nieprawidłowa uczelnia",
-        },
-        yearOfBirth: {
-          min: "Rok urodzenia nie może być wcześniejszy niż {min}",
-          max: "Rok urodzenia nie może być późniejszy niż {max}",
-        },
-        trainingGroup: {
-          invalid: "Nieprawidłowa grupa treningowa",
-        },
-        cezarId: {
-          regexLenght: "Numer Cezar musi składać się z {lenght} cyfr",
-        },
-        bboId: {
-          invalid: "Niepoprawny nick na BBO",
-          max: "Max. {max} znaków",
-        },
-        cuebidsId: {
-          invalid: "Niepoprawny kod użytkownika na Cuebids",
-          max: "Max. {max} znaków",
-        },
-      },
-      email: {
-        regex: "Podaj poprawny adres e-mail",
-        max: "E-mail nie może być dłuższy niż {max} znaków",
-        required: "E-mail jest wymagany",
-      },
-      nickname: {
-        min: "Nick musi mieć co najmniej {min} znaki",
-        max: "Nick nie może być dłuższy niż {max} znaków",
-        regex: "Nick może zawierać tylko litery, cyfry, _ i -",
-      },
+    model: {
+      user: userModelValidation,
     },
   },
   Auth: {

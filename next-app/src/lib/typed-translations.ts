@@ -181,7 +181,59 @@ async function getTranslations<T extends ValidNamespaces = "">(
   return typedT as TypedTranslator<T>;
 }
 
+// translation with fallback
+
+// TODO add docs
+
+const defaultFallbackMessageKey =
+  "common.error.messageKeyNonExisting" as NamespaceKeys<"">;
+
+function useTranslationsWithFallback<T extends ValidNamespaces = "">(
+  namespace?: T,
+  fallbackMessageKey: NamespaceKeys<""> | undefined = defaultFallbackMessageKey
+): (key: unknown, values?: TranslationValues) => string {
+  const t = useTranslations(namespace);
+  const fallbackT = useTranslations();
+
+  return (key: unknown, values?: TranslationValues): string => {
+    if (typeof key !== "string") {
+      return fallbackT(fallbackMessageKey, values);
+    }
+
+    if (!t.has(key)) {
+      return fallbackT(fallbackMessageKey, values);
+    }
+
+    return t(key as NamespaceKeys<T>, values);
+  };
+}
+
+async function getTranslationsWithFallback<T extends ValidNamespaces = "">(
+  namespace?: T,
+  fallbackMessageKey: NamespaceKeys<""> | undefined = defaultFallbackMessageKey
+): Promise<(key: unknown, values?: TranslationValues) => string> {
+  const t = await getTranslations(namespace);
+  const fallbackT = await getTranslations();
+
+  return (key: unknown, values?: TranslationValues): string => {
+    if (typeof key !== "string") {
+      return fallbackT(fallbackMessageKey, values);
+    }
+
+    if (!t.has(key)) {
+      return fallbackT(fallbackMessageKey, values);
+    }
+
+    return t(key as NamespaceKeys<T>, values);
+  };
+}
+
 // ===== EXPORTS =====
 
-export { useTranslations, getTranslations };
-export type { TranslationKeys };
+export {
+  useTranslations,
+  getTranslations,
+  useTranslationsWithFallback,
+  getTranslationsWithFallback,
+};
+export type { TranslationKeys, ValidNamespaces };

@@ -1,227 +1,133 @@
-import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { Academy } from "../../../club-preset/academy";
 import { TrainingGroup } from "../../../club-preset/training-group";
-import { getTranslations } from "next-intl/server";
-import { TranslationFunction } from "../../common";
 import { UserValidationConstants } from "./user-const";
+import type { ValidNamespaces } from "@/lib/typed-translations";
 
 ///////////////////////////////
-// UserName - SchemaProvider
+// UserName - Schemas
 
-function _UserNameSchemaProvider(t: TranslationFunction) {
-  const { name } = UserValidationConstants;
+const { name } = UserValidationConstants;
 
-  const firstNameSchema = z
-    .string()
-    .nonempty(t("firstName.required"))
-    .min(name.min, t("firstName.min", { min: name.min }))
-    .max(name.max, t("firstName.max", { max: name.max }))
-    .regex(name.regex, t("firstName.regex"));
+export const firstNameSchema = z
+  .string()
+  .nonempty("validation.model.user.name.firstName.required" as ValidNamespaces)
+  .min(name.min, "validation.model.user.name.firstName.min" as ValidNamespaces)
+  .max(name.max, "validation.model.user.name.firstName.max" as ValidNamespaces)
+  .regex(
+    name.regex,
+    "validation.model.user.name.firstName.regex" as ValidNamespaces
+  );
 
-  const lastNameSchema = z
-    .string()
-    .nonempty(t("lastName.required"))
-    .min(name.min, t("lastName.min", { min: name.min }))
-    .max(name.max, t("lastName.max", { max: name.max }))
-    .regex(name.regex, t("lastName.regex"));
+export const lastNameSchema = z
+  .string()
+  .nonempty("validation.model.user.name.lastName.required" as ValidNamespaces)
+  .min(name.min, "validation.model.user.name.lastName.min" as ValidNamespaces)
+  .max(name.max, "validation.model.user.name.lastName.max" as ValidNamespaces)
+  .regex(
+    name.regex,
+    "validation.model.user.name.lastName.regex" as ValidNamespaces
+  );
 
-  const nameSchema = z.object({
-    firstName: firstNameSchema,
-    lastName: lastNameSchema,
-  });
-
-  return { firstNameSchema, lastNameSchema, nameSchema };
-}
-
-export type Z_UserNameSchema = ReturnType<
-  typeof _UserNameSchemaProvider
->["nameSchema"];
-
-export type Z_FirstNameSchema = ReturnType<
-  typeof UserNameSchemaProvider
->["firstNameSchema"];
-
-export type Z_LastNameSchema = ReturnType<
-  typeof UserNameSchemaProvider
->["lastNameSchema"];
-
-export function UserNameSchemaProvider() {
-  // for client use
-  const t = useTranslations("validation.user.name");
-  return _UserNameSchemaProvider(t);
-}
-
-export async function UserNameSchemaProviderServer() {
-  // for server use
-  const translation = await getTranslations("validation.user.name");
-  return _UserNameSchemaProvider(translation);
-}
+export const nameSchema = z.object({
+  firstName: firstNameSchema,
+  lastName: lastNameSchema,
+});
 
 ///////////////////////////////
-// UserOnboarding - SchemaProvider
+// UserOnboarding - Schemas
 
-function _UserOnboardingSchemaProvider(t: TranslationFunction) {
-  const { yearOfBirth, cezarId, platformIds } = UserValidationConstants;
+const { yearOfBirth, cezarId, platformIds } = UserValidationConstants;
 
-  const academySchema = z.nativeEnum(Academy, {
-    errorMap: () => ({ message: t("academy.invalid") }),
-  });
+export const academySchema = z.nativeEnum(Academy, {
+  errorMap: () => ({
+    message:
+      "validation.model.user.onboarding.academy.invalid" as ValidNamespaces,
+  }),
+});
 
-  const yearOfBirthSchema = z
-    .number()
-    .int()
-    .min(yearOfBirth.min, t("yearOfBirth.min", { min: yearOfBirth.min }))
-    .max(yearOfBirth.max, t("yearOfBirth.max", { max: yearOfBirth.max }));
+export const yearOfBirthSchema = z
+  .number()
+  .int()
+  .min(
+    yearOfBirth.min,
+    "validation.model.user.onboarding.yearOfBirth.min" as ValidNamespaces
+  )
+  .max(
+    yearOfBirth.max,
+    "validation.model.user.onboarding.yearOfBirth.max" as ValidNamespaces
+  );
 
-  const startPlayingDateSchema = z.date();
+export const startPlayingDateSchema = z.date();
 
-  const trainingGroupSchema = z.nativeEnum(TrainingGroup, {
-    errorMap: () => ({ message: t("trainingGroup.invalid") }),
-  });
+export const trainingGroupSchema = z.nativeEnum(TrainingGroup, {
+  errorMap: () => ({
+    message:
+      "validation.model.user.onboarding.trainingGroup.invalid" as ValidNamespaces,
+  }),
+});
 
-  const hasRefereeLicenseSchema = z.boolean();
+export const hasRefereeLicenseSchema = z.boolean();
 
-  const cezarIdSchema = z
-    .string()
-    .regex(cezarId.regex, t("cezarId.regexLenght", { lenght: cezarId.length }));
+export const cezarIdSchema = z
+  .string()
+  .regex(
+    cezarId.regex,
+    "validation.model.user.onboarding.cezarId.regexLenght" as ValidNamespaces
+  );
 
-  const bboIdSchema = z
-    .string()
-    .nonempty("bboId.invalid")
-    .max(platformIds.max, t("bboId.max", { max: platformIds.max }));
+export const bboIdSchema = z
+  .string()
+  .nonempty("validation.model.user.onboarding.bboId.invalid" as ValidNamespaces)
+  .max(
+    platformIds.max,
+    "validation.model.user.onboarding.bboId.max" as ValidNamespaces
+  );
 
-  const cuebidsIdSchema = z
-    .string()
-    .nonempty("cuebidsId.invalid")
-    .max(platformIds.max, t("cuebidsId.max", { max: platformIds.max }));
+export const cuebidsIdSchema = z
+  .string()
+  .nonempty(
+    "validation.model.user.onboarding.cuebidsId.invalid" as ValidNamespaces
+  )
+  .max(
+    platformIds.max,
+    "validation.model.user.onboarding.cuebidsId.max" as ValidNamespaces
+  );
 
-  const onboardingDataSchema = z.object({
-    academy: academySchema,
-    yearOfBirth: yearOfBirthSchema,
-    startPlayingDate: startPlayingDateSchema,
-    trainingGroup: trainingGroupSchema,
-    hasRefereeLicense: hasRefereeLicenseSchema,
-    cezarId: cezarIdSchema.optional(),
-    bboId: bboIdSchema.optional(),
-    cuebidsId: cuebidsIdSchema.optional(),
-  });
-
-  return {
-    academySchema,
-    yearOfBirthSchema,
-    startPlayingDateSchema,
-    trainingGroupSchema,
-    hasRefereeLicenseSchema,
-    cezarIdSchema,
-    bboIdSchema,
-    cuebidsIdSchema,
-    onboardingDataSchema,
-  };
-}
-
-export type Z_UserOnboardingSchema = ReturnType<
-  typeof _UserOnboardingSchemaProvider
->["onboardingDataSchema"];
-
-export type Z_AcademySchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["academySchema"];
-
-export type Z_YearOfBirthSchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["yearOfBirthSchema"];
-
-export type Z_StartPlayingDateSchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["startPlayingDateSchema"];
-
-export type Z_TrainingGroupSchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["trainingGroupSchema"];
-
-export type Z_HasRefereeLicenseSchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["hasRefereeLicenseSchema"];
-
-export type Z_CezarIdSchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["cezarIdSchema"];
-
-export type Z_BboIdSchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["bboIdSchema"];
-
-export type Z_CuebidsIdSchema = ReturnType<
-  typeof UserOnboardingSchemaProvider
->["cuebidsIdSchema"];
-
-export function UserOnboardingSchemaProvider() {
-  // for client use
-  const t = useTranslations("validation.user.onboarding");
-  return _UserOnboardingSchemaProvider(t);
-}
-
-export async function UserOnboardingSchemaProviderServer() {
-  // for server use
-  const t = await getTranslations("validation.user.onboarding");
-  return _UserOnboardingSchemaProvider(t);
-}
+export const onboardingDataSchema = z.object({
+  academy: academySchema,
+  yearOfBirth: yearOfBirthSchema,
+  startPlayingDate: startPlayingDateSchema,
+  trainingGroup: trainingGroupSchema,
+  hasRefereeLicense: hasRefereeLicenseSchema,
+  cezarId: cezarIdSchema.optional(),
+  bboId: bboIdSchema.optional(),
+  cuebidsId: cuebidsIdSchema.optional(),
+});
 
 ///////////////////////////////
-// User - SchemaProvider
+// User - Schemas
 
-function _UserSchemaProvider(
-  t: TranslationFunction,
-  nameSchema: Z_UserNameSchema,
-  onboardingDataSchema: Z_UserOnboardingSchema
-) {
-  const { email, nickname } = UserValidationConstants;
+const { email, nickname } = UserValidationConstants;
 
-  const emailSchema = z
-    .string()
-    .nonempty(t("email.required"))
-    .max(email.max, t("email.max", { max: email.max }))
-    .email(t("email.regex"));
+export const emailSchema = z
+  .string()
+  .nonempty("validation.model.user.email.required" as ValidNamespaces)
+  .max(email.max, "validation.model.user.email.max" as ValidNamespaces)
+  .email("validation.model.user.email.regex" as ValidNamespaces);
 
-  const nicknameSchema = z
-    .string()
-    .min(nickname.min, t("nickname.min", { min: nickname.min }))
-    .max(nickname.max, t("nickname.max", { max: nickname.max }))
-    .regex(nickname.regex, t("nickname.regex"));
+export const nicknameSchema = z
+  .string()
+  .min(nickname.min, "validation.model.user.nickname.min" as ValidNamespaces)
+  .max(nickname.max, "validation.model.user.nickname.max" as ValidNamespaces)
+  .regex(
+    nickname.regex,
+    "validation.model.user.nickname.regex" as ValidNamespaces
+  );
 
-  const userSchema = z.object({
-    email: emailSchema,
-    nickname: nicknameSchema.optional(),
-    name: nameSchema,
-    onboardingData: onboardingDataSchema.optional(),
-  });
-
-  return { nicknameSchema, emailSchema, userSchema };
-}
-
-export type Z_UserSchema = ReturnType<typeof UserSchemaProvider>["userSchema"];
-
-export type Z_EmailSchema = ReturnType<
-  typeof UserSchemaProvider
->["emailSchema"];
-
-export type Z_NicknameSchema = ReturnType<
-  typeof UserSchemaProvider
->["nicknameSchema"];
-
-export function UserSchemaProvider() {
-  // for client use
-  const t = useTranslations("validation.user");
-  const { nameSchema } = UserNameSchemaProvider();
-  const { onboardingDataSchema } = UserOnboardingSchemaProvider();
-  return _UserSchemaProvider(t, nameSchema, onboardingDataSchema);
-}
-
-export async function UserSchemaProviderServer() {
-  // for server use
-  const t = await getTranslations("validation.user");
-  const { nameSchema } = await UserNameSchemaProviderServer();
-  const { onboardingDataSchema } = await UserOnboardingSchemaProviderServer();
-  return _UserSchemaProvider(t, nameSchema, onboardingDataSchema);
-}
+export const userSchema = z.object({
+  email: emailSchema,
+  nickname: nicknameSchema.optional(),
+  name: nameSchema,
+  onboardingData: onboardingDataSchema.optional(),
+});

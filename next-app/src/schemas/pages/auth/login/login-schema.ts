@@ -1,21 +1,12 @@
 import { useTranslations } from "next-intl";
-import {
-  UserSchemaProvider,
-  UserSchemaProviderServer,
-  Z_EmailSchema,
-  Z_NicknameSchema,
-} from "../../../model/user/user-schema";
+import { emailSchema, nicknameSchema } from "../../../model/user/user-schema";
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { TranslationFunction } from "@/schemas/common";
 
 const translationKey = "Auth.LoginPage.form";
 
-function _LoginFormSchemaProvider(
-  t: TranslationFunction,
-  emailSchema: Z_EmailSchema,
-  nicknameSchema: Z_NicknameSchema
-) {
+function _LoginFormSchemaProvider(t: TranslationFunction) {
   // const nicknameOrEmailSchema = z.union([emailSchema, nicknameSchema]);
   const nicknameOrEmailSchema = z
     .string()
@@ -72,13 +63,11 @@ export type Z_LoginFormSchema = ReturnType<
 export async function LoginFormSchemaProviderServer() {
   //for server use
   const translation = await getTranslations(translationKey);
-  const { emailSchema, nicknameSchema } = await UserSchemaProviderServer();
-  return _LoginFormSchemaProvider(translation, emailSchema, nicknameSchema);
+  return _LoginFormSchemaProvider(translation);
 }
 
 export function LoginFormSchemaProvider() {
   //for client use
   const translation = useTranslations(translationKey);
-  const { emailSchema, nicknameSchema } = UserSchemaProvider();
-  return _LoginFormSchemaProvider(translation, emailSchema, nicknameSchema);
+  return _LoginFormSchemaProvider(translation);
 }

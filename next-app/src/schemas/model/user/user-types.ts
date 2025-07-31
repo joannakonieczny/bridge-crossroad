@@ -1,42 +1,42 @@
 import { z } from "zod";
 import {
-  Z_AcademySchema,
-  Z_BboIdSchema,
-  Z_CezarIdSchema,
-  Z_CuebidsIdSchema,
-  Z_EmailSchema,
-  Z_FirstNameSchema,
-  Z_HasRefereeLicenseSchema,
-  Z_LastNameSchema,
-  Z_NicknameSchema,
-  Z_StartPlayingDateSchema,
-  Z_TrainingGroupSchema,
-  Z_UserNameSchema,
-  Z_UserOnboardingSchema,
-  Z_UserSchema,
-  Z_YearOfBirthSchema,
+  academySchema,
+  bboIdSchema,
+  cezarIdSchema,
+  cuebidsIdSchema,
+  emailSchema,
+  firstNameSchema,
+  hasRefereeLicenseSchema,
+  lastNameSchema,
+  nameSchema,
+  nicknameSchema,
+  onboardingDataSchema,
+  startPlayingDateSchema,
+  trainingGroupSchema,
+  userSchema,
+  yearOfBirthSchema,
 } from "./user-schema";
 
-export type UserNameType = z.infer<Z_UserNameSchema>;
+export type UserNameType = z.infer<typeof nameSchema>;
 
-export type FirstNameType = z.infer<Z_FirstNameSchema>;
-export type LastNameType = z.infer<Z_LastNameSchema>;
+export type FirstNameType = z.infer<typeof firstNameSchema>;
+export type LastNameType = z.infer<typeof lastNameSchema>;
 
-export type UserOnboardingType = z.infer<Z_UserOnboardingSchema>;
+export type UserOnboardingType = z.infer<typeof onboardingDataSchema>;
 
-export type AcademyType = z.infer<Z_AcademySchema>;
-export type YearOfBirthType = z.infer<Z_YearOfBirthSchema>;
-export type StartPlayingDateType = z.infer<Z_StartPlayingDateSchema>;
-export type TrainingGroupType = z.infer<Z_TrainingGroupSchema>;
-export type HasRefereeLicenseType = z.infer<Z_HasRefereeLicenseSchema>;
-export type CezarIdSchemaType = z.infer<Z_CezarIdSchema>;
-export type BboIdSchemaType = z.infer<Z_BboIdSchema>;
-export type CuebidsIdType = z.infer<Z_CuebidsIdSchema>;
+export type AcademyType = z.infer<typeof academySchema>;
+export type YearOfBirthType = z.infer<typeof yearOfBirthSchema>;
+export type StartPlayingDateType = z.infer<typeof startPlayingDateSchema>;
+export type TrainingGroupType = z.infer<typeof trainingGroupSchema>;
+export type HasRefereeLicenseType = z.infer<typeof hasRefereeLicenseSchema>;
+export type CezarIdSchemaType = z.infer<typeof cezarIdSchema>;
+export type BboIdSchemaType = z.infer<typeof bboIdSchema>;
+export type CuebidsIdType = z.infer<typeof cuebidsIdSchema>;
 
-export type UserType = z.infer<Z_UserSchema>;
+export type UserType = z.infer<typeof userSchema>;
 
-export type EmailType = z.infer<Z_EmailSchema>;
-export type NicknameType = z.infer<Z_NicknameSchema>;
+export type EmailType = z.infer<typeof emailSchema>;
+export type NicknameType = z.infer<typeof nicknameSchema>;
 
 export type PasswordTypeGeneric = string;
 export type UserIdType = string;

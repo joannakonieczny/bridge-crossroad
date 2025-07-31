@@ -1,13 +1,9 @@
 import { useTranslations } from "next-intl";
 import {
-  UserNameSchemaProvider,
-  UserNameSchemaProviderServer,
-  UserSchemaProvider,
-  UserSchemaProviderServer,
-  Z_EmailSchema,
-  Z_FirstNameSchema,
-  Z_LastNameSchema,
-  Z_NicknameSchema,
+  emailSchema,
+  nicknameSchema,
+  firstNameSchema,
+  lastNameSchema,
 } from "../../../model/user/user-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 import { z } from "zod";
@@ -16,13 +12,7 @@ import { getTranslations } from "next-intl/server";
 
 const translationKey = "Auth.RegisterPage.form";
 
-function _RegisterFormSchemaProvider(
-  t: TranslationFunction,
-  emailSchema: Z_EmailSchema,
-  nicknameSchema: Z_NicknameSchema,
-  firstNameSchema: Z_FirstNameSchema,
-  lastNameSchema: Z_LastNameSchema
-) {
+function _RegisterFormSchemaProvider(t: TranslationFunction) {
   const { password } = UserValidationConstants;
 
   const passwordSchema = z
@@ -93,28 +83,11 @@ export type Z_PasswordSchema = ReturnType<
 export async function RegisterFormSchemaProviderServer() {
   //for server use
   const translation = await getTranslations(translationKey);
-  const { emailSchema, nicknameSchema } = await UserSchemaProviderServer();
-  const { firstNameSchema, lastNameSchema } =
-    await UserNameSchemaProviderServer();
-  return _RegisterFormSchemaProvider(
-    translation,
-    emailSchema,
-    nicknameSchema,
-    firstNameSchema,
-    lastNameSchema
-  );
+  return _RegisterFormSchemaProvider(translation);
 }
 
 export function RegisterFormSchemaProvider() {
   //for client use
   const translation = useTranslations(translationKey);
-  const { emailSchema, nicknameSchema } = UserSchemaProvider();
-  const { firstNameSchema, lastNameSchema } = UserNameSchemaProvider();
-  return _RegisterFormSchemaProvider(
-    translation,
-    emailSchema,
-    nicknameSchema,
-    firstNameSchema,
-    lastNameSchema
-  );
+  return _RegisterFormSchemaProvider(translation);
 }

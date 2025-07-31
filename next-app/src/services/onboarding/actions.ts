@@ -9,12 +9,10 @@ import {
   sanitizeUser,
 } from "../../sanitizers/server-only/user-sanitize";
 import { action } from "../action-lib";
-import { UserOnboardingSchemaProviderServer } from "@/schemas/model/user/user-schema";
+import { onboardingDataSchema } from "@/schemas/model/user/user-schema";
 
 export const completeOnboarding = action
-  .inputSchema(
-    (await UserOnboardingSchemaProviderServer()).onboardingDataSchema
-  )
+  .inputSchema(onboardingDataSchema)
   .action(async ({ parsedInput: onboardingData }) => {
     const userId = await requireUserId(); // redirects if user is not authenticated
     const updatedUser = await addOnboardingData(userId, onboardingData);

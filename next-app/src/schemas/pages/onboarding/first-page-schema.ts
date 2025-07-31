@@ -1,10 +1,12 @@
 import z from "zod";
-import { UserOnboardingSchemaProvider } from "@/schemas/model/user/user-schema";
+import {
+  academySchema,
+  yearOfBirthSchema,
+} from "@/schemas/model/user/user-schema";
 import { useTranslations } from "next-intl";
 
 // client only
 export function OnboardingFirstPageSchemaProvider() {
-  const { academySchema, yearOfBirthSchema } = UserOnboardingSchemaProvider();
   const t = useTranslations("OnboardingPage.firstPage");
   const formSchema = z.object({
     academy: z.string().nonempty(t("academy.required")).pipe(academySchema),

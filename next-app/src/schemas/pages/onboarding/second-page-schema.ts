@@ -1,14 +1,13 @@
 import z from "zod";
-import { UserOnboardingSchemaProvider } from "@/schemas/model/user/user-schema";
+import {
+  startPlayingDateSchema,
+  trainingGroupSchema,
+  hasRefereeLicenseSchema,
+} from "@/schemas/model/user/user-schema";
 import { useTranslations } from "next-intl";
 
 // client only
 export function OnboardingSecondPageSchemaProvider() {
-  const {
-    startPlayingDateSchema,
-    trainingGroupSchema,
-    hasRefereeLicenseSchema,
-  } = UserOnboardingSchemaProvider();
   const t = useTranslations("OnboardingPage.secondPage");
 
   const formSchema = z.object({
