@@ -305,6 +305,15 @@ const onboardingPageValidation = {
       required: "Nie wybrano grupy zaawansowania",
     },
   },
+  finalPage: {
+    inviteCode: {
+      required: "Nie podano kodu zaproszenia",
+      regex: "Podaj poprawny kod zaproszenia",
+    },
+    terms: {
+      errorMessage: "Musisz zaakceptować regulamin i politykę prywatności",
+    },
+  },
 };
 
 const messages = {

@@ -13,8 +13,8 @@ import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { completeOnboarding } from "@/services/onboarding/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  OnboardingFinalPageSchema,
-  OnboardingFinalPageSchemaProvider,
+  OnboardingFinalPageType,
+  onboardingFinalPageSchema,
 } from "@/schemas/pages/onboarding/final-page-schema";
 import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
 import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/second-page-schema";
@@ -31,9 +31,6 @@ export default function FinalPage() {
   const onboardingContext = useOnboardingFormData();
   const finalPageData = onboardingContext.formData.finalPage;
 
-  // Pobieramy schemat formularza
-  const { formSchema } = OnboardingFinalPageSchemaProvider();
-
   const defaultValues = useMemo(
     () => ({
       inviteCode: finalPageData?.inviteCode || "",
@@ -47,13 +44,13 @@ export default function FinalPage() {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<OnboardingFinalPageSchema>({
-    resolver: zodResolver(formSchema), // Używamy zodResolver z naszym schematem
+  } = useForm<OnboardingFinalPageType>({
+    resolver: zodResolver(onboardingFinalPageSchema),
     defaultValues: defaultValues,
   });
   const termsAccepted = watch("termsAccepted");
 
-  function onSubmit(data: OnboardingFinalPageSchema) {
+  function onSubmit(data: OnboardingFinalPageType) {
     onboardingContext.setData({
       page: "final",
       data: data,
@@ -65,7 +62,7 @@ export default function FinalPage() {
       firstPage: OnboardingFirstPageType;
       secondPage: OnboardingSecondPageType;
       thirdPage: OnboardingThirdPageType;
-      finalPage: OnboardingFinalPageSchema;
+      finalPage: OnboardingFinalPageType;
     };
     // alert("Submitting data: " + JSON.stringify(typedForm));
     completeOnboarding({

@@ -11,13 +11,13 @@ import {
 import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
 import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/second-page-schema";
 import { OnboardingThirdPageType } from "@/schemas/pages/onboarding/third-page-schema";
-import { OnboardingFinalPageSchema } from "@/schemas/pages/onboarding/final-page-schema";
+import { OnboardingFinalPageType } from "@/schemas/pages/onboarding/final-page-schema";
 
 export type FormData = {
   firstPage?: OnboardingFirstPageType;
   secondPage?: OnboardingSecondPageType;
   thirdPage?: OnboardingThirdPageType;
-  finalPage?: OnboardingFinalPageSchema;
+  finalPage?: OnboardingFinalPageType;
 };
 
 type FormDataContextType = {
@@ -32,7 +32,7 @@ interface SetDataParams {
     | OnboardingFirstPageType
     | OnboardingSecondPageType
     | OnboardingThirdPageType
-    | OnboardingFinalPageSchema;
+    | OnboardingFinalPageType;
 }
 
 const FormDataContext = createContext<FormDataContextType | undefined>(
@@ -62,7 +62,7 @@ export const OnboardingFormDataProvider = ({
           newData.thirdPage = data as OnboardingThirdPageType;
           break;
         case "final":
-          newData.finalPage = data as OnboardingFinalPageSchema;
+          newData.finalPage = data as OnboardingFinalPageType;
           break;
         default:
           throw new Error(`Invalid page number got: ${page} expected 1-3`);
