@@ -14,8 +14,8 @@ import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  OnboardingThirdPageSchema,
-  OnboardingThirdPageSchemaProvider,
+  OnboardingThirdPageType,
+  onboardingThirdPageSchema,
 } from "@/schemas/pages/onboarding/third-page-schema";
 import { ROUTES } from "@/routes";
 
@@ -29,8 +29,6 @@ export default function ThirdPage() {
   });
   const onboardingContext = useOnboardingFormData();
   const thirdPageData = onboardingContext.formData.thirdPage;
-
-  const { formSchema } = OnboardingThirdPageSchemaProvider();
 
   const defaultValues = useMemo(
     () => ({
@@ -46,11 +44,11 @@ export default function ThirdPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(onboardingThirdPageSchema),
     defaultValues: defaultValues,
   });
 
-  function onSubmit(data: OnboardingThirdPageSchema) {
+  function onSubmit(data: OnboardingThirdPageType) {
     onboardingContext.setData({
       page: "3",
       data: data,

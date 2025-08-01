@@ -18,7 +18,7 @@ import {
 } from "@/schemas/pages/onboarding/final-page-schema";
 import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
 import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/second-page-schema";
-import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
+import { OnboardingThirdPageType } from "@/schemas/pages/onboarding/third-page-schema";
 import { ROUTES } from "@/routes";
 
 export default function FinalPage() {
@@ -64,7 +64,7 @@ export default function FinalPage() {
       // we have all data right now //TODO handle it better -> method in context?
       firstPage: OnboardingFirstPageType;
       secondPage: OnboardingSecondPageType;
-      thirdPage: OnboardingThirdPageSchema;
+      thirdPage: OnboardingThirdPageType;
       finalPage: OnboardingFinalPageSchema;
     };
     // alert("Submitting data: " + JSON.stringify(typedForm));
