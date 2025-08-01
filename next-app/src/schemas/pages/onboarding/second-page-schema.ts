@@ -4,50 +4,50 @@ import {
   trainingGroupSchema,
   hasRefereeLicenseSchema,
 } from "@/schemas/model/user/user-schema";
-import { useTranslations } from "next-intl";
+import type { ValidNamespaces } from "@/lib/typed-translations";
 
-// client only
-export function OnboardingSecondPageSchemaProvider() {
-  const t = useTranslations("OnboardingPage.secondPage");
+export const onboardingSecondPageSchema = z.object({
+  startPlayingDate: z.union([
+    z
+      .instanceof(Date, {
+        message:
+          "validation.pages.onboarding.secondPage.startPlayingDate.required" as ValidNamespaces,
+      })
+      .pipe(startPlayingDateSchema),
 
-  const formSchema = z.object({
-    startPlayingDate: z.union([
-      z
-        .instanceof(Date, {
-          message: t("startPlayingDate.required"),
-        })
-        .pipe(startPlayingDateSchema),
-
-      z
-        .string()
-        .nonempty(t("startPlayingDate.required"))
-        .transform((val) => {
-          try {
-            const parsedDate = new Date(val);
-            if (isNaN(parsedDate.getTime())) {
-              throw new Error(t("startPlayingDate.required"));
-            }
-            return parsedDate;
-          } catch {
-            throw new Error(t("startPlayingDate.required"));
-          }
-        })
-        .pipe(startPlayingDateSchema),
-    ]),
-
-    trainingGroup: z
+    z
       .string()
-      .nonempty(t("skillLevel.required"))
-      .pipe(trainingGroupSchema),
+      .nonempty(
+        "validation.pages.onboarding.secondPage.startPlayingDate.required" as ValidNamespaces
+      )
+      .transform((val) => {
+        try {
+          const parsedDate = new Date(val);
+          if (isNaN(parsedDate.getTime())) {
+            throw new Error(
+              "validation.pages.onboarding.secondPage.startPlayingDate.invalid" as ValidNamespaces
+            );
+          }
+          return parsedDate;
+        } catch {
+          throw new Error(
+            "validation.pages.onboarding.secondPage.startPlayingDate.invalid" as ValidNamespaces
+          );
+        }
+      })
+      .pipe(startPlayingDateSchema),
+  ]),
 
-    hasRefereeLicense: hasRefereeLicenseSchema,
-  });
+  trainingGroup: z
+    .string()
+    .nonempty(
+      "validation.pages.onboarding.secondPage.trainingGroup.required" as ValidNamespaces
+    )
+    .pipe(trainingGroupSchema),
 
-  return {
-    formSchema,
-  };
-}
+  hasRefereeLicense: hasRefereeLicenseSchema,
+});
 
-export type OnboardingSecondPageSchema = z.infer<
-  ReturnType<typeof OnboardingSecondPageSchemaProvider>["formSchema"]
+export type OnboardingSecondPageType = z.infer<
+  typeof onboardingSecondPageSchema
 >;

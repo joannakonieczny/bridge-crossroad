@@ -296,6 +296,15 @@ const onboardingPageValidation = {
       invalid: "Nieprawidłowy rok urodzenia",
     },
   },
+  secondPage: {
+    startPlayingDate: {
+      required: "Nie wybrano daty",
+      invalid: "Nieprawidłowa data",
+    },
+    trainingGroup: {
+      required: "Nie wybrano grupy zaawansowania",
+    },
+  },
 };
 
 const messages = {

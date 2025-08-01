@@ -13,8 +13,8 @@ import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { TrainingGroup } from "@/club-preset/training-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  OnboardingSecondPageSchema,
-  OnboardingSecondPageSchemaProvider,
+  OnboardingSecondPageType,
+  onboardingSecondPageSchema,
 } from "@/schemas/pages/onboarding/second-page-schema";
 import { ROUTES } from "@/routes";
 
@@ -28,8 +28,6 @@ export default function SecondPage() {
   });
   const onboardingContext = useOnboardingFormData();
   const secondPageData = onboardingContext.formData.secondPage;
-
-  const { formSchema } = OnboardingSecondPageSchemaProvider();
 
   const defaultValues = useMemo(
     () => ({
@@ -45,7 +43,7 @@ export default function SecondPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(onboardingSecondPageSchema),
     defaultValues: defaultValues,
   });
 
@@ -58,7 +56,7 @@ export default function SecondPage() {
     [tTrainingGroup]
   );
 
-  function onSubmit(data: OnboardingSecondPageSchema) {
+  function onSubmit(data: OnboardingSecondPageType) {
     onboardingContext.setData({
       page: "2",
       data: {

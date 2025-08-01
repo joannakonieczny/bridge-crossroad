@@ -9,13 +9,13 @@ import {
   useEffect,
 } from "react";
 import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
-import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
+import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/second-page-schema";
 import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
 import { OnboardingFinalPageSchema } from "@/schemas/pages/onboarding/final-page-schema";
 
 export type FormData = {
   firstPage?: OnboardingFirstPageType;
-  secondPage?: OnboardingSecondPageSchema;
+  secondPage?: OnboardingSecondPageType;
   thirdPage?: OnboardingThirdPageSchema;
   finalPage?: OnboardingFinalPageSchema;
 };
@@ -30,7 +30,7 @@ interface SetDataParams {
   page: PageId;
   data:
     | OnboardingFirstPageType
-    | OnboardingSecondPageSchema
+    | OnboardingSecondPageType
     | OnboardingThirdPageSchema
     | OnboardingFinalPageSchema;
 }
@@ -56,7 +56,7 @@ export const OnboardingFormDataProvider = ({
           newData.firstPage = data as OnboardingFirstPageType;
           break;
         case "2":
-          newData.secondPage = data as OnboardingSecondPageSchema;
+          newData.secondPage = data as OnboardingSecondPageType;
           break;
         case "3":
           newData.thirdPage = data as OnboardingThirdPageSchema;

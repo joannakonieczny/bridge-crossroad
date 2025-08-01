@@ -17,7 +17,7 @@ import {
   OnboardingFinalPageSchemaProvider,
 } from "@/schemas/pages/onboarding/final-page-schema";
 import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
-import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
+import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/second-page-schema";
 import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
 import { ROUTES } from "@/routes";
 
@@ -63,7 +63,7 @@ export default function FinalPage() {
     const typedForm = formToSend as {
       // we have all data right now //TODO handle it better -> method in context?
       firstPage: OnboardingFirstPageType;
-      secondPage: OnboardingSecondPageSchema;
+      secondPage: OnboardingSecondPageType;
       thirdPage: OnboardingThirdPageSchema;
       finalPage: OnboardingFinalPageSchema;
     };
