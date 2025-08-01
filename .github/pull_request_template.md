@@ -1,10 +1,12 @@
 ## 📝 Opis zmian
 
+- [ ] Breaking changes?
+
 <!-- Opisz, jakie zmiany wprowadza ten PR -->
 
 ## 🎯 Typ zmiany
 
-<!-- poprawka, naprawinie issue, ticket, breaking changes, itd.. -->
+<!-- poprawka, naprawinie issue, ticket, itd.. -->
 
 ## 🧪 Jak przetestować
 
