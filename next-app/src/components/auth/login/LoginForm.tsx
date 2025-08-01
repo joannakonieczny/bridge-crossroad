@@ -11,14 +11,13 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { login } from "@/services/auth/actions";
-import { LoginFormSchemaProvider } from "@/schemas/pages/auth/login/login-schema";
+import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { ROUTES } from "@/routes";
 
 export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
-  const { loginFormSchema } = LoginFormSchemaProvider();
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {

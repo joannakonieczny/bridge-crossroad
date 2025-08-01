@@ -6,13 +6,13 @@ import { getUserId, UserId } from "./server-only/user-id";
 import { createNewUser, findExisting } from "@/repositories/user-auth";
 import { ROUTES } from "@/routes";
 import { action } from "@/services/action-lib";
-import { LoginFormSchemaProviderServer } from "@/schemas/pages/auth/login/login-schema";
+import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { RegisterFormSchemaProviderServer } from "@/schemas/pages/auth/register/register-schema";
 import { returnValidationErrors } from "next-safe-action";
 import { getTranslations } from "next-intl/server";
 
 export const login = action
-  .inputSchema((await LoginFormSchemaProviderServer()).loginFormSchema)
+  .inputSchema(loginFormSchema)
   .action(async ({ parsedInput: formData }) => {
     const user =
       (await findExisting({
@@ -27,12 +27,9 @@ export const login = action
       // throw new Error("Invalid credentials");
       console.log("Invalid credentials", formData);
       const t = await getTranslations("Auth.LoginPage.errors");
-      returnValidationErrors(
-        (await LoginFormSchemaProviderServer()).loginFormSchema,
-        {
-          _errors: [t("invalidCredentials")],
-        }
-      );
+      returnValidationErrors(loginFormSchema, {
+        _errors: [t("invalidCredentials")],
+      });
     }
 
     await createSession(user._id.toString());

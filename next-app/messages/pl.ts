@@ -261,6 +261,15 @@ const userModelValidation = {
   },
 };
 
+const loginPageValidation = {
+  nicknameOrEmail: {
+    required: "Podaj nick lub email",
+  },
+  password: {
+    required: "Podaj hasło",
+  },
+};
+
 const messages = {
   DummyPage: {
     text: "Witaj świecie!",
@@ -307,6 +316,11 @@ const messages = {
   validation: {
     model: {
       user: userModelValidation,
+    },
+    pages: {
+      auth: {
+        login: loginPageValidation,
+      },
     },
   },
   Auth: {
