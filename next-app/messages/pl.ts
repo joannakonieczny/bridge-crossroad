@@ -286,6 +286,18 @@ const registerPageValidation = {
   },
 };
 
+const onboardingPageValidation = {
+  firstPage: {
+    academy: {
+      required: "Nie wybrano uczelni",
+    },
+    yearOfBirth: {
+      required: "Nie wybrano roku urodzenia",
+      invalid: "Nieprawidłowy rok urodzenia",
+    },
+  },
+};
+
 const messages = {
   DummyPage: {
     text: "Witaj świecie!",
@@ -338,6 +350,7 @@ const messages = {
         login: loginPageValidation,
         register: registerPageValidation,
       },
+      onboarding: onboardingPageValidation,
     },
   },
   Auth: {

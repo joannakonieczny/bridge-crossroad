@@ -16,7 +16,7 @@ import {
   OnboardingFinalPageSchema,
   OnboardingFinalPageSchemaProvider,
 } from "@/schemas/pages/onboarding/final-page-schema";
-import { OnboardingFirstPageSchema } from "@/schemas/pages/onboarding/first-page-schema";
+import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
 import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
 import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
 import { ROUTES } from "@/routes";
@@ -62,7 +62,7 @@ export default function FinalPage() {
     formToSend.finalPage = data; //issue with async setter of usestate
     const typedForm = formToSend as {
       // we have all data right now //TODO handle it better -> method in context?
-      firstPage: OnboardingFirstPageSchema;
+      firstPage: OnboardingFirstPageType;
       secondPage: OnboardingSecondPageSchema;
       thirdPage: OnboardingThirdPageSchema;
       finalPage: OnboardingFinalPageSchema;

@@ -12,8 +12,8 @@ import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { Academy } from "@/club-preset/academy";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  OnboardingFirstPageSchema,
-  OnboardingFirstPageSchemaProvider,
+  OnboardingFirstPageType,
+  onboardingFirstPageSchema,
 } from "@/schemas/pages/onboarding/first-page-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 import { ROUTES } from "@/routes";
@@ -44,8 +44,6 @@ export default function FirstPage() {
   const onboardingContext = useOnboardingFormData();
   const firstPageData = onboardingContext.formData.firstPage;
 
-  const { formSchema } = OnboardingFirstPageSchemaProvider();
-
   const defaultValues = useMemo(
     () => ({
       academy: firstPageData?.academy || "",
@@ -61,7 +59,7 @@ export default function FirstPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(onboardingFirstPageSchema),
     defaultValues: defaultValues,
   });
 
@@ -75,7 +73,7 @@ export default function FirstPage() {
   );
   const yearOptions = useMemo(() => generateYearOptions(), []);
 
-  function onSubmit(data: OnboardingFirstPageSchema) {
+  function onSubmit(data: OnboardingFirstPageType) {
     onboardingContext.setData({
       page: "1",
       data: data,
