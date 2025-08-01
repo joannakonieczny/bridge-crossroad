@@ -270,6 +270,22 @@ const loginPageValidation = {
   },
 };
 
+const registerPageValidation = {
+  password: {
+    required: "Podaj hasło",
+    min: "Hasło musi mieć co najmniej {min} znaków",
+    max: "Hasło nie może być dłuższe niż {max} znaków",
+    noUpperCase: "Hasło musi zawierać wielkie litery",
+    noLowerCase: "Hasło musi zawierać małe litery",
+    noDigit: "Hasło musi zawierać cyfry",
+    noSpecialChar: "Hasło musi zawierać znaki specjalne",
+  },
+  repeatPassword: {
+    required: "Powtórz hasło",
+    mismatch: "Hasła nie pasują do siebie",
+  },
+};
+
 const messages = {
   DummyPage: {
     text: "Witaj świecie!",
@@ -320,6 +336,7 @@ const messages = {
     pages: {
       auth: {
         login: loginPageValidation,
+        register: registerPageValidation,
       },
     },
   },

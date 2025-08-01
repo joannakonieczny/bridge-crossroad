@@ -10,14 +10,13 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { register } from "@/services/auth/actions";
-import { RegisterFormSchemaProvider } from "@/schemas/pages/auth/register/register-schema";
+import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { ROUTES } from "@/routes";
 
 export default function RegisterForm() {
   const t = useTranslations("Auth.RegisterPage");
-  const { registerFormSchema } = RegisterFormSchemaProvider();
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
