@@ -3,7 +3,10 @@
 import { HStack, Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import FormLayout from "../FormLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import FormHeading from "../FormHeading";
 import FormInput from "../FormInput";
 import GoogleButton from "../FormGoogleButton";
@@ -17,6 +20,7 @@ import { ROUTES } from "@/routes";
 
 export default function RegisterForm() {
   const t = useTranslations("Auth.RegisterPage");
+  const tValidation = useTranslationsWithFallback();
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
@@ -39,7 +43,7 @@ export default function RegisterForm() {
       // alert("Login error:" + JSON.stringify(errorMessages));
       if (errorMessages && errorMessages.length > 0) {
         toast({
-          title: errorMessages[0],
+          title: tValidation(errorMessages[0]),
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -67,9 +71,7 @@ export default function RegisterForm() {
               render={({ field, fieldState: { error } }) => (
                 <FormInput
                   placeholder={t("form.firstNameField.placeholder")}
-                  errorMessage={
-                    error?.message ?? t("form.firstNameField.errorMessage")
-                  }
+                  errorMessage={tValidation(error?.message)}
                   isInvalid={!!error}
                   id="firstName"
                   type="text"
@@ -85,9 +87,7 @@ export default function RegisterForm() {
               render={({ field, fieldState: { error } }) => (
                 <FormInput
                   placeholder={t("form.lastNameField.placeholder")}
-                  errorMessage={
-                    error?.message ?? t("form.lastNameField.errorMessage")
-                  }
+                  errorMessage={tValidation(error?.message)}
                   isInvalid={!!error}
                   id="lastName"
                   type="text"
@@ -104,9 +104,7 @@ export default function RegisterForm() {
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.nicknameField.placeholder")}
-                errorMessage={
-                  error?.message ?? t("form.nicknameField.errorMessage")
-                }
+                errorMessage={tValidation(error?.message)}
                 isInvalid={!!error}
                 id="nickname"
                 type="text"
@@ -122,9 +120,7 @@ export default function RegisterForm() {
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.emailField.placeholder")}
-                errorMessage={
-                  error?.message ?? t("form.emailField.errorMessage")
-                }
+                errorMessage={tValidation(error?.message)}
                 isInvalid={!!error}
                 id="email"
                 value={field.value}
@@ -139,9 +135,7 @@ export default function RegisterForm() {
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.passwordField.placeholder")}
-                errorMessage={
-                  error?.message ?? t("form.passwordField.errorMessage")
-                }
+                errorMessage={tValidation(error?.message)}
                 isInvalid={!!error}
                 id="password"
                 type="password"
@@ -157,9 +151,7 @@ export default function RegisterForm() {
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.repeatPasswordField.placeholder")}
-                errorMessage={
-                  error?.message ?? t("form.repeatPasswordField.errorMessage")
-                }
+                errorMessage={tValidation(error?.message)}
                 isInvalid={!!error}
                 id="repeatPassword"
                 type="password"

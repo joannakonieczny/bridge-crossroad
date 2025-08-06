@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import SelectInput from "../inputs/SelectInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -36,6 +39,7 @@ export default function FirstPage() {
   useFormSkippingValidation({ currentPage: "1" });
   const t = useTranslations("OnboardingPage.firstPage");
   const tAcademy = useTranslations("common.academy");
+  const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.onboarding.step_2,
   });
@@ -104,7 +108,7 @@ export default function FirstPage() {
             <SelectInput
               placeholder={t("academy.placeholder")}
               isInvalid={!!errors.academy}
-              errorMessage={errors.academy?.message}
+              errorMessage={tValidation(errors.academy?.message)}
               options={academyOptions}
               onSelectProps={{
                 ...field,
@@ -119,7 +123,7 @@ export default function FirstPage() {
             <SelectInput
               placeholder={t("yearOfBirth.placeholder")}
               isInvalid={!!errors.yearOfBirth}
-              errorMessage={errors.yearOfBirth?.message}
+              errorMessage={tValidation(errors.yearOfBirth?.message)}
               options={yearOptions}
               onSelectProps={{
                 ...field,

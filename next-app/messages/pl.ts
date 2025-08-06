@@ -1,5 +1,6 @@
 import { TrainingGroup } from "@/club-preset/training-group";
 import { Academy } from "@/club-preset/academy";
+import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -14,12 +15,6 @@ const MONTHS = {
   oct: "Październik",
   nov: "Listopad",
   dec: "Grudzień",
-};
-
-const nameFields = {
-  min: "Min. {min} znaki",
-  max: "Max. {max} znaków",
-  regex: "Tylko litery",
 };
 
 const tooLongString = "Max. {maxLength} znaków";
@@ -223,40 +218,50 @@ const landingPage = {
 
 const userModelValidation = {
   name: {
-    firstName: { ...nameFields, required: "Podaj imię" },
-    lastName: { ...nameFields, required: "Podaj nazwisko" },
+    firstName: {
+      min: `Min. ${USER.name.min} znaki`,
+      max: "Max. {max} znaków",
+      regex: "Tylko litery",
+      required: "Podaj imię",
+    },
+    lastName: {
+      min: `Min. ${USER.name.min} znaki`,
+      max: `Max. ${USER.name.max} znaków`,
+      regex: "Tylko litery",
+      required: "Podaj nazwisko",
+    },
   },
   onboarding: {
     academy: {
       invalid: "Nieprawidłowa uczelnia",
     },
     yearOfBirth: {
-      min: "Rok urodzenia nie może być wcześniejszy niż {min}",
-      max: "Rok urodzenia nie może być późniejszy niż {max}",
+      min: `Rok urodzenia nie może być wcześniejszy niż ${USER.yearOfBirth.min}`,
+      max: `Rok urodzenia nie może być późniejszy niż ${USER.yearOfBirth.max}`,
     },
     trainingGroup: {
       invalid: "Nieprawidłowa grupa treningowa",
     },
     cezarId: {
-      regexLenght: "Numer Cezar musi składać się z {lenght} cyfr",
+      regexLenght: `Numer Cezar musi składać się z ${USER.cezarId.length} cyfr`,
     },
     bboId: {
       invalid: "Niepoprawny nick na BBO",
-      max: "Max. {max} znaków",
+      max: `Max. ${USER.platformIds.max} znaków`,
     },
     cuebidsId: {
       invalid: "Niepoprawny kod użytkownika na Cuebids",
-      max: "Max. {max} znaków",
+      max: `Max. ${USER.platformIds.max} znaków`,
     },
   },
   email: {
     regex: "Podaj poprawny adres e-mail",
-    max: "E-mail nie może być dłuższy niż {max} znaków",
+    max: `E-mail nie może być dłuższy niż ${USER.email.max} znaków`,
     required: "E-mail jest wymagany",
   },
   nickname: {
-    min: "Nick musi mieć co najmniej {min} znaki",
-    max: "Nick nie może być dłuższy niż {max} znaków",
+    min: `Nick musi mieć co najmniej ${USER.nickname.min} znaki`,
+    max: `Nick nie może być dłuższy niż ${USER.nickname.max} znaków`,
     regex: "Nick może zawierać tylko litery, cyfry, _ i -",
   },
 };
@@ -273,8 +278,8 @@ const loginPageValidation = {
 const registerPageValidation = {
   password: {
     required: "Podaj hasło",
-    min: "Hasło musi mieć co najmniej {min} znaków",
-    max: "Hasło nie może być dłuższe niż {max} znaków",
+    min: `Hasło musi mieć co najmniej ${USER.password.min} znaków`,
+    max: `Hasło nie może być dłuższe niż ${USER.password.max} znaków`,
     noUpperCase: "Hasło musi zawierać wielkie litery",
     noLowerCase: "Hasło musi zawierać małe litery",
     noDigit: "Hasło musi zawierać cyfry",

@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import SelectInput from "../inputs/SelectInput";
 import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -20,6 +23,7 @@ export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
   const t = useTranslations("OnboardingPage.secondPage");
   const tTrainingGroup = useTranslations("common.trainingGroup");
+  const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.onboarding.step_3,
     prevPage: ROUTES.onboarding.step_1,
@@ -93,7 +97,7 @@ export default function SecondPage() {
                 value={field.value}
                 onChange={field.onChange}
                 placeholder={t("startPlayingDate.placeholder")}
-                errorMessage={errors.startPlayingDate?.message}
+                errorMessage={tValidation(errors.startPlayingDate?.message)}
                 isInvalid={!!errors.startPlayingDate}
                 onElementProps={{
                   ...field,
@@ -110,7 +114,7 @@ export default function SecondPage() {
             <SelectInput
               placeholder={t("skillLevel.placeholder")}
               isInvalid={!!errors.trainingGroup}
-              errorMessage={errors.trainingGroup?.message}
+              errorMessage={tValidation(errors.trainingGroup?.message)}
               options={trainingGroupOptions}
               onSelectProps={{
                 ...field,

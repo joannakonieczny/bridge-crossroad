@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
@@ -24,6 +27,7 @@ import { ROUTES } from "@/routes";
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
   const t = useTranslations("OnboardingPage.finalPage");
+  const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.dashboard, // after onboarding is completed, redirect to dashboard
     prevPage: ROUTES.onboarding.step_3,
@@ -111,7 +115,7 @@ export default function FinalPage() {
           render={({ field: { onChange, value } }) => (
             <InviteCodeInput
               isInvalid={!!errors.inviteCode}
-              errorMessage={errors.inviteCode?.message}
+              errorMessage={tValidation(errors.inviteCode?.message)}
               length={8}
               onPinInputProps={{
                 value: value,
@@ -135,7 +139,7 @@ export default function FinalPage() {
               isChecked={value}
               onChange={onChange}
               isInvalid={!!errors.termsAccepted}
-              errorMessage={errors.termsAccepted?.message}
+              errorMessage={tValidation(errors.termsAccepted?.message)}
             />
           )}
         />

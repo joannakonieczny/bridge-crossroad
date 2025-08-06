@@ -9,7 +9,7 @@ import { action } from "@/services/action-lib";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { returnValidationErrors } from "next-safe-action";
-import { getTranslations } from "next-intl/server";
+import { ValidNamespaces } from "@/lib/typed-translations";
 
 export const login = action
   .inputSchema(loginFormSchema)
@@ -26,9 +26,10 @@ export const login = action
     if (!user) {
       // throw new Error("Invalid credentials");
       console.log("Invalid credentials", formData);
-      const t = await getTranslations("Auth.LoginPage.errors");
       returnValidationErrors(loginFormSchema, {
-        _errors: [t("invalidCredentials")],
+        _errors: [
+          "Auth.LoginPage.errors.invalidCredentials" as ValidNamespaces,
+        ],
       });
     }
 
@@ -45,19 +46,22 @@ export const register = action
       redirect(ROUTES.dashboard); //auto redirect
     } catch (error) {
       console.error("Registration error:", error);
-      const t = await getTranslations("Auth.RegisterPage.errors");
 
       // Obsługa błędu duplikatu MongoDB
       if (error instanceof Error && error.message.includes("duplicate key")) {
         if (error.message.includes("email")) {
           // Błąd duplikatu email
           returnValidationErrors(registerFormSchema, {
-            _errors: [t("emailExists")],
+            _errors: [
+              "Auth.RegisterPage.errors.emailExists" as ValidNamespaces,
+            ],
           });
         } else if (error.message.includes("nickname")) {
           // Błąd duplikatu nickname
           returnValidationErrors(registerFormSchema, {
-            _errors: [t("nicknameExists")],
+            _errors: [
+              "Auth.RegisterPage.errors.nicknameExists" as ValidNamespaces,
+            ],
           });
         }
       } else {
