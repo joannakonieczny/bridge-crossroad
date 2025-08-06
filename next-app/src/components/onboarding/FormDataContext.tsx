@@ -8,10 +8,12 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
-import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/second-page-schema";
-import { OnboardingThirdPageType } from "@/schemas/pages/onboarding/third-page-schema";
-import { OnboardingFinalPageType } from "@/schemas/pages/onboarding/final-page-schema";
+import {
+  OnboardingFirstPageType,
+  OnboardingSecondPageType,
+  OnboardingThirdPageType,
+  OnboardingFinalPageType,
+} from "@/schemas/pages/onboarding/onboarding-types";
 
 export type FormData = {
   firstPage?: OnboardingFirstPageType;

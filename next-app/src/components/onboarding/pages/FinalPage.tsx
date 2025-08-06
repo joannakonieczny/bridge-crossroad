@@ -14,11 +14,11 @@ import { completeOnboarding } from "@/services/onboarding/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   OnboardingFinalPageType,
-  onboardingFinalPageSchema,
-} from "@/schemas/pages/onboarding/final-page-schema";
-import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/first-page-schema";
-import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/second-page-schema";
-import { OnboardingThirdPageType } from "@/schemas/pages/onboarding/third-page-schema";
+  OnboardingFirstPageType,
+  OnboardingSecondPageType,
+  OnboardingThirdPageType,
+} from "@/schemas/pages/onboarding/onboarding-types";
+import { onboardingFinalPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import { ROUTES } from "@/routes";
 
 export default function FinalPage() {

@@ -11,12 +11,10 @@ import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { Academy } from "@/club-preset/academy";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  OnboardingFirstPageType,
-  onboardingFirstPageSchema,
-} from "@/schemas/pages/onboarding/first-page-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 import { ROUTES } from "@/routes";
+import { onboardingFirstPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
+import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/onboarding-types";
 
 function generateYearOptions() {
   const years = [];

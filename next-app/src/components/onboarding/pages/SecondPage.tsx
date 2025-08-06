@@ -12,10 +12,8 @@ import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { TrainingGroup } from "@/club-preset/training-group";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  OnboardingSecondPageType,
-  onboardingSecondPageSchema,
-} from "@/schemas/pages/onboarding/second-page-schema";
+import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/onboarding-types";
+import { onboardingSecondPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import { ROUTES } from "@/routes";
 
 export default function SecondPage() {
