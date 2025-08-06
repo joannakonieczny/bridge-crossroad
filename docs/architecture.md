@@ -269,12 +269,13 @@ schemas/
 ├── common.ts              # Shared validation utilities
 ├── model/                 # Related to database objects, but not DTOs
 │   └── user/
-│       ├── user-const.ts       # Constants, e.g., word length for validators
-│       ├── user-schema.ts      # Schema used throughout the application for both client and backend
+│       ├── user-schema.ts      # Schema and constants used throughout the application for both client and backend
 │       └── user-types.ts       # Types inferred from schema
 ├── pages/                 # Related to pages - e.g., form field validation for backend or client
 │   ├── auth/
 │   └── onboarding/
+│       ├── onboarding-schema.ts # All onboarding schemas and validation constants
+│       └── onboarding-types.ts  # All onboarding types inferred from schemas
 ```
 
 ### `/src/i18n` - Internationalization

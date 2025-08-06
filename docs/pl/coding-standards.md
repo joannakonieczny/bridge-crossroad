@@ -76,10 +76,12 @@ export default function ComponentName({ // export default function nie arrow fun
 "use server";
 
 import { action } from "@/services/action-lib";
-import { schemaProvider } from "@/schemas/...";
+import { userSchema } from "@/schemas/model/user/user-schema";
+// lub dla schematów onboarding:
+// import { onboardingFirstPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 
 export const actionName = action
-  .inputSchema(schemaProvider.schema) // parsowanie i automatyczne odrzucenie gdy walidacja nie powiedzie się
+  .inputSchema(userSchema) // parsowanie i automatyczne odrzucenie gdy walidacja nie powiedzie się
   .action(async ({ parsedInput: myInputtedData }) => {
     // Logika biznesowa
     console.log(myInputtedData); // wykonuje się po stronie backendu
@@ -90,38 +92,186 @@ export const actionName = action
 ## Wzorzec Walidacji Formularzy
 
 ```typescript
-// Definicja schematu z typowanymi tłumaczeniami
-import { useTranslations } from "@/lib/typed-translations";
+// Definicja schematu z kluczami tłumaczeń
+import { z } from "zod";
+import type { ValidNamespaces } from "@/lib/typed-translations";
 
-export function FormSchemaProvider() {
-  const t = useTranslations("validation.form"); // ✅ Type-safe namespace
-
-  const schema = z.object({
-    email: z.string().email(t("email.invalid")), // ✅ Autouzupełnianie
-    field: z.string().nonempty(t("field.required")),
-  });
-
-  return { schema };
-}
-
-// Użycie w komponencie
-const { schema } = FormSchemaProvider();
-const { control, handleSubmit } = useForm({
-  resolver: zodResolver(schema),
+// ✅ Używaj kluczy tłumaczeń bezpośrednio w definicjach schematów
+const onboardingThirdPageSchema = z.object({
+  cezarId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cezarIdSchema.optional()),
+  bboId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(bboIdSchema.optional()),
+  cuebidsId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cuebidsIdSchema.optional()),
 });
 
-// Przykład z różnymi namespace dla różnych formularzy
-export function LoginFormSchemaProvider() {
-  const t = useTranslations("Auth.LoginPage.validation"); // ✅ Specyficzny namespace
+// Użycie w komponencie z hook'iem tłumaczeń
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 
-  return {
-    schema: z.object({
-      email: z.string().email(t("emailInvalid")),
-      password: z.string().min(8, t("passwordTooShort")),
-    }),
-  };
+function ThirdPage() {
+  const t = useTranslations("OnboardingPage.thirdPage"); // Dla etykiet, placeholderów
+  const tValidation = useTranslationsWithFallback(); // Dla komunikatów walidacji ze schematu
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(onboardingThirdPageSchema),
+    defaultValues: {
+      cezarId: "",
+      bboId: "",
+      cuebidsId: "",
+    },
+  });
+
+  function onSubmit(data: OnboardingThirdPageType) {
+    // Obsługa wysłania formularza
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={4}>
+        <Controller
+          name="cezarId"
+          control={control}
+          render={({ field }) => (
+            <DefaultInput
+              placeholder={t("cezarId.placeholder")}
+              isInvalid={!!errors.cezarId}
+              errorMessage={tValidation(errors.cezarId?.message)}
+              onInputProps={{ ...field }}
+            />
+          )}
+        />
+
+        <Controller
+          name="bboId"
+          control={control}
+          render={({ field }) => (
+            <DefaultInput
+              placeholder={t("bboId.placeholder")}
+              isInvalid={!!errors.bboId}
+              errorMessage={tValidation(errors.bboId?.message)}
+              onInputProps={{ ...field }}
+            />
+          )}
+        />
+
+        <Controller
+          name="cuebidsId"
+          control={control}
+          render={({ field }) => (
+            <DefaultInput
+              placeholder={t("cuebidsId.placeholder")}
+              isInvalid={!!errors.cuebidsId}
+              errorMessage={tValidation(errors.cuebidsId?.message)}
+              onInputProps={{ ...field }}
+            />
+          )}
+        />
+      </Stack>
+    </form>
+  );
 }
 ```
+
+**Ważne:**
+
+- **Brak providerów schematów**: Używaj kluczy tłumaczeń bezpośrednio w definicjach schematów
+- **Bezpieczeństwo typów**: Rzutuj komunikaty błędów na `ValidNamespaces` dla bezpieczeństwa typów
+- **Obsługa błędów**: Używaj `useTranslationsWithFallback()` dla komunikatów błędów walidacji
+- **Rozdzielenie obowiązków**:
+  - `useTranslations("namespace")` dla etykiet UI i placeholderów
+  - `useTranslationsWithFallback()` dla dynamicznych komunikatów błędów ze schematów
+- **Pola opcjonalne**: Używaj wzorca `.transform(emptyStringToUndefined).pipe(schema.optional())`
+
+**Przykład z rzeczywistego schematu onboarding:**
+
+```typescript
+// Zaawansowana walidacja z transformacją i polami opcjonalnymi
+const cezarIdSchema = z
+  .string()
+  .transform(emptyStringToUndefined)
+  .pipe(
+    z
+      .string()
+      .regex(
+        /^\d{8}$/,
+        "validation.model.user.onboarding.cezarId.regexLenght" as ValidNamespaces
+      )
+      .optional()
+  );
+
+// Transformacja pustych stringów na undefined dla pól opcjonalnych
+const emptyStringToUndefined = (value: string | undefined) =>
+  value === "" ? undefined : value;
+
+// Kompletny schemat z wieloma polami opcjonalnymi
+const onboardingThirdPageSchema = z.object({
+  cezarId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cezarIdSchema.optional()),
+  bboId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(bboIdSchema.optional()),
+  cuebidsId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cuebidsIdSchema.optional()),
+});
+```
+
+**Przykład z rzeczywistego schematu logowania:**
+
+```typescript
+// Zaawansowana walidacja z logiką warunkową
+const nicknameOrEmailSchema = z
+  .string()
+  .nonempty(
+    "validation.pages.auth.login.nicknameOrEmail.required" as ValidNamespaces
+  )
+  .superRefine((value, ctx) => {
+    if (value.includes("@")) {
+      // Walidacja emaila
+      const result = emailSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+            path: err.path,
+          });
+        });
+      }
+    } else {
+      // Walidacja nickname
+      const result = nicknameSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+          });
+        });
+      }
+    }
+  });
+```
+
+````
 
 ## Uwierzytelnienie i Autoryzacja
 
@@ -144,7 +294,7 @@ export default async function ProtectedLayout({
   await requireUserId(); // Przekierowuje jeśli nie uwierzytelniony, zwraca userId, nie musisz pisać tego dla każdego komponentu bo są guardy w layout.tsx, to samo istnieje dla onboardingu
   return <>{children}</>;
 }
-```
+````
 
 ### Wzorce Uprawnień
 
