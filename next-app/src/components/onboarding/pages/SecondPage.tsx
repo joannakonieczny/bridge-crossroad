@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import SelectInput from "../inputs/SelectInput";
 import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -12,24 +15,21 @@ import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { TrainingGroup } from "@/club-preset/training-group";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  OnboardingSecondPageSchema,
-  OnboardingSecondPageSchemaProvider,
-} from "@/schemas/pages/onboarding/second-page-schema";
+import { OnboardingSecondPageType } from "@/schemas/pages/onboarding/onboarding-types";
+import { onboardingSecondPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import { ROUTES } from "@/routes";
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
   const t = useTranslations("OnboardingPage.secondPage");
   const tTrainingGroup = useTranslations("common.trainingGroup");
+  const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.onboarding.step_3,
     prevPage: ROUTES.onboarding.step_1,
   });
   const onboardingContext = useOnboardingFormData();
   const secondPageData = onboardingContext.formData.secondPage;
-
-  const { formSchema } = OnboardingSecondPageSchemaProvider();
 
   const defaultValues = useMemo(
     () => ({
@@ -45,7 +45,7 @@ export default function SecondPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(onboardingSecondPageSchema),
     defaultValues: defaultValues,
   });
 
@@ -58,7 +58,7 @@ export default function SecondPage() {
     [tTrainingGroup]
   );
 
-  function onSubmit(data: OnboardingSecondPageSchema) {
+  function onSubmit(data: OnboardingSecondPageType) {
     onboardingContext.setData({
       page: "2",
       data: {
@@ -97,7 +97,7 @@ export default function SecondPage() {
                 value={field.value}
                 onChange={field.onChange}
                 placeholder={t("startPlayingDate.placeholder")}
-                errorMessage={errors.startPlayingDate?.message}
+                errorMessage={tValidation(errors.startPlayingDate?.message)}
                 isInvalid={!!errors.startPlayingDate}
                 onElementProps={{
                   ...field,
@@ -114,7 +114,7 @@ export default function SecondPage() {
             <SelectInput
               placeholder={t("skillLevel.placeholder")}
               isInvalid={!!errors.trainingGroup}
-              errorMessage={errors.trainingGroup?.message}
+              errorMessage={tValidation(errors.trainingGroup?.message)}
               options={trainingGroupOptions}
               onSelectProps={{
                 ...field,

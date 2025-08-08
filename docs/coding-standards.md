@@ -76,10 +76,12 @@ export default function ComponentName({ // export default function not arrow fun
 "use server";
 
 import { action } from "@/services/action-lib";
-import { schemaProvider } from "@/schemas/...";
+import { userSchema } from "@/schemas/model/user/user-schema";
+// or for onboarding schemas:
+// import { onboardingFirstPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 
 export const actionName = action
-  .inputSchema(schemaProvider.schema) // parsing and automatic rejection when validation fails
+  .inputSchema(userSchema) // parsing and automatic rejection when validation fails
   .action(async ({ parsedInput: myInputtedData }) => {
     // Business logic
     console.log(myInputtedData); // executes on the backend side
@@ -90,38 +92,149 @@ export const actionName = action
 ### Form Validation Pattern
 
 ```typescript
-// Schema definition with typed translations
-import { useTranslations } from "@/lib/typed-translations";
+// Schema definition with typed translation keys
+import { z } from "zod";
+import type { ValidNamespaces } from "@/lib/typed-translations";
 
-export function FormSchemaProvider() {
-  const t = useTranslations("validation.form"); // ✅ Type-safe namespace
-
-  const schema = z.object({
-    email: z.string().email(t("email.invalid")), // ✅ Autocomplete works
-    field: z.string().nonempty(t("field.required")),
-  });
-
-  return { schema };
-}
-
-// Component usage
-const { schema } = FormSchemaProvider();
-const { control, handleSubmit } = useForm({
-  resolver: zodResolver(schema),
+// ✅ Use translation keys directly in schema definitions
+const onboardingThirdPageSchema = z.object({
+  cezarId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cezarIdSchema.optional()),
+  bboId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(bboIdSchema.optional()),
+  cuebidsId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cuebidsIdSchema.optional()),
 });
 
-// Example with different namespaces for different forms
-export function LoginFormSchemaProvider() {
-  const t = useTranslations("Auth.LoginPage.validation"); // ✅ Specific namespace
+// Component usage with translation hook
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 
-  return {
-    schema: z.object({
-      email: z.string().email(t("emailInvalid")),
-      password: z.string().min(8, t("passwordTooShort")),
-    }),
-  };
+function ThirdPage() {
+  const t = useTranslations("OnboardingPage.thirdPage"); // For labels, placeholders
+  const tValidation = useTranslationsWithFallback(); // For validation messages from schema
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(onboardingThirdPageSchema),
+    defaultValues: {
+      cezarId: "",
+      bboId: "",
+      cuebidsId: "",
+    },
+  });
+
+  function onSubmit(data: OnboardingThirdPageType) {
+    // Handle form submission
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={4}>
+        <Controller
+          name="cezarId"
+          control={control}
+          render={({ field }) => (
+            <DefaultInput
+              placeholder={t("cezarId.placeholder")}
+              isInvalid={!!errors.cezarId}
+              errorMessage={tValidation(errors.cezarId?.message)}
+              onInputProps={{ ...field }}
+            />
+          )}
+        />
+
+        <Controller
+          name="bboId"
+          control={control}
+          render={({ field }) => (
+            <DefaultInput
+              placeholder={t("bboId.placeholder")}
+              isInvalid={!!errors.bboId}
+              errorMessage={tValidation(errors.bboId?.message)}
+              onInputProps={{ ...field }}
+            />
+          )}
+        />
+
+        <Controller
+          name="cuebidsId"
+          control={control}
+          render={({ field }) => (
+            <DefaultInput
+              placeholder={t("cuebidsId.placeholder")}
+              isInvalid={!!errors.cuebidsId}
+              errorMessage={tValidation(errors.cuebidsId?.message)}
+              onInputProps={{ ...field }}
+            />
+          )}
+        />
+      </Stack>
+    </form>
+  );
 }
 ```
+
+**Important:**
+
+- **No schema providers**: Use translation keys directly in schema definitions
+- **Type safety**: Cast error messages to `ValidNamespaces` for type safety
+- **Error handling**: Use `useTranslationsWithFallback()` for validation error messages
+- **Separate concerns**:
+  - `useTranslations("namespace")` for UI labels and placeholders
+  - `useTranslationsWithFallback()` for dynamic error messages from schemas
+- **Optional fields**: Use `.transform(emptyStringToUndefined).pipe(schema.optional())` pattern
+
+**Real-world example from onboarding schema:**
+
+```typescript
+// Advanced validation with transformation and optional fields
+const cezarIdSchema = z
+  .string()
+  .transform(emptyStringToUndefined)
+  .pipe(
+    z
+      .string()
+      .regex(
+        /^\d{8}$/,
+        "validation.model.user.onboarding.cezarId.regexLenght" as ValidNamespaces
+      )
+      .optional()
+  );
+
+// Transform empty strings to undefined for optional fields
+const emptyStringToUndefined = (value: string | undefined) =>
+  value === "" ? undefined : value;
+
+// Complete schema with multiple optional fields
+const onboardingThirdPageSchema = z.object({
+  cezarId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cezarIdSchema.optional()),
+  bboId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(bboIdSchema.optional()),
+  cuebidsId: z
+    .string()
+    .transform(emptyStringToUndefined)
+    .pipe(cuebidsIdSchema.optional()),
+});
+```
+
+````
 
 ## Authentication & Authorization
 
@@ -144,7 +257,7 @@ export default async function ProtectedLayout({
   await requireUserId(); // Redirects if not authenticated, returns userId, you don't need to write this for every component because there are guards in layout.tsx, same existist for onboarding
   return <>{children}</>;
 }
-```
+````
 
 ### Permission Patterns
 

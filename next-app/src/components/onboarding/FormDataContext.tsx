@@ -8,16 +8,18 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { OnboardingFirstPageSchema } from "@/schemas/pages/onboarding/first-page-schema";
-import { OnboardingSecondPageSchema } from "@/schemas/pages/onboarding/second-page-schema";
-import { OnboardingThirdPageSchema } from "@/schemas/pages/onboarding/third-page-schema";
-import { OnboardingFinalPageSchema } from "@/schemas/pages/onboarding/final-page-schema";
+import {
+  OnboardingFirstPageType,
+  OnboardingSecondPageType,
+  OnboardingThirdPageType,
+  OnboardingFinalPageType,
+} from "@/schemas/pages/onboarding/onboarding-types";
 
 export type FormData = {
-  firstPage?: OnboardingFirstPageSchema;
-  secondPage?: OnboardingSecondPageSchema;
-  thirdPage?: OnboardingThirdPageSchema;
-  finalPage?: OnboardingFinalPageSchema;
+  firstPage?: OnboardingFirstPageType;
+  secondPage?: OnboardingSecondPageType;
+  thirdPage?: OnboardingThirdPageType;
+  finalPage?: OnboardingFinalPageType;
 };
 
 type FormDataContextType = {
@@ -29,10 +31,10 @@ type FormDataContextType = {
 interface SetDataParams {
   page: PageId;
   data:
-    | OnboardingFirstPageSchema
-    | OnboardingSecondPageSchema
-    | OnboardingThirdPageSchema
-    | OnboardingFinalPageSchema;
+    | OnboardingFirstPageType
+    | OnboardingSecondPageType
+    | OnboardingThirdPageType
+    | OnboardingFinalPageType;
 }
 
 const FormDataContext = createContext<FormDataContextType | undefined>(
@@ -53,16 +55,16 @@ export const OnboardingFormDataProvider = ({
       const newData = { ...prevData };
       switch (page) {
         case "1":
-          newData.firstPage = data as OnboardingFirstPageSchema;
+          newData.firstPage = data as OnboardingFirstPageType;
           break;
         case "2":
-          newData.secondPage = data as OnboardingSecondPageSchema;
+          newData.secondPage = data as OnboardingSecondPageType;
           break;
         case "3":
-          newData.thirdPage = data as OnboardingThirdPageSchema;
+          newData.thirdPage = data as OnboardingThirdPageType;
           break;
         case "final":
-          newData.finalPage = data as OnboardingFinalPageSchema;
+          newData.finalPage = data as OnboardingFinalPageType;
           break;
         default:
           throw new Error(`Invalid page number got: ${page} expected 1-3`);

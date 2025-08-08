@@ -1,10 +1,10 @@
 import { z } from "zod";
 import {
-  Z_NicknameOrEmailSchema,
-  Z_PasswordSchema,
-  Z_LoginFormSchema,
+  nicknameOrEmailSchema,
+  passwordSchema,
+  loginFormSchema,
 } from "./login-schema";
 
-export type NicknameOrEmailType = z.infer<Z_NicknameOrEmailSchema>;
-export type PasswordType = z.infer<Z_PasswordSchema>;
-export type LoginFormType = z.infer<Z_LoginFormSchema>;
+export type NicknameOrEmailType = z.infer<typeof nicknameOrEmailSchema>;
+export type PasswordType = z.infer<typeof passwordSchema>;
+export type LoginFormType = z.infer<typeof loginFormSchema>;

@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import PagesLayout from "./PagesLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import SelectInput from "../inputs/SelectInput";
 import { Stack } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -11,12 +14,10 @@ import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { Academy } from "@/club-preset/academy";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  OnboardingFirstPageSchema,
-  OnboardingFirstPageSchemaProvider,
-} from "@/schemas/pages/onboarding/first-page-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 import { ROUTES } from "@/routes";
+import { onboardingFirstPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
+import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/onboarding-types";
 
 function generateYearOptions() {
   const years = [];
@@ -38,13 +39,12 @@ export default function FirstPage() {
   useFormSkippingValidation({ currentPage: "1" });
   const t = useTranslations("OnboardingPage.firstPage");
   const tAcademy = useTranslations("common.academy");
+  const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.onboarding.step_2,
   });
   const onboardingContext = useOnboardingFormData();
   const firstPageData = onboardingContext.formData.firstPage;
-
-  const { formSchema } = OnboardingFirstPageSchemaProvider();
 
   const defaultValues = useMemo(
     () => ({
@@ -61,7 +61,7 @@ export default function FirstPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(onboardingFirstPageSchema),
     defaultValues: defaultValues,
   });
 
@@ -75,7 +75,7 @@ export default function FirstPage() {
   );
   const yearOptions = useMemo(() => generateYearOptions(), []);
 
-  function onSubmit(data: OnboardingFirstPageSchema) {
+  function onSubmit(data: OnboardingFirstPageType) {
     onboardingContext.setData({
       page: "1",
       data: data,
@@ -108,7 +108,7 @@ export default function FirstPage() {
             <SelectInput
               placeholder={t("academy.placeholder")}
               isInvalid={!!errors.academy}
-              errorMessage={errors.academy?.message}
+              errorMessage={tValidation(errors.academy?.message)}
               options={academyOptions}
               onSelectProps={{
                 ...field,
@@ -123,7 +123,7 @@ export default function FirstPage() {
             <SelectInput
               placeholder={t("yearOfBirth.placeholder")}
               isInvalid={!!errors.yearOfBirth}
-              errorMessage={errors.yearOfBirth?.message}
+              errorMessage={tValidation(errors.yearOfBirth?.message)}
               options={yearOptions}
               onSelectProps={{
                 ...field,

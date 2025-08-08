@@ -6,13 +6,13 @@ import { getUserId, UserId } from "./server-only/user-id";
 import { createNewUser, findExisting } from "@/repositories/user-auth";
 import { ROUTES } from "@/routes";
 import { action } from "@/services/action-lib";
-import { LoginFormSchemaProviderServer } from "@/schemas/pages/auth/login/login-schema";
-import { RegisterFormSchemaProviderServer } from "@/schemas/pages/auth/register/register-schema";
+import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
+import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { returnValidationErrors } from "next-safe-action";
-import { getTranslations } from "next-intl/server";
+import { ValidNamespaces } from "@/lib/typed-translations";
 
 export const login = action
-  .inputSchema((await LoginFormSchemaProviderServer()).loginFormSchema)
+  .inputSchema(loginFormSchema)
   .action(async ({ parsedInput: formData }) => {
     const user =
       (await findExisting({
@@ -26,13 +26,11 @@ export const login = action
     if (!user) {
       // throw new Error("Invalid credentials");
       console.log("Invalid credentials", formData);
-      const t = await getTranslations("Auth.LoginPage.errors");
-      returnValidationErrors(
-        (await LoginFormSchemaProviderServer()).loginFormSchema,
-        {
-          _errors: [t("invalidCredentials")],
-        }
-      );
+      returnValidationErrors(loginFormSchema, {
+        _errors: [
+          "Auth.LoginPage.errors.invalidCredentials" as ValidNamespaces,
+        ],
+      });
     }
 
     await createSession(user._id.toString());
@@ -40,7 +38,7 @@ export const login = action
   });
 
 export const register = action
-  .inputSchema((await RegisterFormSchemaProviderServer()).registerFormSchema)
+  .inputSchema(registerFormSchema)
   .action(async ({ parsedInput: formData }) => {
     try {
       const user = await createNewUser(formData);
@@ -48,21 +46,22 @@ export const register = action
       redirect(ROUTES.dashboard); //auto redirect
     } catch (error) {
       console.error("Registration error:", error);
-      const t = await getTranslations("Auth.RegisterPage.errors");
-      const schema = (await RegisterFormSchemaProviderServer())
-        .registerFormSchema;
 
       // Obsługa błędu duplikatu MongoDB
       if (error instanceof Error && error.message.includes("duplicate key")) {
         if (error.message.includes("email")) {
           // Błąd duplikatu email
-          returnValidationErrors(schema, {
-            _errors: [t("emailExists")],
+          returnValidationErrors(registerFormSchema, {
+            _errors: [
+              "Auth.RegisterPage.errors.emailExists" as ValidNamespaces,
+            ],
           });
         } else if (error.message.includes("nickname")) {
           // Błąd duplikatu nickname
-          returnValidationErrors(schema, {
-            _errors: [t("nicknameExists")],
+          returnValidationErrors(registerFormSchema, {
+            _errors: [
+              "Auth.RegisterPage.errors.nicknameExists" as ValidNamespaces,
+            ],
           });
         }
       } else {

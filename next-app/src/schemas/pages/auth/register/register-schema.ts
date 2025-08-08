@@ -1,120 +1,77 @@
-import { useTranslations } from "next-intl";
+import { z } from "zod";
 import {
-  UserNameSchemaProvider,
-  UserNameSchemaProviderServer,
-  UserSchemaProvider,
-  UserSchemaProviderServer,
-  Z_EmailSchema,
-  Z_FirstNameSchema,
-  Z_LastNameSchema,
-  Z_NicknameSchema,
+  emailSchema,
+  nicknameSchema,
+  firstNameSchema,
+  lastNameSchema,
 } from "../../../model/user/user-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
-import { z } from "zod";
-import { emptyStringToUndefined, TranslationFunction } from "../../../common";
-import { getTranslations } from "next-intl/server";
+import { emptyStringToUndefined } from "../../../common";
+import type { ValidNamespaces } from "@/lib/typed-translations";
 
-const translationKey = "Auth.RegisterPage.form";
+const { password } = UserValidationConstants;
 
-function _RegisterFormSchemaProvider(
-  t: TranslationFunction,
-  emailSchema: Z_EmailSchema,
-  nicknameSchema: Z_NicknameSchema,
-  firstNameSchema: Z_FirstNameSchema,
-  lastNameSchema: Z_LastNameSchema
-) {
-  const { password } = UserValidationConstants;
-
-  const passwordSchema = z
-    .string()
-    .nonempty(t("passwordField.required"))
-    .min(
-      password.min,
-      t("passwordField.minLength", { minLength: password.min })
-    )
-    .max(
-      password.max,
-      t("passwordField.maxLength", { maxLength: password.max })
-    )
-    .regex(password.noUpperCaseRegex, t("passwordField.noUpperCase"))
-    .regex(password.noLowerCaseRegex, t("passwordField.noLowerCase"))
-    .regex(password.noDigitRegex, t("passwordField.noDigit"))
-    .regex(password.noSpecialCharRegex, t("passwordField.noSpecialChar"));
-
-  const repeatPasswordSchema = z
-    .string()
-    .nonempty(t("repeatPasswordField.errorMessage"));
-
-  const registerFormSchema = z
-    .object({
-      firstName: firstNameSchema,
-      lastName: lastNameSchema,
-      nickname: z
-        .string()
-        .transform(emptyStringToUndefined)
-        .pipe(nicknameSchema.optional())
-        .optional(),
-      email: emailSchema,
-      password: passwordSchema,
-      repeatPassword: repeatPasswordSchema,
-      rememberMe: z.boolean(),
-    })
-    .transform((data) => {
-      const result = { ...data };
-      if (result.nickname === undefined) {
-        delete result.nickname;
-      }
-      return result;
-    })
-    .refine((data) => data.password === data.repeatPassword, {
-      message: t("repeatPasswordField.errorMessage"),
-      path: ["repeatPassword"],
-    });
-
-  return {
-    registerFormSchema,
-    repeatPasswordSchema,
-    passwordSchema,
-  };
-}
-
-export type Z_RegisterFormSchema = ReturnType<
-  typeof RegisterFormSchemaProvider
->["registerFormSchema"];
-
-export type Z_RepeatPasswordSchema = ReturnType<
-  typeof RegisterFormSchemaProvider
->["repeatPasswordSchema"];
-
-export type Z_PasswordSchema = ReturnType<
-  typeof RegisterFormSchemaProvider
->["passwordSchema"];
-
-export async function RegisterFormSchemaProviderServer() {
-  //for server use
-  const translation = await getTranslations(translationKey);
-  const { emailSchema, nicknameSchema } = await UserSchemaProviderServer();
-  const { firstNameSchema, lastNameSchema } =
-    await UserNameSchemaProviderServer();
-  return _RegisterFormSchemaProvider(
-    translation,
-    emailSchema,
-    nicknameSchema,
-    firstNameSchema,
-    lastNameSchema
+const passwordSchema = z
+  .string()
+  .nonempty(
+    "validation.pages.auth.register.password.required" as ValidNamespaces
+  )
+  .min(
+    password.min,
+    "validation.pages.auth.register.password.min" as ValidNamespaces
+  )
+  .max(
+    password.max,
+    "validation.pages.auth.register.password.max" as ValidNamespaces
+  )
+  .regex(
+    password.noUpperCaseRegex,
+    "validation.pages.auth.register.password.noUpperCase" as ValidNamespaces
+  )
+  .regex(
+    password.noLowerCaseRegex,
+    "validation.pages.auth.register.password.noLowerCase" as ValidNamespaces
+  )
+  .regex(
+    password.noDigitRegex,
+    "validation.pages.auth.register.password.noDigit" as ValidNamespaces
+  )
+  .regex(
+    password.noSpecialCharRegex,
+    "validation.pages.auth.register.password.noSpecialChar" as ValidNamespaces
   );
-}
 
-export function RegisterFormSchemaProvider() {
-  //for client use
-  const translation = useTranslations(translationKey);
-  const { emailSchema, nicknameSchema } = UserSchemaProvider();
-  const { firstNameSchema, lastNameSchema } = UserNameSchemaProvider();
-  return _RegisterFormSchemaProvider(
-    translation,
-    emailSchema,
-    nicknameSchema,
-    firstNameSchema,
-    lastNameSchema
+const repeatPasswordSchema = z
+  .string()
+  .nonempty(
+    "validation.pages.auth.register.repeatPassword.required" as ValidNamespaces
   );
-}
+
+export const registerFormSchema = z
+  .object({
+    firstName: firstNameSchema,
+    lastName: lastNameSchema,
+    nickname: z
+      .string()
+      .transform(emptyStringToUndefined)
+      .pipe(nicknameSchema.optional())
+      .optional(),
+    email: emailSchema,
+    password: passwordSchema,
+    repeatPassword: repeatPasswordSchema,
+    rememberMe: z.boolean(),
+  })
+  .transform((data) => {
+    const result = { ...data };
+    if (result.nickname === undefined) {
+      delete result.nickname;
+    }
+    return result;
+  })
+  .refine((data) => data.password === data.repeatPassword, {
+    message:
+      "validation.pages.auth.register.repeatPassword.mismatch" as ValidNamespaces,
+    path: ["repeatPassword"],
+  });
+
+export { passwordSchema, repeatPasswordSchema };

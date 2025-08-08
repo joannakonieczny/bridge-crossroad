@@ -1,10 +1,10 @@
 import { z } from "zod";
 import {
-  Z_RegisterFormSchema,
-  Z_RepeatPasswordSchema,
-  Z_PasswordSchema,
+  registerFormSchema,
+  repeatPasswordSchema,
+  passwordSchema,
 } from "./register-schema";
 
-export type RegisterFormSchema = z.infer<Z_RegisterFormSchema>;
-export type RepeatPasswordSchema = z.infer<Z_RepeatPasswordSchema>;
-export type PasswordSchema = z.infer<Z_PasswordSchema>;
+export type RegisterFormSchema = z.infer<typeof registerFormSchema>;
+export type RepeatPasswordSchema = z.infer<typeof repeatPasswordSchema>;
+export type PasswordSchema = z.infer<typeof passwordSchema>;

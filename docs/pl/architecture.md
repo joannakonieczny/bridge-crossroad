@@ -232,12 +232,13 @@ schemas/
 ├── common.ts              # Wspólne narzędzia walidacyjne
 ├── model/                 # Związane z obiektami bazy danych, ale nie DTOs
 │   └── user/
-│       ├── user-const.ts       # Stałe, np. długość słów dla walidatorów
-│       ├── user-schema.ts      # Schemat używany w całej aplikacji dla klienta i backendu
+│       ├── user-schema.ts      # Schemat i stałe używane w całej aplikacji dla klienta i backendu
 │       └── user-types.ts       # Typy wnioskowane ze schematu
 ├── pages/                 # Związane ze stronami - np. walidacja pól formularza dla backendu lub klienta
 │   ├── auth/
 │   └── onboarding/
+│       ├── onboarding-schema.ts # Wszystkie schematy onboarding i stałe walidacyjne
+│       └── onboarding-types.ts  # Wszystkie typy onboarding wnioskowane ze schematów
 ```
 
 ### `/src/i18n` - Internacjonalizacja

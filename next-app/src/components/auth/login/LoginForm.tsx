@@ -3,7 +3,10 @@
 import { HStack, Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import FormLayout from "../FormLayout";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 import FormHeading from "../FormHeading";
 import FormInput from "../FormInput";
@@ -11,14 +14,14 @@ import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
 import { login } from "@/services/auth/actions";
-import { LoginFormSchemaProvider } from "@/schemas/pages/auth/login/login-schema";
+import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { ROUTES } from "@/routes";
 
 export default function LoginForm() {
   const t = useTranslations("Auth.LoginPage");
-  const { loginFormSchema } = LoginFormSchemaProvider();
+  const tValidation = useTranslationsWithFallback();
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -36,7 +39,7 @@ export default function LoginForm() {
       // alert("Login error:" + JSON.stringify(errorMessages));
       if (errorMessages && errorMessages.length > 0) {
         toast({
-          title: errorMessages[0],
+          title: tValidation(errorMessages[0]),
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -62,9 +65,7 @@ export default function LoginForm() {
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.nicknameOrEmailField.placeholder")}
-                errorMessage={
-                  error?.message ?? t("form.nicknameOrEmailField.errorMessage")
-                }
+                errorMessage={tValidation(error?.message)}
                 isInvalid={!!error}
                 id="nicknameOrEmail"
                 type="text"
@@ -80,9 +81,7 @@ export default function LoginForm() {
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.passwordField.placeholder")}
-                errorMessage={
-                  error?.message ?? t("form.passwordField.errorMessage")
-                }
+                errorMessage={tValidation(error?.message)}
                 isInvalid={!!error}
                 id="password"
                 type="password"
