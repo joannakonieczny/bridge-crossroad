@@ -322,13 +322,6 @@ const onboardingPageValidation = {
 };
 
 const messages = {
-  DummyPage: {
-    text: "Witaj świecie!",
-    description: {
-      text: "To jest przykładowy tekst na stronie DummyPage.",
-      text2: "To jest drugi przykładowy tekst na stronie DummyPage.",
-    },
-  },
   common: {
     appName: "Bridge Crossroad",
     appNameWords: {
