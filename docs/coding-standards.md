@@ -1,11 +1,11 @@
-## Coding Standards
+# Coding Standards
 
 ## 📖 Language Versions
 
 - **🇺🇸 English** - This version
 - **🇵🇱 Polski** - [coding-standards.md](./pl/coding-standards.md)
 
-### Route Management
+## Route Management
 
 **Always use the centralized routes file:**
 
@@ -36,7 +36,7 @@ redirect(ROUTES.dashboard);
 3. Always add `as const` assertion for type inference
 4. Update the `RouteKeys` type if needed
 
-### TypeScript Guidelines
+## TypeScript Guide
 
 - Enable strict mode
 - Use proper type annotations
@@ -91,6 +91,188 @@ export default function ComponentWithChildren({
   );
 }
 ```
+
+## Localization & Translations Guide
+
+### Typed Translation System
+
+The application uses a custom wrapper over next-intl (`src/lib/typed-translations.ts`) that provides full type safety and namespace validation. **Always use the exported types `TKey` and `ITranslationKey` for type-safe translation handling.**
+
+**Basic usage:**
+
+```typescript
+import { useTranslations, getTranslations } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
+
+// ✅ Client components - automatic autocomplete
+const t = useTranslations();
+t("common.appName"); // TypeScript checks key validity
+
+// ✅ Server components
+const t = await getTranslations();
+const message = t("pages.Auth.LoginPage.title");
+
+// ✅ Type-safe translation keys in schemas
+const errorKey: string =
+  "validation.pages.auth.login.password.required" satisfies TKey;
+```
+
+**Key Types Available:**
+
+- **`TKey`** - All available translation keys as dot-notation paths (alias for `AllTranslationKeys`)
+- **`ITranslationKey<T>`** - Namespace-scoped translation keys for specific namespace `T`
+- **`ValidNamespaces`** - All valid namespace paths (used internally)
+
+**Using TKey with satisfies operator:**
+
+```typescript
+import type { TKey } from "@/lib/typed-translations";
+
+// ✅ Modern approach - use satisfies for better type checking
+const schema = z.object({
+  email: z
+    .string()
+    .email("validation.model.user.email.regex" satisfies TKey)
+    .max(255, "validation.model.user.email.max" satisfies TKey),
+  password: z
+    .string()
+    .min(8, "validation.pages.auth.register.password.min" satisfies TKey)
+    .nonempty(
+      "validation.pages.auth.register.password.required" satisfies TKey
+    ),
+});
+
+// ❌ Deprecated approach - avoid using as ValidNamespaces
+const oldWay = "some.key" as ValidNamespaces; // Less type safety
+```
+
+**Safe namespace with validation:**
+
+```typescript
+// ✅ Correct usage - namespace exists
+const authT = useTranslations("pages.Auth");
+authT("LoginPage.title"); // Autocomplete for pages.Auth.* keys
+
+// ✅ Deep namespace access
+const loginT = useTranslations("pages.Auth.LoginPage");
+loginT("title"); // Direct access to title
+
+// ❌ Compilation error - invalid namespace
+const invalidT = useTranslations("NonExistent"); // TypeScript error!
+```
+
+**Server Actions with TKey:**
+
+```typescript
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
+
+export const loginAction = action
+  .inputSchema(loginFormSchema)
+  .action(async ({ parsedInput: formData }) => {
+    const user = await findUser(formData);
+    if (!user) {
+      returnValidationErrors(loginFormSchema, {
+        _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
+      });
+    }
+    // ... rest of logic
+  });
+```
+
+**Benefits of the new TKey approach:**
+
+- **Better type inference**: `satisfies` preserves the literal type while checking validity
+- **Compile-time validation**: Invalid keys are caught during TypeScript compilation
+- **IntelliSense support**: Full autocomplete for all available translation keys
+- **Refactoring safety**: Renaming keys automatically updates all references
+- **No runtime overhead**: Type checking happens only at compile time
+
+**Migration from old approach:**
+
+```typescript
+// ❌ Old way - using ValidNamespaces with as assertion
+"some.key" as ValidNamespaces;
+
+// ✅ New way - using TKey with satisfies
+"some.key" satisfies TKey;
+```
+
+### Translation Structure
+
+#### Core translation namespaces
+
+- **common** – general texts, app names, enums, global messages (e.g. months, academy, trainingGroup)
+- **validation** – validation messages used in Zod schemas (e.g. validation.pages.auth.login)
+- **api** – messages returned by server actions (e.g. api.auth.register.emailExists)
+- **pages** – page-specific texts (placeholders, headings, descriptions, etc.)
+- **components** – texts used by shared components
+
+#### Rules for `validation` and `api`
+
+- All translation keys must be declared with `satisfies TKey` for type safety.
+- In React components, always use `useTranslationsWithFallback()` to fetch these texts.
+- Translations must be simple strings – do not use objects or interpolation (e.g. `{name}`), only plain strings.
+- Variables should be loaded from global config, not passed through translation keys.
+
+#### Rules for `pages`
+
+- Full flexibility – texts can be nested, complex, and include placeholders, descriptions, headings, etc.
+- Only for texts visible on the page (UI/UX copy).
+
+#### Nesting structure
+
+- Nest translations according to domain logic (e.g. `pages.Auth.LoginPage`, `pages.OnboardingPage`).
+- Group texts by feature or component.
+- Example:
+  ```ts
+  pages: {
+    Auth: {
+      LoginPage: { ... },
+      RegisterPage: { ... },
+    },
+    DashboardPage: { ... },
+    OnboardingPage: { ... },
+  }
+  ```
+
+#### Enums in `common`
+
+- Enums (e.g. academies, training groups) should be declared in config files (e.g. `Academy`, `TrainingGroup`), and their translations in `common`:
+  ```ts
+  common: {
+    academy: {
+      [Academy.UJ]: "Uniwersytet Jagielloński",
+      [Academy.AGH]: "Akademia Górniczo-Hutnicza",
+      // ...
+    },
+    trainingGroup: {
+      [TrainingGroup.BASIC]: "Podstawowa",
+      // ...
+    },
+  }
+  ```
+- Always import enums and use them as translation keys for consistency and type safety.
+
+#### Enums structure
+
+key same as value
+
+```js
+export enum Academy {
+  UJ = "UJ",
+  AGH = "AGH",
+  PK = "PK",
+  // ...
+}
+```
+
+### Good practices
+
+- Avoid duplicating keys at the same level.
+- Always group translations logically and by purpose.
+- For complex components or pages, use additional nesting levels.
+- **Always use typed-translations instead of next-intl directly**
 
 ### Component Patterns
 
@@ -295,46 +477,6 @@ export const register = action
   });
 ```
 
-**Real-world example with complex validation:**
-
-```typescript
-// Advanced validation with transformation and optional fields
-const cezarIdSchema = z
-  .string()
-  .transform(emptyStringToUndefined)
-  .pipe(
-    z
-      .string()
-      .regex(
-        /^\d{8}$/,
-        "validation.model.user.onboarding.cezarId.regexLenght" satisfies TKey
-      )
-      .optional()
-  );
-
-// Transform empty strings to undefined for optional fields
-const emptyStringToUndefined = (value: string | undefined) =>
-  value === "" ? undefined : value;
-
-// Complete schema with multiple optional fields
-const onboardingThirdPageSchema = z.object({
-  cezarId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cezarIdSchema.optional()),
-  bboId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(bboIdSchema.optional()),
-  cuebidsId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cuebidsIdSchema.optional()),
-});
-```
-
-````
-
 ## Authentication & Authorization
 
 ### Session Management
@@ -356,7 +498,7 @@ export default async function ProtectedLayout({
   await requireUserId(); // Redirects if not authenticated, returns userId, you don't need to write this for every component because there are guards in layout.tsx, same existist for onboarding
   return <>{children}</>;
 }
-````
+```
 
 ### Permission Patterns
 
@@ -540,183 +682,3 @@ const isSecure = config.SECURE_COOKIES;
 ```
 
 If a variable is missing and has no fallback, the application will crash at startup with an appropriate message.
-
-## Localization Guidelines
-
-### Typed Translation System
-
-The application uses a custom wrapper over next-intl (`src/lib/typed-translations.ts`) that provides full type safety and namespace validation. **Always use the exported types `TKey` and `ITranslationKey` for type-safe translation handling.**
-
-**Basic usage:**
-
-```typescript
-import { useTranslations, getTranslations } from "@/lib/typed-translations";
-import type { TKey } from "@/lib/typed-translations";
-
-// ✅ Client components - automatic autocomplete
-const t = useTranslations();
-t("common.appName"); // TypeScript checks key validity
-
-// ✅ Server components
-const t = await getTranslations();
-const message = t("pages.Auth.LoginPage.title");
-
-// ✅ Type-safe translation keys in schemas
-const errorKey: string =
-  "validation.pages.auth.login.password.required" satisfies TKey;
-```
-
-**Key Types Available:**
-
-- **`TKey`** - All available translation keys as dot-notation paths (alias for `AllTranslationKeys`)
-- **`ITranslationKey<T>`** - Namespace-scoped translation keys for specific namespace `T`
-- **`ValidNamespaces`** - All valid namespace paths (used internally)
-
-**Using TKey with satisfies operator:**
-
-```typescript
-import type { TKey } from "@/lib/typed-translations";
-
-// ✅ Modern approach - use satisfies for better type checking
-const schema = z.object({
-  email: z
-    .string()
-    .email("validation.model.user.email.regex" satisfies TKey)
-    .max(255, "validation.model.user.email.max" satisfies TKey),
-  password: z
-    .string()
-    .min(8, "validation.pages.auth.register.password.min" satisfies TKey)
-    .nonempty(
-      "validation.pages.auth.register.password.required" satisfies TKey
-    ),
-});
-
-// ❌ Deprecated approach - avoid using as ValidNamespaces
-const oldWay = "some.key" as ValidNamespaces; // Less type safety
-```
-
-**Safe namespace with validation:**
-
-```typescript
-// ✅ Correct usage - namespace exists
-const authT = useTranslations("pages.Auth");
-authT("LoginPage.title"); // Autocomplete for pages.Auth.* keys
-
-// ✅ Deep namespace access
-const loginT = useTranslations("pages.Auth.LoginPage");
-loginT("title"); // Direct access to title
-
-// ❌ Compilation error - invalid namespace
-const invalidT = useTranslations("NonExistent"); // TypeScript error!
-```
-
-**Server Actions with TKey:**
-
-```typescript
-import { returnValidationErrors } from "next-safe-action";
-import type { TKey } from "@/lib/typed-translations";
-
-export const loginAction = action
-  .inputSchema(loginFormSchema)
-  .action(async ({ parsedInput: formData }) => {
-    const user = await findUser(formData);
-    if (!user) {
-      returnValidationErrors(loginFormSchema, {
-        _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
-      });
-    }
-    // ... rest of logic
-  });
-```
-
-**Benefits of the new TKey approach:**
-
-- **Better type inference**: `satisfies` preserves the literal type while checking validity
-- **Compile-time validation**: Invalid keys are caught during TypeScript compilation
-- **IntelliSense support**: Full autocomplete for all available translation keys
-- **Refactoring safety**: Renaming keys automatically updates all references
-- **No runtime overhead**: Type checking happens only at compile time
-
-**Migration from old approach:**
-
-```typescript
-// ❌ Old way - using ValidNamespaces with as assertion
-"some.key" as ValidNamespaces;
-
-// ✅ New way - using TKey with satisfies
-"some.key" satisfies TKey;
-```
-
-### Translations
-
-- All user interface text in messages/pl.ts
-- Translation keys in camelCase
-- Grouping by functionality
-- Placeholder values for dynamic content
-- **Always use typed-translations instead of next-intl directly**
-
-**Translation structure with new namespace organization:**
-
-```typescript
-// messages/pl.ts
-export default {
-  common: {
-    appName: "Bridge Crossroad",
-    buttons: {
-      save: "Zapisz",
-      cancel: "Anuluj",
-    },
-  },
-  api: {
-    auth: {
-      login: {
-        invalidCredentials: "Nieprawidłowe dane logowania",
-      },
-      register: {
-        emailExists: "Konto z tym adresem e-mail już istnieje",
-        nicknameExists: "Konto z tym nickiem już istnieje",
-      },
-    },
-  },
-  pages: {
-    Auth: {
-      LoginPage: {
-        title: "Zaloguj się",
-        form: {
-          nicknameOrEmailField: {
-            placeholder: "Nick lub email",
-          },
-          passwordField: {
-            placeholder: "Hasło",
-          },
-        },
-      },
-      RegisterPage: {
-        title: "Zarejestruj się",
-        // ... more fields
-      },
-    },
-  },
-  validation: {
-    pages: {
-      auth: {
-        login: {
-          nicknameOrEmail: {
-            required: "Podaj nick lub email",
-          },
-          password: {
-            required: "Podaj hasło",
-          },
-        },
-      },
-    },
-  },
-} as const; // Important: as const for type inference
-```
-
-**Namespace organization guidelines:**
-
-- **`api.*`** - Error messages from server actions and API endpoints
-- **`pages.*`** - UI labels, placeholders, and page-specific content
-- **`validation.*`** - Form validation error messages
-- **`common.*`** - Shared content used across multiple components
