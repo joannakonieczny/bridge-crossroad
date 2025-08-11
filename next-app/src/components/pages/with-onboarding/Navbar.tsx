@@ -18,7 +18,7 @@ import ProfilePicture from "@/components/common/ProfilePicture";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/routes";
-import Logo from "../common/Logo";
+import Logo from "@/components/common/Logo";
 import { useTranslations } from "next-intl";
 
 const navbarTabs = [

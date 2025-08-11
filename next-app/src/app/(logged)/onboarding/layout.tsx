@@ -1,4 +1,4 @@
-import { OnboardingFormDataProvider } from "@/components/onboarding/FormDataContext";
+import { OnboardingFormDataProvider } from "@/components/pages/onboarding/FormDataContext";
 import { Box, Container, Flex } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import Image from "next/image";

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import RegisterForm from "@/components/auth/register/RegisterForm";
+import RegisterForm from "@/components/pages/auth/register/RegisterForm";
 
 export interface IRegisterPageProps {}
 
