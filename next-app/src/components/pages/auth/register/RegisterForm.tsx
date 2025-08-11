@@ -19,7 +19,7 @@ import { useAction } from "next-safe-action/hooks";
 import { ROUTES } from "@/routes";
 
 export default function RegisterForm() {
-  const t = useTranslations("Auth.RegisterPage");
+  const t = useTranslations("pages.Auth.RegisterPage");
   const tValidation = useTranslationsWithFallback();
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(registerFormSchema),

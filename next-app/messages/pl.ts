@@ -387,12 +387,13 @@ const messages = {
       },
     },
   },
-  pages: {},
-  components: {},
-  Auth: {
-    LoginPage: loginPage,
-    RegisterPage: registerPage,
+  pages: {
+    Auth: {
+      LoginPage: loginPage,
+      RegisterPage: registerPage,
+    },
   },
+  components: {},
   Navbar: navbar,
   OnboardingPage: onboardingPage,
   DashboardPage: dashboardPage,

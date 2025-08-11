@@ -20,7 +20,7 @@ import { useAction } from "next-safe-action/hooks";
 import { ROUTES } from "@/routes";
 
 export default function LoginForm() {
-  const t = useTranslations("Auth.LoginPage");
+  const t = useTranslations("pages.Auth.LoginPage");
   const tValidation = useTranslationsWithFallback();
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(loginFormSchema),

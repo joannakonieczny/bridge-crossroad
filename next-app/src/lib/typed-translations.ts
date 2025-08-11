@@ -71,15 +71,15 @@ type TypedTranslator<Namespace extends string = ""> = {
  * // Global access to all keys
  * const t = useTranslations();
  * t("common.appName"); // ✅ Autocomplete works
- * t("Auth.LoginPage.title"); // ✅ Autocomplete works
+ * t("pages.Auth.LoginPage.title"); // ✅ Autocomplete works
  *
  * // Namespace-scoped access
- * const authT = useTranslations("Auth");
- * authT("LoginPage.title"); // ✅ Autocomplete for Auth.* keys
+ * const authT = useTranslations("pages.Auth");
+ * authT("LoginPage.title"); // ✅ Autocomplete for pages.Auth.* keys
  *
  * // Deep namespace
- * const loginT = useTranslations("Auth.LoginPage");
- * loginT("title"); // ✅ Autocomplete for Auth.LoginPage.* keys
+ * const loginT = useTranslations("pages.Auth.LoginPage");
+ * loginT("title"); // ✅ Autocomplete for pages.Auth.LoginPage.* keys
  *
  * // With interpolation
  * const validationT = useTranslations("validation.user");
@@ -138,7 +138,7 @@ function useTranslations<T extends ValidNamespaces = "">(
  * const message = t("common.appName"); // ✅ Typed
  *
  * // With namespace
- * const authT = await getTypedTranslations("Auth.LoginPage");
+ * const authT = await getTypedTranslations("pages.Auth.LoginPage");
  * const title = authT("title"); // ✅ Typed
  * ```
  */
