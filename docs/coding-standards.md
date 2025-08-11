@@ -40,9 +40,39 @@ redirect(ROUTES.dashboard);
 
 - Enable strict mode
 - Use proper type annotations
-- Prefer interfaces over types for object shapes
+- **Prefer types over interfaces** - use `type` for all object shapes and component props
 - Use utility types when appropriate
 - Avoid `any` - use `unknown` for truly unknown data
+- Only use `interface` for extending existing interfaces or when you need declaration merging
+
+**Why prefer types over interfaces:**
+
+```typescript
+// ✅ Preferred: Use type for component props
+type ButtonProps = {
+  text: string;
+  onClick?: () => void;
+  variant?: "primary" | "secondary";
+};
+
+// ✅ Preferred: Use type for object shapes
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+// ❌ Avoid: Using interface for simple object shapes
+interface ButtonProps {
+  text: string;
+  onClick?: () => void;
+}
+
+// ✅ Acceptable: Use interface when extending
+interface ExtendedUser extends BaseUser {
+  permissions: string[];
+}
+```
 
 ### Component Patterns
 
@@ -52,7 +82,7 @@ redirect(ROUTES.dashboard);
 
 import { ComponentProps } from "react"; // don't use import * as React - extremely non-optimal
 
-interface ComponentNameProps { // same name as component + Props
+type ComponentNameProps = { // same name as component + Props
   required: string;
   optional?: boolean;
   onAction?: () => void;
@@ -506,7 +536,7 @@ getAuthMessage("Invalid", "some.key");
 
 ### Translations
 
-- All interface text in messages/pl.ts
+- All user interface text in messages/pl.ts
 - Translation keys in camelCase
 - Grouping by functionality
 - Placeholder values for dynamic content

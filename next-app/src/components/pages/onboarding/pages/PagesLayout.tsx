@@ -16,7 +16,7 @@ import {
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
 
-interface FormButtonProps {
+type FormButtonProps = {
   onClick?: () => void;
   disabled?: boolean;
   onButtonProps?: ButtonProps;
@@ -24,7 +24,7 @@ interface FormButtonProps {
   type?: "button" | "submit";
 }
 
-export interface IPagesLayoutProps {
+export type IPagesLayoutProps = {
   children?: ReactNode;
   mainHeading?: {
     text: string;

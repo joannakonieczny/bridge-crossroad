@@ -6,12 +6,12 @@ import {
 import { ReactNode } from "react";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 
-interface LinkInfo {
+type LinkInfo = {
   text: string;
   href: string;
 }
 
-interface ICheckBoxInputProps {
+type ICheckBoxInputProps = {
   label?: string | ReactNode;
   isChecked?: boolean;
   onChange?: (checked: boolean) => void;

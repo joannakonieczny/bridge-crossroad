@@ -6,7 +6,7 @@ import {
   FormErrorMessageProps,
 } from "@chakra-ui/react";
 
-export interface FormControlWrapperProps {
+export type FormControlWrapperProps = {
   errorMessage?: string;
   isInvalid?: boolean;
   isRequired?: boolean;
@@ -14,7 +14,7 @@ export interface FormControlWrapperProps {
   onFormErrorMessageProps?: FormErrorMessageProps;
 }
 
-export interface IFormControlWrapperProps extends FormControlWrapperProps {
+export type IFormControlWrapperProps = FormControlWrapperProps & {
   children: ReactNode;
 }
 

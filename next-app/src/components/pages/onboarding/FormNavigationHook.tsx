@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 export type SubmitSourceType = "prev" | "next" | null;
 
-interface UseFormNavigationProps {
+type UseFormNavigationProps = {
   nextPage?: string;
   prevPage?: string;
 }

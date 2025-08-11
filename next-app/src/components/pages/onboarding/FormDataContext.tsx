@@ -28,7 +28,7 @@ type FormDataContextType = {
   clearData: () => void;
 };
 
-interface SetDataParams {
+type SetDataParams = {
   page: PageId;
   data:
     | OnboardingFirstPageType

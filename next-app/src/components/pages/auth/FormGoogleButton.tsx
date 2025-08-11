@@ -1,11 +1,11 @@
 import { Button, ButtonProps } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 
-export interface IFormGoogleButtonProps {
+export type IFormGoogleButtonProps = {
   text: string;
   onElementProps?: ButtonProps;
   type?: "submit" | "button" | "reset";
-}
+};
 
 export default function FormGoogleButton(props: IFormGoogleButtonProps) {
   return (

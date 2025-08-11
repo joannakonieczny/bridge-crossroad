@@ -200,7 +200,7 @@ Schematy MongoDB używające Mongoose:
 
 To są schematy tylko dla obiektów DTO.
 
-- Pamiętaj o pisaniu odpowiednich interfejsów, które odpowiadają modelom Mongoose
+- Pamiętaj o pisaniu odpowiednich typów, które odpowiadają modelom Mongoose
 - Używaj Types.ObjectId dla ID obiektów
 - Pamiętaj, że każdy obiekt ma `_id`, nawet zagnieżdżone (chociaż nie musisz ich deklarować, jeśli ich nie potrzebujesz)
 
@@ -218,7 +218,7 @@ models/
 
 **Wytyczne dla Modeli:**
 
-- Definiuj interfejsy TypeScript
+- Definiuj typy TypeScript
 - Uwzględniaj kompleksową walidację - te są tylko na poziomie bazy danych!
 - Używaj middleware Mongoose dla reguł biznesowych
 - Implementuj odpowiednie indeksowanie dla wydajności

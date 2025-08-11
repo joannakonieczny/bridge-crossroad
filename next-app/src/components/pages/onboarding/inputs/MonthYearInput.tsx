@@ -26,11 +26,11 @@ import { FiCalendar, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useGetMonths } from "@/util/date";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 
-interface IMonthYearInputProps {
+type IMonthYearInputProps = {
   value: string | Date | null | undefined;
   onChange: (value: Date) => void;
   placeholder: string;
-}
+};
 
 function MonthYearInput(props: IMonthYearInputProps) {
   // Używamy useDisclosure zamiast własnego stanu dla modala

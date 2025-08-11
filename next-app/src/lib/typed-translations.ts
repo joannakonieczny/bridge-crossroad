@@ -50,7 +50,7 @@ type TranslationValues = Record<string, string | number | boolean | ReactNode>;
 /**
  * Typed translation function interface that preserves all next-intl functionality
  */
-interface TypedTranslator<Namespace extends string = ""> {
+type TypedTranslator<Namespace extends string = ""> = {
   (key: NamespaceKeys<Namespace>, values?: TranslationValues): string;
 
   rich(key: NamespaceKeys<Namespace>, values?: TranslationValues): ReactNode;

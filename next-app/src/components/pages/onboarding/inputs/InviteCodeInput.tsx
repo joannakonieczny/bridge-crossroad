@@ -9,10 +9,10 @@ import {
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 
-interface IInviteCodeInputProps {
+type IInviteCodeInputProps = {
   length: number;
   onPinInputProps?: Omit<PinInputProps, "children">;
-}
+};
 
 function InviteCodeInput(props: IInviteCodeInputProps) {
   return (

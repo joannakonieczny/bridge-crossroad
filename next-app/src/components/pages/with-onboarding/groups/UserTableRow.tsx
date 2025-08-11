@@ -1,12 +1,12 @@
-import { Tr, Td, Text, Box, Link } from '@chakra-ui/react';
+import { Tr, Td, Text, Box, Link } from "@chakra-ui/react";
 
-interface UserTableRowProps {
+type UserTableRowProps = {
   fullName: string;
   nickname?: string;
   pzbsId?: string;
   bboId?: string;
   cuebidsId?: string;
-}
+};
 
 export default function UserTableRow({
   fullName,
@@ -23,7 +23,7 @@ export default function UserTableRow({
             {fullName}
           </Text>
           {nickname && (
-            <Text fontSize="sm" color="border.500" mt={2} fontStyle={'italic'}>
+            <Text fontSize="sm" color="border.500" mt={2} fontStyle={"italic"}>
               {nickname}
             </Text>
           )}
@@ -48,11 +48,23 @@ export default function UserTableRow({
       </Td>
 
       <Td>
-        <Text fontSize="sm">{bboId || <Text as="span" color="border.400">-</Text>}</Text>
+        <Text fontSize="sm">
+          {bboId || (
+            <Text as="span" color="border.400">
+              -
+            </Text>
+          )}
+        </Text>
       </Td>
 
       <Td>
-        <Text fontSize="sm">{cuebidsId || <Text as="span" color="border.400">-</Text>}</Text>
+        <Text fontSize="sm">
+          {cuebidsId || (
+            <Text as="span" color="border.400">
+              -
+            </Text>
+          )}
+        </Text>
       </Td>
     </Tr>
   );

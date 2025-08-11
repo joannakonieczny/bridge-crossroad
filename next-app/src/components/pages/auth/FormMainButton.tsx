@@ -1,10 +1,10 @@
 import { Button, ButtonProps } from "@chakra-ui/react";
 
-export interface IFormMainButtonProps {
+export type IFormMainButtonProps = {
   text: string;
   onElementProps?: ButtonProps;
   type?: "submit" | "button" | "reset";
-}
+};
 
 export default function FormMainButton(props: IFormMainButtonProps) {
   return (

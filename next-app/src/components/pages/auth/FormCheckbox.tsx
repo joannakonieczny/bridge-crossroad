@@ -1,9 +1,9 @@
 import { Checkbox, CheckboxProps } from "@chakra-ui/react";
 
-export interface IFormCheckboxProps {
+export type IFormCheckboxProps = {
   text: string;
   onElementProps?: CheckboxProps;
-}
+};
 
 export default function FormCheckbox(props: IFormCheckboxProps) {
   return (

@@ -40,9 +40,39 @@ redirect(ROUTES.dashboard);
 
 - Włącz tryb ścisły
 - Używaj odpowiednich adnotacji typów
-- Preferuj interfejsy nad types dla kształtów obiektów
+- **Preferuj types nad interfejsy** - używaj `type` dla wszystkich kształtów obiektów i props komponentów
 - Używaj utility types gdy odpowiednie
 - Unikaj `any` - używaj `unknown` dla naprawdę nieznanych danych
+- Używaj `interface` tylko przy rozszerzaniu istniejących interfejsów lub gdy potrzebujesz declaration merging
+
+**Dlaczego preferować types nad interfejsy:**
+
+```typescript
+// ✅ Preferowane: Używaj type dla props komponentów
+type ButtonProps = {
+  text: string;
+  onClick?: () => void;
+  variant?: "primary" | "secondary";
+};
+
+// ✅ Preferowane: Używaj type dla kształtów obiektów
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+// ❌ Unikaj: Używania interface dla prostych kształtów obiektów
+interface ButtonProps {
+  text: string;
+  onClick?: () => void;
+}
+
+// ✅ Akceptowalne: Używaj interface przy rozszerzaniu
+interface ExtendedUser extends BaseUser {
+  permissions: string[];
+}
+```
 
 ## Wzorce Komponentów
 
@@ -52,7 +82,7 @@ redirect(ROUTES.dashboard);
 
 import { ComponentProps } from "react"; // nie używaj import * as React - skrajnie nieoptymalne
 
-interface ComponentNameProps { // ta sama nazwa co komponent + Props
+type ComponentNameProps = { // ta sama nazwa co komponent + Props
   required: string;
   optional?: boolean;
   onAction?: () => void;
@@ -621,7 +651,7 @@ getAuthMessage("Invalid", "some.key");
 
 ### Tłumaczenia
 
-- Wszystkie teksty interfejsu w messages/pl.ts
+- Wszystkie teksty interfejsu użytkownika w messages/pl.ts
 - Klucze tłumaczeń w camelCase
 - Grupowanie według funkcjonalności
 - Placeholder values dla dynamicznych treści

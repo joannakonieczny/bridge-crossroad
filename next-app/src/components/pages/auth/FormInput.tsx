@@ -7,7 +7,7 @@ import {
 import { ChangeEventHandler } from "react";
 import PasswordInput from "./PasswordInput";
 
-export interface IFormInputProps {
+export type IFormInputProps = {
   placeholder: string;
   errorMessage: string;
   isInvalid?: boolean;
@@ -17,7 +17,7 @@ export interface IFormInputProps {
   onElementProps?: FormControlProps;
   value?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
-}
+};
 
 export default function FormInput(props: IFormInputProps) {
   return (

@@ -14,7 +14,7 @@ function getEnvVar(key: string, fallback?: string) {
   );
 }
 
-interface Config {
+type Config = {
   SESSION_SECRET: string;
   EXPIRATION_TIME_MS: number;
   SECURE_COOKIES: boolean;

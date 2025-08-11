@@ -10,11 +10,11 @@ import {
 import { ChangeEventHandler } from "react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
-export interface IPasswordInputProps {
+export type IPasswordInputProps = {
   placeholder?: string;
   value?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
-}
+};
 
 export default function PasswordInput(props: IPasswordInputProps) {
   const [show, setShow] = useBoolean(true);

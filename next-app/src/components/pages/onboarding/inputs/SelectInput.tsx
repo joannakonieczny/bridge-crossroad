@@ -4,7 +4,7 @@ import {
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 
-interface ISelectInputProps {
+type ISelectInputProps = {
   placeholder?: string;
   onSelectProps?: SelectProps;
   options?: Array<{

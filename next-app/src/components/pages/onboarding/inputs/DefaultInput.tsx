@@ -4,7 +4,7 @@ import {
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 
-interface IDefaultInputProps {
+type IDefaultInputProps = {
   placeholder?: string;
   onInputProps?: InputProps;
 }

@@ -41,7 +41,7 @@ function findLastFilledPageIndex(formData: FormData): number {
   return -1; // none
 }
 
-interface UseFormValidationProps {
+type UseFormValidationProps = {
   currentPage: PageId;
 }
 

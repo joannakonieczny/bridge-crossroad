@@ -3,9 +3,9 @@ import { Box, Container, Flex } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import Image from "next/image";
 
-export interface IOnboardingLayoutProps {
+export type IOnboardingLayoutProps = {
   children?: ReactNode;
-}
+};
 
 export default function OnboardingLayout({ children }: IOnboardingLayoutProps) {
   return (
