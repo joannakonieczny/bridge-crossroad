@@ -5,7 +5,7 @@ import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
 
 export default function MinimalisticNavbar() {
-  const t = useTranslations("LandingPage");
+  const t = useTranslations("pages.LandingPage");
 
   return (
     <Flex

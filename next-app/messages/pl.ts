@@ -394,12 +394,11 @@ const messages = {
     },
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,
+    LandingPage: landingPage,
   },
   components: {
     Navbar: navbar,
   },
-
-  LandingPage: landingPage,
 };
 
 export default messages;
