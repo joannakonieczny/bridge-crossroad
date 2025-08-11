@@ -37,7 +37,7 @@ export default function Navbar() {
     return match === -1 ? 0 : match;
   }, [pathname]);
 
-  const t = useTranslations("Navbar.Tabs");
+  const t = useTranslations("components.Navbar.Tabs");
 
   return (
     <Flex

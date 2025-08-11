@@ -393,8 +393,9 @@ const messages = {
       RegisterPage: registerPage,
     },
   },
-  components: {},
-  Navbar: navbar,
+  components: {
+    Navbar: navbar,
+  },
   OnboardingPage: onboardingPage,
   DashboardPage: dashboardPage,
   LandingPage: landingPage,
