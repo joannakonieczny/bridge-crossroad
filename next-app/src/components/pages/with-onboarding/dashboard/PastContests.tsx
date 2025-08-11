@@ -10,7 +10,7 @@ import {
 } from "react-icons/pi";
 
 export default function PastContests() {
-  const t = useTranslations("DashboardPage");
+  const t = useTranslations("pages.DashboardPage");
 
   const contests = [
     { name: "III Turnej Czwartkowy - semestr letni", date: "13 Maja 2021" },

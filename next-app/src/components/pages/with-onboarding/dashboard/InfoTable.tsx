@@ -5,7 +5,7 @@ import { useTranslations } from "@/lib/typed-translations";
 
 export default function InfoTable() {
   // mock
-  const t = useTranslations("DashboardPage.PZBSInfo");
+  const t = useTranslations("pages.DashboardPage.PZBSInfo");
   const rows = [
     { label: t("nameAndLastName"), value: "Jan Nowak" },
     { label: t("PIDCezar"), value: "23178" },

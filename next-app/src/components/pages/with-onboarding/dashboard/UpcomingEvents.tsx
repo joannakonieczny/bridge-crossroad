@@ -18,7 +18,7 @@ const ITEMS_PER_PAGE = 2;
 
 export default function CarouselList() {
   const [startIndex, setStartIndex] = useState(0);
-  const t = useTranslations("DashboardPage.headings");
+  const t = useTranslations("pages.DashboardPage.headings");
 
   const showPrev = () => {
     setStartIndex((prev) => Math.max(prev - ITEMS_PER_PAGE, 0));
