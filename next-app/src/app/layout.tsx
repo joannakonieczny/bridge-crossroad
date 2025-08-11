@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ChakraCustomProvider from "@/components/chakra-config/custom-provider";
 import ReactQuerryProvider from "@/components/external-libs/react-querry/provider";
-import { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import { Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
@@ -19,9 +19,7 @@ const montserrat = Montserrat({
 
 export default async function RootLayout({
   children,
-}: Readonly<{
-  children: ReactNode;
-}>) {
+}: Readonly<PropsWithChildren>) {
   const locale = await getLocale();
 
   return (

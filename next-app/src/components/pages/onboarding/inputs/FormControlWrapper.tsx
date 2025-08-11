@@ -1,4 +1,4 @@
-import { ReactNode, ComponentType } from "react";
+import { PropsWithChildren, ComponentType } from "react";
 import {
   FormControl,
   FormControlProps,
@@ -12,13 +12,11 @@ export type FormControlWrapperProps = {
   isRequired?: boolean;
   onElementProps?: FormControlProps;
   onFormErrorMessageProps?: FormErrorMessageProps;
-}
+};
 
-export type IFormControlWrapperProps = FormControlWrapperProps & {
-  children: ReactNode;
-}
-
-export default function FormControlWrapper(props: IFormControlWrapperProps) {
+export default function FormControlWrapper(
+  props: PropsWithChildren<FormControlWrapperProps>
+) {
   return (
     <FormControl
       isInvalid={props.isInvalid}

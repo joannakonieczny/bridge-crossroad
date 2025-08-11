@@ -1,12 +1,8 @@
 import { Box, Container, Flex } from "@chakra-ui/react";
 import Image from "next/image";
-import { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 
-export type IAuthLayoutProps = {
-  children?: ReactNode;
-};
-
-export default function AuthLayout({ children }: IAuthLayoutProps) {
+export default function AuthLayout({ children }: PropsWithChildren) {
   return (
     <>
       <Flex minH="100vh" position="relative" overflow={"hidden"}>

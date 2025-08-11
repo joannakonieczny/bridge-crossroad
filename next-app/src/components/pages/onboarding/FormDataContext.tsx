@@ -5,8 +5,8 @@ import {
   createContext,
   useContext,
   useState,
-  ReactNode,
   useEffect,
+  PropsWithChildren,
 } from "react";
 import {
   OnboardingFirstPageType,
@@ -35,7 +35,7 @@ type SetDataParams = {
     | OnboardingSecondPageType
     | OnboardingThirdPageType
     | OnboardingFinalPageType;
-}
+};
 
 const FormDataContext = createContext<FormDataContextType | undefined>(
   undefined
@@ -43,11 +43,7 @@ const FormDataContext = createContext<FormDataContextType | undefined>(
 
 const storingKey = "onboardingFormData";
 
-export const OnboardingFormDataProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+export const OnboardingFormDataProvider = ({ children }: PropsWithChildren) => {
   const [formData, setFormData] = useState<FormData>({});
 
   function setData({ page, data }: SetDataParams): void {

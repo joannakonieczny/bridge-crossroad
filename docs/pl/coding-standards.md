@@ -44,6 +44,7 @@ redirect(ROUTES.dashboard);
 - Używaj utility types gdy odpowiednie
 - Unikaj `any` - używaj `unknown` dla naprawdę nieznanych danych
 - Używaj `interface` tylko przy rozszerzaniu istniejących interfejsów lub gdy potrzebujesz declaration merging
+- Używaj typu `PropsWithChildren<T>` z React dla propsów komponentów przyjmujących `children`. Dla komponentów akceptujących wyłącznie `children` używaj `PropsWithChildren` bez generyka.
 
 **Dlaczego preferować types nad interfejsy:**
 
@@ -71,6 +72,28 @@ interface ButtonProps {
 // ✅ Akceptowalne: Używaj interface przy rozszerzaniu
 interface ExtendedUser extends BaseUser {
   permissions: string[];
+}
+
+// ✅ Przykład użycia PropsWithChildren dla komponentów przyjmujących children
+import type { PropsWithChildren } from "react";
+
+type ComponentWithChildrenProps = PropsWithChildren<{
+  title: string;
+  onClose?: () => void;
+}>;
+
+export default function ComponentWithChildren({
+  title,
+  onClose,
+  children,
+}: ComponentWithChildrenProps) {
+  return (
+    <div>
+      <h2>{title}</h2>
+      <button onClick={onClose}>Zamknij</button>
+      <div>{children}</div>
+    </div>
+  );
 }
 ```
 
@@ -301,8 +324,6 @@ const nicknameOrEmailSchema = z
   });
 ```
 
-````
-
 ## Uwierzytelnienie i Autoryzacja
 
 ### Zarządzanie Sesjami
@@ -324,7 +345,7 @@ export default async function ProtectedLayout({
   await requireUserId(); // Przekierowuje jeśli nie uwierzytelniony, zwraca userId, nie musisz pisać tego dla każdego komponentu bo są guardy w layout.tsx, to samo istnieje dla onboardingu
   return <>{children}</>;
 }
-````
+```
 
 ### Wzorce Uprawnień
 

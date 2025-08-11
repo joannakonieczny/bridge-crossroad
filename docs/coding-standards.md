@@ -42,8 +42,8 @@ redirect(ROUTES.dashboard);
 - Use proper type annotations
 - **Prefer types over interfaces** - use `type` for all object shapes and component props
 - Use utility types when appropriate
-- Avoid `any` - use `unknown` for truly unknown data
-- Only use `interface` for extending existing interfaces or when you need declaration merging
+- Avoid `any` - use `unknown` for truly unknown data or `never`
+- Use PropsWithChildren type from React if you need to pass children to component or declare component props type
 
 **Why prefer types over interfaces:**
 
@@ -68,9 +68,27 @@ interface ButtonProps {
   onClick?: () => void;
 }
 
-// ✅ Acceptable: Use interface when extending
-interface ExtendedUser extends BaseUser {
-  permissions: string[];
+// ✅ Example: Using PropsWithChildren for components that accept children
+import type { PropsWithChildren } from "react";
+// ❌ import type { PropsWithChildren } from "react";
+
+type ComponentWithChildrenProps = PropsWithChildren<{
+  title: string;
+  onClose?: () => void;
+}>;
+
+export default function ComponentWithChildren({
+  title,
+  onClose,
+  children,
+}: ComponentWithChildrenProps) {
+  return (
+    <div>
+      <h2>{title}</h2>
+      <button onClick={onClose}>Close</button>
+      <div>{children}</div>
+    </div>
+  );
 }
 ```
 

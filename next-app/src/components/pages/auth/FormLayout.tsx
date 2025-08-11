@@ -1,8 +1,8 @@
 import { Box, HStack, Stack, Text, Image } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import { useTranslations } from "@/lib/typed-translations";
 
-export default function FormLayout({ children }: { children?: ReactNode }) {
+export default function FormLayout({ children }: PropsWithChildren) {
   const t = useTranslations("common");
   return (
     <Stack mb={8}>

@@ -1,4 +1,4 @@
-import { ReactNode, HTMLAttributes } from "react";
+import { PropsWithChildren, HTMLAttributes } from "react";
 import {
   Heading,
   Text,
@@ -22,10 +22,9 @@ type FormButtonProps = {
   onButtonProps?: ButtonProps;
   text?: string;
   type?: "button" | "submit";
-}
+};
 
-export type IPagesLayoutProps = {
-  children?: ReactNode;
+export type IPagesLayoutProps = PropsWithChildren<{
   mainHeading?: {
     text: string;
     highlight?: {
@@ -42,7 +41,7 @@ export type IPagesLayoutProps = {
   nextButton?: FormButtonProps;
   onDividerProps?: DividerProps;
   onFormProps?: HTMLAttributes<HTMLFormElement>;
-}
+}>;
 
 export default function PagesLayout(props: IPagesLayoutProps) {
   const t = useTranslations("OnboardingPage.common");
