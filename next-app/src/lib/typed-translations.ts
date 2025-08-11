@@ -60,7 +60,7 @@ type TypedTranslator<Namespace extends string = ""> = {
   // Additional properties that might exist on the original translator
   has(key: string): boolean;
   getPathname(href: string): string;
-}
+};
 
 /**
  * Typed wrapper around next-intl's useTranslations hook
@@ -236,4 +236,4 @@ export {
   useTranslationsWithFallback,
   getTranslationsWithFallback,
 };
-export type { TranslationKeys, ValidNamespaces };
+export type { TranslationKeys as ITranslationKey, AllTranslationKeys as TKey };

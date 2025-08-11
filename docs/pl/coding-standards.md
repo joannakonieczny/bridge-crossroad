@@ -142,37 +142,69 @@ export const actionName = action
   });
 ```
 
-## Wzorzec Walidacji Formularzy
+### Wzorzec Walidacji Formularzy
 
 ```typescript
-// Definicja schematu z kluczami tłumaczeń
+// Definicja schematu z typowanymi kluczami tłumaczeń
 import { z } from "zod";
-import type { ValidNamespaces } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
-// ✅ Używaj kluczy tłumaczeń bezpośrednio w definicjach schematów
-const onboardingThirdPageSchema = z.object({
-  cezarId: z
+// ✅ Używaj typu TKey z operatorem satisfies dla bezpiecznych kluczy tłumaczeń
+const loginFormSchema = z.object({
+  nicknameOrEmail: z
     .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cezarIdSchema.optional()),
-  bboId: z
+    .nonempty(
+      "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
+    ),
+  password: z
     .string()
-    .transform(emptyStringToUndefined)
-    .pipe(bboIdSchema.optional()),
-  cuebidsId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cuebidsIdSchema.optional()),
+    .nonempty("validation.pages.auth.login.password.required" satisfies TKey),
+  rememberMe: z.boolean(),
 });
 
-// Użycie w komponencie z hook'iem tłumaczeń
+// Zaawansowana walidacja z niestandardowym refinement
+const nicknameOrEmailSchema = z
+  .string()
+  .nonempty(
+    "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
+  )
+  .superRefine((value, ctx) => {
+    if (value.includes("@")) {
+      const result = emailSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+            path: err.path,
+          });
+        });
+      }
+    } else {
+      const result = nicknameSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+            path: err.path,
+          });
+        });
+      }
+    }
+  });
+```
+
+**Użycie w komponencie z hook'iem tłumaczeń:**
+
+```typescript
 import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 
-function ThirdPage() {
-  const t = useTranslations("OnboardingPage.thirdPage"); // Dla etykiet, placeholderów
+function LoginPage() {
+  const t = useTranslations("pages.Auth.LoginPage"); // Dla etykiet UI i placeholderów
   const tValidation = useTranslationsWithFallback(); // Dla komunikatów walidacji ze schematu
 
   const {
@@ -180,15 +212,15 @@ function ThirdPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(onboardingThirdPageSchema),
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      cezarId: "",
-      bboId: "",
-      cuebidsId: "",
+      nicknameOrEmail: "",
+      password: "",
+      rememberMe: false,
     },
   });
 
-  function onSubmit(data: OnboardingThirdPageType) {
+  function onSubmit(data: LoginFormType) {
     // Obsługa wysłania formularza
   }
 
@@ -196,39 +228,27 @@ function ThirdPage() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={4}>
         <Controller
-          name="cezarId"
+          name="nicknameOrEmail"
           control={control}
           render={({ field }) => (
             <DefaultInput
-              placeholder={t("cezarId.placeholder")}
-              isInvalid={!!errors.cezarId}
-              errorMessage={tValidation(errors.cezarId?.message)}
+              placeholder={t("form.nicknameOrEmailField.placeholder")}
+              isInvalid={!!errors.nicknameOrEmail}
+              errorMessage={tValidation(errors.nicknameOrEmail?.message)}
               onInputProps={{ ...field }}
             />
           )}
         />
 
         <Controller
-          name="bboId"
+          name="password"
           control={control}
           render={({ field }) => (
             <DefaultInput
-              placeholder={t("bboId.placeholder")}
-              isInvalid={!!errors.bboId}
-              errorMessage={tValidation(errors.bboId?.message)}
-              onInputProps={{ ...field }}
-            />
-          )}
-        />
-
-        <Controller
-          name="cuebidsId"
-          control={control}
-          render={({ field }) => (
-            <DefaultInput
-              placeholder={t("cuebidsId.placeholder")}
-              isInvalid={!!errors.cuebidsId}
-              errorMessage={tValidation(errors.cuebidsId?.message)}
+              type="password"
+              placeholder={t("form.passwordField.placeholder")}
+              isInvalid={!!errors.password}
+              errorMessage={tValidation(errors.password?.message)}
               onInputProps={{ ...field }}
             />
           )}
@@ -241,13 +261,61 @@ function ThirdPage() {
 
 **Ważne:**
 
-- **Brak providerów schematów**: Używaj kluczy tłumaczeń bezpośrednio w definicjach schematów
-- **Bezpieczeństwo typów**: Rzutuj komunikaty błędów na `ValidNamespaces` dla bezpieczeństwa typów
-- **Obsługa błędów**: Używaj `useTranslationsWithFallback()` dla komunikatów błędów walidacji
+- **Używaj typu TKey**: Importuj `TKey` z `@/lib/typed-translations` dla wszystkich kluczy tłumaczeń
+- **Używaj operatora satisfies**: Używaj `satisfies TKey` zamiast `as ValidNamespaces` dla lepszego sprawdzania typów
+- **Obsługa błędów**: Używaj `useTranslationsWithFallback()` dla komunikatów błędów walidacji ze schematów
 - **Rozdzielenie obowiązków**:
   - `useTranslations("namespace")` dla etykiet UI i placeholderów
   - `useTranslationsWithFallback()` dla dynamicznych komunikatów błędów ze schematów
-- **Pola opcjonalne**: Używaj wzorca `.transform(emptyStringToUndefined).pipe(schema.optional())`
+- **Bezpieczeństwo typów**: TypeScript wykryje nieprawidłowe klucze tłumaczeń w czasie kompilacji
+
+**Server Actions z TKey:**
+
+```typescript
+// W server actions używaj TKey dla bezpiecznej obsługi błędów
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
+
+export const register = action
+  .inputSchema(registerFormSchema)
+  .action(async ({ parsedInput: formData }) => {
+    try {
+      const user = await createNewUser(formData);
+      await createSession(user._id.toString());
+      redirect(ROUTES.dashboard);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("duplicate key")) {
+        if (error.message.includes("email")) {
+          returnValidationErrors(registerFormSchema, {
+            _errors: ["api.auth.register.emailExists" satisfies TKey],
+          });
+        } else if (error.message.includes("nickname")) {
+          returnValidationErrors(registerFormSchema, {
+            _errors: ["api.auth.register.nicknameExists" satisfies TKey],
+          });
+        }
+      }
+      throw error;
+    }
+  });
+```
+
+**Przykład z rzeczywistej aplikacji z zaawansowaną walidacją:**
+
+````typescript
+// Zaawansowana walidacja z transformacją i polami opcjonalnymi
+const cezarIdSchema = z
+  .string()
+  .transform(emptyStringToUndefined)
+  .pipe(
+    z
+      .string()
+      .regex(
+        /^\d{8}$/,
+        "validation.model.user.onboarding.cezarId.regexLenght" satisfies TKey
+      )
+      .optional()
+  );
 
 **Przykład z rzeczywistego schematu onboarding:**
 
@@ -285,7 +353,7 @@ const onboardingThirdPageSchema = z.object({
     .transform(emptyStringToUndefined)
     .pipe(cuebidsIdSchema.optional()),
 });
-```
+````
 
 **Przykład z rzeczywistego schematu logowania:**
 
@@ -612,12 +680,13 @@ function exampleFunction(param: string): boolean {
 
 ### System Typowanych Tłumaczeń
 
-Aplikacja wykorzystuje niestandardową nakładkę na next-intl (`src/lib/typed-translations.ts`), która zapewnia pełne bezpieczeństwo typów i walidację namespace:
+Aplikacja wykorzystuje niestandardową nakładkę na next-intl (`src/lib/typed-translations.ts`), która zapewnia pełne bezpieczeństwo typów i walidację namespace. **Zawsze używaj eksportowanych typów `TKey` i `ITranslationKey` dla bezpiecznej obsługi tłumaczeń.**
 
 **Podstawowe użycie:**
 
 ```typescript
 import { useTranslations, getTranslations } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
 // ✅ Komponenty klienta - automatyczne autouzupełnianie
 const t = useTranslations();
@@ -625,50 +694,93 @@ t("common.appName"); // TypeScript sprawdza poprawność klucza
 
 // ✅ Komponenty serwera
 const t = await getTranslations();
-const message = t("Auth.LoginPage.title");
+const message = t("pages.Auth.LoginPage.title");
+
+// ✅ Bezpieczne klucze tłumaczeń w schematach
+const errorKey: string =
+  "validation.pages.auth.login.password.required" satisfies TKey;
+```
+
+**Dostępne typy kluczy:**
+
+- **`TKey`** - Wszystkie dostępne klucze tłumaczeń jako ścieżki dot-notation (alias dla `AllTranslationKeys`)
+- **`ITranslationKey<T>`** - Klucze tłumaczeń ograniczone do określonego namespace `T`
+- **`ValidNamespaces`** - Wszystkie poprawne ścieżki namespace (używane wewnętrznie)
+
+**Używanie TKey z operatorem satisfies:**
+
+```typescript
+import type { TKey } from "@/lib/typed-translations";
+
+// ✅ Nowoczesne podejście - używaj satisfies dla lepszego sprawdzania typów
+const schema = z.object({
+  email: z
+    .string()
+    .email("validation.model.user.email.regex" satisfies TKey)
+    .max(255, "validation.model.user.email.max" satisfies TKey),
+  password: z
+    .string()
+    .min(8, "validation.pages.auth.register.password.min" satisfies TKey)
+    .nonempty(
+      "validation.pages.auth.register.password.required" satisfies TKey
+    ),
+});
+
+// ❌ Przestarzałe podejście - unikaj używania as ValidNamespaces
+const oldWay = "some.key" as ValidNamespaces; // Mniejsze bezpieczeństwo typów
 ```
 
 **Bezpieczne namespace z walidacją:**
 
 ```typescript
 // ✅ Poprawne użycie - namespace istnieje
-const authT = useTranslations("Auth");
-authT("LoginPage.title"); // Autouzupełnianie dla kluczy Auth.*
+const authT = useTranslations("pages.Auth");
+authT("LoginPage.title"); // Autouzupełnianie dla kluczy pages.Auth.*
+
+// ✅ Głębokie dostęp do namespace
+const loginT = useTranslations("pages.Auth.LoginPage");
+loginT("title"); // Bezpośredni dostęp do title
 
 // ❌ Błąd kompilacji - nieprawidłowy namespace
 const invalidT = useTranslations("NonExistent"); // TypeScript error!
 ```
 
-**Typ TranslationKeys dla walidacji namespace:**
+**Server Actions z TKey:**
 
 ```typescript
-// Sprawdza poprawność namespace w czasie kompilacji
-type ValidKeys = TranslationKeys<"Auth">; // ✅ Zwraca klucze z Auth
-type InvalidKeys = TranslationKeys<"BadNamespace">; // ❌ never type
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
 
-// Użycie w funkcjach pomocniczych
-function getAuthMessage<T extends string>(
-  namespace: T,
-  key: TranslationKeys<T>
-): string {
-  const t = useTranslations(namespace);
-  return t(key);
-}
-
-// ✅ Działa poprawnie
-getAuthMessage("Auth", "LoginPage.title");
-
-// ❌ Błąd kompilacji
-getAuthMessage("Invalid", "some.key");
+export const loginAction = action
+  .inputSchema(loginFormSchema)
+  .action(async ({ parsedInput: formData }) => {
+    const user = await findUser(formData);
+    if (!user) {
+      returnValidationErrors(loginFormSchema, {
+        _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
+      });
+    }
+    // ... reszta logiki
+  });
 ```
 
-**Korzyści systemu typowanych tłumaczeń:**
+**Korzyści nowego podejścia z TKey:**
 
-- **Autouzupełnianie**: Pełne wsparcie IDE dla kluczy tłumaczeń
-- **Walidacja namespace**: TypeScript wykrywa nieprawidłowe namespace
-- **Bezpieczeństwo refaktoryzacji**: Zmiana kluczy automatycznie wykrywa błędy
-- **Interpolacja wartości**: Type-safe wstawianie zmiennych do tekstów
-- **Wsparcie rich content**: Bezpieczne używanie komponentów React w tłumaczeniach
+- **Lepsze wnioskowanie typów**: `satisfies` zachowuje typ literału podczas sprawdzania poprawności
+- **Walidacja w czasie kompilacji**: Nieprawidłowe klucze są wykrywane podczas kompilacji TypeScript
+- **Wsparcie IntelliSense**: Pełne autouzupełnianie dla wszystkich dostępnych kluczy tłumaczeń
+- **Bezpieczeństwo refaktoryzacji**: Zmiana nazwy kluczy automatycznie aktualizuje wszystkie odniesienia
+- **Brak narzutu runtime**: Sprawdzanie typów odbywa się tylko w czasie kompilacji
+
+**Migracja ze starego podejścia:**
+
+```typescript
+// ❌ Stary sposób - używanie ValidNamespaces z asercją as
+"some.key" as ValidNamespaces;
+
+// ✅ Nowy sposób - używanie TKey z satisfies
+"some.key" satisfies TKey;
+```
 
 ### Tłumaczenia
 
@@ -678,7 +790,7 @@ getAuthMessage("Invalid", "some.key");
 - Placeholder values dla dynamicznych treści
 - **Zawsze używaj typed-translations zamiast next-intl bezpośrednio**
 
-**Przykład struktury tłumaczeń:**
+**Struktura tłumaczeń z nową organizacją namespace:**
 
 ```typescript
 // messages/pl.ts
@@ -690,14 +802,59 @@ export default {
       cancel: "Anuluj",
     },
   },
-  Auth: {
-    LoginPage: {
-      title: "Logowanie",
-      emailPlaceholder: "Wprowadź email",
+  api: {
+    auth: {
+      login: {
+        invalidCredentials: "Nieprawidłowe dane logowania",
+      },
+      register: {
+        emailExists: "Konto z tym adresem e-mail już istnieje",
+        nicknameExists: "Konto z tym nickiem już istnieje",
+      },
+    },
+  },
+  pages: {
+    Auth: {
+      LoginPage: {
+        title: "Zaloguj się",
+        form: {
+          nicknameOrEmailField: {
+            placeholder: "Nick lub email",
+          },
+          passwordField: {
+            placeholder: "Hasło",
+          },
+        },
+      },
+      RegisterPage: {
+        title: "Zarejestruj się",
+        // ... więcej pól
+      },
+    },
+  },
+  validation: {
+    pages: {
+      auth: {
+        login: {
+          nicknameOrEmail: {
+            required: "Podaj nick lub email",
+          },
+          password: {
+            required: "Podaj hasło",
+          },
+        },
+      },
     },
   },
 } as const; // Ważne: as const dla wnioskowania typów
 ```
+
+**Wytyczne organizacji namespace:**
+
+- **`api.*`** - Komunikaty błędów z server actions i endpointów API
+- **`pages.*`** - Etykiety UI, placeholdery i treści specyficzne dla stron
+- **`validation.*`** - Komunikaty błędów walidacji formularzy
+- **`common.*`** - Współdzielone treści używane w wielu komponentach
 
 ### Formatowanie Dat i Liczb
 

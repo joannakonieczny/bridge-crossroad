@@ -376,6 +376,19 @@ const messages = {
       onboarding: onboardingPageValidation,
     },
   },
+  api: {
+    auth: {
+      register: {
+        emailExists: "Konto z tym adresem e-mail już istnieje",
+        nicknameExists: "Konto z tym nickiem już istnieje",
+      },
+      login: {
+        invalidCredentials: "Nieprawidłowe dane logowania",
+      },
+    },
+  },
+  pages: {},
+  components: {},
   Auth: {
     LoginPage: loginPage,
     RegisterPage: registerPage,
