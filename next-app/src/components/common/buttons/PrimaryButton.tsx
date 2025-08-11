@@ -1,6 +1,7 @@
-import { Button, ButtonProps } from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { ElementType } from "react";
+import type { ElementType } from "react";
 
 export type IPrimaryButtonProps = {
   text: string;

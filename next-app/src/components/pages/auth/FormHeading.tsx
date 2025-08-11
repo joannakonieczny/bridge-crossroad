@@ -1,4 +1,5 @@
-import { Box, BoxProps, Heading, HStack, Text } from "@chakra-ui/react";
+import type { BoxProps} from "@chakra-ui/react";
+import { Box, Heading, HStack, Text } from "@chakra-ui/react";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 
 export type IFormHeadingProps = {

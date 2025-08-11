@@ -1,6 +1,8 @@
-import { Input, InputProps } from "@chakra-ui/react";
+import type { InputProps } from "@chakra-ui/react";
+import { Input } from "@chakra-ui/react";
+import type {
+  FormControlWrapperProps} from "./FormControlWrapper";
 import {
-  FormControlWrapperProps,
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 

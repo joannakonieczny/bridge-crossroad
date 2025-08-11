@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 import { ROUTES } from "@/routes";
 import { onboardingFirstPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
-import { OnboardingFirstPageType } from "@/schemas/pages/onboarding/onboarding-types";
+import type { OnboardingFirstPageType } from "@/schemas/pages/onboarding/onboarding-types";
 
 function generateYearOptions() {
   const years = [];

@@ -1,9 +1,11 @@
-import { Checkbox, CheckboxProps, Text, HStack } from "@chakra-ui/react";
+import type { CheckboxProps} from "@chakra-ui/react";
+import { Checkbox, Text, HStack } from "@chakra-ui/react";
+import type {
+  FormControlWrapperProps} from "./FormControlWrapper";
 import {
-  FormControlWrapperProps,
   WithFormControlWrapper,
 } from "./FormControlWrapper";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 
 type LinkInfo = {

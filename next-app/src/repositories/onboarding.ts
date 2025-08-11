@@ -1,7 +1,8 @@
 "server-only";
 
-import User, { IUserDTO } from "@/models/user";
-import {
+import type { IUserDTO } from "@/models/user";
+import User from "@/models/user";
+import type {
   UserIdType,
   UserOnboardingType,
 } from "@/schemas/model/user/user-types";

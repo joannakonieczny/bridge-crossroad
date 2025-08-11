@@ -1,10 +1,11 @@
+import type {
+  FormControlProps} from "@chakra-ui/react";
 import {
   FormControl,
-  FormControlProps,
   FormErrorMessage,
   Input,
 } from "@chakra-ui/react";
-import { ChangeEventHandler } from "react";
+import type { ChangeEventHandler } from "react";
 import PasswordInput from "./PasswordInput";
 
 export type IFormInputProps = {

@@ -1,17 +1,18 @@
-import { PropsWithChildren, HTMLAttributes } from "react";
+import type { PropsWithChildren, HTMLAttributes } from "react";
+import type {
+  HighlightProps,
+  HeadingProps,
+  TextProps,
+  DividerProps,
+  ButtonProps} from "@chakra-ui/react";
 import {
   Heading,
   Text,
   Divider,
   Highlight,
-  HighlightProps,
-  HeadingProps,
-  TextProps,
-  DividerProps,
   Flex,
   HStack,
-  Button,
-  ButtonProps,
+  Button
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";

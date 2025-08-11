@@ -7,7 +7,7 @@ import {
   Icon,
   useBoolean,
 } from "@chakra-ui/react";
-import { ChangeEventHandler } from "react";
+import type { ChangeEventHandler } from "react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 export type IPasswordInputProps = {

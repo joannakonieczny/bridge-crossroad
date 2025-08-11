@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
+import { useState, useEffect } from "react";
 
 export default function SafeHydration({ children }: PropsWithChildren) {
   const [mounted, setMounted] = useState(false);

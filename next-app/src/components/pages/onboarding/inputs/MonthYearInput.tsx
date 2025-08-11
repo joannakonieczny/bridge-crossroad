@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import type {
+  FormControlWrapperProps} from "./FormControlWrapper";
 import {
-  FormControlWrapperProps,
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 import {

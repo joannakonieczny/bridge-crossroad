@@ -1,6 +1,8 @@
-import { Select, SelectProps } from "@chakra-ui/react";
+import type { SelectProps } from "@chakra-ui/react";
+import { Select } from "@chakra-ui/react";
+import type {
+  FormControlWrapperProps} from "./FormControlWrapper";
 import {
-  FormControlWrapperProps,
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 

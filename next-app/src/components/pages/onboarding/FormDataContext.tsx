@@ -1,14 +1,15 @@
 "use client";
 
-import { PageId } from "@/app/(logged)/onboarding/[page]/page";
+import type { PageId } from "@/app/(logged)/onboarding/[page]/page";
+import type {
+  PropsWithChildren} from "react";
 import {
   createContext,
   useContext,
   useState,
-  useEffect,
-  PropsWithChildren,
+  useEffect
 } from "react";
-import {
+import type {
   OnboardingFirstPageType,
   OnboardingSecondPageType,
   OnboardingThirdPageType,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { logout } from "@/services/auth/actions";
-import { UserId } from "@/services/auth/server-only/user-id";
+import type { UserId } from "@/services/auth/server-only/user-id";
 import { getUser } from "@/services/onboarding/actions";
 
 export default function DashboardClient({ userId }: { userId: UserId }) {

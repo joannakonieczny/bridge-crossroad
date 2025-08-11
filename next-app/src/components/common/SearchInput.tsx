@@ -1,6 +1,6 @@
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 
 type SearchInputProps = {
   value: string;

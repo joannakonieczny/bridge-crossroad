@@ -1,7 +1,7 @@
 import { useTranslations as useNextIntlTranslations } from "next-intl";
 import { getTranslations as getNextIntlTranslations } from "next-intl/server";
-import { ReactNode } from "react";
-import messages from "../../messages/pl";
+import type { ReactNode } from "react";
+import type messages from "../../messages/pl";
 
 // Helper type to create dot-notation paths from nested objects
 type DotNotation<T, K extends keyof T = keyof T> = K extends string

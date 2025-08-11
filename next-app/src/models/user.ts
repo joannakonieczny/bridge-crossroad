@@ -1,4 +1,5 @@
-import { Schema, Document, model, models, Types } from "mongoose";
+import type { Document, Types } from "mongoose";
+import { Schema, model, models } from "mongoose";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 
 export type IUserDTO = Document & {

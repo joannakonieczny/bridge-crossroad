@@ -1,9 +1,10 @@
-import { PropsWithChildren, ComponentType } from "react";
+import type { PropsWithChildren, ComponentType } from "react";
+import type {
+  FormControlProps,
+  FormErrorMessageProps} from "@chakra-ui/react";
 import {
   FormControl,
-  FormControlProps,
-  FormErrorMessage,
-  FormErrorMessageProps,
+  FormErrorMessage
 } from "@chakra-ui/react";
 
 export type FormControlWrapperProps = {

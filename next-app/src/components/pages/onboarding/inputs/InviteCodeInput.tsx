@@ -1,11 +1,13 @@
+import type {
+  PinInputProps} from "@chakra-ui/react";
 import {
   HStack,
   PinInput,
-  PinInputField,
-  PinInputProps,
+  PinInputField
 } from "@chakra-ui/react";
+import type {
+  FormControlWrapperProps} from "./FormControlWrapper";
 import {
-  FormControlWrapperProps,
   WithFormControlWrapper,
 } from "./FormControlWrapper";
 

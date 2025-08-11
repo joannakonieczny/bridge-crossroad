@@ -2,14 +2,15 @@
 
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./server-only/session";
-import { getUserId, UserId } from "./server-only/user-id";
+import type { UserId } from "./server-only/user-id";
+import { getUserId } from "./server-only/user-id";
 import { createNewUser, findExisting } from "@/repositories/user-auth";
 import { ROUTES } from "@/routes";
 import { action } from "@/services/action-lib";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { returnValidationErrors } from "next-safe-action";
-import { ValidNamespaces } from "@/lib/typed-translations";
+import type { ValidNamespaces } from "@/lib/typed-translations";
 
 export const login = action
   .inputSchema(loginFormSchema)

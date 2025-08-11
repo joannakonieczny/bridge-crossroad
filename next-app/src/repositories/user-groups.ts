@@ -1,6 +1,7 @@
 "server-only";
 
-import User, { IUserDTO } from "@/models/user";
+import type { IUserDTO } from "@/models/user";
+import User from "@/models/user";
 import dbConnect from "@/util/connect-mongo";
 import { findByInviteCode, addUser, getMembers } from "./groups";
 

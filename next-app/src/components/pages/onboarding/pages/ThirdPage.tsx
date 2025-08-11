@@ -13,7 +13,7 @@ import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { OnboardingThirdPageType } from "@/schemas/pages/onboarding/onboarding-types";
+import type { OnboardingThirdPageType } from "@/schemas/pages/onboarding/onboarding-types";
 import { onboardingThirdPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import { ROUTES } from "@/routes";
 

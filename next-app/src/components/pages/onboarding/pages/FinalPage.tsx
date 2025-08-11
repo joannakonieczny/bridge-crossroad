@@ -15,7 +15,7 @@ import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { completeOnboarding } from "@/services/onboarding/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
+import type {
   OnboardingFinalPageType,
   OnboardingFirstPageType,
   OnboardingSecondPageType,

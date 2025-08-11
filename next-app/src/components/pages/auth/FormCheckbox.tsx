@@ -1,4 +1,5 @@
-import { Checkbox, CheckboxProps } from "@chakra-ui/react";
+import type { CheckboxProps } from "@chakra-ui/react";
+import { Checkbox } from "@chakra-ui/react";
 
 export type IFormCheckboxProps = {
   text: string;
