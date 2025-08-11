@@ -21,7 +21,7 @@ import { ROUTES } from "@/routes";
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
-  const t = useTranslations("OnboardingPage.secondPage");
+  const t = useTranslations("pages.OnboardingPage.secondPage");
   const tTrainingGroup = useTranslations("common.trainingGroup");
   const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({

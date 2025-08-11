@@ -392,11 +392,12 @@ const messages = {
       LoginPage: loginPage,
       RegisterPage: registerPage,
     },
+    OnboardingPage: onboardingPage,
   },
   components: {
     Navbar: navbar,
   },
-  OnboardingPage: onboardingPage,
+
   DashboardPage: dashboardPage,
   LandingPage: landingPage,
 };

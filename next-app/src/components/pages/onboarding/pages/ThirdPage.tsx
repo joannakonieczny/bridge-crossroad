@@ -19,7 +19,7 @@ import { ROUTES } from "@/routes";
 
 export default function ThirdPage() {
   useFormSkippingValidation({ currentPage: "3" });
-  const t = useTranslations("OnboardingPage.thirdPage");
+  const t = useTranslations("pages.OnboardingPage.thirdPage");
   const tValidation = useTranslationsWithFallback(); // For validation messages, messages in zod are just strings
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.onboarding.final,

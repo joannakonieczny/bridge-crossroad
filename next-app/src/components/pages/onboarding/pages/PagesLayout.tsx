@@ -4,7 +4,8 @@ import type {
   HeadingProps,
   TextProps,
   DividerProps,
-  ButtonProps} from "@chakra-ui/react";
+  ButtonProps,
+} from "@chakra-ui/react";
 import {
   Heading,
   Text,
@@ -12,7 +13,7 @@ import {
   Highlight,
   Flex,
   HStack,
-  Button
+  Button,
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
@@ -45,7 +46,7 @@ export type IPagesLayoutProps = PropsWithChildren<{
 }>;
 
 export default function PagesLayout(props: IPagesLayoutProps) {
-  const t = useTranslations("OnboardingPage.common");
+  const t = useTranslations("pages.OnboardingPage.common");
   return (
     <>
       <Heading

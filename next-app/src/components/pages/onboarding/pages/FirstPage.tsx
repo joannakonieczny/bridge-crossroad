@@ -37,7 +37,7 @@ function generateYearOptions() {
 
 export default function FirstPage() {
   useFormSkippingValidation({ currentPage: "1" });
-  const t = useTranslations("OnboardingPage.firstPage");
+  const t = useTranslations("pages.OnboardingPage.firstPage");
   const tAcademy = useTranslations("common.academy");
   const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({

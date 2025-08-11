@@ -26,7 +26,7 @@ import { ROUTES } from "@/routes";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
-  const t = useTranslations("OnboardingPage.finalPage");
+  const t = useTranslations("pages.OnboardingPage.finalPage");
   const tValidation = useTranslationsWithFallback();
   const formNavigation = useFormNavigation({
     nextPage: ROUTES.dashboard, // after onboarding is completed, redirect to dashboard
