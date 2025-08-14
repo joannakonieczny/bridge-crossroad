@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import type { Document, Types } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IGroup extends Document {
+export type IGroup = Document & {
   _id: Types.ObjectId;
   name: string;
   createdAt: Date;

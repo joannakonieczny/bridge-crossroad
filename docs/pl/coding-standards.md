@@ -1,4 +1,11 @@
-# Stand### Zarządzanie Trasami
+# Standardy Kodowania
+
+## 📖 Wersje Językowe
+
+- **🇺🇸 English** – [coding-standards.md](../coding-standards.md)
+- **🇵🇱 Polski** – Ta wersja
+
+## Zarządzanie Trasami
 
 **Zawsze używaj scentralizowanego pliku tras:**
 
@@ -17,60 +24,282 @@ redirect(ROUTES.dashboard);
 **Korzyści z używania ROUTES:**
 
 - **Bezpieczeństwo typów**: Zapobiega literówkom w stringach tras
-- **Refaktoryzowanie**: Łatwe aktualizowanie tras w całej aplikacji
+- **Refaktoryzacja**: Łatwe aktualizowanie tras w całej aplikacji
 - **Wsparcie IDE**: Autouzupełnianie i IntelliSense dla ścieżek tras
 - **Spójność**: Pojedyncze źródło prawdy dla całej nawigacji
 - **Dokumentacja**: Przejrzysty przegląd wszystkich dostępnych tras
 
-**Przy dodawaniu nowych tras:**
+**Dodając nowe trasy:**
 
 1. Dodaj trasę do obiektu `ROUTES` w `/src/routes.ts`
-2. Używaj opisowej struktury zagnieżdżonej dla powiązanych tras
-3. Zawsze dodawaj asercję `as const` dla wnioskowania typów
-4. Zaktualizuj typ `RouteKeys` jeśli potrzebne
-
-### Wytyczne TypeScriptrdy Kodowania
-
-## 📖 Wersje Językowe
-
-- **🇵🇱 Polski** - Ta wersja
-- **🇺🇸 English** - [coding-standards.md](../coding-standards.md)
+2. Użyj opisowej zagnieżdżonej struktury dla powiązanych tras
+3. Zawsze dodaj asercję `as const` dla wnioskowania typów
+4. Zaktualizuj typ `RouteKeys` jeśli to konieczne
 
 ## Wytyczne TypeScript
 
-- Włącz tryb ścisły
+- Włącz tryb strict
 - Używaj odpowiednich adnotacji typów
-- Preferuj interfejsy nad types dla kształtów obiektów
-- Używaj utility types gdy odpowiednie
-- Unikaj `any` - używaj `unknown` dla naprawdę nieznanych danych
+- **Preferuj types nad interfaces** – używaj `type` dla wszystkich kształtów obiektów i props komponentów
+- Używaj utility types gdy to odpowiednie
+- Unikaj `any` – używaj `unknown` dla naprawdę nieznanych danych lub `never`
+- Używaj PropsWithChildren z React jeśli musisz przekazać children do komponentu lub zadeklarować typ propsów komponentu
 
-## Wzorce Komponentów
+**Dlaczego preferować types nad interfaces:**
+
+```typescript
+// ✅ Preferowane: Używaj type dla props komponentów
+type ButtonProps = {
+  text: string;
+  onClick?: () => void;
+  variant?: "primary" | "secondary";
+};
+
+// ✅ Preferowane: Używaj type dla kształtów obiektów
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+// ❌ Unikaj: Używania interface dla prostych kształtów obiektów
+interface ButtonProps {
+  text: string;
+  onClick?: () => void;
+}
+
+// ✅ Przykład: Użycie PropsWithChildren dla komponentów przyjmujących children
+import type { PropsWithChildren } from "react";
+
+type ComponentWithChildrenProps = PropsWithChildren<{
+  title: string;
+  onClose?: () => void;
+}>;
+
+export default function ComponentWithChildren({
+  title,
+  onClose,
+  children,
+}: ComponentWithChildrenProps) {
+  return (
+    <div>
+      <h2>{title}</h2>
+      <button onClick={onClose}>Zamknij</button>
+      <div>{children}</div>
+    </div>
+  );
+}
+```
+
+## Lokalizacja i tłumaczenia
+
+### System typowanych tłumaczeń
+
+Aplikacja używa niestandardowej nakładki na next-intl (`src/lib/typed-translations.ts`), która zapewnia pełne bezpieczeństwo typów i walidację namespace. **Zawsze używaj eksportowanych typów `TKey` i `ITranslationKey` dla typowanej obsługi tłumaczeń.**
+
+**Podstawowe użycie:**
+
+```typescript
+import { useTranslations, getTranslations } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
+
+// ✅ Komponenty klienckie – automatyczne podpowiedzi
+const t = useTranslations();
+t("common.appName"); // TypeScript sprawdza poprawność klucza
+
+// ✅ Komponenty serwerowe
+const t = await getTranslations();
+const message = t("pages.Auth.LoginPage.title");
+
+// ✅ Typowane klucze tłumaczeń w schematach
+const errorKey: string =
+  "validation.pages.auth.login.password.required" satisfies TKey;
+```
+
+**Dostępne typy kluczy:**
+
+- **`TKey`** – Wszystkie dostępne klucze tłumaczeń jako ścieżki z kropkami (alias dla `AllTranslationKeys`)
+- **`ITranslationKey<T>`** – Klucze tłumaczeń ograniczone do namespace `T`
+- **`ValidNamespaces`** – Wszystkie poprawne ścieżki namespace (używane wewnętrznie)
+
+**Używanie TKey z operatorem satisfies:**
+
+```typescript
+import type { TKey } from "@/lib/typed-translations";
+
+// ✅ Nowoczesne podejście – używaj satisfies dla lepszego sprawdzania typów
+const schema = z.object({
+  email: z
+    .string()
+    .email("validation.model.user.email.regex" satisfies TKey)
+    .max(255, "validation.model.user.email.max" satisfies TKey),
+  password: z
+    .string()
+    .min(8, "validation.pages.auth.register.password.min" satisfies TKey)
+    .nonempty(
+      "validation.pages.auth.register.password.required" satisfies TKey
+    ),
+});
+
+// ❌ Przestarzałe podejście – unikaj używania as ValidNamespaces
+const oldWay = "some.key" as ValidNamespaces; // Mniejsze bezpieczeństwo typów
+```
+
+**Bezpieczne namespace z walidacją:**
+
+```typescript
+// ✅ Poprawne użycie – namespace istnieje
+const authT = useTranslations("pages.Auth");
+authT("LoginPage.title"); // Podpowiedzi dla pages.Auth.*
+
+// ✅ Głębokie namespace
+const loginT = useTranslations("pages.Auth.LoginPage");
+loginT("title"); // Bezpośredni dostęp do title
+
+// ❌ Błąd kompilacji – nieprawidłowy namespace
+const invalidT = useTranslations("NonExistent"); // Błąd TypeScript!
+```
+
+**Server Actions z TKey:**
+
+```typescript
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
+
+export const loginAction = action
+  .inputSchema(loginFormSchema)
+  .action(async ({ parsedInput: formData }) => {
+    const user = await findUser(formData);
+    if (!user) {
+      returnValidationErrors(loginFormSchema, {
+        _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
+      });
+    }
+    // ... reszta logiki
+  });
+```
+
+**Korzyści nowego podejścia z TKey:**
+
+- **Lepsze wnioskowanie typów**: `satisfies` zachowuje typ literału podczas sprawdzania poprawności
+- **Walidacja w czasie kompilacji**: Nieprawidłowe klucze są wykrywane podczas kompilacji TypeScript
+- **Wsparcie IntelliSense**: Pełne podpowiedzi dla wszystkich dostępnych kluczy tłumaczeń
+- **Bezpieczeństwo refaktoryzacji**: Zmiana nazwy kluczy automatycznie aktualizuje wszystkie odwołania
+- **Brak narzutu runtime**: Sprawdzanie typów tylko w czasie kompilacji
+
+**Migracja ze starego podejścia:**
+
+```typescript
+// ❌ Stary sposób – używanie ValidNamespaces z asercją as
+"some.key" as ValidNamespaces;
+
+// ✅ Nowy sposób – używanie TKey z satisfies
+"some.key" satisfies TKey;
+```
+
+### Struktura tłumaczeń
+
+#### Główne namespace tłumaczeń
+
+- **common** – ogólne teksty, nazwy aplikacji, enumy, globalne komunikaty (np. miesiące, academy, trainingGroup)
+- **validation** – komunikaty walidacyjne używane w schematach Zod (np. validation.pages.auth.login)
+- **api** – komunikaty zwracane przez server actions (np. api.auth.register.emailExists)
+- **pages** – teksty specyficzne dla stron (placeholdery, nagłówki, opisy itd.)
+- **components** – teksty używane przez współdzielone komponenty
+
+#### Zasady dla `validation` i `api`
+
+- Wszystkie klucze tłumaczeń muszą być zadeklarowane z `satisfies TKey` dla bezpieczeństwa typów.
+- W komponentach React zawsze używaj `useTranslationsWithFallback()` do pobierania tych tekstów.
+- Tłumaczenia muszą być prostymi stringami – nie używaj obiektów ani interpolacji (np. `{name}`), tylko zwykłe stringi.
+- Zmienne powinny być ładowane z globalnej konfiguracji, a nie przekazywane przez klucze tłumaczeń.
+
+#### Zasady dla `pages`
+
+- Pełna elastyczność – teksty mogą być zagnieżdżone, złożone, zawierać placeholdery, opisy, nagłówki itd.
+- Tylko dla tekstów widocznych na stronie (UI/UX copy).
+
+#### Struktura zagnieżdżania
+
+- Zagnieżdżaj tłumaczenia zgodnie z logiką domenową (np. `pages.Auth.LoginPage`, `pages.OnboardingPage`).
+- Grupuj teksty według funkcjonalności lub komponentu.
+- Przykład:
+  ```ts
+  pages: {
+  	Auth: {
+  		LoginPage: { ... },
+  		RegisterPage: { ... },
+  	},
+  	DashboardPage: { ... },
+  	OnboardingPage: { ... },
+  }
+  ```
+
+#### Enumy w `common`
+
+- Enumy (np. academies, training groups) powinny być zadeklarowane w plikach konfiguracyjnych (np. `Academy`, `TrainingGroup`), a ich tłumaczenia w `common`:
+  ```ts
+  common: {
+  	academy: {
+  		[Academy.UJ]: "Uniwersytet Jagielloński",
+  		[Academy.AGH]: "Akademia Górniczo-Hutnicza",
+  		// ...
+  	},
+  	trainingGroup: {
+  		[TrainingGroup.BASIC]: "Podstawowa",
+  		// ...
+  	},
+  }
+  ```
+- Zawsze importuj enumy i używaj ich jako kluczy tłumaczeń dla spójności i bezpieczeństwa typów.
+
+#### Struktura enumów
+
+klucz taki sam jak wartość
+
+```js
+export enum Academy {
+	UJ = "UJ",
+	AGH = "AGH",
+	PK = "PK",
+	// ...
+}
+```
+
+### Dobre praktyki
+
+- Unikaj duplikowania kluczy na tym samym poziomie.
+- Zawsze grupuj tłumaczenia logicznie i według przeznaczenia.
+- Dla złożonych komponentów lub stron używaj dodatkowych poziomów zagnieżdżenia.
+- **Zawsze używaj typed-translations zamiast next-intl bezpośrednio**
+
+### Wzorce komponentów
 
 ```typescript
 // Przykład struktury komponentu
 "use client"; // Tylko gdy potrzebne są funkcje po stronie klienta
 
-import { ComponentProps } from "react"; // nie używaj import * as React - skrajnie nieoptymalne
+import { ComponentProps } from "react"; // nie używaj import * as React – bardzo nieoptymalne
 
-interface ComponentNameProps { // ta sama nazwa co komponent + Props
-  required: string;
-  optional?: boolean;
-  onAction?: () => void;
+type ComponentNameProps = { // ta sama nazwa co komponent + Props
+	required: string;
+	optional?: boolean;
+	onAction?: () => void;
 }
 
-export default function ComponentName({ // export default function nie arrow function
-  required,
-  optional = false,
-  onAction
+export default function ComponentName({ // export default function, nie arrow function
+	required,
+	optional = false,
+	onAction
 }: ComponentNameProps) {
-  // Logika komponentu
-  return (
-    // JSX
-  );
+	// Logika komponentu
+	return (
+		// JSX
+	);
 }
 ```
 
-## Wzorzec Server Action
+### Wzorzec Server Action
 
 ```typescript
 "use server";
@@ -81,7 +310,7 @@ import { userSchema } from "@/schemas/model/user/user-schema";
 // import { onboardingFirstPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 
 export const actionName = action
-  .inputSchema(userSchema) // parsowanie i automatyczne odrzucenie gdy walidacja nie powiedzie się
+  .inputSchema(userSchema) // parsowanie i automatyczne odrzucenie przy niepowodzeniu walidacji
   .action(async ({ parsedInput: myInputtedData }) => {
     // Logika biznesowa
     console.log(myInputtedData); // wykonuje się po stronie backendu
@@ -89,37 +318,69 @@ export const actionName = action
   });
 ```
 
-## Wzorzec Walidacji Formularzy
+### Wzorzec walidacji formularzy
 
 ```typescript
-// Definicja schematu z kluczami tłumaczeń
+// Definicja schematu z typowanymi kluczami tłumaczeń
 import { z } from "zod";
-import type { ValidNamespaces } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
-// ✅ Używaj kluczy tłumaczeń bezpośrednio w definicjach schematów
-const onboardingThirdPageSchema = z.object({
-  cezarId: z
+// ✅ Używaj typu TKey z satisfies dla typowanych kluczy tłumaczeń
+const loginFormSchema = z.object({
+  nicknameOrEmail: z
     .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cezarIdSchema.optional()),
-  bboId: z
+    .nonempty(
+      "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
+    ),
+  password: z
     .string()
-    .transform(emptyStringToUndefined)
-    .pipe(bboIdSchema.optional()),
-  cuebidsId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cuebidsIdSchema.optional()),
+    .nonempty("validation.pages.auth.login.password.required" satisfies TKey),
+  rememberMe: z.boolean(),
 });
 
-// Użycie w komponencie z hook'iem tłumaczeń
+// Zaawansowana walidacja z niestandardowym refinement
+const nicknameOrEmailSchema = z
+  .string()
+  .nonempty(
+    "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
+  )
+  .superRefine((value, ctx) => {
+    if (value.includes("@")) {
+      const result = emailSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+            path: err.path,
+          });
+        });
+      }
+    } else {
+      const result = nicknameSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+            path: err.path,
+          });
+        });
+      }
+    }
+  });
+```
+
+**Użycie w komponencie z hookiem tłumaczeń:**
+
+```typescript
 import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 
-function ThirdPage() {
-  const t = useTranslations("OnboardingPage.thirdPage"); // Dla etykiet, placeholderów
+function LoginPage() {
+  const t = useTranslations("pages.Auth.LoginPage"); // Dla etykiet UI i placeholderów
   const tValidation = useTranslationsWithFallback(); // Dla komunikatów walidacji ze schematu
 
   const {
@@ -127,15 +388,15 @@ function ThirdPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(onboardingThirdPageSchema),
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      cezarId: "",
-      bboId: "",
-      cuebidsId: "",
+      nicknameOrEmail: "",
+      password: "",
+      rememberMe: false,
     },
   });
 
-  function onSubmit(data: OnboardingThirdPageType) {
+  function onSubmit(data: LoginFormType) {
     // Obsługa wysłania formularza
   }
 
@@ -143,39 +404,27 @@ function ThirdPage() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={4}>
         <Controller
-          name="cezarId"
+          name="nicknameOrEmail"
           control={control}
           render={({ field }) => (
             <DefaultInput
-              placeholder={t("cezarId.placeholder")}
-              isInvalid={!!errors.cezarId}
-              errorMessage={tValidation(errors.cezarId?.message)}
+              placeholder={t("form.nicknameOrEmailField.placeholder")}
+              isInvalid={!!errors.nicknameOrEmail}
+              errorMessage={tValidation(errors.nicknameOrEmail?.message)}
               onInputProps={{ ...field }}
             />
           )}
         />
 
         <Controller
-          name="bboId"
+          name="password"
           control={control}
           render={({ field }) => (
             <DefaultInput
-              placeholder={t("bboId.placeholder")}
-              isInvalid={!!errors.bboId}
-              errorMessage={tValidation(errors.bboId?.message)}
-              onInputProps={{ ...field }}
-            />
-          )}
-        />
-
-        <Controller
-          name="cuebidsId"
-          control={control}
-          render={({ field }) => (
-            <DefaultInput
-              placeholder={t("cuebidsId.placeholder")}
-              isInvalid={!!errors.cuebidsId}
-              errorMessage={tValidation(errors.cuebidsId?.message)}
+              type="password"
+              placeholder={t("form.passwordField.placeholder")}
+              isInvalid={!!errors.password}
+              errorMessage={tValidation(errors.password?.message)}
               onInputProps={{ ...field }}
             />
           )}
@@ -188,101 +437,55 @@ function ThirdPage() {
 
 **Ważne:**
 
-- **Brak providerów schematów**: Używaj kluczy tłumaczeń bezpośrednio w definicjach schematów
-- **Bezpieczeństwo typów**: Rzutuj komunikaty błędów na `ValidNamespaces` dla bezpieczeństwa typów
-- **Obsługa błędów**: Używaj `useTranslationsWithFallback()` dla komunikatów błędów walidacji
-- **Rozdzielenie obowiązków**:
+- **Używaj typu TKey**: Importuj `TKey` z `@/lib/typed-translations` dla wszystkich kluczy tłumaczeń
+- **Używaj operatora satisfies**: Używaj `satisfies TKey` zamiast `as ValidNamespaces` dla lepszego sprawdzania typów
+- **Obsługa błędów**: Używaj `useTranslationsWithFallback()` dla komunikatów błędów walidacji ze schematów
+- **Rozdziel obowiązki**:
   - `useTranslations("namespace")` dla etykiet UI i placeholderów
   - `useTranslationsWithFallback()` dla dynamicznych komunikatów błędów ze schematów
-- **Pola opcjonalne**: Używaj wzorca `.transform(emptyStringToUndefined).pipe(schema.optional())`
+- **Bezpieczeństwo typów**: TypeScript wykryje nieprawidłowe klucze tłumaczeń w czasie kompilacji
 
-**Przykład z rzeczywistego schematu onboarding:**
-
-```typescript
-// Zaawansowana walidacja z transformacją i polami opcjonalnymi
-const cezarIdSchema = z
-  .string()
-  .transform(emptyStringToUndefined)
-  .pipe(
-    z
-      .string()
-      .regex(
-        /^\d{8}$/,
-        "validation.model.user.onboarding.cezarId.regexLenght" as ValidNamespaces
-      )
-      .optional()
-  );
-
-// Transformacja pustych stringów na undefined dla pól opcjonalnych
-const emptyStringToUndefined = (value: string | undefined) =>
-  value === "" ? undefined : value;
-
-// Kompletny schemat z wieloma polami opcjonalnymi
-const onboardingThirdPageSchema = z.object({
-  cezarId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cezarIdSchema.optional()),
-  bboId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(bboIdSchema.optional()),
-  cuebidsId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cuebidsIdSchema.optional()),
-});
-```
-
-**Przykład z rzeczywistego schematu logowania:**
+**Server Actions z TKey:**
 
 ```typescript
-// Zaawansowana walidacja z logiką warunkową
-const nicknameOrEmailSchema = z
-  .string()
-  .nonempty(
-    "validation.pages.auth.login.nicknameOrEmail.required" as ValidNamespaces
-  )
-  .superRefine((value, ctx) => {
-    if (value.includes("@")) {
-      // Walidacja emaila
-      const result = emailSchema.safeParse(value);
-      if (!result.success) {
-        result.error.errors.forEach((err) => {
-          ctx.addIssue({
-            code: "custom",
-            message: err.message,
-            path: err.path,
+// W server actions używaj TKey dla typowanej obsługi błędów
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
+
+export const register = action
+  .inputSchema(registerFormSchema)
+  .action(async ({ parsedInput: formData }) => {
+    try {
+      const user = await createNewUser(formData);
+      await createSession(user._id.toString());
+      redirect(ROUTES.dashboard);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("duplicate key")) {
+        if (error.message.includes("email")) {
+          returnValidationErrors(registerFormSchema, {
+            _errors: ["api.auth.register.emailExists" satisfies TKey],
           });
-        });
-      }
-    } else {
-      // Walidacja nickname
-      const result = nicknameSchema.safeParse(value);
-      if (!result.success) {
-        result.error.errors.forEach((err) => {
-          ctx.addIssue({
-            code: "custom",
-            message: err.message,
+        } else if (error.message.includes("nickname")) {
+          returnValidationErrors(registerFormSchema, {
+            _errors: ["api.auth.register.nicknameExists" satisfies TKey],
           });
-        });
+        }
       }
+      throw error;
     }
   });
 ```
 
-````
+## Uwierzytelnienie i autoryzacja
 
-## Uwierzytelnienie i Autoryzacja
-
-### Zarządzanie Sesjami
+### Zarządzanie sesjami
 
 - Tokeny JWT przechowywane w HTTP-only cookies
 - Walidacja sesji po stronie serwera
 - Automatyczne odświeżanie tokenów
 - Bezpieczne wylogowanie z czyszczeniem tokenów
 
-### Ochrona Tras
+### Ochrona tras
 
 ```typescript
 // Ochrona oparta na layout
@@ -294,17 +497,17 @@ export default async function ProtectedLayout({
   await requireUserId(); // Przekierowuje jeśli nie uwierzytelniony, zwraca userId, nie musisz pisać tego dla każdego komponentu bo są guardy w layout.tsx, to samo istnieje dla onboardingu
   return <>{children}</>;
 }
-````
+```
 
-### Wzorce Uprawnień
+### Wzorce uprawnień
 
 - Dostęp oparty na rolach przez dane użytkownika
 - Guardy na poziomie tras w komponentach layout
 - Sprawdzanie uprawnień na poziomie komponentów
 
-## Wzorce Bazy Danych
+## Wzorce bazy danych
 
-### Zarządzanie Połączeniami
+### Zarządzanie połączeniami
 
 ```typescript
 // Zawsze używaj narzędzia połączenia
@@ -316,7 +519,7 @@ export async function databaseOperation() {
 }
 ```
 
-### Sanityzacja Danych
+### Sanityzacja danych
 
 ```typescript
 // Zawsze sanityzuj dane przed zwróceniem do klienta w server actions
@@ -326,55 +529,55 @@ const user = await User.findById(id);
 return sanitizeUser(user);
 ```
 
-## Obsługa Formularzy
+## Obsługa formularzy
 
-### Formularze Wieloetapowe
+### Formularze wieloetapowe
 
 - Zarządzanie stanem oparte na kontekście
 - Walidacja na poziomie strony
 - Guardy nawigacji
 - Śledzenie postępu
 
-### Strategia Walidacji
+### Strategia walidacji
 
 - Walidacja po stronie klienta z Zod
 - Walidacja po stronie serwera dla bezpieczeństwa
 - Informacje zwrotne o walidacji w czasie rzeczywistym
 - Zinternacjonalizowane komunikaty błędów
 
-## Zarządzanie Stanem
+## Zarządzanie stanem
 
-### Stan Serwera
+### Stan serwera
 
 - TanStack React Query dla stanu serwera
 - Automatyczne cachowanie i unieważnianie
 - Odświeżanie w tle
 - Optymistyczne aktualizacje
 
-### Stan Klienta
+### Stan klienta
 
 - React Context dla złożonego wspólnego stanu
 - useState dla stanu lokalnego komponentu
 - useReducer dla złożonych przejść stanu
 
-## Optymalizacja Wydajności
+## Optymalizacja wydajności
 
-### Dzielenie Kodu
+### Dzielenie kodu
 
 - Dynamiczne importy dla ciężkich komponentów
-- Dzielenie oparte na trasach (automatyczne)
-- Dzielenie na poziomie komponentów gdzie odpowiednie
+- Dzielenie na poziomie tras (automatyczne)
+- Dzielenie na poziomie komponentów, gdy to uzasadnione
 
-Dziel tylko jeśli widzisz, że komponent będzie duży i może mieć loader.
+Dziel tylko jeśli komponent jest duży i może mieć loader.
 
-Nie używaj React.lazy, używaj dynamicznych importów Next.js zamiast tego.
+Nie używaj React.lazy, używaj dynamicznych importów Next.js.
 
-**Dlaczego używać dynamicznych importów Next.js zamiast React.lazy:**
+**Dlaczego dynamiczne importy Next.js zamiast React.lazy:**
 
-- **Lepsze wsparcie SSR**: Dynamiczne importy Next.js działają bezproblemowo z renderowaniem po stronie serwera
+- **Lepsze wsparcie SSR**: Dynamiczne importy Next.js działają z renderowaniem po stronie serwera
 - **Automatyczne dzielenie kodu**: Next.js automatycznie obsługuje bundlowanie i ładowanie
-- **Wbudowane stany ładowania**: Zintegrowane z plikami loading.tsx Next.js
-- **Lepsza wydajność**: Zoptymalizowane dla systemu budowania Next.js
+- **Wbudowane stany ładowania**: Zintegrowane z plikami loading.tsx
+- **Lepsza wydajność**: Zoptymalizowane pod system budowania Next.js
 - **Wsparcie TypeScript**: Lepsze wnioskowanie typów i bezpieczeństwo
 
 **Przykłady użycia:**
@@ -402,44 +605,44 @@ function MyPage() {
   );
 }
 
-// Dla komponentów, które powinny ładować się tylko po stronie klienta
+// Dla komponentów tylko po stronie klienta
 const ClientOnlyComponent = dynamic(() => import("./ClientOnlyComponent"), {
   ssr: false,
   loading: () => <div>Ładowanie...</div>,
 });
 ```
 
-### Optymalizacja Bundla
+### Optymalizacja bundla
 
 ```javascript
 // next.config.ts
 experimental: {
-  optimizePackageImports: [
-    "@chakra-ui/react",
-    "react-icons",
-    "@tanstack/react-query",
-    "react-hook-form",
-  ],
+	optimizePackageImports: [
+		"@chakra-ui/react",
+		"react-icons",
+		"@tanstack/react-query",
+		"react-hook-form",
+	],
 }
 ```
 
-### Optymalizacja Obrazów
+### Optymalizacja obrazów
 
 - Używaj komponentu Image z Next.js
-- Odpowiedni sizing i wybór formatu
+- Odpowiednie rozmiary i formaty
 - Lazy loading domyślnie
 
-Nie używaj Image z Chakra UI, używaj Image z Next.js zamiast tego.
+Nie używaj Image z Chakra UI, tylko z Next.js.
 
-### Optymalizacja Linków
+### Optymalizacja linków
 
-Nie używaj Link z Chakra UI ani Link z Next.js bezpośrednio. Używaj naszego niestandardowego komponentu ChakraLink zamiast tego.
+Nie używaj Link z Chakra UI ani Link z Next.js bezpośrednio. Używaj własnego komponentu ChakraLink.
 
-**Użycie Komponentu ChakraLink:**
+**Użycie ChakraLink:**
 
 Niestandardowy komponent ChakraLink znajduje się w [`/src/components/chakra-config/ChakraLink.tsx`](../../next-app/src/components/chakra-config/ChakraLink.tsx).
 
-Ten komponent łączy funkcjonalność Next.js Link z możliwościami stylizacji Chakra UI.
+Łączy funkcjonalność Next.js Link z możliwościami stylizacji Chakra UI.
 
 **Przykłady użycia:**
 
@@ -451,18 +654,18 @@ import ChakraLink from "@/components/chakra-config/ChakraLink";
   color="blue.500"
   fontWeight="bold"
   _hover={{ color: "blue.700" }}
-  ...inne props z Chakra
+  // ...inne propsy z Chakra
 >
   Profil
-</ChakraLink>
+</ChakraLink>;
 ```
 
-**Dlaczego używać ChakraLink:**
+**Dlaczego ChakraLink:**
 
-- **Optymalizacja Next.js**: Zawiera wszystkie optymalizacje Next.js Link (prefetching, routing po stronie klienta)
-- **Stylizacja Chakra UI**: Pełny dostęp do systemu stylizacji i props Chakra UI
-- **Bezpieczeństwo typów**: Odpowiednie wsparcie TypeScript dla props Next.js i Chakra UI
-- **Spójna stylizacja**: Utrzymuje spójność systemu projektowania w całej aplikacji
+- **Optymalizacja Next.js**: Prefetching, routing po stronie klienta
+- **Stylizacja Chakra UI**: Pełny dostęp do systemu stylizacji
+- **Bezpieczeństwo typów**: Wsparcie TypeScript dla props Next.js i Chakra UI
+- **Spójna stylizacja**: Spójność design systemu w całej aplikacji
 
 **Używanie envConfigLoader.ts:**
 
@@ -477,211 +680,4 @@ const sessionSecret = config.SESSION_SECRET;
 const isSecure = config.SECURE_COOKIES;
 ```
 
-Jeśli zmienna brakuje i nie ma fallback, aplikacja ulegnie awarii przy starcie z odpowiednim komunikatem.
-
-## Bezpieczeństwo
-
-### Walidacja Input
-
-- Schematy Zod dla wszystkich danych wejściowych
-- Sanityzacja po stronie serwera
-- Ochrona przed atakami injection
-- Walidacja typu plików dla uploadów
-
-### Ochrona CSRF
-
-- SameSite cookies
-- Tokeny CSRF dla newralgicznych operacji
-- Walidacja origin headers
-
-### Bezpieczeństwo Sesji
-
-- HTTP-only cookies
-- Bezpieczne flagi dla HTTPS
-- Rotacja tokenów sesji
-- Timeouty sesji
-
-## Wzorce Testowania
-
-### Testowanie Jednostkowe
-
-```typescript
-// Testowanie utility functions
-// Testowanie logiki biznesowej
-// Testowanie walidacji schematów
-```
-
-### Testowanie Komponentów
-
-```typescript
-// Renderowanie komponentów
-// Interakcje użytkownika
-- Stany ładowania i błędów
-```
-
-### Testowanie Integracyjne
-
-```typescript
-// Przepływy end-to-end
-// API endpoints
-// Operacje bazodanowe
-```
-
-## Konwencje Dokumentacji
-
-### Komentarze w Kodzie
-
-```typescript
-/**
- * Opis funkcji w języku polskim
- * @param param - opis parametru
- * @returns opis zwracanej wartości
- */
-function exampleFunction(param: string): boolean {
-  // Komentarz w kodzie po polsku
-  return true;
-}
-```
-
-### README Files
-
-- Instrukcje w języku polskim
-- Przykłady użycia
-- Wymagania środowiska
-- Kroki troubleshootingu
-
-### API Documentation
-
-- OpenAPI/Swagger specs
-- Przykłady żądań i odpowiedzi
-- Kody błędów i ich znaczenie
-- Limity rate limiting
-
-## Wytyczne Lokalizacji
-
-### System Typowanych Tłumaczeń
-
-Aplikacja wykorzystuje niestandardową nakładkę na next-intl (`src/lib/typed-translations.ts`), która zapewnia pełne bezpieczeństwo typów i walidację namespace:
-
-**Podstawowe użycie:**
-
-```typescript
-import { useTranslations, getTranslations } from "@/lib/typed-translations";
-
-// ✅ Komponenty klienta - automatyczne autouzupełnianie
-const t = useTranslations();
-t("common.appName"); // TypeScript sprawdza poprawność klucza
-
-// ✅ Komponenty serwera
-const t = await getTranslations();
-const message = t("Auth.LoginPage.title");
-```
-
-**Bezpieczne namespace z walidacją:**
-
-```typescript
-// ✅ Poprawne użycie - namespace istnieje
-const authT = useTranslations("Auth");
-authT("LoginPage.title"); // Autouzupełnianie dla kluczy Auth.*
-
-// ❌ Błąd kompilacji - nieprawidłowy namespace
-const invalidT = useTranslations("NonExistent"); // TypeScript error!
-```
-
-**Typ TranslationKeys dla walidacji namespace:**
-
-```typescript
-// Sprawdza poprawność namespace w czasie kompilacji
-type ValidKeys = TranslationKeys<"Auth">; // ✅ Zwraca klucze z Auth
-type InvalidKeys = TranslationKeys<"BadNamespace">; // ❌ never type
-
-// Użycie w funkcjach pomocniczych
-function getAuthMessage<T extends string>(
-  namespace: T,
-  key: TranslationKeys<T>
-): string {
-  const t = useTranslations(namespace);
-  return t(key);
-}
-
-// ✅ Działa poprawnie
-getAuthMessage("Auth", "LoginPage.title");
-
-// ❌ Błąd kompilacji
-getAuthMessage("Invalid", "some.key");
-```
-
-**Korzyści systemu typowanych tłumaczeń:**
-
-- **Autouzupełnianie**: Pełne wsparcie IDE dla kluczy tłumaczeń
-- **Walidacja namespace**: TypeScript wykrywa nieprawidłowe namespace
-- **Bezpieczeństwo refaktoryzacji**: Zmiana kluczy automatycznie wykrywa błędy
-- **Interpolacja wartości**: Type-safe wstawianie zmiennych do tekstów
-- **Wsparcie rich content**: Bezpieczne używanie komponentów React w tłumaczeniach
-
-### Tłumaczenia
-
-- Wszystkie teksty interfejsu w messages/pl.ts
-- Klucze tłumaczeń w camelCase
-- Grupowanie według funkcjonalności
-- Placeholder values dla dynamicznych treści
-- **Zawsze używaj typed-translations zamiast next-intl bezpośrednio**
-
-**Przykład struktury tłumaczeń:**
-
-```typescript
-// messages/pl.ts
-export default {
-  common: {
-    appName: "Bridge Crossroad",
-    buttons: {
-      save: "Zapisz",
-      cancel: "Anuluj",
-    },
-  },
-  Auth: {
-    LoginPage: {
-      title: "Logowanie",
-      emailPlaceholder: "Wprowadź email",
-    },
-  },
-} as const; // Ważne: as const dla wnioskowania typów
-```
-
-### Formatowanie Dat i Liczb
-
-```typescript
-// Używaj narzędzi locale-aware
-const formatter = new Intl.DateTimeFormat("pl-PL");
-const currency = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-});
-```
-
-## Monitoring i Logging
-
-### Logging Strukturalny
-
-```typescript
-// Używaj strukturalnych logów
-console.log({
-  action: "user_login",
-  userId: user.id,
-  timestamp: new Date().toISOString(),
-  success: true,
-});
-```
-
-### Metrics i Analytics
-
-- Performance metrics
-- User behavior tracking
-- Error rates monitoring
-- Business metrics
-
----
-
-**Projekt Pracy Inżynierskiej** autorstwa Szymona Kubiczka, Bartłomieja Szubiaka i Joanny Konieczny
-
-Dla przeglądu projektu i informacji ogólnych, zobacz [główny README](../README.md).
+Jeśli zmiennej brakuje i nie ma fallbacku, aplikacja zakończy się błędem przy starcie z odpowiednim komunikatem.

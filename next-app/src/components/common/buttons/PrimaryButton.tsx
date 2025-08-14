@@ -1,8 +1,9 @@
-import { Button, ButtonProps } from "@chakra-ui/react";
+import type { ButtonProps } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { ElementType } from "react";
+import type { ElementType } from "react";
 
-export interface IPrimaryButtonProps {
+export type IPrimaryButtonProps = {
   text: string;
   href?: string;
   as?: ElementType;
@@ -10,7 +11,7 @@ export interface IPrimaryButtonProps {
   type?: "submit" | "button" | "reset";
   onElementProps?: ButtonProps;
   size?: "sm" | "md" | "lg" | "xl";
-}
+};
 
 export default function PrimaryButton({
   text,

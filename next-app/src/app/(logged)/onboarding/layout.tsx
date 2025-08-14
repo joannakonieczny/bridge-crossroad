@@ -1,13 +1,9 @@
-import { OnboardingFormDataProvider } from "@/components/onboarding/FormDataContext";
+import { OnboardingFormDataProvider } from "@/components/pages/onboarding/FormDataContext";
 import { Box, Container, Flex } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import Image from "next/image";
 
-export interface IOnboardingLayoutProps {
-  children?: ReactNode;
-}
-
-export default function OnboardingLayout({ children }: IOnboardingLayoutProps) {
+export default function OnboardingLayout({ children }: PropsWithChildren) {
   return (
     <Box position="relative" minH="100vh" w="100vw" overflow="hidden">
       {/* Background images */}

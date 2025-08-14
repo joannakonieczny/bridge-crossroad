@@ -1,7 +1,8 @@
-import { Schema, Document, model, models, Types } from "mongoose";
+import type { Document, Types } from "mongoose";
+import { Schema, model, models } from "mongoose";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 
-export interface IUserDTO extends Document {
+export type IUserDTO = Document & {
   _id: Types.ObjectId;
   email: string;
   encodedPassword: string;

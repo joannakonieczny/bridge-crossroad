@@ -1,5 +1,5 @@
-import PeopleList from "@/components/with-onboarding/groups/PeopleList";
+import PeopleList from "@/components/pages/with-onboarding/groups/PeopleList";
 
 export default function GroupsPage() {
-  return <PeopleList/>
+  return <PeopleList />;
 }

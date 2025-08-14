@@ -1,6 +1,7 @@
 "server-only";
 
-import Group, { IGroup } from "@/models/group";
+import type { IGroup } from "@/models/group";
+import Group from "@/models/group";
 import dbConnect from "@/util/connect-mongo";
 
 export async function findByInviteCode(invitationCode: string): Promise<IGroup | null> {

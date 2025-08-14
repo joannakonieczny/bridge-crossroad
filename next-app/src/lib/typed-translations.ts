@@ -1,7 +1,7 @@
 import { useTranslations as useNextIntlTranslations } from "next-intl";
 import { getTranslations as getNextIntlTranslations } from "next-intl/server";
-import { ReactNode } from "react";
-import messages from "../../messages/pl";
+import type { ReactNode } from "react";
+import type messages from "../../messages/pl";
 
 // Helper type to create dot-notation paths from nested objects
 type DotNotation<T, K extends keyof T = keyof T> = K extends string
@@ -50,7 +50,7 @@ type TranslationValues = Record<string, string | number | boolean | ReactNode>;
 /**
  * Typed translation function interface that preserves all next-intl functionality
  */
-interface TypedTranslator<Namespace extends string = ""> {
+type TypedTranslator<Namespace extends string = ""> = {
   (key: NamespaceKeys<Namespace>, values?: TranslationValues): string;
 
   rich(key: NamespaceKeys<Namespace>, values?: TranslationValues): ReactNode;
@@ -60,7 +60,7 @@ interface TypedTranslator<Namespace extends string = ""> {
   // Additional properties that might exist on the original translator
   has(key: string): boolean;
   getPathname(href: string): string;
-}
+};
 
 /**
  * Typed wrapper around next-intl's useTranslations hook
@@ -71,15 +71,15 @@ interface TypedTranslator<Namespace extends string = ""> {
  * // Global access to all keys
  * const t = useTranslations();
  * t("common.appName"); // ✅ Autocomplete works
- * t("Auth.LoginPage.title"); // ✅ Autocomplete works
+ * t("pages.Auth.LoginPage.title"); // ✅ Autocomplete works
  *
  * // Namespace-scoped access
- * const authT = useTranslations("Auth");
- * authT("LoginPage.title"); // ✅ Autocomplete for Auth.* keys
+ * const authT = useTranslations("pages.Auth");
+ * authT("LoginPage.title"); // ✅ Autocomplete for pages.Auth.* keys
  *
  * // Deep namespace
- * const loginT = useTranslations("Auth.LoginPage");
- * loginT("title"); // ✅ Autocomplete for Auth.LoginPage.* keys
+ * const loginT = useTranslations("pages.Auth.LoginPage");
+ * loginT("title"); // ✅ Autocomplete for pages.Auth.LoginPage.* keys
  *
  * // With interpolation
  * const validationT = useTranslations("validation.user");
@@ -138,7 +138,7 @@ function useTranslations<T extends ValidNamespaces = "">(
  * const message = t("common.appName"); // ✅ Typed
  *
  * // With namespace
- * const authT = await getTypedTranslations("Auth.LoginPage");
+ * const authT = await getTypedTranslations("pages.Auth.LoginPage");
  * const title = authT("title"); // ✅ Typed
  * ```
  */
@@ -236,4 +236,4 @@ export {
   useTranslationsWithFallback,
   getTranslationsWithFallback,
 };
-export type { TranslationKeys, ValidNamespaces };
+export type { TranslationKeys as ITranslationKey, AllTranslationKeys as TKey };

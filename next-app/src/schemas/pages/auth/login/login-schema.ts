@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { emailSchema, nicknameSchema } from "../../../model/user/user-schema";
-import type { ValidNamespaces } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
 const nicknameOrEmailSchema = z
   .string()
   .nonempty(
-    "validation.pages.auth.login.nicknameOrEmail.required" as ValidNamespaces
+    "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
   )
   .superRefine((value, ctx) => {
     if (value.includes("@")) {
@@ -35,7 +35,7 @@ const nicknameOrEmailSchema = z
 
 const passwordSchema = z
   .string()
-  .nonempty("validation.pages.auth.login.password.required" as ValidNamespaces);
+  .nonempty("validation.pages.auth.login.password.required" satisfies TKey);
 
 export const loginFormSchema = z.object({
   nicknameOrEmail: nicknameOrEmailSchema,

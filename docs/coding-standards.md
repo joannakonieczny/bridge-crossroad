@@ -1,11 +1,11 @@
-## Coding Standards
+# Coding Standards
 
 ## 📖 Language Versions
 
 - **🇺🇸 English** - This version
 - **🇵🇱 Polski** - [coding-standards.md](./pl/coding-standards.md)
 
-### Route Management
+## Route Management
 
 **Always use the centralized routes file:**
 
@@ -36,13 +36,243 @@ redirect(ROUTES.dashboard);
 3. Always add `as const` assertion for type inference
 4. Update the `RouteKeys` type if needed
 
-### TypeScript Guidelines
+## TypeScript Guide
 
 - Enable strict mode
 - Use proper type annotations
-- Prefer interfaces over types for object shapes
+- **Prefer types over interfaces** - use `type` for all object shapes and component props
 - Use utility types when appropriate
-- Avoid `any` - use `unknown` for truly unknown data
+- Avoid `any` - use `unknown` for truly unknown data or `never`
+- Use PropsWithChildren type from React if you need to pass children to component or declare component props type
+
+**Why prefer types over interfaces:**
+
+```typescript
+// ✅ Preferred: Use type for component props
+type ButtonProps = {
+  text: string;
+  onClick?: () => void;
+  variant?: "primary" | "secondary";
+};
+
+// ✅ Preferred: Use type for object shapes
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+// ❌ Avoid: Using interface for simple object shapes
+interface ButtonProps {
+  text: string;
+  onClick?: () => void;
+}
+
+// ✅ Example: Using PropsWithChildren for components that accept children
+import type { PropsWithChildren } from "react";
+// ❌ import type { PropsWithChildren } from "react";
+
+type ComponentWithChildrenProps = PropsWithChildren<{
+  title: string;
+  onClose?: () => void;
+}>;
+
+export default function ComponentWithChildren({
+  title,
+  onClose,
+  children,
+}: ComponentWithChildrenProps) {
+  return (
+    <div>
+      <h2>{title}</h2>
+      <button onClick={onClose}>Close</button>
+      <div>{children}</div>
+    </div>
+  );
+}
+```
+
+## Localization & Translations Guide
+
+### Typed Translation System
+
+The application uses a custom wrapper over next-intl (`src/lib/typed-translations.ts`) that provides full type safety and namespace validation. **Always use the exported types `TKey` and `ITranslationKey` for type-safe translation handling.**
+
+**Basic usage:**
+
+```typescript
+import { useTranslations, getTranslations } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
+
+// ✅ Client components - automatic autocomplete
+const t = useTranslations();
+t("common.appName"); // TypeScript checks key validity
+
+// ✅ Server components
+const t = await getTranslations();
+const message = t("pages.Auth.LoginPage.title");
+
+// ✅ Type-safe translation keys in schemas
+const errorKey: string =
+  "validation.pages.auth.login.password.required" satisfies TKey;
+```
+
+**Key Types Available:**
+
+- **`TKey`** - All available translation keys as dot-notation paths (alias for `AllTranslationKeys`)
+- **`ITranslationKey<T>`** - Namespace-scoped translation keys for specific namespace `T`
+- **`ValidNamespaces`** - All valid namespace paths (used internally)
+
+**Using TKey with satisfies operator:**
+
+```typescript
+import type { TKey } from "@/lib/typed-translations";
+
+// ✅ Modern approach - use satisfies for better type checking
+const schema = z.object({
+  email: z
+    .string()
+    .email("validation.model.user.email.regex" satisfies TKey)
+    .max(255, "validation.model.user.email.max" satisfies TKey),
+  password: z
+    .string()
+    .min(8, "validation.pages.auth.register.password.min" satisfies TKey)
+    .nonempty(
+      "validation.pages.auth.register.password.required" satisfies TKey
+    ),
+});
+
+// ❌ Deprecated approach - avoid using as ValidNamespaces
+const oldWay = "some.key" as ValidNamespaces; // Less type safety
+```
+
+**Safe namespace with validation:**
+
+```typescript
+// ✅ Correct usage - namespace exists
+const authT = useTranslations("pages.Auth");
+authT("LoginPage.title"); // Autocomplete for pages.Auth.* keys
+
+// ✅ Deep namespace access
+const loginT = useTranslations("pages.Auth.LoginPage");
+loginT("title"); // Direct access to title
+
+// ❌ Compilation error - invalid namespace
+const invalidT = useTranslations("NonExistent"); // TypeScript error!
+```
+
+**Server Actions with TKey:**
+
+```typescript
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
+
+export const loginAction = action
+  .inputSchema(loginFormSchema)
+  .action(async ({ parsedInput: formData }) => {
+    const user = await findUser(formData);
+    if (!user) {
+      returnValidationErrors(loginFormSchema, {
+        _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
+      });
+    }
+    // ... rest of logic
+  });
+```
+
+**Benefits of the new TKey approach:**
+
+- **Better type inference**: `satisfies` preserves the literal type while checking validity
+- **Compile-time validation**: Invalid keys are caught during TypeScript compilation
+- **IntelliSense support**: Full autocomplete for all available translation keys
+- **Refactoring safety**: Renaming keys automatically updates all references
+- **No runtime overhead**: Type checking happens only at compile time
+
+**Migration from old approach:**
+
+```typescript
+// ❌ Old way - using ValidNamespaces with as assertion
+"some.key" as ValidNamespaces;
+
+// ✅ New way - using TKey with satisfies
+"some.key" satisfies TKey;
+```
+
+### Translation Structure
+
+#### Core translation namespaces
+
+- **common** – general texts, app names, enums, global messages (e.g. months, academy, trainingGroup)
+- **validation** – validation messages used in Zod schemas (e.g. validation.pages.auth.login)
+- **api** – messages returned by server actions (e.g. api.auth.register.emailExists)
+- **pages** – page-specific texts (placeholders, headings, descriptions, etc.)
+- **components** – texts used by shared components
+
+#### Rules for `validation` and `api`
+
+- All translation keys must be declared with `satisfies TKey` for type safety.
+- In React components, always use `useTranslationsWithFallback()` to fetch these texts.
+- Translations must be simple strings – do not use objects or interpolation (e.g. `{name}`), only plain strings.
+- Variables should be loaded from global config, not passed through translation keys.
+
+#### Rules for `pages`
+
+- Full flexibility – texts can be nested, complex, and include placeholders, descriptions, headings, etc.
+- Only for texts visible on the page (UI/UX copy).
+
+#### Nesting structure
+
+- Nest translations according to domain logic (e.g. `pages.Auth.LoginPage`, `pages.OnboardingPage`).
+- Group texts by feature or component.
+- Example:
+  ```ts
+  pages: {
+    Auth: {
+      LoginPage: { ... },
+      RegisterPage: { ... },
+    },
+    DashboardPage: { ... },
+    OnboardingPage: { ... },
+  }
+  ```
+
+#### Enums in `common`
+
+- Enums (e.g. academies, training groups) should be declared in config files (e.g. `Academy`, `TrainingGroup`), and their translations in `common`:
+  ```ts
+  common: {
+    academy: {
+      [Academy.UJ]: "Uniwersytet Jagielloński",
+      [Academy.AGH]: "Akademia Górniczo-Hutnicza",
+      // ...
+    },
+    trainingGroup: {
+      [TrainingGroup.BASIC]: "Podstawowa",
+      // ...
+    },
+  }
+  ```
+- Always import enums and use them as translation keys for consistency and type safety.
+
+#### Enums structure
+
+key same as value
+
+```js
+export enum Academy {
+  UJ = "UJ",
+  AGH = "AGH",
+  PK = "PK",
+  // ...
+}
+```
+
+### Good practices
+
+- Avoid duplicating keys at the same level.
+- Always group translations logically and by purpose.
+- For complex components or pages, use additional nesting levels.
+- **Always use typed-translations instead of next-intl directly**
 
 ### Component Patterns
 
@@ -52,7 +282,7 @@ redirect(ROUTES.dashboard);
 
 import { ComponentProps } from "react"; // don't use import * as React - extremely non-optimal
 
-interface ComponentNameProps { // same name as component + Props
+type ComponentNameProps = { // same name as component + Props
   required: string;
   optional?: boolean;
   onAction?: () => void;
@@ -94,32 +324,64 @@ export const actionName = action
 ```typescript
 // Schema definition with typed translation keys
 import { z } from "zod";
-import type { ValidNamespaces } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
-// ✅ Use translation keys directly in schema definitions
-const onboardingThirdPageSchema = z.object({
-  cezarId: z
+// ✅ Use TKey type with satisfies for type-safe translation keys
+const loginFormSchema = z.object({
+  nicknameOrEmail: z
     .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cezarIdSchema.optional()),
-  bboId: z
+    .nonempty(
+      "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
+    ),
+  password: z
     .string()
-    .transform(emptyStringToUndefined)
-    .pipe(bboIdSchema.optional()),
-  cuebidsId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cuebidsIdSchema.optional()),
+    .nonempty("validation.pages.auth.login.password.required" satisfies TKey),
+  rememberMe: z.boolean(),
 });
 
-// Component usage with translation hook
+// Advanced validation with custom refinement
+const nicknameOrEmailSchema = z
+  .string()
+  .nonempty(
+    "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
+  )
+  .superRefine((value, ctx) => {
+    if (value.includes("@")) {
+      const result = emailSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+            path: err.path,
+          });
+        });
+      }
+    } else {
+      const result = nicknameSchema.safeParse(value);
+      if (!result.success) {
+        result.error.errors.forEach((err) => {
+          ctx.addIssue({
+            code: "custom",
+            message: err.message,
+            path: err.path,
+          });
+        });
+      }
+    }
+  });
+```
+
+**Component usage with translation hook:**
+
+```typescript
 import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 
-function ThirdPage() {
-  const t = useTranslations("OnboardingPage.thirdPage"); // For labels, placeholders
+function LoginPage() {
+  const t = useTranslations("pages.Auth.LoginPage"); // For UI labels and placeholders
   const tValidation = useTranslationsWithFallback(); // For validation messages from schema
 
   const {
@@ -127,15 +389,15 @@ function ThirdPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(onboardingThirdPageSchema),
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      cezarId: "",
-      bboId: "",
-      cuebidsId: "",
+      nicknameOrEmail: "",
+      password: "",
+      rememberMe: false,
     },
   });
 
-  function onSubmit(data: OnboardingThirdPageType) {
+  function onSubmit(data: LoginFormType) {
     // Handle form submission
   }
 
@@ -143,39 +405,27 @@ function ThirdPage() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={4}>
         <Controller
-          name="cezarId"
+          name="nicknameOrEmail"
           control={control}
           render={({ field }) => (
             <DefaultInput
-              placeholder={t("cezarId.placeholder")}
-              isInvalid={!!errors.cezarId}
-              errorMessage={tValidation(errors.cezarId?.message)}
+              placeholder={t("form.nicknameOrEmailField.placeholder")}
+              isInvalid={!!errors.nicknameOrEmail}
+              errorMessage={tValidation(errors.nicknameOrEmail?.message)}
               onInputProps={{ ...field }}
             />
           )}
         />
 
         <Controller
-          name="bboId"
+          name="password"
           control={control}
           render={({ field }) => (
             <DefaultInput
-              placeholder={t("bboId.placeholder")}
-              isInvalid={!!errors.bboId}
-              errorMessage={tValidation(errors.bboId?.message)}
-              onInputProps={{ ...field }}
-            />
-          )}
-        />
-
-        <Controller
-          name="cuebidsId"
-          control={control}
-          render={({ field }) => (
-            <DefaultInput
-              placeholder={t("cuebidsId.placeholder")}
-              isInvalid={!!errors.cuebidsId}
-              errorMessage={tValidation(errors.cuebidsId?.message)}
+              type="password"
+              placeholder={t("form.passwordField.placeholder")}
+              isInvalid={!!errors.password}
+              errorMessage={tValidation(errors.password?.message)}
               onInputProps={{ ...field }}
             />
           )}
@@ -188,53 +438,44 @@ function ThirdPage() {
 
 **Important:**
 
-- **No schema providers**: Use translation keys directly in schema definitions
-- **Type safety**: Cast error messages to `ValidNamespaces` for type safety
-- **Error handling**: Use `useTranslationsWithFallback()` for validation error messages
+- **Use TKey type**: Import `TKey` from `@/lib/typed-translations` for all translation keys
+- **Use satisfies operator**: Use `satisfies TKey` instead of `as ValidNamespaces` for better type checking
+- **Error handling**: Use `useTranslationsWithFallback()` for validation error messages from schemas
 - **Separate concerns**:
   - `useTranslations("namespace")` for UI labels and placeholders
   - `useTranslationsWithFallback()` for dynamic error messages from schemas
-- **Optional fields**: Use `.transform(emptyStringToUndefined).pipe(schema.optional())` pattern
+- **Type safety**: TypeScript will catch invalid translation keys at compile time
 
-**Real-world example from onboarding schema:**
+**Server Actions with TKey:**
 
 ```typescript
-// Advanced validation with transformation and optional fields
-const cezarIdSchema = z
-  .string()
-  .transform(emptyStringToUndefined)
-  .pipe(
-    z
-      .string()
-      .regex(
-        /^\d{8}$/,
-        "validation.model.user.onboarding.cezarId.regexLenght" as ValidNamespaces
-      )
-      .optional()
-  );
+// In server actions, use TKey for type-safe error handling
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
 
-// Transform empty strings to undefined for optional fields
-const emptyStringToUndefined = (value: string | undefined) =>
-  value === "" ? undefined : value;
-
-// Complete schema with multiple optional fields
-const onboardingThirdPageSchema = z.object({
-  cezarId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cezarIdSchema.optional()),
-  bboId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(bboIdSchema.optional()),
-  cuebidsId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cuebidsIdSchema.optional()),
-});
+export const register = action
+  .inputSchema(registerFormSchema)
+  .action(async ({ parsedInput: formData }) => {
+    try {
+      const user = await createNewUser(formData);
+      await createSession(user._id.toString());
+      redirect(ROUTES.dashboard);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("duplicate key")) {
+        if (error.message.includes("email")) {
+          returnValidationErrors(registerFormSchema, {
+            _errors: ["api.auth.register.emailExists" satisfies TKey],
+          });
+        } else if (error.message.includes("nickname")) {
+          returnValidationErrors(registerFormSchema, {
+            _errors: ["api.auth.register.nicknameExists" satisfies TKey],
+          });
+        }
+      }
+      throw error;
+    }
+  });
 ```
-
-````
 
 ## Authentication & Authorization
 
@@ -257,7 +498,7 @@ export default async function ProtectedLayout({
   await requireUserId(); // Redirects if not authenticated, returns userId, you don't need to write this for every component because there are guards in layout.tsx, same existist for onboarding
   return <>{children}</>;
 }
-````
+```
 
 ### Permission Patterns
 
@@ -441,94 +682,3 @@ const isSecure = config.SECURE_COOKIES;
 ```
 
 If a variable is missing and has no fallback, the application will crash at startup with an appropriate message.
-
-## Localization Guidelines
-
-### Typed Translation System
-
-The application uses a custom wrapper over next-intl (`src/lib/typed-translations.ts`) that provides full type safety and namespace validation:
-
-**Basic usage:**
-
-```typescript
-import { useTranslations, getTranslations } from "@/lib/typed-translations";
-
-// ✅ Client components - automatic autocomplete
-const t = useTranslations();
-t("common.appName"); // TypeScript checks key validity
-
-// ✅ Server components
-const t = await getTranslations();
-const message = t("Auth.LoginPage.title");
-```
-
-**Safe namespace with validation:**
-
-```typescript
-// ✅ Correct usage - namespace exists
-const authT = useTranslations("Auth");
-authT("LoginPage.title"); // Autocomplete for Auth.* keys
-
-// ❌ Compilation error - invalid namespace
-const invalidT = useTranslations("NonExistent"); // TypeScript error!
-```
-
-**TranslationKeys type for namespace validation:**
-
-```typescript
-// Checks namespace validity at compile time
-type ValidKeys = TranslationKeys<"Auth">; // ✅ Returns keys from Auth
-type InvalidKeys = TranslationKeys<"BadNamespace">; // ❌ never type
-
-// Usage in helper functions
-function getAuthMessage<T extends string>(
-  namespace: T,
-  key: TranslationKeys<T>
-): string {
-  const t = useTranslations(namespace);
-  return t(key);
-}
-
-// ✅ Works correctly
-getAuthMessage("Auth", "LoginPage.title");
-
-// ❌ Compilation error
-getAuthMessage("Invalid", "some.key");
-```
-
-**Benefits of typed translation system:**
-
-- **Autocomplete**: Full IDE support for translation keys
-- **Namespace validation**: TypeScript detects invalid namespaces
-- **Refactoring safety**: Key changes automatically detect errors
-- **Value interpolation**: Type-safe variable insertion into texts
-- **Rich content support**: Safe usage of React components in translations
-
-### Translations
-
-- All interface text in messages/pl.ts
-- Translation keys in camelCase
-- Grouping by functionality
-- Placeholder values for dynamic content
-- **Always use typed-translations instead of next-intl directly**
-
-**Translation structure example:**
-
-```typescript
-// messages/pl.ts
-export default {
-  common: {
-    appName: "Bridge Crossroad",
-    buttons: {
-      save: "Save",
-      cancel: "Cancel",
-    },
-  },
-  Auth: {
-    LoginPage: {
-      title: "Login",
-      emailPlaceholder: "Enter email",
-    },
-  },
-} as const; // Important: as const for type inference
-```

@@ -2,14 +2,15 @@
 
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./server-only/session";
-import { getUserId, UserId } from "./server-only/user-id";
+import type { UserId } from "./server-only/user-id";
+import { getUserId } from "./server-only/user-id";
 import { createNewUser, findExisting } from "@/repositories/user-auth";
 import { ROUTES } from "@/routes";
 import { action } from "@/services/action-lib";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { returnValidationErrors } from "next-safe-action";
-import { ValidNamespaces } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
 export const login = action
   .inputSchema(loginFormSchema)
@@ -27,9 +28,7 @@ export const login = action
       // throw new Error("Invalid credentials");
       console.log("Invalid credentials", formData);
       returnValidationErrors(loginFormSchema, {
-        _errors: [
-          "Auth.LoginPage.errors.invalidCredentials" as ValidNamespaces,
-        ],
+        _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
       });
     }
 
@@ -52,16 +51,12 @@ export const register = action
         if (error.message.includes("email")) {
           // Błąd duplikatu email
           returnValidationErrors(registerFormSchema, {
-            _errors: [
-              "Auth.RegisterPage.errors.emailExists" as ValidNamespaces,
-            ],
+            _errors: ["api.auth.register.emailExists" satisfies TKey],
           });
         } else if (error.message.includes("nickname")) {
           // Błąd duplikatu nickname
           returnValidationErrors(registerFormSchema, {
-            _errors: [
-              "Auth.RegisterPage.errors.nicknameExists" as ValidNamespaces,
-            ],
+            _errors: ["api.auth.register.nicknameExists" satisfies TKey],
           });
         }
       } else {

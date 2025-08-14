@@ -150,7 +150,7 @@ const schema = z.object({
 - Server Components domyślnie
 - Client Components tylko gdy potrzebne (`'use client'`)
 - Domyślne eksporty dla stron i layoutów
-- Interfejsy props z nazwą komponentu + sufiks `Props`
+- Typy props z nazwą komponentu + sufiks `Props`
 
 ### Zarządzanie Stanem
 
@@ -217,7 +217,7 @@ npm run lint          # ESLint z regułami TypeScript
 
 - **Przewodnik Architektury**: [🇵🇱 `../../docs/pl/architecture.md`](../../docs/pl/architecture.md) | [🇺🇸 `../../docs/architecture.md`](../../docs/architecture.md)
 - **Standardy Kodowania**: [🇵🇱 `../../docs/pl/coding-standards.md`](../../docs/pl/coding-standards.md) | [🇺🇸 `../../docs/coding-standards.md`](../../docs/coding-standards.md)
-- **Dokumentacja API**: Generowana z interfejsów TypeScript
+- **Dokumentacja API**: Generowana z typów TypeScript
 - **Dokumentacja Komponentów**: Planowana integracja Storybook
 
 ## Współtworzenie

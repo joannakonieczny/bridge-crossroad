@@ -11,25 +11,25 @@ export type PageId = (typeof AVAILABLE_PAGES)[number];
 
 // Next.js dynamic imports with loading states
 const FirstPage = dynamic(
-  () => import("@/components/onboarding/pages/FirstPage"),
+  () => import("@/components/pages/onboarding/pages/FirstPage"),
   {
     loading: () => <LoadingFallback />,
   }
 );
 const SecondPage = dynamic(
-  () => import("@/components/onboarding/pages/SecondPage"),
+  () => import("@/components/pages/onboarding/pages/SecondPage"),
   {
     loading: () => <LoadingFallback />,
   }
 );
 const ThirdPage = dynamic(
-  () => import("@/components/onboarding/pages/ThirdPage"),
+  () => import("@/components/pages/onboarding/pages/ThirdPage"),
   {
     loading: () => <LoadingFallback />,
   }
 );
 const FinalPage = dynamic(
-  () => import("@/components/onboarding/pages/FinalPage"),
+  () => import("@/components/pages/onboarding/pages/FinalPage"),
   {
     loading: () => <LoadingFallback />,
   }

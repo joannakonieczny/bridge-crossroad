@@ -10,7 +10,7 @@ import {
   cuebidsIdSchema,
 } from "@/schemas/model/user/user-schema";
 import { emptyStringToUndefined } from "@/schemas/common";
-import type { ValidNamespaces } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
 export const InviteCodeValidationConstants = {
   inviteCodeLength: 8,
@@ -22,19 +22,19 @@ export const onboardingFirstPageSchema = z.object({
   academy: z
     .string()
     .nonempty(
-      "validation.pages.onboarding.firstPage.academy.required" as ValidNamespaces
+      "validation.pages.onboarding.firstPage.academy.required" satisfies TKey
     )
     .pipe(academySchema),
   yearOfBirth: z
     .string()
     .nonempty(
-      "validation.pages.onboarding.firstPage.yearOfBirth.required" as ValidNamespaces
+      "validation.pages.onboarding.firstPage.yearOfBirth.required" satisfies TKey
     )
     .transform((val) => {
       const parsed = parseInt(val, 10);
       if (isNaN(parsed)) {
         throw new Error(
-          "validation.pages.onboarding.firstPage.yearOfBirth.invalid" as ValidNamespaces
+          "validation.pages.onboarding.firstPage.yearOfBirth.invalid" satisfies TKey
         );
       }
       return parsed;
@@ -48,27 +48,27 @@ export const onboardingSecondPageSchema = z.object({
     z
       .instanceof(Date, {
         message:
-          "validation.pages.onboarding.secondPage.startPlayingDate.required" as ValidNamespaces,
+          "validation.pages.onboarding.secondPage.startPlayingDate.required" satisfies TKey,
       })
       .pipe(startPlayingDateSchema),
 
     z
       .string()
       .nonempty(
-        "validation.pages.onboarding.secondPage.startPlayingDate.required" as ValidNamespaces
+        "validation.pages.onboarding.secondPage.startPlayingDate.required" satisfies TKey
       )
       .transform((val) => {
         try {
           const parsedDate = new Date(val);
           if (isNaN(parsedDate.getTime())) {
             throw new Error(
-              "validation.pages.onboarding.secondPage.startPlayingDate.invalid" as ValidNamespaces
+              "validation.pages.onboarding.secondPage.startPlayingDate.invalid" satisfies TKey
             );
           }
           return parsedDate;
         } catch {
           throw new Error(
-            "validation.pages.onboarding.secondPage.startPlayingDate.invalid" as ValidNamespaces
+            "validation.pages.onboarding.secondPage.startPlayingDate.invalid" satisfies TKey
           );
         }
       })
@@ -78,7 +78,7 @@ export const onboardingSecondPageSchema = z.object({
   trainingGroup: z
     .string()
     .nonempty(
-      "validation.pages.onboarding.secondPage.trainingGroup.required" as ValidNamespaces
+      "validation.pages.onboarding.secondPage.trainingGroup.required" satisfies TKey
     )
     .pipe(trainingGroupSchema),
 
@@ -106,7 +106,7 @@ const inviteCodeSchema = z
   .string()
   .regex(
     InviteCodeValidationConstants.inviteCodeRegex,
-    "validation.pages.onboarding.finalPage.inviteCode.regex" as ValidNamespaces
+    "validation.pages.onboarding.finalPage.inviteCode.regex" satisfies TKey
   );
 
 const termsAcceptedSchema = z.boolean();
@@ -116,12 +116,12 @@ export const onboardingFinalPageSchema = z
     inviteCode: z
       .string()
       .nonempty(
-        "validation.pages.onboarding.finalPage.inviteCode.required" as ValidNamespaces
+        "validation.pages.onboarding.finalPage.inviteCode.required" satisfies TKey
       )
       .pipe(inviteCodeSchema),
     termsAccepted: termsAcceptedSchema,
   })
   .refine((data) => data.termsAccepted, {
     message:
-      "validation.pages.onboarding.finalPage.terms.errorMessage" as ValidNamespaces,
+      "validation.pages.onboarding.finalPage.terms.errorMessage" satisfies TKey,
   });

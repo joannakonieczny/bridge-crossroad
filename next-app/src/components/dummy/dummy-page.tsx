@@ -11,7 +11,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslations } from "@/lib/typed-translations";
 import { BsMoon, BsSun } from "react-icons/bs";
 
 function Toggle() {
@@ -36,8 +35,6 @@ function Toggle() {
 }
 
 export default function DummyPageComponent() {
-  const t = useTranslations("DummyPage");
-
   const { data, isFetched } = useQuery({
     queryKey: ["dummy"],
     queryFn: async () => {
@@ -49,8 +46,8 @@ export default function DummyPageComponent() {
 
   return (
     <>
-      <Heading>{t("text")}</Heading>
-      <Heading>{t("description.text")}</Heading>
+      <Heading>text</Heading>
+      <Heading>description.text</Heading>
       <Heading>{isFetched ? JSON.stringify(data) : "fetching..."}</Heading>
       <Button colorScheme="accent">color scheme</Button>
       <Button colorScheme="accent" variant={"ghost"}>

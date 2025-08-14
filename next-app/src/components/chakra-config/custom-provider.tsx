@@ -2,14 +2,10 @@
 
 import { theme } from "@/components/chakra-config/theme";
 import { ChakraProvider } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import SafeHydration from "../common/SafeHydration";
 
-export default function CustomChakraProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function CustomChakraProvider({ children }: PropsWithChildren) {
   return (
     <SafeHydration>
       <ChakraProvider theme={theme}>{children}</ChakraProvider>

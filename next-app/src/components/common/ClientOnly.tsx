@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, FC, PropsWithChildren, ReactNode } from "react";
+import type { FC, PropsWithChildren, ReactNode } from "react";
+import { useState, useEffect } from "react";
 
-interface ClientOnlyProps extends PropsWithChildren {
+type ClientOnlyProps = PropsWithChildren & {
   fallback?: ReactNode;
-}
+};
 
 const ClientOnly: FC<ClientOnlyProps> = ({ children, fallback = null }) => {
   const [mounted, setMounted] = useState(false);

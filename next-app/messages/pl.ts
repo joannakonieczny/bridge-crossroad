@@ -17,44 +17,6 @@ const MONTHS = {
   dec: "Grudzień",
 };
 
-const tooLongString = "Max. {maxLength} znaków";
-
-const authForm = {
-  nicknameField: {
-    placeholder: "Nick lub przezwisko (opcjonalne)",
-    errorMessage: "Podaj poprawny nick",
-  },
-  passwordField: {
-    placeholder: "Hasło",
-    errorMessage: "Podaj poprawne hasło",
-    minLength: "Hasło musi mieć co najmniej {minLength} znaków",
-    maxLength: "Hasło nie może być dłuższe niż {maxLength} znaków",
-    invalidSyntax:
-      "Hasło musi zawierać wielkie, małe litery, cyfry i znaki specjalne",
-    noLowerCase: "Hasło musi zawierać małe litery",
-    noUpperCase: "Hasło musi zawierać wielkie litery",
-    noDigit: "Hasło musi zawierać cyfry",
-    noSpecialChar: "Hasło musi zawierać znaki specjalne",
-    required: "Podaj hasło",
-  },
-  emailField: {
-    placeholder: "E-mail",
-    errorMessage: "Podaj poprawny adres e-mail",
-  },
-  firstNameField: {
-    placeholder: "Imię",
-    errorMessage: "Podaj poprawne imię",
-  },
-  lastNameField: {
-    placeholder: "Nazwisko",
-    errorMessage: "Podaj poprawne nazwisko",
-  },
-  repeatPasswordField: {
-    placeholder: "Powtórz hasło",
-    errorMessage: "Hasła nie pasują do siebie",
-  },
-};
-
 const loginPage = {
   title: "Zaloguj się",
   noAccount: {
@@ -64,10 +26,10 @@ const loginPage = {
   form: {
     nicknameOrEmailField: {
       placeholder: "Nick lub email",
-      errorMessage: "Podaj poprawny nick lub email",
-      required: "Podaj nick lub email",
     },
-    passwordField: authForm.passwordField,
+    passwordField: {
+      placeholder: "Hasło",
+    },
   },
   utilities: {
     rememberMe: "Zapamiętaj mnie",
@@ -76,9 +38,6 @@ const loginPage = {
   submitButtons: {
     loginWithGoogle: "Zaloguj się z Google",
     login: "Zaloguj się",
-  },
-  errors: {
-    invalidCredentials: "Nieprawidłowe dane logowania",
   },
 };
 
@@ -89,12 +48,24 @@ const registerPage = {
     link: "Zaloguj się",
   },
   form: {
-    firstNameField: authForm.firstNameField,
-    lastNameField: authForm.lastNameField,
-    emailField: authForm.emailField,
-    passwordField: authForm.passwordField,
-    repeatPasswordField: authForm.repeatPasswordField,
-    nicknameField: authForm.nicknameField,
+    firstNameField: {
+      placeholder: "Imię",
+    },
+    lastNameField: {
+      placeholder: "Nazwisko",
+    },
+    emailField: {
+      placeholder: "E-mail",
+    },
+    passwordField: {
+      placeholder: "Hasło",
+    },
+    repeatPasswordField: {
+      placeholder: "Powtórz hasło",
+    },
+    nicknameField: {
+      placeholder: "Nick lub przezwisko (opcjonalne)",
+    },
   },
   utilities: {
     rememberMe: "Zapamiętaj mnie",
@@ -102,10 +73,6 @@ const registerPage = {
   submitButtons: {
     registerWithGoogle: "Zarejestruj się z Google",
     register: "Zarejestruj się",
-  },
-  errors: {
-    emailExists: "Konto z tym adresem e-mail już istnieje",
-    nicknameExists: "Konto z tym nickiem już istnieje",
   },
 };
 
@@ -122,11 +89,9 @@ const onboardingPage = {
     subHeading: "Ważne dane personalne",
     academy: {
       placeholder: "Wybierz uczelnię",
-      required: "Nie wybrano uczelni",
     },
     yearOfBirth: {
       placeholder: "Wybierz rok urodzenia",
-      required: "Nie wybrano roku urodzenia",
     },
   },
   secondPage: {
@@ -137,14 +102,12 @@ const onboardingPage = {
     subHeading: "Kilka rzeczy o Twoim doświadczeniu!",
     skillLevel: {
       placeholder: "Grupa zaawansowania, początkujący, trener?",
-      required: "Nie wybrano grupy zaawansowania",
     },
     hasRefereeLicense: {
       label: "Czy skończyłeś kurs sędziowski?",
     },
     startPlayingDate: {
       placeholder: "Kiedy zacząłeś grać w brydża?",
-      required: "Nie wybrano daty",
     },
   },
   thirdPage: {
@@ -156,15 +119,12 @@ const onboardingPage = {
       "Profile brydżowe - ich widoczność dla innych możesz zmienić w ustawieniach",
     cezarId: {
       placeholder: "Numer Cezar (opcjonalne)",
-      maxLenght: tooLongString,
     },
     bboId: {
       placeholder: "Nick na BBO (opcjonalne)",
-      maxLenght: tooLongString,
     },
     cuebidsId: {
       placeholder: "Kod użytkownika na Cuebids (opcjonalne)",
-      maxLenght: tooLongString,
     },
   },
   finalPage: {
@@ -175,14 +135,9 @@ const onboardingPage = {
     subHeading:
       "Twoja pierwsza grupa - podaj kod aby mieć dostęp do społeczności Just Bridge AGH",
     submitButton: "Zakończ",
-    inviteCode: {
-      regex: "Podaj poprawny kod zaproszenia",
-      required: "Nie podano kodu zaproszenia",
-    },
     terms: {
       acceptPrefix: "Akceptuję ",
       link: "regulamin i warunki użytkowania",
-      errorMessage: "Musisz zaakceptować regulamin i politykę prywatności",
     },
   },
 };
@@ -220,7 +175,7 @@ const userModelValidation = {
   name: {
     firstName: {
       min: `Min. ${USER.name.min} znaki`,
-      max: "Max. {max} znaków",
+      max: `Max. ${USER.name.max} znaków`,
       regex: "Tylko litery",
       required: "Podaj imię",
     },
@@ -322,13 +277,6 @@ const onboardingPageValidation = {
 };
 
 const messages = {
-  DummyPage: {
-    text: "Witaj świecie!",
-    description: {
-      text: "To jest przykładowy tekst na stronie DummyPage.",
-      text2: "To jest drugi przykładowy tekst na stronie DummyPage.",
-    },
-  },
   common: {
     appName: "Bridge Crossroad",
     appNameWords: {
@@ -376,14 +324,29 @@ const messages = {
       onboarding: onboardingPageValidation,
     },
   },
-  Auth: {
-    LoginPage: loginPage,
-    RegisterPage: registerPage,
+  api: {
+    auth: {
+      register: {
+        emailExists: "Konto z tym adresem e-mail już istnieje",
+        nicknameExists: "Konto z tym nickiem już istnieje",
+      },
+      login: {
+        invalidCredentials: "Nieprawidłowe dane logowania",
+      },
+    },
   },
-  Navbar: navbar,
-  OnboardingPage: onboardingPage,
-  DashboardPage: dashboardPage,
-  LandingPage: landingPage,
+  pages: {
+    Auth: {
+      LoginPage: loginPage,
+      RegisterPage: registerPage,
+    },
+    OnboardingPage: onboardingPage,
+    DashboardPage: dashboardPage,
+    LandingPage: landingPage,
+  },
+  components: {
+    Navbar: navbar,
+  },
 };
 
 export default messages;

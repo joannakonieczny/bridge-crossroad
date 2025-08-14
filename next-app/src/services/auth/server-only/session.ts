@@ -3,7 +3,7 @@ import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { config } from "@/util/envConfigLoader";
-import { UserId } from "./user-id";
+import type { UserId } from "./user-id";
 
 const secretKey = config.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);

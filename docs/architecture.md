@@ -237,7 +237,7 @@ MongoDB schemas using Mongoose:
 
 These are schemas for DTO objects only.
 
-- Remember to write appropriate interfaces that correspond to Mongoose models
+- Remember to write appropriate types that correspond to Mongoose models
 - Use Types.ObjectId for object IDs
 - Remember that every object has `_id`, even nested ones (although you don't have to declare them if you don't need them)
 
@@ -255,7 +255,7 @@ models/
 
 **Model Guidelines:**
 
-- Define TypeScript interfaces
+- Define TypeScript types
 - Include comprehensive validation - these are only at the database level!
 - Use Mongoose middleware for business rules
 - Implement proper indexing for performance
