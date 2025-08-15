@@ -1,9 +1,9 @@
 import { Box, HStack, Stack, Text, Image } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
-import { useTranslations } from "@/lib/typed-translations";
+import { config } from "@/club-preset/config";
 
 export default function FormLayout({ children }: PropsWithChildren) {
-  const t = useTranslations("common");
+  const [firstWord, secondWord] = config.appName.split(" ");
   return (
     <Stack mb={8}>
       {/* Logo and appName */}
@@ -11,7 +11,7 @@ export default function FormLayout({ children }: PropsWithChildren) {
         <HStack>
           <Box w="8px" h="80px" bg="accent.500" borderRadius="2px" />
           <Text fontSize="4xl" fontWeight="bold" lineHeight="1">
-            {t("appNameWords.first")} <br /> {t("appNameWords.second")}
+            {firstWord} <br /> {secondWord}
           </Text>
         </HStack>
         <Image

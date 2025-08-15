@@ -278,11 +278,6 @@ const onboardingPageValidation = {
 
 const messages = {
   common: {
-    appName: "Bridge Crossroad",
-    appNameWords: {
-      first: "Bridge",
-      second: "Crossroad",
-    },
     date: {
       months: MONTHS,
     },
