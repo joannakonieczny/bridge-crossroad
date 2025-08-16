@@ -6,9 +6,10 @@ import type { PropsWithChildren } from "react";
 import { Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
+import { config } from "@/club-preset/config";
 
 export const metadata: Metadata = {
-  title: "Bridge Crossroad",
+  title: config.appName,
   description: "Authors: Szymon Kubiczek, Bartłomiej Szubiak, Joanna Konieczny",
 };
 
