@@ -309,7 +309,7 @@ const messages = {
     },
     error: {
       general: "Wystąpił błąd dla {error}. Spróbuj ponownie później.",
-      messageKeyNonExisting: "Wystąpił błąd",
+      messageKeyNotExisting: "Wystąpił błąd",
     },
   },
   validation: {

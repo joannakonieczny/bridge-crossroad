@@ -3,13 +3,13 @@ import { getTranslations as getNextIntlTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import type messages from "../../messages/pl";
 
-// Helper type to create dot-notation paths from nested objects
+// Helper type to create dot-notation paths from nested objects, only for leaf values (not objects)
 type DotNotation<T, K extends keyof T = keyof T> = K extends string
   ? T[K] extends Record<string, unknown>
     ? T[K] extends unknown[]
-      ? K
-      : K | `${K}.${DotNotation<T[K]>}`
-    : K
+      ? K // Arrays are treated as leaf values
+      : `${K}.${DotNotation<T[K]>}` // Only return deeper paths, not the intermediate namespace
+    : K // Primitive values are leaf values
   : never;
 
 // All available translation keys as dot-notation paths
@@ -183,14 +183,28 @@ async function getTranslations<T extends ValidNamespaces = "">(
 
 // translation with fallback
 
-// TODO add docs
-
 const defaultFallbackMessageKey =
-  "common.error.messageKeyNonExisting" as NamespaceKeys<"">;
+  "common.error.messageKeyNotExisting" satisfies AllTranslationKeys;
 
+/**
+ * Typed wrapper around next-intl's useTranslations with fallback support (client-side)
+ * Returns a translation function that automatically falls back to a default message if the key is missing or invalid.
+ * Useful for safe rendering of translations without risk of undefined/null.
+ *
+ * @example
+ * ```tsx
+ * const t = useTranslationsWithFallback("common");
+ * t("appName"); // ✅ Returns translation or fallback
+ * t("nonExistingKey"); // ✅ Returns fallback message
+ *
+ * // With custom fallback key
+ * const t2 = useTranslationsWithFallback("common", "common.error.general");
+ * t2("nonExistingKey"); // ✅ Returns custom fallback
+ * ```
+ */
 function useTranslationsWithFallback<T extends ValidNamespaces = "">(
   namespace?: T,
-  fallbackMessageKey: NamespaceKeys<""> | undefined = defaultFallbackMessageKey
+  fallbackMessageKey: AllTranslationKeys | undefined = defaultFallbackMessageKey
 ): (key: unknown, values?: TranslationValues) => string {
   const t = useTranslations(namespace);
   const fallbackT = useTranslations();
@@ -208,6 +222,22 @@ function useTranslationsWithFallback<T extends ValidNamespaces = "">(
   };
 }
 
+/**
+ * Typed wrapper around next-intl's getTranslations with fallback support (server-side)
+ * Returns an async translation function that automatically falls back to a default message if the key is missing or invalid.
+ * Use in server components, actions, etc.
+ *
+ * @example
+ * ```tsx
+ * const t = await getTranslationsWithFallback("common");
+ * t("appName"); // ✅ Returns translation or fallback
+ * t("nonExistingKey"); // ✅ Returns fallback message
+ *
+ * // With custom fallback key
+ * const t2 = await getTranslationsWithFallback("common", "common.error.general");
+ * t2("nonExistingKey"); // ✅ Returns custom fallback
+ * ```
+ */
 async function getTranslationsWithFallback<T extends ValidNamespaces = "">(
   namespace?: T,
   fallbackMessageKey: NamespaceKeys<""> | undefined = defaultFallbackMessageKey
