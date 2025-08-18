@@ -682,3 +682,72 @@ const isSecure = config.SECURE_COOKIES;
 ```
 
 If a variable is missing and has no fallback, the application will crash at startup with an appropriate message.
+
+## React Query: Safe wrapper with error handling (DEMO)
+
+Example usage of the useActionQuery wrapper with full error handling and built-in React Query features:
+
+```tsx
+import { login } from "@/services/auth/actions";
+import { useActionQuery } from "./actions-querry";
+
+export function DummyComponent() {
+  const o = {
+    nicknameOrEmail: "user@example.com",
+    password: "password123",
+    rememberMe: true,
+  };
+
+  const q = useActionQuery({
+    queryKey: ["login", o.nicknameOrEmail],
+    action: () => login(o), //pass action here
+    onError: (error) => {
+      //error has more complex structure
+      if (error.serverError) {
+        // Server error handling
+        console.error("Server error:", error.serverError);
+      }
+      if (error.validationErrors) {
+        // zod .format() method
+        // Validation error handling
+        console.warn("Validation errors:", error.validationErrors);
+      }
+      if (error.generalError) {
+        // error
+        // General error handling (e.g. network)
+        console.error("General error:", error.generalError.message);
+      }
+    },
+    retry: false, // Disable retries
+  });
+
+  return (
+    <div>
+      <div>Data: {JSON.stringify(q.data)}</div>
+      <div>Error: {q.error ? q.error.message : "none"}</div>
+      <div>
+        ServerError:{" "}
+        {q.error?.serverError ? String(q.error.serverError) : "none"}
+      </div>
+      <div>
+        ValidationErrors:{" "}
+        {q.error?.validationErrors
+          ? JSON.stringify(q.error.validationErrors)
+          : "none"}
+      </div>
+      <div>
+        GeneralError:{" "}
+        {q.error?.generalError ? String(q.error.generalError) : "none"}
+      </div>
+      <div>Loading: {q.isLoading ? "true" : "false"}</div>
+      <div>Fetching: {q.isFetching ? "true" : "false"}</div>
+      <div>Success: {q.isSuccess ? "true" : "false"}</div>
+      <div>Error (isError): {q.isError ? "true" : "false"}</div>
+      <div>Status: {q.status}</div>
+      <div>Data updated at: {q.dataUpdatedAt}</div>
+      <div>Error updated at: {q.errorUpdatedAt}</div>
+      <button onClick={() => q.refetch()}>Refetch</button>
+    </div>
+  );
+}
+```
