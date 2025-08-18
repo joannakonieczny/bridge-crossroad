@@ -294,6 +294,7 @@ const onboardingPageValidation = {
 
 const messages = {
   common: {
+    appName: "Bridge Crossroad",
     date: {
       months: MONTHS,
     },
