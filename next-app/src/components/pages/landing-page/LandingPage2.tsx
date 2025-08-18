@@ -1,6 +1,9 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+"use client";
+
+import { Box, Flex, Text, Icon } from "@chakra-ui/react";
 import { FiCalendar, FiUsers, FiUserPlus } from "react-icons/fi";
 import Image from "next/image";
+import { BsCalendar } from "react-icons/bs";
 
 export default function LandingPage2() {
   return (
@@ -35,8 +38,10 @@ export default function LandingPage2() {
           px={{ base: 6, md: 16 }}
           py={16}
           minH="60vh"
+          backgroundColor={"transparent"}
+          fontSize="lg"
+          textAlign="justify"
         >
-          {/* Lewa kolumna (np. grafika lub pusta przestrzeń) */}
           <Box flex="1" />
 
           {/* Prawa kolumna z treścią */}
@@ -44,22 +49,21 @@ export default function LandingPage2() {
             flex="1"
             direction="column"
             justify="center"
-            gap={8}
+            gap={16}
             maxW="500px"
           >
             {/* Nagłówek */}
             <Flex align="center" gap={2}>
               <Box w="4px" h="28px" bg="purple.400" borderRadius="full" />
-              <Text fontSize="2xl" fontWeight="bold">
+              <Text fontSize="3xl" fontWeight="bold">
                 Wszystko, czyli...?
               </Text>
             </Flex>
 
             {/* Element 1 */}
             <Flex gap={4} align="flex-start">
-              <FiCalendar size={8} color="purple.400" />
+              <Icon as={BsCalendar} boxSize="4rem" color="purple.400" />
               <Text>
-                {/* TODO chakra ma highlight komponent */}
                 <Text as="span" fontWeight="bold" color="purple.700">
                   Zaawansowany kalendarz
                 </Text>
@@ -70,9 +74,8 @@ export default function LandingPage2() {
 
             {/* Element 2 */}
             <Flex gap={4} align="flex-start">
-              <FiUserPlus size={8} color="purple.400" />
+              <Icon as={FiUserPlus} boxSize="4rem" color="purple.400" />
               <Text>
-                {/* TODO chakra ma highlight komponent */}
                 <Text as="span" fontWeight="bold" color="purple.700">
                   System poszukiwania partnera
                 </Text>{" "}
@@ -82,7 +85,7 @@ export default function LandingPage2() {
 
             {/* Element 3 */}
             <Flex gap={4} align="flex-start">
-              <FiUsers size={8} color="purple.400" />
+              <Icon as={FiUsers} boxSize="4rem" color="purple.400" />
               <Text>
                 <Text as="span" fontWeight="bold" color="purple.700">
                   Możliwość tworzenia grup
