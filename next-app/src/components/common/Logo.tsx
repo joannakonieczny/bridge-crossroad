@@ -1,17 +1,16 @@
 import Link from "next/link";
 import { Flex, Heading, Box } from "@chakra-ui/react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
 import { ROUTES } from "@/routes";
+import { config } from "@/club-preset/config";
 
 export default function Logo() {
-  const t = useTranslations("common");
 
   return (
     <Link href={ROUTES.dashboard} style={{ textDecoration: "none" }}>
       <Flex gap={2} mr={100} cursor="pointer" alignItems="center">
         <Heading as="h1" size="md">
-          {t("appName")}
+          {config.appName}
         </Heading>
         <Box
           style={{
