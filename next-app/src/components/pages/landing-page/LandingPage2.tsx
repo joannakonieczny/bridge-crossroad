@@ -1,9 +1,10 @@
 "use client";
 
-import { Box, Flex, Text, Icon } from "@chakra-ui/react";
+import { Box, Flex, Text, Icon, Highlight } from "@chakra-ui/react";
 import { FiCalendar, FiUsers, FiUserPlus } from "react-icons/fi";
 import Image from "next/image";
 import { BsCalendar } from "react-icons/bs";
+import HighlightedHeading from "@/components/common/texts/HighlightedHeading";
 
 export default function LandingPage2() {
   return (
@@ -53,22 +54,18 @@ export default function LandingPage2() {
             maxW="500px"
           >
             {/* Nagłówek */}
-            <Flex align="center" gap={2}>
-              <Box w="4px" h="28px" bg="purple.400" borderRadius="full" />
-              <Text fontSize="3xl" fontWeight="bold">
-                Wszystko, czyli...?
-              </Text>
-            </Flex>
+            <HighlightedHeading text="Wszystko, czyli...?" fontSize="3xl" />
 
             {/* Element 1 */}
             <Flex gap={4} align="flex-start">
               <Icon as={BsCalendar} boxSize="4rem" color="purple.400" />
               <Text>
-                <Text as="span" fontWeight="bold" color="purple.700">
-                  Zaawansowany kalendarz
-                </Text>
-                , umożliwiający tworzenie takich wydarzeń, jak zjazdy ligowe,
-                treningi, czy nawet spotkania towarzyskie!
+                <Highlight
+                  query="Zaawansowany kalendarz"
+                  styles={{ fontWeight: "bold", color: "purple.700" }}
+                >
+                  Zaawansowany kalendarz, umożliwiający tworzenie takich wydarzeń, jak zjazdy ligowe, treningi, czy nawet spotkania towarzyskie!
+                </Highlight>
               </Text>
             </Flex>
 
@@ -76,10 +73,12 @@ export default function LandingPage2() {
             <Flex gap={4} align="flex-start">
               <Icon as={FiUserPlus} boxSize="4rem" color="purple.400" />
               <Text>
-                <Text as="span" fontWeight="bold" color="purple.700">
-                  System poszukiwania partnera
-                </Text>{" "}
-                w oparciu o charakterystykę zawodnika i system licytacji
+                <Highlight
+                  query="System poszukiwania partnera"
+                  styles={{ fontWeight: "bold", color: "purple.700" }}
+                >
+                  System poszukiwania partnera w oparciu o charakterystykę zawodnika i system licytacji
+                </Highlight>
               </Text>
             </Flex>
 
@@ -87,11 +86,12 @@ export default function LandingPage2() {
             <Flex gap={4} align="flex-start">
               <Icon as={FiUsers} boxSize="4rem" color="purple.400" />
               <Text>
-                <Text as="span" fontWeight="bold" color="purple.700">
-                  Możliwość tworzenia grup
-                </Text>{" "}
-                z miejscem na wspólne rozmowy, zapisywanie cennych rozdań czy
-                materiałów szkoleniowych
+                <Highlight
+                  query="Możliwość tworzenia grup"
+                  styles={{ fontWeight: "bold", color: "purple.700" }}
+                >
+                  Możliwość tworzenia grup z miejscem na wspólne rozmowy, zapisywanie cennych rozdań czy materiałów szkoleniowych
+                </Highlight>
               </Text>
             </Flex>
           </Flex>
