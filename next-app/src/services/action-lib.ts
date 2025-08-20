@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import type { TKey } from "@/lib/typed-translations";
 import {
   createSafeActionClient,
   DEFAULT_SERVER_ERROR_MESSAGE,
@@ -6,17 +7,10 @@ import {
 
 export const action = createSafeActionClient({
   async handleServerError(e, utils) {
-    try {
-      const t = await getTranslations("common.error");
-      // You can access these properties inside the `utils` object.
-      // const { clientInput, bindArgsClientInputs, metadata, ctx } = utils;
-      console.error("Server error:", e);
-      return t("general", {
-        error: e.message + utils.clientInput,
-      });
-    } catch {
-      // Fallback to the default error message if translations are not available
-      return DEFAULT_SERVER_ERROR_MESSAGE;
-    }
+    // You can access these properties inside the `utils` object.
+    // const { clientInput, bindArgsClientInputs, metadata, ctx } = utils;
+    console.error("[SERVER ACTION ERR]:", e);
+    return "common.error" satisfies TKey;
+    // return DEFAULT_SERVER_ERROR_MESSAGE;
   },
 });

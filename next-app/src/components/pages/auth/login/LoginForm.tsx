@@ -16,8 +16,9 @@ import FormCheckbox from "../FormCheckbox";
 import { login } from "@/services/auth/actions";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "next-safe-action/hooks";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { ROUTES } from "@/routes";
+import type { ActionInput, MutationError } from "@/lib/tanstack-action/types";
 
 export default function LoginForm() {
   const t = useTranslations("pages.Auth.LoginPage");
@@ -32,25 +33,30 @@ export default function LoginForm() {
   });
   const toast = useToast();
 
-  const loginAction = useAction(login, {
-    onError: (e) => {
-      const errorMessages = e.error.validationErrors?._errors;
-      console.log("Login error:", JSON.stringify(errorMessages));
-      // alert("Login error:" + JSON.stringify(errorMessages));
-      if (errorMessages && errorMessages.length > 0) {
-        toast({
-          title: tValidation(errorMessages[0]),
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    },
+  const loginAction = useActionMutation({
+    action: login,
   });
+
+  function handleWithToast(data: ActionInput<typeof login>) {
+    const promise = loginAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationError<typeof loginAction>) => {
+        // TODO use handler pattern for extracting all errors to list, validation, server errors
+        const errorTKeys = err.validationErrors?._errors;
+        return {
+          title: errorTKeys?.[0]
+            ? tValidation(errorTKeys[0])
+            : t("toast.errorDefault"),
+        };
+      },
+    });
+  }
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit((data) => loginAction.executeAsync(data))}>
+      <form onSubmit={handleSubmit(handleWithToast)}>
         <Stack spacing={4} mt={8}>
           <FormHeading
             title={t("title")}

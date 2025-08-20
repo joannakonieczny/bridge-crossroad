@@ -39,6 +39,11 @@ const loginPage = {
     loginWithGoogle: "Zaloguj się z Google",
     login: "Zaloguj się",
   },
+  toast: {
+    loading: "Trwa logowanie...",
+    success: "Pomyślnie zalogowano!",
+    errorDefault: "Wystąpił błąd podczas logowania",
+  },
 };
 
 const registerPage = {
