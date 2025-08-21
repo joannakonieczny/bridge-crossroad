@@ -10,7 +10,7 @@ export const action = createSafeActionClient({
     // You can access these properties inside the `utils` object.
     // const { clientInput, bindArgsClientInputs, metadata, ctx } = utils;
     console.error("[SERVER ACTION ERR]:", e);
-    return "common.error" satisfies TKey;
+    return "common.error.serverError" satisfies TKey;
     // return DEFAULT_SERVER_ERROR_MESSAGE;
   },
 });

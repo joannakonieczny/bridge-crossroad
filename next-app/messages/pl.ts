@@ -310,6 +310,7 @@ const messages = {
     error: {
       general: "Wystąpił błąd dla {error}. Spróbuj ponownie później.",
       messageKeyNotExisting: "Wystąpił błąd",
+      serverError: "Wystąpił błąd. Spróbuj ponownie później.",
     },
   },
   validation: {
