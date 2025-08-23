@@ -2,7 +2,8 @@ import { Box, Flex, Text, FlexProps, TextProps } from "@chakra-ui/react";
 
 export type IResponsiveHeadingProps = FlexProps & {
   text: string;
-  fontSize: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+  showBar?: boolean;
+  fontSize: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
   textAlign?: 
     | "left" 
     | "right" 
@@ -42,6 +43,7 @@ function getResponsiveFontSizes(size: string) {
 
 export default function ResponsiveHeading({
   text,
+  showBar = true,
   fontSize,
   textAlign = "left",
   justifyContent = "left",
@@ -55,9 +57,9 @@ export default function ResponsiveHeading({
       alignItems="stretch"
       textAlign={textAlign}
       justifyContent={justifyContent}
-      {...rest} // <- tu przekazujemy wszystkie dodatkowe style
+      {...rest} 
     >
-      <Box w="6px" bg="purple.400" />
+      {showBar && <Box w="6px" bg="purple.400" />}
       <Text fontSize={responsiveFontSize} fontWeight="bold">
         {text}
       </Text>
