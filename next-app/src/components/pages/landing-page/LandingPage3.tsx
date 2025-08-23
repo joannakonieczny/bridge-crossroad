@@ -1,4 +1,5 @@
-import HighlightedHeading from "@/components/common/texts/HighlightedHeading";
+import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { Box, Flex, Highlight, Text } from "@chakra-ui/react";
 import Image from "next/image";
 
@@ -40,12 +41,14 @@ export default function LandingPage3() {
           marginTop="3rem"
           alignItems="center"
         >
-          <HighlightedHeading text="Brydżowe skrzyżowanie" fontSize="3xl" justifyContent="center" textAlign="center"/>
-          <Text fontSize="lg" maxWidth="25rem">
-            <Highlight query="Bridge Crossroad" styles={{fontWeight: "bold"}}>
-              Wierzymy, że Bridge Crossroad to miejsce, w którym złączą się nasze drogi poza stołem brydżowym :)
-            </Highlight>
-          </Text>
+          <Flex direction="column" alignItems="center">
+            <ResponsiveHeading text="Brydżowe skrzyżowanie" fontSize="3xl" justifyContent="center" textAlign="center" marginBottom="1.5rem"/>
+            <ResponsiveText fontSize="lg" maxWidth="20rem" width="100%" textAlign="center">
+              <Highlight query="Bridge Crossroad" styles={{fontWeight: "bold"}}>
+                Wierzymy, że Bridge Crossroad to miejsce, w którym złączą się nasze drogi poza stołem brydżowym :)
+              </Highlight>
+            </ResponsiveText>
+          </Flex>
           <Image
             src="/assets/landing-page/landing-page-3-art.svg"
             alt="Logo"
