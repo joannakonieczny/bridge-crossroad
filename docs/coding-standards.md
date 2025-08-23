@@ -721,6 +721,25 @@ export function DummyComponent() {
     retry: false, // Disable retries
   });
 
+  const tValidation = useTranslationsWithFallback();
+  const toast = useToast();
+
+  const loginAction = useActionMutation({
+    action: login,
+  });
+
+  function handleWithToast(data: ActionInput<typeof login>) {
+    const promise = loginAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof loginAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
+
   return (
     <div>
       <div>Data: {JSON.stringify(q.data)}</div>

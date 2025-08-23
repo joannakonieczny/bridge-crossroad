@@ -23,12 +23,14 @@ export type ActionInput<TAction> = TAction extends (arg: infer A) => unknown
   ? P[0]
   : never;
 
-// Inferuje typ błędu z obiektu mutacji (np. typeof loginAction)
-export type MutationError<TMutation> = TMutation extends { error: infer E }
+// Infers the error type from a mutation object (e.g. typeof loginAction)
+export type MutationOrQuerryError<TMutation> = TMutation extends {
+  error: infer E;
+}
   ? NonNullable<E>
   : never;
 
-// Inferuje ActionError<TValidationErrors> z funkcji akcji zwracającej ActionResult
+// Infers ActionError<TValidationErrors> from an action function returning ActionResult
 export type ActionErrorFromAction<TAction> = TAction extends (
   ...args: unknown[]
 ) => Promise<infer R>

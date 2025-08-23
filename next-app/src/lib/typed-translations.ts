@@ -258,6 +258,8 @@ async function getTranslationsWithFallback<T extends ValidNamespaces = "">(
   };
 }
 
+type TKeyOrMessage = AllTranslationKeys | string;
+
 // ===== EXPORTS =====
 
 export {
@@ -266,4 +268,8 @@ export {
   useTranslationsWithFallback,
   getTranslationsWithFallback,
 };
-export type { TranslationKeys as ITranslationKey, AllTranslationKeys as TKey };
+export type {
+  TranslationKeys as ITranslationKey,
+  AllTranslationKeys as TKey,
+  TKeyOrMessage,
+};

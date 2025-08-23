@@ -18,7 +18,11 @@ import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { ROUTES } from "@/routes";
-import type { ActionInput, MutationError } from "@/lib/tanstack-action/types";
+import type {
+  ActionInput,
+  MutationOrQuerryError,
+} from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 
 export default function LoginForm() {
   const t = useTranslations("pages.Auth.LoginPage");
@@ -42,14 +46,9 @@ export default function LoginForm() {
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
-      error: (err: MutationError<typeof loginAction>) => {
-        // TODO use handler pattern for extracting all errors to list, validation, server errors
-        const errorTKeys = err.validationErrors?._errors;
-        return {
-          title: errorTKeys?.[0]
-            ? tValidation(errorTKeys[0])
-            : t("toast.errorDefault"),
-        };
+      error: (err: MutationOrQuerryError<typeof loginAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
       },
     });
   }

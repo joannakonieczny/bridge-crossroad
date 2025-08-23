@@ -308,9 +308,11 @@ const messages = {
       [TrainingGroup.NONE]: "Nie chodzę na zajęcia z brydża na AGH",
     },
     error: {
-      general: "Wystąpił błąd dla {error}. Spróbuj ponownie później.",
       messageKeyNotExisting: "Wystąpił błąd",
       serverError: "Wystąpił błąd. Spróbuj ponownie później.",
+      validationError: "Wystąpił błąd walidacji. Sprawdź wprowadzone dane.",
+      networkError: "Wystąpił błąd sieci. Sprawdź połączenie internetowe.",
+      unknownError: "Wystąpił błąd. Spróbuj ponownie później.",
     },
   },
   validation: {
