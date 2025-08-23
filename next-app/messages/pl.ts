@@ -79,6 +79,11 @@ const registerPage = {
     registerWithGoogle: "Zarejestruj się z Google",
     register: "Zarejestruj się",
   },
+  toast: {
+    loading: "Tworzymy konto...",
+    success: "Pomyślnie utworzono nowe konto!",
+    errorDefault: "Wystąpił błąd podczas rejestracji",
+  },
 };
 
 const onboardingPage = {

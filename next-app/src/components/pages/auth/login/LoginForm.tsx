@@ -23,6 +23,7 @@ import type {
   MutationOrQuerryError,
 } from "@/lib/tanstack-action/types";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const t = useTranslations("pages.Auth.LoginPage");
@@ -36,9 +37,13 @@ export default function LoginForm() {
     },
   });
   const toast = useToast();
+  const router = useRouter();
 
   const loginAction = useActionMutation({
     action: login,
+    onSuccess: () => {
+      router.push(ROUTES.dashboard);
+    },
   });
 
   function handleWithToast(data: ActionInput<typeof login>) {

@@ -15,8 +15,14 @@ import FormCheckbox from "../FormCheckbox";
 import { register } from "@/services/auth/actions";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "next-safe-action/hooks";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import type {
+  ActionInput,
+  MutationOrQuerryError,
+} from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { ROUTES } from "@/routes";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const t = useTranslations("pages.Auth.RegisterPage");
@@ -35,28 +41,30 @@ export default function RegisterForm() {
   });
 
   const toast = useToast();
+  const router = useRouter();
 
-  const registerAction = useAction(register, {
-    onError: (e) => {
-      const errorMessages = e.error.validationErrors?._errors;
-      console.log("register error:", JSON.stringify(errorMessages));
-      // alert("Login error:" + JSON.stringify(errorMessages));
-      if (errorMessages && errorMessages.length > 0) {
-        toast({
-          title: tValidation(errorMessages[0]),
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+  const registerAction = useActionMutation({
+    action: register,
+    onSuccess: () => {
+      router.push(ROUTES.dashboard);
     },
   });
 
+  function handleWithToast(data: ActionInput<typeof register>) {
+    const promise = registerAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof registerAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
+
   return (
     <FormLayout>
-      <form
-        onSubmit={handleSubmit((data) => registerAction.executeAsync(data))}
-      >
+      <form onSubmit={handleSubmit(handleWithToast)}>
         <Stack spacing={3} mt={8}>
           <FormHeading
             title={t("title")}

@@ -33,7 +33,6 @@ export const login = action
     }
 
     await createSession(user._id.toString());
-    redirect(ROUTES.dashboard); //auto redirect
   });
 
 export const register = action
@@ -42,7 +41,6 @@ export const register = action
     try {
       const user = await createNewUser(formData);
       await createSession(user._id.toString());
-      redirect(ROUTES.dashboard); //auto redirect
     } catch (error) {
       console.error("Registration error:", error);
 
