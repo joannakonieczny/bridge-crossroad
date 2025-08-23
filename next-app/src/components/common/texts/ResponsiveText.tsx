@@ -1,7 +1,7 @@
 import { Text, TextProps } from "@chakra-ui/react";
 
 export type IResponsiveTextProps = TextProps & {
-  fontSize: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+  fontSize?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 };
 
 const fontSizesOrder = ["sm", "md", "lg", "xl", "2xl", "3xl"];
@@ -20,7 +20,7 @@ function getResponsiveFontSizes(size: string) {
 }
 
 export default function ResponsiveText({
-  fontSize,
+  fontSize = "md",
   textAlign = "left",
   children,
   ...rest
