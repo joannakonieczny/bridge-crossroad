@@ -27,7 +27,11 @@ import { useRouter } from "next/navigation";
 export default function RegisterForm() {
   const t = useTranslations("pages.Auth.RegisterPage");
   const tValidation = useTranslationsWithFallback();
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit: handleFormSubmit,
+    control: formControl,
+    setError: setFormError,
+  } = useForm({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       firstName: "",
@@ -48,6 +52,24 @@ export default function RegisterForm() {
     onSuccess: () => {
       router.push(ROUTES.dashboard);
     },
+    onError: (err) => {
+      const hasEmailDuplicationError = Boolean(err?.validationErrors?.email);
+      if (hasEmailDuplicationError) {
+        setFormError("email", {
+          type: "server",
+          message: err.validationErrors?.email?._errors?.[0],
+        });
+      }
+      const hasNicknameDuplicationError = Boolean(
+        err?.validationErrors?.nickname
+      );
+      if (hasNicknameDuplicationError) {
+        setFormError("nickname", {
+          type: "server",
+          message: err.validationErrors?.nickname?._errors?.[0],
+        });
+      }
+    },
   });
 
   function handleWithToast(data: ActionInput<typeof register>) {
@@ -64,7 +86,7 @@ export default function RegisterForm() {
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(handleWithToast)}>
+      <form onSubmit={handleFormSubmit(handleWithToast)}>
         <Stack spacing={3} mt={8}>
           <FormHeading
             title={t("title")}
@@ -74,7 +96,7 @@ export default function RegisterForm() {
           />
           <HStack>
             <Controller
-              control={control}
+              control={formControl}
               name="firstName"
               render={({ field, fieldState: { error } }) => (
                 <FormInput
@@ -90,7 +112,7 @@ export default function RegisterForm() {
             />
 
             <Controller
-              control={control}
+              control={formControl}
               name="lastName"
               render={({ field, fieldState: { error } }) => (
                 <FormInput
@@ -107,7 +129,7 @@ export default function RegisterForm() {
           </HStack>
 
           <Controller
-            control={control}
+            control={formControl}
             name="nickname"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -123,7 +145,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="email"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -138,7 +160,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="password"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -154,7 +176,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="repeatPassword"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -170,7 +192,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="rememberMe"
             render={({ field }) => (
               <FormCheckbox
