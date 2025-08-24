@@ -26,7 +26,7 @@ export type IResponsiveHeadingProps = FlexProps & {
 };
 
 // kolejność od najmniejszej do największej
-const fontSizesOrder = ["sm", "md", "lg", "xl", "2xl", "3xl"];
+const fontSizesOrder = ["sm", "md", "lg", "xl", "2xl", "3xl", "4xl"];
 
 function getResponsiveFontSizes(size: string) {
   const index = fontSizesOrder.indexOf(size);

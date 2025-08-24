@@ -2,6 +2,9 @@ import { Box, Flex } from "@chakra-ui/react";
 import FooterLogo from "./FooterLogo";
 import ResponsiveHeading from "../texts/ResponsiveHeading";
 import ResponsiveText from "../texts/ResponsiveText";
+import { baseConfig } from "@/club-preset/baseConfig";
+import { BsFacebook } from "react-icons/bs";
+import { FaInstagramSquare, FaYoutube } from "react-icons/fa";
 
 
 export default function Footer() {
@@ -9,7 +12,7 @@ export default function Footer() {
   return (
     <Flex
         width="100%"
-        paddingX="6rem"
+        paddingX={{base:"3rem", md: "6rem"}}
         paddingY="3rem"
         backgroundColor="purple.800"
         direction="column"
@@ -21,10 +24,15 @@ export default function Footer() {
         <Flex
           width="100%"
           justifyContent="space-between"
+          direction={{base: "column", md: "row"}}
+          alignItems={{base: "center", md: "initial"}}
+          gap={{base: "2rem", md: 0}}
         >
           <Flex
             direction="column"
             gap="1.5rem"
+            width="100%"
+            display={{base: "none", md: "block"}}
           >
             <ResponsiveHeading text="Szybki dostęp" fontSize="xl" color="white"/>
             <ResponsiveText color="white">
@@ -46,6 +54,7 @@ export default function Footer() {
           <Flex
             direction="column"
             gap="1.5rem"
+            width="100%"
           >
             <ResponsiveHeading text="Pomoc" fontSize="xl" color="white"/>
             <ResponsiveText color="white">
@@ -58,11 +67,19 @@ export default function Footer() {
           <Flex
             direction="column"
             gap="1.5rem"
+            width="100%"
           >
             <ResponsiveHeading text="Społeczność" fontSize="xl" color="white"/>
             <ResponsiveText color="white">
-              email: justbridgeagh@gmail.com
+              email: {baseConfig.clubEmail}
             </ResponsiveText>
+            <Flex
+              gap="2rem"
+            >
+              <BsFacebook size="3rem" color="white"/>
+              <FaInstagramSquare size="3rem" color="white"/>
+              <FaYoutube size="3rem" color="white"/>
+            </Flex>
           </Flex>
         </Flex>
     </Flex>

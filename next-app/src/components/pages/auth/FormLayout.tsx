@@ -1,6 +1,6 @@
 import { Box, HStack, Stack, Text, Image } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
-import { config } from "@/club-preset/config";
+import { config } from "@/club-preset/baseConfig";
 
 export default function FormLayout({ children }: PropsWithChildren) {
   const [firstWord, secondWord] = config.appName.split(" ");
