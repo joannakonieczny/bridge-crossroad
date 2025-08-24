@@ -1,6 +1,7 @@
 // import Image from "next/image";
 // import styles from "./page.module.css";
 
+import Footer from "@/components/common/footer/Footer";
 import LandingPage1 from "@/components/pages/landing-page/LandingPage1";
 import LandingPage2 from "@/components/pages/landing-page/LandingPage2";
 import LandingPage3 from "@/components/pages/landing-page/LandingPage3";
@@ -14,6 +15,7 @@ export default function Home() {
       <LandingPage1 />
       <LandingPage2 />
       <LandingPage3 />
+      <Footer />
     </Flex>
   );
 }
