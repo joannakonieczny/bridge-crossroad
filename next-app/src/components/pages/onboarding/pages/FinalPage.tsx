@@ -6,7 +6,7 @@ import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
-import { Stack } from "@chakra-ui/react";
+import { Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
 import { useFormNavigation } from "../FormNavigationHook";
@@ -23,6 +23,7 @@ import type {
 } from "@/schemas/pages/onboarding/onboarding-types";
 import { onboardingFinalPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import { ROUTES } from "@/routes";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
@@ -52,7 +53,16 @@ export default function FinalPage() {
     resolver: zodResolver(onboardingFinalPageSchema),
     defaultValues: defaultValues,
   });
+
   const termsAccepted = watch("termsAccepted");
+  const toast = useToast();
+
+  const completeOnboardingMutation = useActionMutation({
+    action: completeOnboarding,
+    onSuccess: () => {
+      formNavigation.handleNextClickedRedirectNow();
+    },
+  });
 
   function onSubmit(data: OnboardingFinalPageType) {
     onboardingContext.setData({
@@ -68,8 +78,8 @@ export default function FinalPage() {
       thirdPage: OnboardingThirdPageType;
       finalPage: OnboardingFinalPageType;
     };
-    // alert("Submitting data: " + JSON.stringify(typedForm));
-    completeOnboarding({
+
+    const promise = completeOnboardingMutation.mutateAsync({
       academy: typedForm.firstPage.academy,
       yearOfBirth: typedForm.firstPage.yearOfBirth,
       startPlayingDate: typedForm.secondPage.startPlayingDate,
@@ -78,15 +88,12 @@ export default function FinalPage() {
       cezarId: typedForm.thirdPage.cezarId,
       bboId: typedForm.thirdPage.bboId,
       cuebidsId: typedForm.thirdPage.cuebidsId,
-    })
-      .then((d) => {
-        alert("Subbmitted successfully!" + JSON.stringify(d));
-        formNavigation.handleNextClickedRedirectNow();
-      })
-      .catch((e) => {
-        alert("Error while submitting: " + e.message);
-        console.error("Error while submitting onboarding data:", e);
-      });
+    });
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: { title: t("toast.error") },
+    });
   }
 
   return (

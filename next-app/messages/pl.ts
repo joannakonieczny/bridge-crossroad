@@ -149,6 +149,12 @@ const onboardingPage = {
       acceptPrefix: "Akceptuję ",
       link: "regulamin i warunki użytkowania",
     },
+    toast: {
+      loading: "Przetwarzamy informacje...",
+      success: "Super zakończyliśmy onboarding!",
+      error:
+        "Wystąpił błąd podczas dodawania informacji onboardingu. Spróbuj ponownie później.",
+    },
   },
 };
 
