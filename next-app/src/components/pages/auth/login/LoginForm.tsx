@@ -28,7 +28,11 @@ import { useRouter } from "next/navigation";
 export default function LoginForm() {
   const t = useTranslations("pages.Auth.LoginPage");
   const tValidation = useTranslationsWithFallback();
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit: handleFormSubmit,
+    control: formControl,
+    setError: setFormError,
+  } = useForm({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
       nicknameOrEmail: "",
@@ -43,6 +47,13 @@ export default function LoginForm() {
     action: login,
     onSuccess: () => {
       router.push(ROUTES.dashboard);
+    },
+    onError: (err) => {
+      const hasValidationErrors = Boolean(err?.validationErrors);
+      if (hasValidationErrors) {
+        setFormError("nicknameOrEmail", { type: "server", message: undefined });
+        setFormError("password", { type: "server", message: undefined });
+      }
     },
   });
 
@@ -60,7 +71,7 @@ export default function LoginForm() {
 
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit(handleWithToast)}>
+      <form onSubmit={handleFormSubmit(handleWithToast)}>
         <Stack spacing={4} mt={8}>
           <FormHeading
             title={t("title")}
@@ -70,12 +81,16 @@ export default function LoginForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="nicknameOrEmail"
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.nicknameOrEmailField.placeholder")}
-                errorMessage={tValidation(error?.message)}
+                errorMessage={
+                  typeof error?.message === "string"
+                    ? tValidation(error.message)
+                    : undefined
+                }
                 isInvalid={!!error}
                 id="nicknameOrEmail"
                 type="text"
@@ -86,12 +101,16 @@ export default function LoginForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="password"
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.passwordField.placeholder")}
-                errorMessage={tValidation(error?.message)}
+                errorMessage={
+                  typeof error?.message === "string"
+                    ? tValidation(error.message)
+                    : undefined
+                }
                 isInvalid={!!error}
                 id="password"
                 type="password"
@@ -103,7 +122,7 @@ export default function LoginForm() {
 
           <HStack justify="space-between" pt={4}>
             <Controller
-              control={control}
+              control={formControl}
               name="rememberMe"
               render={({ field }) => (
                 <FormCheckbox

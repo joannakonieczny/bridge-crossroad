@@ -1,16 +1,11 @@
-import type {
-  FormControlProps} from "@chakra-ui/react";
-import {
-  FormControl,
-  FormErrorMessage,
-  Input,
-} from "@chakra-ui/react";
+import type { FormControlProps } from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, Input } from "@chakra-ui/react";
 import type { ChangeEventHandler } from "react";
 import PasswordInput from "./PasswordInput";
 
 export type IFormInputProps = {
   placeholder: string;
-  errorMessage: string;
+  errorMessage?: string;
   isInvalid?: boolean;
   id?: string;
   isRequired?: boolean;
@@ -28,7 +23,9 @@ export default function FormInput(props: IFormInputProps) {
       isRequired={props.isRequired}
       {...props.onElementProps}
     >
-      <FormErrorMessage mb={2}>{props.errorMessage}</FormErrorMessage>
+      {props.errorMessage && (
+        <FormErrorMessage mb={2}>{props.errorMessage}</FormErrorMessage>
+      )}
       {props.type === "password" ? (
         <PasswordInput
           placeholder={props.placeholder}
