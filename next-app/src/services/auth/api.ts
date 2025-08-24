@@ -1,11 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./server-only/session";
-import type { UserId } from "./server-only/user-id";
-import { getUserId } from "./server-only/user-id";
 import { createNewUser, findExisting } from "@/repositories/user-auth";
-import { ROUTES } from "@/routes";
 import { action } from "@/services/action-lib";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
@@ -42,19 +38,20 @@ export const register = action
       const user = await createNewUser(formData);
       await createSession(user._id.toString());
     } catch (error) {
-      console.error("Registration error:", error);
-
-      // Obsługa błędu duplikatu MongoDB
       if (error instanceof Error && error.message.includes("duplicate key")) {
         if (error.message.includes("email")) {
-          // Błąd duplikatu email
+          // email duplicated
           returnValidationErrors(registerFormSchema, {
-            _errors: ["api.auth.register.emailExists" satisfies TKey],
+            email: {
+              _errors: ["api.auth.register.emailExists" satisfies TKey],
+            },
           });
         } else if (error.message.includes("nickname")) {
-          // Błąd duplikatu nickname
+          // nickname duplicated
           returnValidationErrors(registerFormSchema, {
-            _errors: ["api.auth.register.nicknameExists" satisfies TKey],
+            nickname: {
+              _errors: ["api.auth.register.nicknameExists" satisfies TKey],
+            },
           });
         }
       } else {
@@ -68,14 +65,3 @@ export const logout = action.action(async () => {
   await deleteSession();
   // redirect("/auth"); // guard will handle this
 });
-
-// TODO: change to safe server-action if needed
-export async function requireUserId(): Promise<UserId> {
-  const redirectPath = ROUTES.auth.login;
-  const userId = await getUserId({
-    onUnauthenticated: () => {
-      redirect(redirectPath);
-    },
-  });
-  return userId as UserId; //never null, because server redirect will be called if userId is null
-}
