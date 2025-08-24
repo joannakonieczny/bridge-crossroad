@@ -2,15 +2,15 @@ import Link from "next/link";
 import { Flex, Heading, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import { ROUTES } from "@/routes";
-import { config } from "@/club-preset/config";
+import { baseConfig } from "@/club-preset/baseConfig";
 
 export default function Logo() {
 
   return (
     <Link href={ROUTES.dashboard} style={{ textDecoration: "none" }}>
       <Flex gap={2} mr={100} cursor="pointer" alignItems="center">
-        <Heading as="h1" size="md">
-          {config.appName}
+        <Heading as="h1" size="md" whiteSpace="nowrap">
+          {baseConfig.appName}
         </Heading>
         <Box
           style={{
