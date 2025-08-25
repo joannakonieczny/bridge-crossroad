@@ -1,13 +1,8 @@
 "use server";
 
 import { addOnboardingData, getUserData } from "@/repositories/onboarding";
-import { requireUserId } from "../auth/actions";
-import { redirect } from "next/navigation";
-import { ROUTES } from "@/routes";
-import {
-  sanitizeOnboardingData,
-  sanitizeUser,
-} from "../../sanitizers/server-only/user-sanitize";
+import { requireUserId } from "../auth/simple-action";
+import { sanitizeUser } from "../../sanitizers/server-only/user-sanitize";
 import { action } from "../action-lib";
 import { onboardingDataSchema } from "@/schemas/model/user/user-schema";
 
@@ -31,16 +26,3 @@ export const getUser = action.action(async () => {
   }
   return sanitizeUser(user);
 });
-
-// TODO: change to safe server-action if needed
-
-export async function requireUserOnboarding() {
-  const userId = await requireUserId(); // redirects if user is not authenticated
-  const user = await getUserData(userId);
-
-  if (!user || !user.onboardingData) {
-    redirect(ROUTES.onboarding.index);
-  }
-
-  return sanitizeOnboardingData(user.onboardingData);
-}

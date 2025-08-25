@@ -12,16 +12,26 @@ import FormInput from "../FormInput";
 import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
-import { register } from "@/services/auth/actions";
+import { register } from "@/services/auth/api";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "next-safe-action/hooks";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import type {
+  ActionInput,
+  MutationOrQuerryError,
+} from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { ROUTES } from "@/routes";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const t = useTranslations("pages.Auth.RegisterPage");
   const tValidation = useTranslationsWithFallback();
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit: handleFormSubmit,
+    control: formControl,
+    setError: setFormError,
+  } = useForm({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       firstName: "",
@@ -35,28 +45,48 @@ export default function RegisterForm() {
   });
 
   const toast = useToast();
+  const router = useRouter();
 
-  const registerAction = useAction(register, {
-    onError: (e) => {
-      const errorMessages = e.error.validationErrors?._errors;
-      console.log("register error:", JSON.stringify(errorMessages));
-      // alert("Login error:" + JSON.stringify(errorMessages));
-      if (errorMessages && errorMessages.length > 0) {
-        toast({
-          title: tValidation(errorMessages[0]),
-          status: "error",
-          duration: 5000,
-          isClosable: true,
+  const registerAction = useActionMutation({
+    action: register,
+    onSuccess: () => {
+      router.push(ROUTES.dashboard);
+    },
+    onError: (err) => {
+      const hasEmailDuplicationError = Boolean(err?.validationErrors?.email);
+      if (hasEmailDuplicationError) {
+        setFormError("email", {
+          type: "server",
+          message: err.validationErrors?.email?._errors?.[0],
+        });
+      }
+      const hasNicknameDuplicationError = Boolean(
+        err?.validationErrors?.nickname
+      );
+      if (hasNicknameDuplicationError) {
+        setFormError("nickname", {
+          type: "server",
+          message: err.validationErrors?.nickname?._errors?.[0],
         });
       }
     },
   });
 
+  function handleWithToast(data: ActionInput<typeof register>) {
+    const promise = registerAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof registerAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
+
   return (
     <FormLayout>
-      <form
-        onSubmit={handleSubmit((data) => registerAction.executeAsync(data))}
-      >
+      <form onSubmit={handleFormSubmit(handleWithToast)}>
         <Stack spacing={3} mt={8}>
           <FormHeading
             title={t("title")}
@@ -66,7 +96,7 @@ export default function RegisterForm() {
           />
           <HStack>
             <Controller
-              control={control}
+              control={formControl}
               name="firstName"
               render={({ field, fieldState: { error } }) => (
                 <FormInput
@@ -82,7 +112,7 @@ export default function RegisterForm() {
             />
 
             <Controller
-              control={control}
+              control={formControl}
               name="lastName"
               render={({ field, fieldState: { error } }) => (
                 <FormInput
@@ -99,7 +129,7 @@ export default function RegisterForm() {
           </HStack>
 
           <Controller
-            control={control}
+            control={formControl}
             name="nickname"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -115,7 +145,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="email"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -130,7 +160,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="password"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -146,7 +176,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="repeatPassword"
             render={({ field, fieldState: { error } }) => (
               <FormInput
@@ -162,7 +192,7 @@ export default function RegisterForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="rememberMe"
             render={({ field }) => (
               <FormCheckbox

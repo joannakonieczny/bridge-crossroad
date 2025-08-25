@@ -1,4 +1,4 @@
-import { requireUserId } from "@/services/auth/actions";
+import { requireUserId } from "@/services/auth/simple-action";
 import type { PropsWithChildren } from "react";
 
 // firewall for logged pages

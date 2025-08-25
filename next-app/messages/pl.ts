@@ -39,6 +39,11 @@ const loginPage = {
     loginWithGoogle: "Zaloguj się z Google",
     login: "Zaloguj się",
   },
+  toast: {
+    loading: "Trwa logowanie...",
+    success: "Pomyślnie zalogowano!",
+    errorDefault: "Wystąpił błąd podczas logowania",
+  },
 };
 
 const registerPage = {
@@ -73,6 +78,11 @@ const registerPage = {
   submitButtons: {
     registerWithGoogle: "Zarejestruj się z Google",
     register: "Zarejestruj się",
+  },
+  toast: {
+    loading: "Tworzymy konto...",
+    success: "Pomyślnie utworzono nowe konto!",
+    errorDefault: "Wystąpił błąd podczas rejestracji",
   },
 };
 
@@ -138,6 +148,12 @@ const onboardingPage = {
     terms: {
       acceptPrefix: "Akceptuję ",
       link: "regulamin i warunki użytkowania",
+    },
+    toast: {
+      loading: "Przetwarzamy informacje...",
+      success: "Super zakończyliśmy onboarding!",
+      error:
+        "Wystąpił błąd podczas dodawania informacji onboardingu. Spróbuj ponownie później.",
     },
   },
 };
@@ -303,8 +319,11 @@ const messages = {
       [TrainingGroup.NONE]: "Nie chodzę na zajęcia z brydża na AGH",
     },
     error: {
-      general: "Wystąpił błąd dla {error}. Spróbuj ponownie później.",
       messageKeyNotExisting: "Wystąpił błąd",
+      serverError: "Wystąpił błąd. Spróbuj ponownie później.",
+      validationError: "Wystąpił błąd walidacji. Sprawdź wprowadzone dane.",
+      networkError: "Wystąpił błąd sieci. Sprawdź połączenie internetowe.",
+      unknownError: "Wystąpił błąd. Spróbuj ponownie później.",
     },
   },
   validation: {

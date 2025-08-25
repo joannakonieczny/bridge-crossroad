@@ -13,16 +13,26 @@ import FormInput from "../FormInput";
 import GoogleButton from "../FormGoogleButton";
 import FormMainButton from "../FormMainButton";
 import FormCheckbox from "../FormCheckbox";
-import { login } from "@/services/auth/actions";
+import { login } from "@/services/auth/api";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "next-safe-action/hooks";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { ROUTES } from "@/routes";
+import type {
+  ActionInput,
+  MutationOrQuerryError,
+} from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const t = useTranslations("pages.Auth.LoginPage");
   const tValidation = useTranslationsWithFallback();
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit: handleFormSubmit,
+    control: formControl,
+    setError: setFormError,
+  } = useForm({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
       nicknameOrEmail: "",
@@ -31,26 +41,37 @@ export default function LoginForm() {
     },
   });
   const toast = useToast();
+  const router = useRouter();
 
-  const loginAction = useAction(login, {
-    onError: (e) => {
-      const errorMessages = e.error.validationErrors?._errors;
-      console.log("Login error:", JSON.stringify(errorMessages));
-      // alert("Login error:" + JSON.stringify(errorMessages));
-      if (errorMessages && errorMessages.length > 0) {
-        toast({
-          title: tValidation(errorMessages[0]),
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+  const loginAction = useActionMutation({
+    action: login,
+    onSuccess: () => {
+      router.push(ROUTES.dashboard);
+    },
+    onError: (err) => {
+      const hasValidationErrors = Boolean(err?.validationErrors);
+      if (hasValidationErrors) {
+        setFormError("nicknameOrEmail", { type: "server", message: undefined });
+        setFormError("password", { type: "server", message: undefined });
       }
     },
   });
 
+  function handleWithToast(data: ActionInput<typeof login>) {
+    const promise = loginAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof loginAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
+
   return (
     <FormLayout>
-      <form onSubmit={handleSubmit((data) => loginAction.executeAsync(data))}>
+      <form onSubmit={handleFormSubmit(handleWithToast)}>
         <Stack spacing={4} mt={8}>
           <FormHeading
             title={t("title")}
@@ -60,12 +81,16 @@ export default function LoginForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="nicknameOrEmail"
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.nicknameOrEmailField.placeholder")}
-                errorMessage={tValidation(error?.message)}
+                errorMessage={
+                  typeof error?.message === "string"
+                    ? tValidation(error.message)
+                    : undefined
+                }
                 isInvalid={!!error}
                 id="nicknameOrEmail"
                 type="text"
@@ -76,12 +101,16 @@ export default function LoginForm() {
           />
 
           <Controller
-            control={control}
+            control={formControl}
             name="password"
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("form.passwordField.placeholder")}
-                errorMessage={tValidation(error?.message)}
+                errorMessage={
+                  typeof error?.message === "string"
+                    ? tValidation(error.message)
+                    : undefined
+                }
                 isInvalid={!!error}
                 id="password"
                 type="password"
@@ -93,7 +122,7 @@ export default function LoginForm() {
 
           <HStack justify="space-between" pt={4}>
             <Controller
-              control={control}
+              control={formControl}
               name="rememberMe"
               render={({ field }) => (
                 <FormCheckbox
