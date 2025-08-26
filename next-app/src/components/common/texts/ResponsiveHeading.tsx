@@ -1,4 +1,5 @@
-import { Box, Flex, Text, FlexProps, TextProps } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import type { FlexProps } from "@chakra-ui/react";
 
 export type IResponsiveHeadingProps = FlexProps & {
   text: string;
@@ -25,7 +26,6 @@ export type IResponsiveHeadingProps = FlexProps & {
     | 'stretch';
 };
 
-// kolejność od najmniejszej do największej
 const fontSizesOrder = ["sm", "md", "lg", "xl", "2xl", "3xl", "4xl"];
 
 function getResponsiveFontSizes(size: string) {
