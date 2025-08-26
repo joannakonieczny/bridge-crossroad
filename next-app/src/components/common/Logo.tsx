@@ -7,7 +7,7 @@ import { baseConfig } from "@/club-preset/baseConfig";
 export default function Logo() {
 
   return (
-    <Link href={ROUTES.dashboard} style={{ textDecoration: "none" }}>
+    <Link href={ROUTES.landing_page} style={{ textDecoration: "none" }}>
       <Flex gap={2} mr={100} cursor="pointer" alignItems="center">
         <Heading as="h1" size="md" whiteSpace="nowrap">
           {baseConfig.appName}

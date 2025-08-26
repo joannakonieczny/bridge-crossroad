@@ -1,57 +1,79 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import { Box, Flex, Highlight, Text } from "@chakra-ui/react";
+import { Box, Flex, Highlight } from "@chakra-ui/react";
 import Image from "next/image";
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function LandingPage3() {
+  const t = useTranslations("pages.LandingPage.landingPage3");
+
   return (
     <Box
       bg="yellow.100"
-      width="100%"
-      height="100vh"
+      w="100%"
+      h="100vh"
       position="relative"
       overflowX="hidden"
     >
       <Flex
-        width="100%"
-        height="100vh"
+        w="100%"
+        h="100vh"
         position="absolute"
         top="50%"
         left="0"
         transform="translateY(-50%)"
-        justifyContent="center"
-        alignItems="center"
+        justify="center"
+        align="center"
       >
+        {/* Tło */}
         <Image
           src="/assets/landing-page/landing-page-3.svg"
-          alt="Logo"
+          alt="Tło sekcji 3"
           fill
           style={{
             position: "absolute",
             objectFit: "contain",
             objectPosition: "right top",
-            margin: "-1px" //special case trick - the svg didn't align properly
+            margin: "-1px", // special case trick - the svg didn't align properly
           }}
+          priority
         />
-        <Flex 
+
+        {/* Teksty */}
+        <Flex
           direction="column"
           textAlign="center"
-          justifyContent="center"
+          justify="center"
           gap="1.5rem"
-          marginTop="3rem"
-          alignItems="center"
+          mt="3rem"
+          align="center"
         >
-          <Flex direction="column" alignItems="center">
-            <ResponsiveHeading text="Brydżowe skrzyżowanie" fontSize="3xl" justifyContent="center" textAlign="center" marginBottom="1.5rem"/>
-            <ResponsiveText fontSize="lg" maxWidth="20rem" width="100%" textAlign="center">
-              <Highlight query="Bridge Crossroad" styles={{fontWeight: "bold"}}>
-                Wierzymy, że Bridge Crossroad to miejsce, w którym złączą się nasze drogi poza stołem brydżowym :)
+          <Flex direction="column" align="center">
+            <ResponsiveHeading
+              text={t("heading")}
+              fontSize="3xl"
+              textAlign="center"
+              mb="1.5rem"
+            />
+            <ResponsiveText
+              fontSize="lg"
+              maxW="20rem"
+              w="100%"
+              textAlign="center"
+            >
+              <Highlight
+                query={t("highlight")}
+                styles={{ fontWeight: "bold" }}
+              >
+                {t("text")}
               </Highlight>
             </ResponsiveText>
           </Flex>
+
+          {/* Grafika */}
           <Image
             src="/assets/landing-page/landing-page-3-art.svg"
-            alt="Logo"
+            alt="Ilustracja sekcji 3"
             width={27 * 16}
             height={37.7 * 16}
             style={{

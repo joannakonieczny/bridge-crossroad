@@ -1,6 +1,8 @@
-import { Text, TextProps } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
+import type { TextProps } from "@chakra-ui/react";
 
 export type IResponsiveTextProps = TextProps & {
+  href?: string;
   fontSize?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 };
 
@@ -20,6 +22,7 @@ function getResponsiveFontSizes(size: string) {
 }
 
 export default function ResponsiveText({
+  href,
   fontSize = "md",
   textAlign = "left",
   children,
@@ -28,7 +31,13 @@ export default function ResponsiveText({
   const responsiveFontSize = getResponsiveFontSizes(fontSize);
 
   return (
-    <Text fontSize={responsiveFontSize} textAlign={textAlign} {...rest}>
+    <Text
+      as={href ? "a" : "p"}
+      href={href}
+      fontSize={responsiveFontSize}
+      textAlign={textAlign}
+      {...rest}
+    >
       {children}
     </Text>
   );

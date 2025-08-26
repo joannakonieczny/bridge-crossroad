@@ -1,4 +1,9 @@
 export const baseConfig = {
   appName: "Bridge Crossroad",
-  clubEmail: "justbridgeagh@gmail.com"
+  socialMedia: {
+    clubEmail: "justbridgeagh@gmail.com",
+    facebookUrl: "",
+    instagramUrl: "",
+    youtubeUrl: ""
+  }
 };

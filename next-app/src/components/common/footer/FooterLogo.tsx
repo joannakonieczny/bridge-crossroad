@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Flex, Heading, Box } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import { ROUTES } from "@/routes";
 import { baseConfig } from "@/club-preset/baseConfig";
