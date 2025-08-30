@@ -1,10 +1,5 @@
 # Coding Standards
 
-## 📖 Language Versions
-
-- **🇺🇸 English** - This version
-- **🇵🇱 Polski** - [coding-standards.md](./pl/coding-standards.md)
-
 ## Route Management
 
 **Always use the centralized routes file:**
