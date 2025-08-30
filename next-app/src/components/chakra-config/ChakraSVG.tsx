@@ -1,5 +1,6 @@
-import { Box, type BoxProps } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import type { SVGProps } from "react";
+import type { BoxProps } from "@chakra-ui/react";
 
 export type ChakraSVGProps = BoxProps & {
   svg: React.ElementType<SVGProps<SVGSVGElement>>;
