@@ -56,11 +56,11 @@ export default function LandingPage2() {
 
           {/* Element 1 */}
           <Flex gap={4} align="flex-start">
-            <Icon as={BsCalendar} boxSize="3rem" color="purple.400" />
+            <Icon as={BsCalendar} boxSize="3rem" color="accent.400" />
             <ResponsiveText fontSize="lg">
               <Highlight
                 query={t("highlight1")}
-                styles={{ fontWeight: "bold", color: "purple.700" }}
+                styles={{ fontWeight: "bold", color: "accent.700" }}
               >
                 {t("text1")}
               </Highlight>
@@ -69,11 +69,11 @@ export default function LandingPage2() {
 
           {/* Element 2 */}
           <Flex gap={4} align="flex-start">
-            <Icon as={FiUserPlus} boxSize="3rem" color="purple.400" />
+            <Icon as={FiUserPlus} boxSize="3rem" color="accent.400" />
             <ResponsiveText fontSize="lg">
               <Highlight
                 query={t("highlight2")}
-                styles={{ fontWeight: "bold", color: "purple.700" }}
+                styles={{ fontWeight: "bold", color: "accent.700" }}
               >
                 {t("text2")}
               </Highlight>
@@ -82,11 +82,11 @@ export default function LandingPage2() {
 
           {/* Element 3 */}
           <Flex gap={4} align="flex-start">
-            <Icon as={FiUsers} boxSize="3rem" color="purple.400" />
+            <Icon as={FiUsers} boxSize="3rem" color="accent.400" />
             <ResponsiveText fontSize="lg">
               <Highlight
                 query={t("highlight3")}
-                styles={{ fontWeight: "bold", color: "purple.700" }}
+                styles={{ fontWeight: "bold", color: "accent.700" }}
               >
                 {t("text3")}
               </Highlight>

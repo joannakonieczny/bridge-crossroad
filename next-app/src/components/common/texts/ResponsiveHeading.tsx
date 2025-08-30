@@ -27,7 +27,7 @@ export default function ResponsiveHeading({
       justifyContent={justifyContent}
       {...rest}
     >
-      {showBar && <Box w="6px" bg="purple.400" />}
+      {showBar && <Box w="6px" bg="accent.400" />}
       <Text fontSize={responsiveFontSize} fontWeight="bold">
         {text}
       </Text>

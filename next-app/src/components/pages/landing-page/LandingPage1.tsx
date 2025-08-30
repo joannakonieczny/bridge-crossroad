@@ -60,9 +60,9 @@ export default function LandingPage1() {
         <Button
           as={Link}
           href={ROUTES.auth.register}
-          bg="purple.500"
+          bg="accent.500"
           color="white"
-          _hover={{ bg: "purple.600", textDecoration: "none" }}
+          _hover={{ bg: "accent.600", textDecoration: "none" }}
           borderRadius="md"
           px={6}
           mt={"4rem"}
