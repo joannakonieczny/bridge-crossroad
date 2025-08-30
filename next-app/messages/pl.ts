@@ -17,13 +17,13 @@ const MONTHS = {
   dec: "Grudzień",
 };
 
-const TABS = {
+const tabs = {
   dashboard: "Strona główna",
   calendar: "Kalendarz",
   groups: "Grupy",
   findPartner: "Szukaj partnera",
   tools: "Przydatne narzędzia",
-}
+};
 
 const loginPage = {
   title: "Zaloguj się",
@@ -182,25 +182,25 @@ const dashboardPage = {
 };
 
 const navbar = {
-  Tabs: TABS
+  Tabs: tabs,
 };
 
 const footer = {
   quickAccess: {
     title: "Szybki dostęp",
-    content: TABS
+    content: tabs,
   },
   help: {
     title: "Pomoc",
     content: {
       privacyPolice: "Polityka prywatności",
-      technicalHelp: "Pomoc techniczna"
-    }
+      technicalHelp: "Pomoc techniczna",
+    },
   },
   socialMedia: {
-    title: "Społeczność"
-  }
-}
+    title: "Społeczność",
+  },
+};
 
 const landingPage = {
   logInButton: "Zaloguj się",
@@ -208,22 +208,25 @@ const landingPage = {
     heading: "Jedyny portal w Polsce",
     text: "zapewniający wszystko, czego potrzebuje Twój klub brydżowy",
     highlight: "klub brydżowy",
-    callToActionButton: "Załóż konto teraz"
+    callToActionButton: "Załóż konto teraz",
   },
   landingPage2: {
     heading: "Wszystko, czyli...?",
-    text1: "Zaawansowany kalendarz, umożliwiający tworzenie takich wydarzeń, jak zjazdy ligowe, treningi, czy nawet spotkania towarzyskie!",
+    text1:
+      "Zaawansowany kalendarz, umożliwiający tworzenie takich wydarzeń, jak zjazdy ligowe, treningi, czy nawet spotkania towarzyskie!",
     highlight1: "Zaawansowany Kalendarz",
-    text2: "System poszukiwania partnera w oparciu o charakterystykę zawodnika i system licytacji",
+    text2:
+      "System poszukiwania partnera w oparciu o charakterystykę zawodnika i system licytacji",
     highlight2: "System poszukiwania partnera",
-    text3: "Możliwość tworzenia grup z miejscem na wspólne rozmowy, zapisywanie cennych rozdań czy materiałów szkoleniowych",
+    text3:
+      "Możliwość tworzenia grup z miejscem na wspólne rozmowy, zapisywanie cennych rozdań czy materiałów szkoleniowych",
     highlight3: "Możliwość tworzenia grup",
   },
   landingPage3: {
     heading: "Brydżowe skrzyżowanie",
     text: "Wierzymy, że Bridge Crossroad to miejsce, w którym złączą się nasze drogi poza stołem brydżowym :)",
-    highlight: "Bridge Crossroad"
-  }
+    highlight: "Bridge Crossroad",
+  },
 };
 
 const userModelValidation = {
@@ -399,7 +402,7 @@ const messages = {
   },
   components: {
     Navbar: navbar,
-    Footer: footer
+    Footer: footer,
   },
 };
 

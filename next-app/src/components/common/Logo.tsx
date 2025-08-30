@@ -1,14 +1,18 @@
-import Link from "next/link";
 import { Flex, Heading, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import { ROUTES } from "@/routes";
 import { baseConfig } from "@/club-preset/baseConfig";
+import ChakraLink from "../chakra-config/ChakraLink";
 
 export default function Logo() {
-
   return (
-    <Link href={ROUTES.landing_page} style={{ textDecoration: "none" }}>
-      <Flex gap={2} mr={100} cursor="pointer" alignItems="center">
+    <ChakraLink
+      href={ROUTES.landing_page}
+      style={{
+        textDecoration: "none",
+      }}
+    >
+      <Flex gap={2} cursor="pointer" alignItems="center">
         <Heading as="h1" size="md" whiteSpace="nowrap">
           {baseConfig.appName}
         </Heading>
@@ -28,6 +32,6 @@ export default function Logo() {
           />
         </Box>
       </Flex>
-    </Link>
+    </ChakraLink>
   );
 }

@@ -9,7 +9,13 @@ export default function LandingPage1() {
   const t = useTranslations("pages.LandingPage.landingPage1");
 
   return (
-    <Box width="100%" height="100vh" position="relative" overflow="hidden">
+    <Box
+      as="section"
+      width="100%"
+      minHeight="100vh"
+      position="relative"
+      overflow="hidden"
+    >
       <Image
         src="/assets/landing-page/landing-page-1.svg"
         alt="Logo"
@@ -59,7 +65,7 @@ export default function LandingPage1() {
           _hover={{ bg: "purple.600", textDecoration: "none" }}
           borderRadius="md"
           px={6}
-          mt={{ base: "25rem", sm: "20rem" }}
+          mt={"4rem"}
           size="lg"
           maxWidth="300px"
         >

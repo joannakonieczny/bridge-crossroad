@@ -16,7 +16,7 @@ export default function LandingPage2() {
       as="section"
       bg="landingBg"
       w="100%"
-      h="100vh"
+      minHeight="100vh"
       position="relative"
       overflowX="hidden"
     >

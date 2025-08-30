@@ -1,25 +1,12 @@
 import { Text } from "@chakra-ui/react";
+import { getResponsiveFontSizes } from "@/components/chakra-config/responsive-font-size";
 import type { TextProps } from "@chakra-ui/react";
+import type { FontSizeToken } from "@/components/chakra-config/responsive-font-size";
 
 export type IResponsiveTextProps = TextProps & {
   href?: string;
-  fontSize?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+  fontSize?: FontSizeToken;
 };
-
-const fontSizesOrder = ["sm", "md", "lg", "xl", "2xl", "3xl"];
-
-function getResponsiveFontSizes(size: string) {
-  const index = fontSizesOrder.indexOf(size);
-  if (index === -1) return { base: size }; // fallback
-  const baseIndex = Math.max(index - 2, 0); // base → 2 poziomy mniejsze
-  const mdIndex = Math.max(index - 1, 0);   // md → 1 poziom mniejsze
-  const lgIndex = index;                    // lg → oryginalny rozmiar
-  return {
-    base: fontSizesOrder[baseIndex],
-    md: fontSizesOrder[mdIndex],
-    lg: fontSizesOrder[lgIndex],
-  };
-}
 
 export default function ResponsiveText({
   href,
