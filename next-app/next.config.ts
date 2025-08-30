@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
       "react-hook-form",
     ],
   },
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: "@svgr/webpack",
+    });
+    return config;
+  },
 };
 
 const withNextIntl = createNextIntlPlugin();
