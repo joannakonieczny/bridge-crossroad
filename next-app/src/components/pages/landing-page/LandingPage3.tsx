@@ -1,7 +1,9 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { Box, Flex, Highlight } from "@chakra-ui/react";
-import Image from "next/image";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
+import Landing3UpperArrowSVG from "@/assets/landing-page/landing-page-3.svg";
+import Landing3ArtSVG from "@/assets/landing-page/landing-page-3-art.svg";
 import { useTranslations } from "@/lib/typed-translations";
 
 export default function LandingPage3() {
@@ -16,17 +18,12 @@ export default function LandingPage3() {
       position="relative"
       overflowX="hidden"
     >
-      {/* Tło */}
-      <Image
-        src="/assets/landing-page/landing-page-3.svg"
-        alt="Tło sekcji 3"
-        fill
-        style={{
-          position: "absolute",
-          objectFit: "contain",
-          objectPosition: "right top",
-        }}
-        priority
+      {/* upper arrow */}
+      <ChakraSVG
+        svg={Landing3UpperArrowSVG}
+        position="absolute"
+        width="100%"
+        aria-label="Tło sekcji 3"
       />
 
       {/* Teksty */}
@@ -35,7 +32,7 @@ export default function LandingPage3() {
         textAlign="center"
         justify="center"
         gap="1.5rem"
-        mt="3rem"
+        mt="6rem"
         align="center"
       >
         <Flex direction="column" align="center">
@@ -58,17 +55,11 @@ export default function LandingPage3() {
         </Flex>
 
         {/* Grafika */}
-        <Image
-          src="/assets/landing-page/landing-page-3-art.svg"
-          alt="Ilustracja sekcji 3"
-          width={27 * 16}
-          height={37.7 * 16}
-          style={{
-            width: "20rem",
-            height: "auto",
-            objectFit: "contain",
-            objectPosition: "right top",
-          }}
+        <ChakraSVG
+          svg={Landing3ArtSVG}
+          width="20rem"
+          height="auto"
+          aria-label="Ilustracja sekcji 3"
         />
       </Flex>
     </Box>
