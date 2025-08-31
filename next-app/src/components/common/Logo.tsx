@@ -1,17 +1,20 @@
-import Link from "next/link";
 import { Flex, Heading, Box } from "@chakra-ui/react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
 import { ROUTES } from "@/routes";
+import { baseConfig } from "@/club-preset/baseConfig";
+import ChakraLink from "../chakra-config/ChakraLink";
 
 export default function Logo() {
-  const t = useTranslations("common");
-
   return (
-    <Link href={ROUTES.dashboard} style={{ textDecoration: "none" }}>
-      <Flex gap={2} mr={100} cursor="pointer" alignItems="center">
-        <Heading as="h1" size="md">
-          {t("appName")}
+    <ChakraLink
+      href={ROUTES.landing_page}
+      style={{
+        textDecoration: "none",
+      }}
+    >
+      <Flex gap={2} cursor="pointer" alignItems="center">
+        <Heading as="h1" size="md" whiteSpace="nowrap">
+          {baseConfig.appName}
         </Heading>
         <Box
           style={{
@@ -29,6 +32,6 @@ export default function Logo() {
           />
         </Box>
       </Flex>
-    </Link>
+    </ChakraLink>
   );
 }
