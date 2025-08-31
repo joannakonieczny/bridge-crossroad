@@ -12,14 +12,23 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Box,
+  useColorMode,
+  VStack,
+  Heading,
+  useColorModeValue,
+  Switch,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import ProfilePicture from "@/components/common/ProfilePicture";
-import { FaAngleDown, FaAngleRight } from "react-icons/fa";
+import { FaAngleDown, FaAngleRight, FaCog, FaRegQuestionCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/routes";
 import Logo from "@/components/common/Logo";
 import { useTranslations } from "next-intl";
+import { FaRegUser } from "react-icons/fa";
+import { BsFillMoonStarsFill, BsMoon, BsSun } from "react-icons/bs";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
 
 const navbarTabs = [
   ROUTES.dashboard,
@@ -38,6 +47,7 @@ export default function Navbar() {
   }, [pathname]);
 
   const t = useTranslations("components.Navbar.Tabs");
+  const { toggleColorMode } = useColorMode();
 
   return (
     <Flex
@@ -50,6 +60,7 @@ export default function Navbar() {
       top={0}
       zIndex={1000}
       pl={8}
+      gap={8}
     >
       <Logo />
       <Tabs
@@ -60,42 +71,52 @@ export default function Navbar() {
       >
         <TabList gap={8} color="accent.500">
           <Tab
+            fontSize={"0.87rem"}
             as={Link}
             href={navbarTabs[0]}
             _selected={{ color: "black" }}
             _focus={{ boxShadow: "none" }}
+            whiteSpace="nowrap"
           >
             {t("dashboard")}
           </Tab>
           <Tab
+            fontSize={"0.87rem"}
             as={Link}
             href={navbarTabs[1]}
             _selected={{ color: "black" }}
             _focus={{ boxShadow: "none" }}
+            whiteSpace="nowrap"
           >
             {t("calendar")}
           </Tab>
           <Tab
+            fontSize={"0.87rem"}
             as={Link}
             href={navbarTabs[2]}
             _selected={{ color: "black" }}
             _focus={{ boxShadow: "none" }}
+            whiteSpace="nowrap"
           >
             {t("groups")}
           </Tab>
           <Tab
+            fontSize={"0.87rem"}
             as={Link}
             href={navbarTabs[3]}
             _selected={{ color: "black" }}
             _focus={{ boxShadow: "none" }}
+            whiteSpace="nowrap"
           >
             {t("findPartner")}
           </Tab>
           <Tab
+            fontSize={"0.87rem"}
             as={Link}
             href={navbarTabs[4]}
             _selected={{ color: "black" }}
             _focus={{ boxShadow: "none" }}
+            whiteSpace="nowrap"
           >
             {t("tools")}
           </Tab>
@@ -131,10 +152,22 @@ export default function Navbar() {
                 borderRadius="md"
                 mt={4}
               >
-                <MenuItem icon={<FaAngleDown />}>New Tab</MenuItem>
-                <MenuItem icon={<FaAngleDown />}>New Window</MenuItem>
-                <MenuItem icon={<FaAngleDown />}>Open Closed Tab</MenuItem>
-                <MenuItem icon={<FaAngleDown />}>Open File...</MenuItem>
+                <MenuItem icon={<FaRegUser size={"1rem"}/>}>Profil</MenuItem>
+                <MenuItem icon={<FaRegQuestionCircle size={"1rem"}/>}>Ustawienia</MenuItem>
+                <MenuItem icon={<FaCog size={"1rem"}/>}>O stronie</MenuItem>
+                <Flex alignItems="center" gap={2} pl={3} mt={6}>
+                  <BsFillMoonStarsFill size={"1rem"}/>
+                  <ResponsiveText>Tryb ciemny</ResponsiveText>
+                  <Switch
+                    isChecked={useColorMode().colorMode === "dark"}
+                    onChange={useColorMode().toggleColorMode}
+                    colorScheme="accent"
+                  />
+                </Flex>
+
+                <Box>
+                  
+                </Box>
               </MenuList>
             </>
           )}
