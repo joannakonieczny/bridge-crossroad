@@ -1,7 +1,9 @@
 import { OnboardingFormDataProvider } from "@/components/pages/onboarding/FormDataContext";
 import { Box, Container, Flex } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
-import Image from "next/image";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
+import OnboardingLeft from "@/assets/onboarding/splash-art-lightmode-left.svg";
+import OnboardingRight from "@/assets/onboarding/splash-art-lightmode-right.svg";
 
 export default function OnboardingLayout({ children }: PropsWithChildren) {
   return (
@@ -15,29 +17,12 @@ export default function OnboardingLayout({ children }: PropsWithChildren) {
         h="100vh"
         zIndex={0}
         display={{ base: "none", xl: "flex" }}
+        justifyContent="space-between"
       >
-        <Box w="50%" h="100%">
-          <Image
-            src="/assets/onboarding/splash-art-lightmode-left.svg"
-            alt="Splash Art Left"
-            fill
-            style={{ objectFit: "contain", objectPosition: "left top" }}
-            sizes="50vw 100vh"
-            priority
-          />
-        </Box>
-        <Box w="50%" h="100%">
-          <Image
-            src="/assets/onboarding/splash-art-lightmode-right.svg"
-            alt="Splash Art Right"
-            fill
-            style={{ objectFit: "contain", objectPosition: "right top" }}
-            sizes="50vw 100vh"
-            priority
-          />
-        </Box>
+        <ChakraSVG svg={OnboardingLeft} aria-label="Splash Art Left" />
+        <ChakraSVG svg={OnboardingRight} aria-label="Splash Art Right" />
       </Flex>
-      {/* Kontener na wierzchu */}
+      {/* form page container */}
       <Container
         maxWidth="container.md"
         position="relative"
