@@ -1,7 +1,8 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { Box, Flex, Button, Highlight, Link } from "@chakra-ui/react";
-import Image from "next/image";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
+import Landing1SVG from "@/assets/landing-page/landing-page-1.svg";
 import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
 
@@ -16,22 +17,21 @@ export default function LandingPage1() {
       position="relative"
       overflow="hidden"
     >
-      <Image
-        src="/assets/landing-page/landing-page-1.svg"
-        alt="Logo"
-        fill
-        style={{
-          position: "absolute",
-          objectFit: "cover",
-          objectPosition: "left -4.5rem",
-        }}
-      />
-      <Box
-        width="100%"
-        height="4.5rem"
-        backgroundColor="landingBg"
-        bottom="0"
+      <ChakraSVG
+        svg={Landing1SVG}
         position="absolute"
+        width="100%"
+        aria-label="Landing background"
+        bottom="4.5rem"
+        _after={{
+          //for extending the svg
+          backgroundColor: "landingBg",
+          content: '" "',
+          position: "absolute",
+          width: "100%",
+          height: "4.6rem", //extended to resolve bug in rendering
+          marginTop: "-1px",
+        }}
       />
       <Flex
         direction="column"
