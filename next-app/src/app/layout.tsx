@@ -6,10 +6,10 @@ import type { PropsWithChildren } from "react";
 import { Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
-import { config } from "@/club-preset/config";
+import { baseConfig } from "@/club-preset/baseConfig";
 
 export const metadata: Metadata = {
-  title: config.appName,
+  title: baseConfig.appName,
   description: "Authors: Szymon Kubiczek, Bartłomiej Szubiak, Joanna Konieczny",
 };
 
