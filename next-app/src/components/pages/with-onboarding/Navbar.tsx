@@ -170,8 +170,16 @@ export default function Navbar() {
           <Drawer placement="right" onClose={onClose} isOpen={isOpen}>
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerHeader borderBottomWidth="1px">
+              <DrawerHeader borderBottomWidth="1px" display="flex" alignItems="center" justifyContent="space-between">
                 <ProfilePicture size="3rem" />
+                
+                {/* Druga ikona, widoczna w Drawerze */}
+                <IconButton
+                  aria-label="Close drawer"
+                  icon={<FaBars size="1.5rem" />}
+                  variant="ghost"
+                  onClick={onClose}
+                />
               </DrawerHeader>
               <DrawerBody>
                 <VStack align="stretch" spacing={4}>
