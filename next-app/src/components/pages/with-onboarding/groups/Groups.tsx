@@ -1,7 +1,7 @@
 import { Box, Flex, HStack, Button, Input } from "@chakra-ui/react";
 import { BiLogIn } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa";
-import { GroupsList } from "./GroupsList";
+import GroupsGrid from "./GroupsGrid";
 
 export default function Groups() {
   return (
@@ -25,12 +25,11 @@ export default function Groups() {
               Dołącz
             </Button>
           </HStack>
-
           <Button rightIcon={<FaPlus />} colorScheme="accent">
             Stwórz grupę
           </Button>
         </Flex>
-        <GroupsList/>
+        <GroupsGrid/>
       </Box>
     </Flex>
   );
