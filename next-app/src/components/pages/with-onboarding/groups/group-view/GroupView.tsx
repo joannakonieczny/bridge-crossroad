@@ -1,29 +1,5 @@
-import { Box, Flex, HStack, Button, Input, VStack } from "@chakra-ui/react";
+import { Box, Flex, VStack } from "@chakra-ui/react";
 import Sidebar from "./Sidebar";
-
-const sampleData = [
-    {
-      fullName: 'Jan Kowalski',
-      nickname: 'jan123',
-      pzbsId: '123456',
-      bboId: 'jk_bbo',
-      cuebidsId: 'ABCABC',
-    },
-    {
-      fullName: 'Michał Wiśniewski',
-      nickname: 'MWisnia',
-      pzbsId: '654321',
-      bboId: 'michal_wisnia',
-      cuebidsId: 'XYZXYZ',
-    },
-    {
-      fullName: 'Piotr Nowak',
-      nickname: 'pionowak',
-      pzbsId: '',
-      bboId: '',
-      cuebidsId: '',
-    },
-];
 
 export default function GroupView() {
     return (
