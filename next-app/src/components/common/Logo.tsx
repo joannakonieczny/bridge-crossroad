@@ -1,5 +1,6 @@
-import { Flex, Heading, Box } from "@chakra-ui/react";
-import Image from "next/image";
+import { Flex, Heading } from "@chakra-ui/react";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
+import LogoSVG from "@/assets/common/logo-lightmode.svg";
 import { ROUTES } from "@/routes";
 import { baseConfig } from "@/club-preset/baseConfig";
 import ChakraLink from "../chakra-config/ChakraLink";
@@ -16,21 +17,13 @@ export default function Logo() {
         <Heading as="h1" size="md" whiteSpace="nowrap">
           {baseConfig.appName}
         </Heading>
-        <Box
-          style={{
-            width: "1.875rem",
-            height: "1.75rem",
-            position: "relative",
-            marginRight: "1rem",
-          }}
-        >
-          <Image
-            src="/assets/common/logo-lightmode.svg"
-            alt="Logo"
-            fill
-            style={{ objectFit: "contain", objectPosition: "left top" }}
-          />
-        </Box>
+        <ChakraSVG
+          svg={LogoSVG}
+          width="1.875rem"
+          height="1.75rem"
+          mr="1rem"
+          aria-label="Logo"
+        />
       </Flex>
     </ChakraLink>
   );

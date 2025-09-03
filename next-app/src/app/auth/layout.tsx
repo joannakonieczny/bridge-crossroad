@@ -1,6 +1,7 @@
 import { Box, Container, Flex } from "@chakra-ui/react";
-import Image from "next/image";
+import SplashArtLightmode from "@/assets/auth/splash-art-lightmode.svg";
 import type { PropsWithChildren } from "react";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
 
 export default function AuthLayout({ children }: PropsWithChildren) {
   return (
@@ -19,25 +20,21 @@ export default function AuthLayout({ children }: PropsWithChildren) {
         {/* right side with background image */}
         <Box
           flex="1"
-          display={{ base: "none", md: "block" }}
+          display={{ base: "none", lg: "block" }}
           position="relative"
         >
-          <Box
+          <ChakraSVG
             position="absolute"
             right={0}
             bottom={-1}
             zIndex={0}
-            h="110vh"
             width={"100%"}
-          >
-            <Image
-              src="/assets/auth/splash-art-lightmode.svg"
-              alt="Background with a trophy"
-              fill
-              objectFit="cover"
-              objectPosition="right"
-            />
-          </Box>
+            display="flex"
+            flexDirection="column"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+            svg={SplashArtLightmode}
+          />
         </Box>
       </Flex>
     </>

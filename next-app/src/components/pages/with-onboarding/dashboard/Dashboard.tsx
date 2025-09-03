@@ -1,5 +1,6 @@
 import { Box, Flex, VStack } from "@chakra-ui/react";
-import Image from "next/image";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
+import SplashArtSVG from "@/assets/dashboard/splash-art.svg";
 import InfoTable from "./InfoTable";
 import ProfileBanner from "./ProfileBanner";
 import PastContests from "./PastContests";
@@ -28,14 +29,12 @@ export default function Dashboard() {
           </VStack>
 
           <VStack align="end" width="100%" spacing="2rem">
-            <Box width={"100%"} position="relative" height={"36.62rem"}>
-              <Image
-                src="/assets/dashboard/splash-art.svg"
-                alt="Splash Art Left"
-                objectPosition="end"
-                fill
-              />
-            </Box>
+            <ChakraSVG
+              svg={SplashArtSVG}
+              width="100%"
+              height={"36.62rem"}
+              aria-label="Splash Art Left"
+            />
             <UpcomingEvents />
           </VStack>
         </Flex>

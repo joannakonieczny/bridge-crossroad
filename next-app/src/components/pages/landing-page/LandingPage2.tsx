@@ -3,7 +3,8 @@
 import { Box, Flex, Icon, Highlight } from "@chakra-ui/react";
 import { FiUsers, FiUserPlus } from "react-icons/fi";
 import { BsCalendar } from "react-icons/bs";
-import Image from "next/image";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
+import Landing2SVG from "@/assets/landing-page/landing-page-2.svg";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { useTranslations } from "@/lib/typed-translations";
@@ -20,21 +21,14 @@ export default function LandingPage2() {
       position="relative"
       overflowX="hidden"
     >
-      {/* Tło */}
-      <Box
+      {/* background */}
+      <ChakraSVG
+        svg={Landing2SVG}
         position="absolute"
+        height="100%"
+        aria-label="Landing artwork"
         display={{ base: "none", lg: "block" }}
-        w="100%"
-        h="100%"
-      >
-        <Image
-          src="/assets/landing-page/landing-page-2.svg"
-          alt="Ilustracja sekcji 2"
-          fill
-          style={{ objectFit: "contain", objectPosition: "left top" }}
-          priority
-        />
-      </Box>
+      />
 
       {/* Zawartość */}
       <Flex

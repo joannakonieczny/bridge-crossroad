@@ -1,6 +1,8 @@
-import { Box, HStack, Stack, Text, Image } from "@chakra-ui/react";
+import { Box, HStack, Stack, Text } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import { baseConfig } from "@/club-preset/baseConfig";
+import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
+import LogoSVG from "@/assets/common/logo-lightmode.svg";
 
 export default function FormLayout({ children }: PropsWithChildren) {
   const [firstWord, secondWord] = baseConfig.appName.split(" ");
@@ -14,13 +16,7 @@ export default function FormLayout({ children }: PropsWithChildren) {
             {firstWord} <br /> {secondWord}
           </Text>
         </HStack>
-        <Image
-          src="/assets/common/logo-lightmode.svg"
-          alt="logo"
-          objectFit="cover"
-          objectPosition="right"
-          h="100px"
-        />
+        <ChakraSVG svg={LogoSVG} h="100px" aria-label="logo" />
       </HStack>
 
       {children}
