@@ -1,5 +1,5 @@
 import type { Document } from "mongoose";
-import type { IGroupId } from "../group";
+import type { IGroupId } from "../group/group-types";
 import type { Timestamps } from "../utils";
 import { Schema } from "mongoose";
 

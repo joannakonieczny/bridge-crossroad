@@ -1,26 +1,18 @@
-import type { Document } from "mongoose";
 import mongoose, { Schema } from "mongoose";
-import { UserId, UserTableName, type IUserId } from "./user/user-types";
-
-export const GroupId = Schema.Types.ObjectId;
-export type IGroupId = typeof GroupId;
-
-export type IGroup = Document & {
-  _id: IGroupId;
-  name: string;
-  admins: IUserId[];
-  members: IUserId[];
-  imageUrl?: string;
-  invitationCode: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { UserId, UserTableName } from "../user/user-types";
+import type { IGroup } from "./group-types";
 
 const Group = new Schema<IGroup>(
   {
     name: {
       type: String,
       required: true,
+      unique: true,
+      index: true,
+    },
+    description: {
+      type: String,
+      required: false,
     },
     admins: {
       type: [{ type: UserId, ref: UserTableName }],
@@ -36,7 +28,13 @@ const Group = new Schema<IGroup>(
       type: String,
       required: false,
     },
-    invitationCode: { type: String, required: true, length: 8 },
+    invitationCode: {
+      type: String,
+      required: true,
+      length: 8,
+      unique: true,
+      index: true,
+    },
   },
   { timestamps: true } // auto timestamps for createdAt and updatedAt
 );
