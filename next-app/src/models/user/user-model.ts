@@ -8,42 +8,33 @@ const UserSchema = new Schema<IUserDTO>(
   {
     email: {
       type: String,
-      required: [true, "Please provide an email"],
+      required: true,
       unique: true,
       lowercase: true,
       trim: true,
-      maxlength: [email.max, `Email cannot exceed ${email.max} characters`],
-      match: [email.additionalRegex, "Please provide a valid email"],
+      maxlength: email.max,
+      match: email.additionalRegex,
     },
     encodedPassword: {
       type: String,
-      required: [true, "Please provide a encoded password"],
+      required: true,
     },
     name: {
       firstName: {
         type: String,
-        required: [true, "Please provide a first name"],
+        required: true,
         trim: true,
-        minlength: [
-          name.min,
-          `First name must be at least ${name.min} characters`,
-        ],
-        maxlength: [
-          name.max,
-          `First name cannot exceed ${name.max} characters`,
-        ],
-        match: [name.regex, "First name contains invalid characters"],
+        minlength: name.min,
+        maxlength: name.max,
+        match: name.regex,
       },
       lastName: {
         type: String,
-        required: [true, "Please provide a last name"],
+        required: true,
         trim: true,
-        minlength: [
-          name.min,
-          `Last name must be at least ${name.min} characters`,
-        ],
-        maxlength: [name.max, `Last name cannot exceed ${name.max} characters`],
-        match: [name.regex, "Last name contains invalid characters"],
+        minlength: name.min,
+        maxlength: name.max,
+        match: name.regex,
       },
     },
     nickname: {
@@ -51,15 +42,9 @@ const UserSchema = new Schema<IUserDTO>(
       unique: true,
       sparse: true, // allow null/undefined values for uniqueness
       trim: true,
-      minlength: [
-        nickname.min,
-        `Nickname must be at least ${nickname.min} characters`,
-      ],
-      maxlength: [
-        nickname.max,
-        `Nickname cannot exceed ${nickname.max} characters`,
-      ],
-      match: [nickname.regex, "Nickname contains invalid characters"],
+      minlength: nickname.min,
+      maxlength: nickname.max,
+      match: nickname.regex,
     },
     groups: {
       type: [{ type: UserId, ref: "Group" }],
@@ -70,32 +55,28 @@ const UserSchema = new Schema<IUserDTO>(
       type: {
         academy: {
           type: String,
-          required: [true, "Academy is required"],
+          required: true,
         },
         yearOfBirth: {
           type: Number,
-          required: [true, "Year of birth is required"],
-          min: [
-            yearOfBirth.min,
-            `Year of birth must be at least ${yearOfBirth.min}`,
-          ],
-          max: [yearOfBirth.max, "Year of birth cannot be in the future"],
+          required: true,
+          min: yearOfBirth.min,
+          max: yearOfBirth.max,
           validate: {
             validator: Number.isInteger,
-            message: "Year of birth must be an integer",
           },
         },
         startPlayingDate: {
           type: Date,
-          required: [true, "Start playing date is required"],
+          required: true,
         },
         trainingGroup: {
           type: String,
-          required: [true, "Training group is required"],
+          required: true,
         },
         hasRefereeLicense: {
           type: Boolean,
-          required: [true, "Referee license status is required"],
+          required: true,
           default: false,
         },
         cezarId: {
@@ -106,24 +87,17 @@ const UserSchema = new Schema<IUserDTO>(
               if (!v) return true;
               return new RegExp(cezarId.regex).test(v);
             },
-            message: `CEZAR ID must be ${cezarId.length} digits`,
           },
         },
         bboId: {
           type: String,
           trim: true,
-          maxlength: [
-            platformIds.max,
-            `BBO ID cannot exceed ${platformIds.max} characters`,
-          ],
+          maxlength: platformIds.max,
         },
         cuebidsId: {
           type: String,
           trim: true,
-          maxlength: [
-            platformIds.max,
-            `Cuebids ID cannot exceed ${platformIds.max} characters`,
-          ],
+          maxlength: platformIds.max,
         },
       },
       required: false, // Onboarding data is optional
