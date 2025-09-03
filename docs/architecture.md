@@ -2,11 +2,6 @@
 
 This document outlines the development practices, architecture, and coding standards for the Bridge Crossroad project.
 
-## 📖 Language Versions
-
-- **🇺🇸 English** - This version
-- **🇵🇱 Polski** - [architecture.md](./pl/architecture.md)
-
 ## Architecture Overview
 
 The application follows a modern Next.js architecture with clear separation of concerns:
