@@ -1,31 +1,6 @@
-import type { Document, Types } from "mongoose";
-import { Schema, model, models } from "mongoose";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
-
-export type IUserDTO = Document & {
-  _id: Types.ObjectId;
-  email: string;
-  encodedPassword: string;
-  name: {
-    firstName: string;
-    lastName: string;
-  };
-  nickname?: string;
-  onboardingData?: {
-    academy: string;
-    yearOfBirth: number;
-    startPlayingDate: Date;
-    trainingGroup: string;
-    hasRefereeLicense: boolean;
-    cezarId?: string;
-    bboId?: string;
-    cuebidsId?: string;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Pobierz stałe walidacji
+import { Schema, model, models } from "mongoose";
+import { UserId, UserTableName, type IUserDTO } from "./user-types";
 const { name, yearOfBirth, cezarId, platformIds, email, nickname } =
   UserValidationConstants;
 
@@ -86,6 +61,11 @@ const UserSchema = new Schema<IUserDTO>(
       ],
       match: [nickname.regex, "Nickname contains invalid characters"],
     },
+    groups: {
+      type: [{ type: UserId, ref: "Group" }],
+      default: [],
+      required: true,
+    },
     onboardingData: {
       type: {
         academy: {
@@ -106,7 +86,7 @@ const UserSchema = new Schema<IUserDTO>(
           },
         },
         startPlayingDate: {
-          type: Date, // Zmieniono na Date z String
+          type: Date,
           required: [true, "Start playing date is required"],
         },
         trainingGroup: {
@@ -154,4 +134,4 @@ const UserSchema = new Schema<IUserDTO>(
 );
 
 // Prevent re-registering the model (issue with hot reload in Next.js)
-export default models.User || model<IUserDTO>("User", UserSchema);
+export default models.User || model<IUserDTO>(UserTableName, UserSchema);

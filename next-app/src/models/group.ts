@@ -1,49 +1,44 @@
-import type { Document, Types } from 'mongoose';
-import mongoose, { Schema } from 'mongoose';
+import type { Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { UserId, UserTableName, type IUserId } from "./user/user-types";
+
+export const GroupId = Schema.Types.ObjectId;
+export type IGroupId = typeof GroupId;
 
 export type IGroup = Document & {
-  _id: Types.ObjectId;
+  _id: IGroupId;
   name: string;
-  createdAt: Date;
-  admin: Types.ObjectId; 
-  members: Types.ObjectId[];
+  admins: IUserId[];
+  members: IUserId[];
   imageUrl?: string;
-  invitationCode: string; 
-  //openings: string[]; 
-  //chat: Types.ObjectId;
-  //materials: Types.ObjectId;
-}
+  invitationCode: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-const Group = new Schema<IGroup>({
-  name: { 
-    type: String, 
-    required: true 
+const Group = new Schema<IGroup>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    admins: {
+      type: [{ type: UserId, ref: UserTableName }],
+      default: [],
+      required: true,
+    },
+    members: {
+      type: [{ type: UserId, ref: UserTableName }],
+      default: [],
+      required: true,
+    },
+    imageUrl: {
+      type: String,
+      required: false,
+    },
+    invitationCode: { type: String, required: true, length: 8 },
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
-  },
-  admin: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'User', 
-    required: true 
-  },
-  members: [
-    { 
-      type: Schema.Types.ObjectId, 
-      ref: 'User', 
-      required: true 
-    }
-  ],
-  imageUrl: { 
-    type: String, 
-    required: false 
-  },
-  invitationCode: { type: String, required: true, length: 8 },
-  //openings: [{ type: String }],
-  //chat: { type: Schema.Types.ObjectId, ref: 'Chat', required: false },
-  //materials: { type: Schema.Types.ObjectId, ref: 'Dir', required: false }
-});
+  { timestamps: true } // auto timestamps for createdAt and updatedAt
+);
 
-export default mongoose.models.Group || mongoose.model<IGroup>('Group', Group);
-
+export default mongoose.models.Group || mongoose.model<IGroup>("Group", Group);

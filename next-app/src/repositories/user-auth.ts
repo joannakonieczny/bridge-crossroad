@@ -1,7 +1,7 @@
 "server-only";
 
-import type { IUserDTO } from "@/models/user";
-import User from "@/models/user";
+import type { IUserDTO } from "@/models/user/user-types";
+import User from "@/models/user/user-model";
 import type {
   EmailType,
   FirstNameType,

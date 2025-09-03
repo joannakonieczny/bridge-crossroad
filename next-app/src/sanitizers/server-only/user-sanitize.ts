@@ -1,6 +1,6 @@
 "server-only";
 
-import type { IUserDTO } from "@/models/user";
+import type { IUserDTO } from "@/models/user/user-types";
 import type {
   AcademyType,
   TrainingGroupType,
