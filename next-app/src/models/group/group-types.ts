@@ -1,3 +1,5 @@
+"server-only";
+
 import { Schema } from "mongoose";
 import type { Document } from "mongoose";
 import type { IUserId } from "../user/user-types";

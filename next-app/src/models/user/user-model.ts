@@ -1,3 +1,5 @@
+"server-only";
+
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 import { Schema, model, models } from "mongoose";
 import { UserId, UserTableName, type IUserDTO } from "./user-types";

@@ -1,3 +1,5 @@
+"server-only";
+
 import mongoose, { Schema } from "mongoose";
 import { UserId, UserTableName } from "../user/user-types";
 import type { IGroup } from "./group-types";
