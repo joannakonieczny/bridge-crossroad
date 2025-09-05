@@ -1,6 +1,6 @@
 "server-only";
 
-import { createNewUser } from "../src/repositories/user-auth";
+import { createNewUser, findExisting } from "../src/repositories/user-auth";
 import { registerFormSchema } from "../src/schemas/pages/auth/register/register-schema";
 
 export async function addAdminUser() {
@@ -11,6 +11,17 @@ export async function addAdminUser() {
     repeatPassword: jsonInput.password,
     rememberMe: false,
   });
+
+  const existingUser = await findExisting({
+    email: parsedPayload.email,
+    password: parsedPayload.password,
+  });
+
+  if (existingUser) {
+    console.warn("Admin user already exists:", existingUser);
+    console.warn("Skipping admin account creation...");
+    return;
+  }
 
   const user = await createNewUser({
     email: parsedPayload.email,
