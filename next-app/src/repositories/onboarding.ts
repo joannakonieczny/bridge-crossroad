@@ -1,7 +1,7 @@
 "server-only";
 
-import type { IUserDTO } from "@/models/user";
-import User from "@/models/user";
+import type { IUserDTO } from "@/models/user/user-types";
+import User from "@/models/user/user-model";
 import type {
   UserIdType,
   UserOnboardingType,
@@ -11,25 +11,20 @@ import dbConnect from "@/util/connect-mongo";
 export async function addOnboardingData(
   userId: UserIdType,
   onboardingData: UserOnboardingType
-): Promise<IUserDTO | null> {
+) {
   await dbConnect();
 
-  const updatedUser = await User.findByIdAndUpdate(
+  return await User.findByIdAndUpdate(
     userId,
     { onboardingData },
     {
       new: true, // returns the updated document
       runValidators: true,
     }
-  );
-
-  return updatedUser ? updatedUser.toObject() : null;
+  ).lean<IUserDTO>();
 }
 
-export async function getUserData(
-  userId: UserIdType
-): Promise<IUserDTO | null> {
+export async function getUserData(userId: UserIdType) {
   await dbConnect();
-  const user = await User.findById(userId);
-  return user ? user.toObject() : null;
+  return await User.findById(userId).lean<IUserDTO>();
 }
