@@ -22,9 +22,7 @@ export type CreateUserParams = {
 
 const hashingRounds = 10;
 
-export async function createNewUser(
-  params: CreateUserParams
-): Promise<IUserDTO> {
+export async function createNewUser(params: CreateUserParams) {
   await dbConnect();
 
   const salt = await bcrypt.genSalt(hashingRounds);
@@ -43,7 +41,7 @@ export async function createNewUser(
   const newUser = new User(userData);
   await newUser.save();
 
-  return newUser.toObject();
+  return newUser.toObject() as IUserDTO;
 }
 
 type FindIfExistByEmailParams = {
@@ -60,17 +58,15 @@ export type FindIfExistParams =
   | FindIfExistByEmailParams
   | FindIfExistByNicknameParams;
 
-export async function findExisting(
-  params: FindIfExistParams
-): Promise<IUserDTO | null> {
+export async function findExisting(params: FindIfExistParams) {
   await dbConnect();
 
   let user: IUserDTO | null = null;
 
   if ("email" in params) {
-    user = await User.findOne({ email: params.email });
+    user = await User.findOne({ email: params.email }).lean<IUserDTO>();
   } else if ("nickname" in params) {
-    user = await User.findOne({ nickname: params.nickname });
+    user = await User.findOne({ nickname: params.nickname }).lean<IUserDTO>();
   }
 
   if (user) {
