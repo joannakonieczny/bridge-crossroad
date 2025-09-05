@@ -1,36 +1,38 @@
 "server-only";
 
-import type { IGroup } from "@/models/group/group-types";
+import type { IGroupDTO, IGroupId } from "@/models/group/group-types";
 import Group from "@/models/group/group-model";
 import dbConnect from "@/util/connect-mongo";
 
-export async function findByInviteCode(
-  invitationCode: string
-): Promise<IGroup | null> {
+export async function getAll() {
   await dbConnect();
-  let group: IGroup | null = null;
-  group = await Group.findOne({ invitationCode: invitationCode });
-  if (group) {
-    return group;
-  }
-  return null;
+  return await Group.find({}).lean<IGroupDTO[]>();
 }
 
-export async function addUser(userId: string, groupId: string) {
+export async function getByInviteCode(
+  invitationCode: string //TODO change to type from schemas, create schema for group (transfer from page)
+) {
   await dbConnect();
-  const updatedGroup = await Group.findByIdAndUpdate(
-    groupId,
-    { $addToSet: { members: userId } },
-    { new: true }
-  );
-  return updatedGroup;
+  return await Group.findOne({
+    invitationCode: invitationCode,
+  }).lean<IGroupDTO>();
 }
 
-export async function getMembers(groupId: string) {
+export async function getById(groupId: IGroupId) {
   await dbConnect();
-  const group = await Group.findById(groupId);
-  if (group) {
-    return group.members;
-  }
-  return null;
+  return await Group.findById(groupId).lean<IGroupDTO>();
+}
+
+type CreateGroupData = {
+  name: string;
+  description?: string;
+  imageUrl?: string;
+};
+
+export async function createGroup(data: CreateGroupData) {
+  await dbConnect();
+
+  const invitationCode = Math.random().toString(36).substring(2, 10); // generate random 8 char code
+  const newGroup = new Group({ ...data, invitationCode });
+  return (await newGroup.save()) as IGroupDTO;
 }

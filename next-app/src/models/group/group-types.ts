@@ -1,14 +1,13 @@
 "server-only";
 
 import { Schema } from "mongoose";
-import type { Document } from "mongoose";
 import type { IUserId } from "../user/user-types";
 import type { Timestamps } from "../utils";
 
 export const GroupId = Schema.Types.ObjectId;
 export type IGroupId = typeof GroupId;
 
-export type IGroup = Document & {
+export type IGroupDTO = {
   _id: IGroupId;
   name: string;
   description?: string;

@@ -1,10 +1,11 @@
 "server-only";
 
 import mongoose, { Schema } from "mongoose";
+import type { IUserId } from "../user/user-types";
 import { UserId, UserTableName } from "../user/user-types";
-import type { IGroup } from "./group-types";
+import type { IGroupDTO } from "./group-types";
 
-const Group = new Schema<IGroup>(
+const Group = new Schema<IGroupDTO>(
   {
     name: {
       type: String,
@@ -20,6 +21,15 @@ const Group = new Schema<IGroup>(
       type: [{ type: UserId, ref: UserTableName }],
       default: [],
       required: true,
+      validate: {
+        // only members can be admins
+        validator: function (admins: IUserId[]) {
+          if (!Array.isArray(admins)) return false;
+          const memberIds = (this.members || []).map((m) => m?.toString());
+          return admins.every((a) => memberIds.includes(a?.toString()));
+        },
+        message: "All admins must be members of the group",
+      },
     },
     members: {
       type: [{ type: UserId, ref: UserTableName }],
@@ -41,4 +51,5 @@ const Group = new Schema<IGroup>(
   { timestamps: true } // auto timestamps for createdAt and updatedAt
 );
 
-export default mongoose.models.Group || mongoose.model<IGroup>("Group", Group);
+export default mongoose.models.Group ||
+  mongoose.model<IGroupDTO>("Group", Group);
