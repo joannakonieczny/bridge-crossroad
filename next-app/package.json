@@ -2,6 +2,7 @@
   "name": "bridge-crossroad-next-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,7 +10,9 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "test": "echo 'No tests specified' && exit 0",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "ts": "tsx --tsconfig tsconfig.node.json",
+    "add:master-admin": "npm run ts -- scripts/jobs/add-master-admin-account.ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.9",
@@ -38,8 +41,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.2",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "tsx": "^4.20.5",
     "typescript": "^5"
   }
 }

@@ -1,7 +1,7 @@
 "server-only";
 
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import { UserId, UserTableName, type IUserDTO } from "./user-types";
 const { name, yearOfBirth, cezarId, platformIds, email, nickname } =
   UserValidationConstants;
@@ -110,4 +110,5 @@ const UserSchema = new Schema<IUserDTO>(
 );
 
 // Prevent re-registering the model (issue with hot reload in Next.js)
-export default models.User || model<IUserDTO>(UserTableName, UserSchema);
+export default mongoose.models.User ||
+  model<IUserDTO>(UserTableName, UserSchema);
