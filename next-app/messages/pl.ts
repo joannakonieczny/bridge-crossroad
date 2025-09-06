@@ -182,7 +182,13 @@ const dashboardPage = {
 };
 
 const navbar = {
-  Tabs: tabs,
+  tabs: tabs,
+  menu: {
+    profile: "Profil",
+    settings: "Ustawienia",
+    aboutPage: "O stronie",
+    darkMode: "Tryb ciemny"
+  }
 };
 
 const footer = {
