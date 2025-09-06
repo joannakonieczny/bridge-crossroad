@@ -1,6 +1,6 @@
 "server-only";
 
-import type { IGroupDTO, IGroupId } from "@/models/group/group-types";
+import type { IGroupDTO } from "@/models/group/group-types";
 import Group from "@/models/group/group-model";
 import dbConnect from "@/util/connect-mongo";
 
@@ -18,7 +18,8 @@ export async function getByInviteCode(
   }).lean<IGroupDTO>();
 }
 
-export async function getById(groupId: IGroupId) {
+export async function getById(groupId: string) {
+  // TODO add type
   await dbConnect();
   return await Group.findById(groupId).lean<IGroupDTO>();
 }
