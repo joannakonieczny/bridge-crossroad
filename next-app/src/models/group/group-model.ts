@@ -12,10 +12,12 @@ const Group = new Schema<IGroupDTO>(
       required: true,
       unique: true,
       index: true,
+      // TODO add more validation (min/max length)
     },
     description: {
       type: String,
       required: false,
+      // TODO add more validation (min/max length)
     },
     admins: {
       type: [{ type: UserId, ref: UserTableName }],
@@ -46,9 +48,19 @@ const Group = new Schema<IGroupDTO>(
       length: 8,
       unique: true,
       index: true,
+      regex: /^[A-Z0-9]{8}$/, // 8 characters, uppercase letters and digits only
+    },
+    isMain: {
+      type: Boolean,
+      required: false,
     },
   },
   { timestamps: true } // auto timestamps for createdAt and updatedAt
+);
+
+Group.index(
+  { isMain: 1 },
+  { unique: true, partialFilterExpression: { isMain: true } }
 );
 
 export default mongoose.models.Group ||

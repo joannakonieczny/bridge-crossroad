@@ -1,6 +1,6 @@
 "server-only";
 
-import { createGroup } from "@/repositories/groups";
+import { createGroup, getMainGroup } from "@/repositories/groups";
 import { createNewUser, findExisting } from "../src/repositories/user-auth";
 import { registerFormSchema } from "../src/schemas/pages/auth/register/register-schema";
 import { addAdminToGroup, addUserToGroup } from "@/repositories/user-groups";
@@ -42,11 +42,21 @@ export async function addMainGroup() {
   const jsonInput = JSON.parse(rawJsonInput);
   // TODO add schema
 
-  const group = await createGroup({
-    name: jsonInput.name,
-    description: jsonInput.description,
-    imageUrl: jsonInput.imageUrl,
-  });
+  const existingGroup = await getMainGroup();
+  if (existingGroup) {
+    console.warn("Main group already exists:", existingGroup);
+    console.warn("Skipping main group creation...");
+    return existingGroup;
+  }
+
+  const group = await createGroup(
+    {
+      name: jsonInput.name,
+      description: jsonInput.description,
+      imageUrl: jsonInput.imageUrl,
+    },
+    true
+  );
 
   console.info("Group created:", group);
   return group;

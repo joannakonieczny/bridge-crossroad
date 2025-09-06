@@ -24,16 +24,25 @@ export async function getById(groupId: string) {
   return await Group.findById(groupId).lean<IGroupDTO>();
 }
 
+export async function getMainGroup() {
+  await dbConnect();
+  return await Group.findOne({ isMain: true }).lean<IGroupDTO>();
+}
+
 type CreateGroupData = {
   name: string;
   description?: string;
   imageUrl?: string;
 };
 
-export async function createGroup(data: CreateGroupData) {
+export async function createGroup(data: CreateGroupData, isMain = false) {
   await dbConnect();
-
-  const invitationCode = Math.random().toString(36).substring(2, 10); // generate random 8 char code
-  const newGroup = new Group({ ...data, invitationCode });
+  // TODO NON determinictic code generation - to be changed if collisions occur
+  const invitationCode = Array.from({ length: 8 }, () =>
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".charAt(
+      Math.floor(Math.random() * 36)
+    )
+  ).join("");
+  const newGroup = new Group({ ...data, invitationCode, isMain });
   return (await newGroup.save()) as IGroupDTO;
 }

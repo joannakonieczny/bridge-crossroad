@@ -15,4 +15,5 @@ export type IGroupDTO = {
   members: IUserId[];
   imageUrl?: string;
   invitationCode: string;
+  isMain?: boolean;
 } & Timestamps;
