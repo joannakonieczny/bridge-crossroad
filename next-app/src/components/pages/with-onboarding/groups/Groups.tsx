@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, Button, Input } from "@chakra-ui/react";
 import { BiLogIn } from "react-icons/bi";
-import { FaPlus } from "react-icons/fa";
+import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
 
 export default function Groups() {
@@ -8,9 +8,10 @@ export default function Groups() {
     <Flex
       minHeight="100vh"
       width="100%"
-      py={{ base: "2rem", md: "3rem" }}
-      px={{ base: "1rem", md: "4rem", lg: "6rem", xl: "10rem" }}
-      gap={{ base: "2rem", lg: "4rem" }}
+      py={{ base: "2rem" }}
+      px={{ base: "2rem" }}
+      gap={{ base: "2rem" }}
+      backgroundColor="border.50"
     >
       <Box flex="1" width="100%">
         <Flex
@@ -18,14 +19,16 @@ export default function Groups() {
           justify="space-between" 
           align="center"
           width="100%"
+          backgroundColor="white"
+          padding="0.5rem"
         >
-          <HStack>
-            <Input placeholder="Wpisz kod grupy" />
-            <Button rightIcon={<BiLogIn />} colorScheme="accent">
+          <Flex>
+            <Input placeholder="Wpisz kod grupy" borderRadius={"0.25rem 0 0 0.25rem"}/>
+            <Button rightIcon={<FaArrowAltCircleRight size={"1.5rem"} />} colorScheme="accent" borderRadius={"0 0.25rem 0.25rem 0"}>
               Dołącz
             </Button>
-          </HStack>
-          <Button rightIcon={<FaPlus />} colorScheme="accent">
+          </Flex>
+          <Button rightIcon={<FaPlus size="1.5rem" />} colorScheme="accent">
             Stwórz grupę
           </Button>
         </Flex>
