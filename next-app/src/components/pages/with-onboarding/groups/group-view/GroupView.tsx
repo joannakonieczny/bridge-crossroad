@@ -1,7 +1,11 @@
 import { Box, Flex, VStack } from "@chakra-ui/react";
 import Sidebar from "./Sidebar";
 
-export default function GroupView() {
+interface IGroupViewProps {
+    id: number;
+}
+
+export default function GroupView(props: IGroupViewProps) {
     return (
         <Flex
             minHeight="100vh"

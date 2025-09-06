@@ -13,7 +13,7 @@ import {
   MenuItem,
   IconButton,
 } from "@chakra-ui/react";
-import Link from "next/link";
+import { Link } from "@chakra-ui/react";
 import ProfilePicture from "@/components/common/ProfilePicture";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import { usePathname } from "next/navigation";
