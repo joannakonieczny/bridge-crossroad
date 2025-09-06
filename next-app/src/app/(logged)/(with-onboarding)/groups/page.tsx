@@ -1,7 +1,5 @@
-//import Groups from "@/components/pages/with-onboarding/groups/Groups";
-
-import GroupView from "@/components/pages/with-onboarding/groups/group-view/GroupView";
+import Groups from "@/components/pages/with-onboarding/groups/Groups";
 
 export default function GroupsPage() {
-  return <GroupView />
+  return <Groups />
 }
