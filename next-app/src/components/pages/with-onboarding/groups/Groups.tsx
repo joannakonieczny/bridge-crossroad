@@ -1,5 +1,4 @@
-import { Box, Flex, HStack, Button, Input } from "@chakra-ui/react";
-import { BiLogIn } from "react-icons/bi";
+import { Box, Flex, Stack, Button, Input } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
 
@@ -12,27 +11,52 @@ export default function Groups() {
       px={{ base: "2rem" }}
       gap={{ base: "2rem" }}
       backgroundColor="border.50"
+      direction="column"
     >
       <Box flex="1" width="100%">
-        <Flex
-          direction="row"      
-          justify="space-between" 
-          align="center"
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          spacing={4}
+          justify={{ base: "stretch", md: "space-between" }}
+          align={{ base: "stretch", md: "center" }}
           width="100%"
           backgroundColor="white"
           padding="0.5rem"
+          mb={4}
         >
-          <Flex>
-            <Input placeholder="Wpisz kod grupy" borderRadius={"0.25rem 0 0 0.25rem"}/>
-            <Button rightIcon={<FaArrowAltCircleRight size={"1.5rem"} />} colorScheme="accent" borderRadius={"0 0.25rem 0.25rem 0"}>
+          {/* Input + Dołącz */}
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            gap={{ base: 2, md: 0 }} // tylko na małych ekranach odstęp między input a przyciskiem
+            width={{ base: "100%", md: "auto" }} // rozciągnięcie tylko na małych ekranach
+          >
+            <Input
+              placeholder="Wpisz kod grupy"
+              borderRadius={{ base: "0.25rem", md: "0.25rem 0 0 0.25rem" }}
+              w={{ base: "100%", md: "20rem" }} // tylko na dużych ekranach stała szerokość
+            />
+            <Button
+              rightIcon={<FaArrowAltCircleRight size="1.5rem" />}
+              colorScheme="accent"
+              borderRadius={{ base: "0.25rem", md: "0 0.25rem 0.25rem 0" }}
+              w={{ base: "100%", md: "auto" }} 
+            >
               Dołącz
             </Button>
           </Flex>
-          <Button rightIcon={<FaPlus size="1.5rem" />} colorScheme="accent">
+
+          {/* Stwórz grupę */}
+          <Button
+            rightIcon={<FaPlus size="1.5rem" />}
+            colorScheme="accent"
+            variant="outline"
+            w={{ base: "100%", md: "auto" }} 
+          >
             Stwórz grupę
           </Button>
-        </Flex>
-        <GroupsGrid/>
+        </Stack>
+
+        <GroupsGrid />
       </Box>
     </Flex>
   );
