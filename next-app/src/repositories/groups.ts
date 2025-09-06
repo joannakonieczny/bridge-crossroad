@@ -3,6 +3,13 @@
 import type { IGroupDTO } from "@/models/group/group-types";
 import Group from "@/models/group/group-model";
 import dbConnect from "@/util/connect-mongo";
+import type {
+  DescriptionType,
+  GroupIdType,
+  ImageUrlType,
+  InvitationCodeType,
+  NameType,
+} from "@/schemas/model/group/group-types";
 
 export async function getAll() {
   await dbConnect();
@@ -10,7 +17,7 @@ export async function getAll() {
 }
 
 export async function getByInviteCode(
-  invitationCode: string //TODO change to type from schemas, create schema for group (transfer from page)
+  invitationCode: InvitationCodeType //TODO change to type from schemas, create schema for group (transfer from page)
 ) {
   await dbConnect();
   return await Group.findOne({
@@ -18,8 +25,7 @@ export async function getByInviteCode(
   }).lean<IGroupDTO>();
 }
 
-export async function getById(groupId: string) {
-  // TODO add type
+export async function getById(groupId: GroupIdType) {
   await dbConnect();
   return await Group.findById(groupId).lean<IGroupDTO>();
 }
@@ -30,9 +36,9 @@ export async function getMainGroup() {
 }
 
 type CreateGroupData = {
-  name: string;
-  description?: string;
-  imageUrl?: string;
+  name: NameType;
+  description?: DescriptionType;
+  imageUrl?: ImageUrlType;
 };
 
 export async function createGroup(data: CreateGroupData, isMain = false) {

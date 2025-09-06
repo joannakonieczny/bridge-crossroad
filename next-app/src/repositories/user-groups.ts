@@ -8,23 +8,14 @@ import dbConnect from "@/util/connect-mongo";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IUserDTO } from "@/models/user/user-types";
 import type { IGroupDTO } from "@/models/group/group-types";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
 
-export type AddUserToGroupResult = {
-  user: IUserDTO;
-  group: IGroupDTO;
-};
-
-export type AddAdminToGroupResult = {
-  group: IGroupDTO;
-};
-
-export async function addUserToGroup({
-  groupId,
-  userId,
-}: {
-  groupId: string; // TODO add type
+type UserAndGroupUpdate = {
   userId: UserIdType;
-}): Promise<AddUserToGroupResult> {
+  groupId: GroupIdType;
+};
+
+export async function addUserToGroup({ groupId, userId }: UserAndGroupUpdate) {
   await dbConnect();
 
   const session = await mongoose.startSession();
@@ -58,13 +49,7 @@ export async function addUserToGroup({
     });
 }
 
-export async function addAdminToGroup({
-  groupId,
-  userId,
-}: {
-  groupId: string; // TODO add type;
-  userId: UserIdType;
-}) {
+export async function addAdminToGroup({ groupId, userId }: UserAndGroupUpdate) {
   await dbConnect();
 
   const updatedGroup = await Group.findOneAndUpdate(

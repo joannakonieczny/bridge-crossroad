@@ -11,11 +11,7 @@ import {
 } from "@/schemas/model/user/user-schema";
 import { emptyStringToUndefined } from "@/schemas/common";
 import type { TKey } from "@/lib/typed-translations";
-
-export const InviteCodeValidationConstants = {
-  inviteCodeLength: 8,
-  inviteCodeRegex: /^[A-Z0-9]{8}$/,
-};
+import { invitationCodeSchema } from "@/schemas/model/group/group-schema";
 
 // First Page Schema
 export const onboardingFirstPageSchema = z.object({
@@ -102,23 +98,12 @@ export const onboardingThirdPageSchema = z.object({
 });
 
 // Final Page Schema
-const inviteCodeSchema = z
-  .string()
-  .regex(
-    InviteCodeValidationConstants.inviteCodeRegex,
-    "validation.pages.onboarding.finalPage.inviteCode.regex" satisfies TKey
-  );
 
 const termsAcceptedSchema = z.boolean();
 
 export const onboardingFinalPageSchema = z
   .object({
-    inviteCode: z
-      .string()
-      .nonempty(
-        "validation.pages.onboarding.finalPage.inviteCode.required" satisfies TKey
-      )
-      .pipe(inviteCodeSchema),
+    inviteCode: invitationCodeSchema,
     termsAccepted: termsAcceptedSchema,
   })
   .refine((data) => data.termsAccepted, {
