@@ -1,4 +1,4 @@
-"use server";
+"server-only";
 
 export class RepositoryError extends Error {
   public readonly isRepositoryError = true;
