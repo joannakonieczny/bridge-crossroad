@@ -1,10 +1,8 @@
 "server-only";
 
-import { UserValidationConstants } from "@/schemas/model/user/user-const";
+import { UserValidationConstants as c } from "@/schemas/model/user/user-const";
 import mongoose, { Schema, model } from "mongoose";
 import { UserId, UserTableName, type IUserDTO } from "./user-types";
-const { name, yearOfBirth, cezarId, platformIds, email, nickname } =
-  UserValidationConstants;
 
 const UserSchema = new Schema<IUserDTO>(
   {
@@ -14,8 +12,8 @@ const UserSchema = new Schema<IUserDTO>(
       unique: true,
       lowercase: true,
       trim: true,
-      maxlength: email.max,
-      match: email.additionalRegex,
+      maxlength: c.email.max,
+      match: c.email.additionalRegex,
     },
     encodedPassword: {
       type: String,
@@ -26,17 +24,17 @@ const UserSchema = new Schema<IUserDTO>(
         type: String,
         required: true,
         trim: true,
-        minlength: name.min,
-        maxlength: name.max,
-        match: name.regex,
+        minlength: c.name.min,
+        maxlength: c.name.max,
+        match: c.name.regex,
       },
       lastName: {
         type: String,
         required: true,
         trim: true,
-        minlength: name.min,
-        maxlength: name.max,
-        match: name.regex,
+        minlength: c.name.min,
+        maxlength: c.name.max,
+        match: c.name.regex,
       },
     },
     nickname: {
@@ -44,9 +42,9 @@ const UserSchema = new Schema<IUserDTO>(
       unique: true,
       sparse: true, // allow null/undefined values for uniqueness
       trim: true,
-      minlength: nickname.min,
-      maxlength: nickname.max,
-      match: nickname.regex,
+      minlength: c.nickname.min,
+      maxlength: c.nickname.max,
+      match: c.nickname.regex,
     },
     groups: {
       type: [{ type: UserId, ref: "Group" }],
@@ -62,8 +60,8 @@ const UserSchema = new Schema<IUserDTO>(
         yearOfBirth: {
           type: Number,
           required: true,
-          min: yearOfBirth.min,
-          max: yearOfBirth.max,
+          min: c.yearOfBirth.min,
+          max: c.yearOfBirth.max,
           validate: {
             validator: Number.isInteger,
           },
@@ -87,19 +85,19 @@ const UserSchema = new Schema<IUserDTO>(
           validate: {
             validator: function (v: string) {
               if (!v) return true;
-              return new RegExp(cezarId.regex).test(v);
+              return new RegExp(c.cezarId.regex).test(v);
             },
           },
         },
         bboId: {
           type: String,
           trim: true,
-          maxlength: platformIds.max,
+          maxlength: c.platformIds.max,
         },
         cuebidsId: {
           type: String,
           trim: true,
-          maxlength: platformIds.max,
+          maxlength: c.platformIds.max,
         },
       },
       required: false, // Onboarding data is optional

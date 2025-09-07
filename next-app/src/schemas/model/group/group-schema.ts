@@ -7,7 +7,6 @@ const { name, description, invitationCode, imageUrl } =
 export const nameSchema = z
   .string()
   .nonempty("validation.model.group.name.required")
-  .min(name.min, "validation.model.group.name.min")
   .max(name.max, "validation.model.group.name.max")
   .regex(name.regex, "validation.model.group.name.regex");
 

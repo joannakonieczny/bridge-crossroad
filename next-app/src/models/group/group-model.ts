@@ -1,8 +1,9 @@
 "server-only";
 
 import mongoose, { Schema } from "mongoose";
-import type { IUserId } from "../user/user-types";
 import { UserId, UserTableName } from "../user/user-types";
+import { GroupValidationConstants as c } from "@/schemas/model/group/group-const";
+import type { IUserId } from "../user/user-types";
 import type { IGroupDTO } from "./group-types";
 
 const Group = new Schema<IGroupDTO>(
@@ -12,12 +13,13 @@ const Group = new Schema<IGroupDTO>(
       required: true,
       unique: true,
       index: true,
-      // TODO add more validation (min/max length)
+      maxlength: c.name.max,
+      match: c.name.regex,
     },
     description: {
       type: String,
       required: false,
-      // TODO add more validation (min/max length)
+      maxlength: c.description.max,
     },
     admins: {
       type: [{ type: UserId, ref: UserTableName }],
@@ -41,14 +43,15 @@ const Group = new Schema<IGroupDTO>(
     imageUrl: {
       type: String,
       required: false,
+      maxlength: c.imageUrl.max,
     },
     invitationCode: {
       type: String,
       required: true,
-      length: 8,
       unique: true,
       index: true,
-      regex: /^[A-Z0-9]{8}$/, // 8 characters, uppercase letters and digits only
+      length: c.invitationCode.length,
+      regex: c.invitationCode.regex,
     },
     isMain: {
       type: Boolean,
