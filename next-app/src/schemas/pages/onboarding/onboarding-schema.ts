@@ -8,10 +8,11 @@ import {
   cezarIdSchema,
   bboIdSchema,
   cuebidsIdSchema,
+  onboardingDataSchema,
 } from "@/schemas/model/user/user-schema";
 import { emptyStringToUndefined } from "@/schemas/common";
-import type { TKey } from "@/lib/typed-translations";
 import { invitationCodeSchema } from "@/schemas/model/group/group-schema";
+import type { TKey } from "@/lib/typed-translations";
 
 // First Page Schema
 export const onboardingFirstPageSchema = z.object({
@@ -109,4 +110,10 @@ export const onboardingFinalPageSchema = z
   .refine((data) => data.termsAccepted, {
     message:
       "validation.pages.onboarding.finalPage.terms.errorMessage" satisfies TKey,
+  });
+
+// API
+export const completeOnboardingAndJoinMainGroupSchema =
+  onboardingDataSchema.extend({
+    inviteCode: invitationCodeSchema,
   });

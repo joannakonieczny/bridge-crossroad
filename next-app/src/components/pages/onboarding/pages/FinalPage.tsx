@@ -15,15 +15,18 @@ import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
 import { completeOnboardingAndJoinMainGroup } from "@/services/onboarding/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { onboardingFinalPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
+import { ROUTES } from "@/routes";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import { GroupValidationConstants } from "@/schemas/model/group/group-const";
 import type {
   OnboardingFinalPageType,
   OnboardingFirstPageType,
   OnboardingSecondPageType,
   OnboardingThirdPageType,
 } from "@/schemas/pages/onboarding/onboarding-types";
-import { onboardingFinalPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
-import { ROUTES } from "@/routes";
-import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
@@ -47,7 +50,7 @@ export default function FinalPage() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    setError: setFormError,
     watch,
   } = useForm<OnboardingFinalPageType>({
     resolver: zodResolver(onboardingFinalPageSchema),
@@ -61,6 +64,17 @@ export default function FinalPage() {
     action: completeOnboardingAndJoinMainGroup,
     onSuccess: () => {
       formNavigation.handleNextClickedRedirectNow();
+    },
+    onError: (error) => {
+      const hasWrongInviteCodeError = Boolean(
+        error?.validationErrors?.inviteCode
+      );
+      if (hasWrongInviteCodeError) {
+        setFormError("inviteCode", {
+          type: "server",
+          message: error.validationErrors?.inviteCode?._errors?.[0],
+        });
+      }
     },
   });
 
@@ -88,11 +102,17 @@ export default function FinalPage() {
       cezarId: typedForm.thirdPage.cezarId,
       bboId: typedForm.thirdPage.bboId,
       cuebidsId: typedForm.thirdPage.cuebidsId,
+      inviteCode: typedForm.finalPage.inviteCode,
     });
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
-      error: { title: t("toast.error") },
+      error: (
+        err: MutationOrQuerryError<typeof completeOnboardingMutation>
+      ) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
     });
   }
 
@@ -119,15 +139,15 @@ export default function FinalPage() {
         <Controller
           name="inviteCode"
           control={control}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <InviteCodeInput
-              isInvalid={!!errors.inviteCode}
-              errorMessage={tValidation(errors.inviteCode?.message)}
-              length={8}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
+              length={GroupValidationConstants.invitationCode.length}
               onPinInputProps={{
                 value: value,
                 onChange: (val) => onChange(val.toUpperCase()),
-                isInvalid: !!errors.inviteCode,
+                isInvalid: !!error,
               }}
             />
           )}
@@ -136,7 +156,7 @@ export default function FinalPage() {
         <Controller
           name="termsAccepted"
           control={control}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <CheckBoxInput
               label={t("terms.acceptPrefix")}
               linkInfo={{
@@ -145,8 +165,8 @@ export default function FinalPage() {
               }}
               isChecked={value}
               onChange={onChange}
-              isInvalid={!!errors.termsAccepted}
-              errorMessage={tValidation(errors.termsAccepted?.message)}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
             />
           )}
         />

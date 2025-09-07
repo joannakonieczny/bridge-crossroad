@@ -161,7 +161,7 @@ const onboardingPage = {
     toast: {
       loading: "Przetwarzamy informacje...",
       success: "Super zakończyliśmy onboarding!",
-      error:
+      errorDefault:
         "Wystąpił błąd podczas dodawania informacji onboardingu. Spróbuj ponownie później.",
     },
   },
@@ -406,6 +406,13 @@ const messages = {
       },
       login: {
         invalidCredentials: "Nieprawidłowe dane logowania",
+      },
+    },
+    onboarding: {
+      finalPage: {
+        inviteCode: {
+          invalid: "Nieprawidłowy kod zaproszenia do Just Bridge AGH",
+        },
       },
     },
   },
