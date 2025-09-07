@@ -1,5 +1,6 @@
 export const GroupValidationConstants = {
   name: {
+    min: 3,
     max: 100,
     // letters (including Polish), digits, spaces, dash and underscore
     regex: /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9\s\-_]+$/,

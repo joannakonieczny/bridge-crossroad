@@ -1,6 +1,7 @@
 import { TrainingGroup } from "@/club-preset/training-group";
 import { Academy } from "@/club-preset/academy";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
+import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -279,6 +280,26 @@ const userModelValidation = {
   },
 };
 
+const groupModelValidation = {
+  name: {
+    required: "Podaj nazwę grupy",
+    min: `Min. ${GROUP.name.min} znaki`,
+    max: `Max. ${GROUP.name.max} znaków`,
+    regex: "Nazwa może zawierać litery, cyfry, spacje, - i _",
+  },
+  description: {
+    max: `Opis nie może być dłuższy niż ${GROUP.description.max} znaków`,
+  },
+  invitationCode: {
+    length: `Kod zaproszenia musi składać się z ${GROUP.invitationCode.length} znaków`,
+    regex: "Kod zaproszenia może zawierać tylko wielkie litery i cyfry",
+  },
+  imageUrl: {
+    max: `URL obrazka nie może być dłuższy niż ${GROUP.imageUrl.max} znaków`,
+    url: "Podaj poprawny adres URL",
+  },
+};
+
 const loginPageValidation = {
   nicknameOrEmail: {
     required: "Podaj nick lub email",
@@ -367,6 +388,7 @@ const messages = {
   validation: {
     model: {
       user: userModelValidation,
+      group: groupModelValidation,
     },
     pages: {
       auth: {
