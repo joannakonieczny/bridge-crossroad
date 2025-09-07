@@ -56,11 +56,7 @@ export default function FirstPage() {
     [firstPageData]
   );
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     resolver: zodResolver(onboardingFirstPageSchema),
     defaultValues: defaultValues,
   });
@@ -104,11 +100,11 @@ export default function FirstPage() {
         <Controller
           name="academy"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <SelectInput
               placeholder={t("academy.placeholder")}
-              isInvalid={!!errors.academy}
-              errorMessage={tValidation(errors.academy?.message)}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
               options={academyOptions}
               onSelectProps={{
                 ...field,
@@ -119,11 +115,11 @@ export default function FirstPage() {
         <Controller
           name="yearOfBirth"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <SelectInput
               placeholder={t("yearOfBirth.placeholder")}
-              isInvalid={!!errors.yearOfBirth}
-              errorMessage={tValidation(errors.yearOfBirth?.message)}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
               options={yearOptions}
               onSelectProps={{
                 ...field,
