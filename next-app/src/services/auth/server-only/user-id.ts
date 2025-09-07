@@ -2,16 +2,17 @@
 
 import { cookies } from "next/headers";
 import { decrypt } from "@/services/auth/server-only/session";
-
-export type UserId = string;
+import type { UserIdType } from "@/schemas/model/user/user-types";
 
 type GetUserIdProps = {
   //always wait for these functions to complete
-  onAuthenticated?: (userId: string) => Promise<void> | void;
+  onAuthenticated?: (userId: UserIdType) => Promise<void> | void;
   onUnauthenticated?: () => Promise<void> | void;
 };
 
-export async function getUserId(props: GetUserIdProps): Promise<UserId | null> {
+export async function getUserId(
+  props: GetUserIdProps
+): Promise<UserIdType | null> {
   const cookie = await cookies();
   const cookieValue = cookie.get("session")?.value;
   try {

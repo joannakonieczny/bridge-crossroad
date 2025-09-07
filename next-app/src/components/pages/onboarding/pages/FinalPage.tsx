@@ -13,7 +13,7 @@ import { useFormNavigation } from "../FormNavigationHook";
 import InviteCodeInput from "../inputs/InviteCodeInput";
 import CheckBoxInput from "../inputs/CheckBoxInput";
 import { useFormSkippingValidation } from "../FormSkippingValidationHook";
-import { completeOnboarding } from "@/services/onboarding/api";
+import { completeOnboardingAndJoinMainGroup } from "@/services/onboarding/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type {
   OnboardingFinalPageType,
@@ -58,7 +58,7 @@ export default function FinalPage() {
   const toast = useToast();
 
   const completeOnboardingMutation = useActionMutation({
-    action: completeOnboarding,
+    action: completeOnboardingAndJoinMainGroup,
     onSuccess: () => {
       formNavigation.handleNextClickedRedirectNow();
     },

@@ -9,6 +9,7 @@ import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IUserDTO } from "@/models/user/user-types";
 import type { IGroupDTO } from "@/models/group/group-types";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
+import { check, RepositoryError } from "./common";
 
 type UserAndGroupUpdate = {
   userId: UserIdType;
@@ -36,7 +37,7 @@ export async function addUserToGroup({ groupId, userId }: UserAndGroupUpdate) {
       ]);
 
       if (!updatedGroup || !updatedUser) {
-        throw new Error("Failed to update user or group");
+        throw new RepositoryError("Failed to update user or group");
       }
 
       return {
@@ -63,9 +64,5 @@ export async function addAdminToGroup({ groupId, userId }: UserAndGroupUpdate) {
     { new: true }
   ).lean<IGroupDTO>();
 
-  if (!updatedGroup) {
-    throw new Error("User must be a member to be promoted to admin");
-  }
-
-  return updatedGroup;
+  return check(updatedGroup, "User must be a member to be promoted to admin");
 }

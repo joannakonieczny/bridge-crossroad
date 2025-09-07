@@ -1,8 +1,8 @@
 "server-only";
 
-import type { IGroupDTO } from "@/models/group/group-types";
 import Group from "@/models/group/group-model";
 import dbConnect from "@/util/connect-mongo";
+import { check } from "./common";
 import type {
   DescriptionType,
   GroupIdType,
@@ -10,29 +10,32 @@ import type {
   InvitationCodeType,
   NameType,
 } from "@/schemas/model/group/group-types";
+import type { IGroupDTO } from "@/models/group/group-types";
 
-export async function getAll() {
+export async function getAllGroups() {
   await dbConnect();
-  return await Group.find({}).lean<IGroupDTO[]>();
+  const groups = await Group.find().lean<IGroupDTO[]>();
+  return check(groups, "Failed to fetch groups");
 }
 
-export async function getByInviteCode(
-  invitationCode: InvitationCodeType //TODO change to type from schemas, create schema for group (transfer from page)
-) {
+export async function getGroupByInviteCode(invitationCode: InvitationCodeType) {
   await dbConnect();
-  return await Group.findOne({
+  const group = await Group.findOne({
     invitationCode: invitationCode,
   }).lean<IGroupDTO>();
+  return check(group, "Group not found by invitation code");
 }
 
 export async function getById(groupId: GroupIdType) {
   await dbConnect();
-  return await Group.findById(groupId).lean<IGroupDTO>();
+  const group = await Group.findById(groupId).lean<IGroupDTO>();
+  return check(group, "Group not found");
 }
 
 export async function getMainGroup() {
   await dbConnect();
-  return await Group.findOne({ isMain: true }).lean<IGroupDTO>();
+  const group = await Group.findOne({ isMain: true }).lean<IGroupDTO>();
+  return check(group, "Main group not found");
 }
 
 type CreateGroupData = {
@@ -49,6 +52,12 @@ export async function createGroup(data: CreateGroupData, isMain = false) {
       Math.floor(Math.random() * 36)
     )
   ).join("");
-  const newGroup = new Group({ ...data, invitationCode, isMain });
-  return (await newGroup.save()) as IGroupDTO;
+
+  const groupData = {
+    ...data,
+    invitationCode,
+    isMain,
+  };
+  const newGroup = (await new Group(groupData).save()) as IGroupDTO | null;
+  return check(newGroup, "Failed to create group");
 }

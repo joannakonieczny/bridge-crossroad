@@ -6,28 +6,30 @@ import { action } from "@/services/action-lib";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { returnValidationErrors } from "next-safe-action";
+import { isProbablyEmail } from "@/schemas/common";
+import { onRepoError } from "@/repositories/common";
 import type { TKey } from "@/lib/typed-translations";
 
 export const login = action
   .inputSchema(loginFormSchema)
   .action(async ({ parsedInput: formData }) => {
-    const user =
-      (await findExisting({
-        email: formData.nicknameOrEmail,
-        password: formData.password,
-      })) ||
-      (await findExisting({
-        nickname: formData.nicknameOrEmail,
-        password: formData.password,
-      }));
-    if (!user) {
-      // throw new Error("Invalid credentials");
-      console.log("Invalid credentials", formData);
-      returnValidationErrors(loginFormSchema, {
-        _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
-      });
-    }
+    const data = isProbablyEmail(formData.nicknameOrEmail)
+      ? {
+          email: formData.nicknameOrEmail,
+          password: formData.password,
+        }
+      : {
+          nickname: formData.nicknameOrEmail,
+          password: formData.password,
+        };
 
+    const user = await findExisting(data).catch((err) =>
+      onRepoError(err, () =>
+        returnValidationErrors(loginFormSchema, {
+          _errors: ["api.auth.login.invalidCredentials" satisfies TKey],
+        })
+      )
+    );
     await createSession(user._id.toString());
   });
 

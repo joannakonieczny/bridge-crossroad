@@ -3,17 +3,17 @@ import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { config } from "@/util/envConfigLoader";
-import type { UserId } from "./user-id";
+import type { UserIdType } from "@/schemas/model/user/user-types";
 
 const secretKey = config.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 type SessionPayload = {
-  userId: UserId;
+  userId: UserIdType;
   expiresAt: number;
 };
 
-export async function createSession(userId: string) {
+export async function createSession(userId: UserIdType) {
   const ttl = config.EXPIRATION_TIME_MS;
   const expiresDate = new Date(Date.now() + ttl);
 

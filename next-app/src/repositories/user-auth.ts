@@ -1,7 +1,10 @@
 "server-only";
 
-import type { IUserDTO } from "@/models/user/user-types";
 import User from "@/models/user/user-model";
+import dbConnect from "@/util/connect-mongo";
+import bcrypt from "bcryptjs";
+import { check, RepositoryError } from "./common";
+import type { IUserDTO } from "@/models/user/user-types";
 import type {
   EmailType,
   FirstNameType,
@@ -9,8 +12,6 @@ import type {
   NicknameType,
   PasswordTypeGeneric,
 } from "@/schemas/model/user/user-types";
-import dbConnect from "@/util/connect-mongo";
-import bcrypt from "bcryptjs";
 
 export type CreateUserParams = {
   email: EmailType;
@@ -38,10 +39,8 @@ export async function createNewUser(params: CreateUserParams) {
     nickname: params.nickname,
   };
 
-  const newUser = new User(userData);
-  await newUser.save();
-
-  return newUser.toObject() as IUserDTO;
+  const newUser = await new User(userData).save();
+  return check(newUser.toObject() as IUserDTO, "Failed to create user");
 }
 
 type FindIfExistByEmailParams = {
@@ -76,9 +75,9 @@ export async function findExisting(params: FindIfExistParams) {
     );
 
     if (isPasswordValid) {
-      return user;
+      return user as IUserDTO;
     }
   }
 
-  return null;
+  throw new RepositoryError("Invalid credentials");
 }
