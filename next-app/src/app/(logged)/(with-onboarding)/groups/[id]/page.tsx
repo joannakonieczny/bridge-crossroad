@@ -4,8 +4,8 @@ interface GroupPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function GroupPage({ params }: GroupPageProps) {
-  const { id } = await params;
+export default async function GroupPage(props: GroupPageProps) {
+  const { id } = await props.params;
 
   return (
     <GroupView id={Number(id)}/>
