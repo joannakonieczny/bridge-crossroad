@@ -41,8 +41,11 @@ const members = [
     },
 ];
 
+interface ISidebarProps {
+  id: number;
+}
 
-export default function Sidebar() {
+export default function Sidebar(props: ISidebarProps) {
   return (
     <Box w="17rem" p={4}>
       <VStack align="start" spacing={4}>
