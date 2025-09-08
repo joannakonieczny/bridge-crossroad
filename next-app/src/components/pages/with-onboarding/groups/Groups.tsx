@@ -14,6 +14,7 @@ export default function Groups() {
       direction="column"
     >
       <Box flex="1" width="100%">
+        {/* Górny pasek */}
         <Stack
           direction={{ base: "column", md: "row" }}
           spacing={4}
@@ -27,19 +28,19 @@ export default function Groups() {
           {/* Input + Dołącz */}
           <Flex
             direction={{ base: "column", md: "row" }}
-            gap={{ base: 2, md: 0 }} // tylko na małych ekranach odstęp między input a przyciskiem
-            width={{ base: "100%", md: "auto" }} // rozciągnięcie tylko na małych ekranach
+            gap={{ base: 2, md: 0 }}
+            width={{ base: "100%", md: "auto" }}
           >
             <Input
               placeholder="Wpisz kod grupy"
               borderRadius={{ base: "0.25rem", md: "0.25rem 0 0 0.25rem" }}
-              w={{ base: "100%", md: "20rem" }} // tylko na dużych ekranach stała szerokość
+              w={{ base: "100%", md: "20rem" }}
             />
             <Button
               rightIcon={<FaArrowAltCircleRight size="1.5rem" />}
               colorScheme="accent"
               borderRadius={{ base: "0.25rem", md: "0 0.25rem 0.25rem 0" }}
-              w={{ base: "100%", md: "auto" }} 
+              w={{ base: "100%", md: "auto" }}
             >
               Dołącz
             </Button>
@@ -50,12 +51,13 @@ export default function Groups() {
             rightIcon={<FaPlus size="1.5rem" />}
             colorScheme="accent"
             variant="outline"
-            w={{ base: "100%", md: "auto" }} 
+            w={{ base: "100%", md: "auto" }}
           >
             Stwórz grupę
           </Button>
         </Stack>
 
+        {/* Grid z grupami */}
         <GroupsGrid />
       </Box>
     </Flex>
