@@ -63,7 +63,7 @@ export default function Sidebar(props: ISidebarProps) {
           borderRadius="md"
         />
         <Box>
-          <Text fontWeight="bold">{group.name}</Text>
+          <Text fontWeight="bold">{group.name}{props.id}</Text>
           <Text fontSize="sm" color="gray.500">
             {members.length} członków
           </Text>
