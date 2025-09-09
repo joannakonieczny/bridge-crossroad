@@ -111,7 +111,11 @@ export const emailSchema = z
   .string()
   .nonempty("validation.model.user.email.required" satisfies TKey)
   .max(email.max, "validation.model.user.email.max" satisfies TKey)
-  .email("validation.model.user.email.regex" satisfies TKey);
+  .email("validation.model.user.email.regex" satisfies TKey)
+  .regex(
+    email.additionalRegex,
+    "validation.model.user.email.regex" satisfies TKey
+  );
 
 export const nicknameSchema = z
   .string()
