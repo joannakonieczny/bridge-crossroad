@@ -40,11 +40,7 @@ export default function SecondPage() {
     [secondPageData]
   );
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     resolver: zodResolver(onboardingSecondPageSchema),
     defaultValues: defaultValues,
   });
@@ -88,17 +84,17 @@ export default function SecondPage() {
       }}
     >
       <Stack spacing={4} width="100%" maxWidth="md" align="center">
-        <FormControl isInvalid={!!errors.startPlayingDate}>
+        <FormControl>
           <Controller
             name="startPlayingDate"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <MonthYearInput
                 value={field.value}
                 onChange={field.onChange}
                 placeholder={t("startPlayingDate.placeholder")}
-                errorMessage={tValidation(errors.startPlayingDate?.message)}
-                isInvalid={!!errors.startPlayingDate}
+                errorMessage={tValidation(error?.message)}
+                isInvalid={!!error}
                 onElementProps={{
                   ...field,
                 }}
@@ -110,11 +106,11 @@ export default function SecondPage() {
         <Controller
           name="trainingGroup"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <SelectInput
               placeholder={t("skillLevel.placeholder")}
-              isInvalid={!!errors.trainingGroup}
-              errorMessage={tValidation(errors.trainingGroup?.message)}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
               options={trainingGroupOptions}
               onSelectProps={{
                 ...field,

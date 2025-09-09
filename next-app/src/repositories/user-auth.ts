@@ -1,7 +1,10 @@
 "server-only";
 
-import type { IUserDTO } from "@/models/user";
-import User from "@/models/user";
+import User from "@/models/user/user-model";
+import dbConnect from "@/util/connect-mongo";
+import bcrypt from "bcryptjs";
+import { check, RepositoryError } from "./common";
+import type { IUserDTO } from "@/models/user/user-types";
 import type {
   EmailType,
   FirstNameType,
@@ -9,8 +12,6 @@ import type {
   NicknameType,
   PasswordTypeGeneric,
 } from "@/schemas/model/user/user-types";
-import dbConnect from "@/util/connect-mongo";
-import bcrypt from "bcryptjs";
 
 export type CreateUserParams = {
   email: EmailType;
@@ -22,9 +23,7 @@ export type CreateUserParams = {
 
 const hashingRounds = 10;
 
-export async function createNewUser(
-  params: CreateUserParams
-): Promise<IUserDTO> {
+export async function createNewUser(params: CreateUserParams) {
   await dbConnect();
 
   const salt = await bcrypt.genSalt(hashingRounds);
@@ -40,10 +39,8 @@ export async function createNewUser(
     nickname: params.nickname,
   };
 
-  const newUser = new User(userData);
-  await newUser.save();
-
-  return newUser.toObject();
+  const newUser = await new User(userData).save();
+  return check(newUser.toObject() as IUserDTO, "Failed to create user");
 }
 
 type FindIfExistByEmailParams = {
@@ -60,17 +57,15 @@ export type FindIfExistParams =
   | FindIfExistByEmailParams
   | FindIfExistByNicknameParams;
 
-export async function findExisting(
-  params: FindIfExistParams
-): Promise<IUserDTO | null> {
+export async function findExisting(params: FindIfExistParams) {
   await dbConnect();
 
   let user: IUserDTO | null = null;
 
   if ("email" in params) {
-    user = await User.findOne({ email: params.email });
+    user = await User.findOne({ email: params.email }).lean<IUserDTO>();
   } else if ("nickname" in params) {
-    user = await User.findOne({ nickname: params.nickname });
+    user = await User.findOne({ nickname: params.nickname }).lean<IUserDTO>();
   }
 
   if (user) {
@@ -80,9 +75,9 @@ export async function findExisting(
     );
 
     if (isPasswordValid) {
-      return user;
+      return user as IUserDTO;
     }
   }
 
-  return null;
+  throw new RepositoryError("Invalid credentials");
 }

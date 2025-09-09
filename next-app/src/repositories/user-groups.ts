@@ -1,33 +1,68 @@
 "server-only";
 
-import type { IUserDTO } from "@/models/user";
-import User from "@/models/user";
-import dbConnect from "@/util/connect-mongo";
-import { findByInviteCode, addUser, getMembers } from "./groups";
+import User from "@/models/user/user-model";
+import Group from "@/models/group/group-model";
+import mongoose from "mongoose";
 
-export async function joinGroup(userId: string, invitationCode: string) : Promise<IUserDTO | null> {
-    await dbConnect();
-    const group = await findByInviteCode(invitationCode);
-    if (group) {
-        await addUser(userId, group._id.toString());
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { $push: { groups: group._id } },
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
-        return updatedUser ? updatedUser.toObject() : null;
-    }
-    return null;
+import dbConnect from "@/util/connect-mongo";
+import type { UserIdType } from "@/schemas/model/user/user-types";
+import type { IUserDTO } from "@/models/user/user-types";
+import type { IGroupDTO } from "@/models/group/group-types";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
+import { check, RepositoryError } from "./common";
+
+type UserAndGroupUpdate = {
+  userId: UserIdType;
+  groupId: GroupIdType;
+};
+
+export async function addUserToGroup({ groupId, userId }: UserAndGroupUpdate) {
+  await dbConnect();
+
+  const session = await mongoose.startSession();
+
+  return await session
+    .withTransaction(async () => {
+      const [updatedGroup, updatedUser] = await Promise.all([
+        Group.findByIdAndUpdate(
+          groupId,
+          { $addToSet: { members: userId } },
+          { new: true, session }
+        ).lean<IGroupDTO | null>(),
+        User.findByIdAndUpdate(
+          userId,
+          { $addToSet: { groups: groupId } },
+          { new: true, session }
+        ).lean<IUserDTO | null>(),
+      ]);
+
+      if (!updatedGroup || !updatedUser) {
+        throw new RepositoryError("Failed to update user or group");
+      }
+
+      return {
+        user: updatedUser,
+        group: updatedGroup,
+      };
+    })
+    .finally(async () => {
+      await session.endSession();
+    });
 }
 
-export async function getMembersAsUsers(groupId: string) {
-    await dbConnect();
-    
-    const idList = await getMembers(groupId);
-    const userList = await User.find({ _id: { $in: idList } });
+export async function addAdminToGroup({ groupId, userId }: UserAndGroupUpdate) {
+  await dbConnect();
 
-    return userList;
+  const updatedGroup = await Group.findOneAndUpdate(
+    {
+      _id: groupId,
+      members: userId, // user must be a member to be promoted to admin
+    },
+    {
+      $addToSet: { admins: userId }, // add userId to admins if not already present
+    },
+    { new: true }
+  ).lean<IGroupDTO>();
+
+  return check(updatedGroup, "User must be a member to be promoted to admin");
 }

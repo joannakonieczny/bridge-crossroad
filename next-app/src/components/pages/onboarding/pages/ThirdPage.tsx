@@ -37,11 +37,7 @@ export default function ThirdPage() {
     [thirdPageData]
   );
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     resolver: zodResolver(onboardingThirdPageSchema),
     defaultValues: defaultValues,
   });
@@ -75,11 +71,11 @@ export default function ThirdPage() {
         <Controller
           name="cezarId"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <DefaultInput
               placeholder={t("cezarId.placeholder")}
-              isInvalid={!!errors.cezarId}
-              errorMessage={tValidation(errors.cezarId?.message)}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
               onInputProps={{
                 ...field,
               }}
@@ -90,11 +86,11 @@ export default function ThirdPage() {
         <Controller
           name="bboId"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <DefaultInput
               placeholder={t("bboId.placeholder")}
-              isInvalid={!!errors.bboId}
-              errorMessage={tValidation(errors.bboId?.message)}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
               onInputProps={{
                 ...field,
               }}
@@ -105,11 +101,11 @@ export default function ThirdPage() {
         <Controller
           name="cuebidsId"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState: { error } }) => (
             <DefaultInput
               placeholder={t("cuebidsId.placeholder")}
-              isInvalid={!!errors.cuebidsId}
-              errorMessage={tValidation(errors.cuebidsId?.message)}
+              isInvalid={!!error}
+              errorMessage={tValidation(error?.message)}
               onInputProps={{
                 ...field,
               }}
