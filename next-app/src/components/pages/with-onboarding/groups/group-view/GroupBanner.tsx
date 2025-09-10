@@ -1,9 +1,8 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
-import { Box, Flex } from "@chakra-ui/react";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import { Box, Flex, HStack, VStack } from "@chakra-ui/react";
 
-interface IGroupBannerProps {
-
-}
+interface IGroupBannerProps {}
 
 export default function GroupBanner(props: IGroupBannerProps) {
     return (
@@ -12,8 +11,10 @@ export default function GroupBanner(props: IGroupBannerProps) {
             width="100%"
             paddingY="0.75rem"
             paddingX="2rem"
+            direction="column"
+            gap="2rem"
         >
-            <Flex> {/* górna sekcja */}
+            <Flex width="100%"> {/* górna sekcja */}
                 <Flex
                     width="10rem"
                     height="10rem"
@@ -22,22 +23,31 @@ export default function GroupBanner(props: IGroupBannerProps) {
                     <Box backgroundColor="accent.100" width="1rem" height="100%"></Box>
                     <Box backgroundColor="border.300" width="100%" height="100%"></Box>
                 </Flex>
-                <Flex direction="column"> {/* dane szczegółowe */}
+                <Flex direction="column" flex="1"> {/* dane szczegółowe */}
                     <ResponsiveHeading fontSize="xl" text="pies pies" showBar={false} width="100%" />
-                    <Flex width="50%">
-                        <Box>
-                            <ResponsiveHeading fontSize="md" text="pies pies" showBar={false}/>
-                        </Box>
-                        <Box>
-                            <ResponsiveHeading fontSize="md" text="pies pies" showBar={false}/>
-                        </Box>
-                        <Box>
-                            <ResponsiveHeading fontSize="md" text="pies pies" showBar={false}/>
-                        </Box>
-                    </Flex>
+                    
+                    <HStack width="100%" spacing="2rem" justify="space-between">
+                        <Flex direction="column">
+                            <ResponsiveHeading fontSize="md" text="Administrator" showBar={false}/>
+                            <ResponsiveText>Szymon Kubiczek</ResponsiveText>
+                            <ResponsiveText color="gray.500" fontStyle="italic">Cuebiczek</ResponsiveText>
+                        </Flex>
+                        <Flex direction="column">
+                            <ResponsiveHeading fontSize="md" text="Data założenia" showBar={false}/>
+                            <ResponsiveText>09.09.2025</ResponsiveText>
+                        </Flex> 
+                        <Flex direction="column">
+                            <ResponsiveHeading fontSize="md" text="Liczba członków" showBar={false}/>
+                            <ResponsiveText>12</ResponsiveText>
+                        </Flex>
+                            
+                        
+                    </HStack>
                 </Flex>
             </Flex>
-            <Flex justifyContent="space-between"> {/* opis grupy */}
+            <Flex direction="column"> {/* opis grupy */}
+                <ResponsiveHeading barOrientation="horizontal" fontSize="md" text="Opis grupy" showBar={false}/>
+                <ResponsiveText>pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies </ResponsiveText>
             </Flex>
         </Flex>
     );
