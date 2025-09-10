@@ -1,6 +1,6 @@
 import { Box, Flex, VStack } from "@chakra-ui/react";
 import Sidebar from "./Sidebar";
-import PeopleList from "../PeopleList";
+import PeopleList from "./PeopleList";
 import GroupBanner from "./GroupBanner";
 
 interface IGroupViewProps {
@@ -17,8 +17,10 @@ export default function GroupView(props: IGroupViewProps) {
             minHeight="calc(100vh - 6rem)"
             paddingY="2rem"
             paddingX="3rem"
+            gap="3rem"
         >
             <GroupBanner />
+            <PeopleList />
         </Flex>
     );
 }
