@@ -34,6 +34,12 @@ export const theme = extendTheme({
         800: { default: "gray.800" },
         900: { default: "gray.900" },
       },
+      fonts: {
+        default: "black",
+      },
+      bg: {
+        default: "white",
+      },
       landingBg: {
         default: "#D5D5FF"
       }

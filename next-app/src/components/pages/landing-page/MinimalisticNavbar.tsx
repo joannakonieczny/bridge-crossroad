@@ -10,7 +10,7 @@ export default function MinimalisticNavbar() {
   return (
     <Flex
       as="nav"
-      bg="white"
+      bg="bg"
       p={4}
       boxShadow="sm"
       alignItems="center"

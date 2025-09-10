@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Flex,
   Tabs,
   TabList,
-  Tab,
   TabIndicator,
   IconButton,
   VStack,
@@ -17,13 +16,12 @@ import {
   DrawerBody,
   useDisclosure,
   Switch,
-  Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  useMediaQuery,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import ProfilePicture from "@/components/common/ProfilePicture";
 import {
   FaBars,
@@ -37,9 +35,12 @@ import { BsFillMoonStarsFill } from "react-icons/bs";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/routes";
 import Logo from "@/components/common/Logo";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/typed-translations";
 import { useColorMode } from "@chakra-ui/react";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import NavbarTab from "./NavbarTab";
+import NavbarDrawerItem from "./NavbarDrawerItem";
+import NavbarDrawerMenuItem from "./NavbarDrawerMenuItem";
 
 const navbarTabs = [
   ROUTES.dashboard,
@@ -61,23 +62,14 @@ export default function Navbar() {
   const t = useTranslations("components.Navbar");
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  // for now it must stay this way- exactly under 77% of screen width there are unsolvable bugs with Chakra tabs indicator so we replace navbar there with hamburger
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth / window.screen.width > 0.77);
-    };
-    
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const [isDesktop]  = useMediaQuery(
+    "(min-width: 1200px)" 
+  )
 
   return (
     <Flex
       as="nav"
-      bg="white"
+      bg="bg"
       p={4}
       boxShadow="sm"
       alignItems="center"
@@ -99,23 +91,13 @@ export default function Navbar() {
             defaultIndex={defaultIndex}
           >
             <TabList gap={8} color="accent.500">
-              <Tab as={Link} href={ROUTES.dashboard} whiteSpace="nowrap" fontSize="0.87rem" _selected={{ color: "black" }} _focus={{ boxShadow: "none" }}>
-                {t("tabs.dashboard")}
-              </Tab>
-              <Tab as={Link} href={ROUTES.calendar} whiteSpace="nowrap" fontSize="0.87rem" _selected={{ color: "black" }} _focus={{ boxShadow: "none" }}>
-                {t("tabs.calendar")}
-              </Tab>
-              <Tab as={Link} href={ROUTES.groups} whiteSpace="nowrap" fontSize="0.87rem" _selected={{ color: "black" }} _focus={{ boxShadow: "none" }}>
-                {t("tabs.groups")}
-              </Tab>
-              <Tab as={Link} href={ROUTES.find_partner} whiteSpace="nowrap" fontSize="0.87rem" _selected={{ color: "black" }} _focus={{ boxShadow: "none" }}>
-                {t("tabs.findPartner")}
-              </Tab>
-              <Tab as={Link} href={ROUTES.tools} whiteSpace="nowrap" fontSize="0.87rem" _selected={{ color: "black" }} _focus={{ boxShadow: "none" }}>
-                {t("tabs.tools")}
-              </Tab>
+              <NavbarTab href={ROUTES.dashboard}>{t("tabs.dashboard")}</NavbarTab>
+              <NavbarTab href={ROUTES.calendar}>{t("tabs.calendar")}</NavbarTab>
+              <NavbarTab href={ROUTES.groups}>{t("tabs.groups")}</NavbarTab>
+              <NavbarTab href={ROUTES.find_partner}>{t("tabs.findPartner")}</NavbarTab>
+              <NavbarTab href={ROUTES.tools}>{t("tabs.tools")}</NavbarTab>
             </TabList>
-            <TabIndicator mt="-1.5px" height="2px" bg="black" borderRadius="1px" />
+              <TabIndicator mt="-1.5px" height="2px" bg="fonts" borderRadius="1px" />
           </Tabs>
 
           {/* profile + dropdown menu */}
@@ -135,7 +117,7 @@ export default function Navbar() {
                     _active={{ bg: "transparent" }}
                     _focus={{ boxShadow: "none" }}
                   />
-                  <MenuList minWidth="240px" bg="white" borderColor="border.200" boxShadow="md">
+                  <MenuList minWidth="240px" bg="bg" borderColor="border.200" boxShadow="md">
                     <MenuItem icon={<FaRegUser size="1rem" />}>{t("menu.profile")}</MenuItem>
                     <MenuItem icon={<FaRegQuestionCircle size="1rem" />}>{t("menu.settings")}</MenuItem>
                     <MenuItem icon={<FaCog size="1rem" />}>{t("menu.aboutPage")}</MenuItem>
@@ -184,18 +166,25 @@ export default function Navbar() {
               <DrawerBody>
                 <VStack align="stretch" spacing={4}>
                   {/* zakładki */}
-                  <Link href={ROUTES.dashboard}><Button variant="ghost" justifyContent="flex-start">{t("tabs.dashboard")}</Button></Link>
-                  <Link href={ROUTES.calendar}><Button variant="ghost" justifyContent="flex-start">{t("tabs.calendar")}</Button></Link>
-                  <Link href={ROUTES.groups}><Button variant="ghost" justifyContent="flex-start">{t("tabs.groups")}</Button></Link>
-                  <Link href={ROUTES.find_partner}><Button variant="ghost" justifyContent="flex-start">{t("tabs.findPartner")}</Button></Link>
-                  <Link href={ROUTES.tools}><Button variant="ghost" justifyContent="flex-start">{t("tabs.tools")}</Button></Link>
-
+                  <NavbarDrawerItem href={ROUTES.dashboard}>{t("tabs.dashboard")}</NavbarDrawerItem>
+                  <NavbarDrawerItem href={ROUTES.calendar}>{t("tabs.calendar")}</NavbarDrawerItem>
+                  <NavbarDrawerItem href={ROUTES.groups}>{t("tabs.groups")}</NavbarDrawerItem>
+                  <NavbarDrawerItem href={ROUTES.find_partner}>{t("tabs.findPartner")}</NavbarDrawerItem>
+                  <NavbarDrawerItem href={ROUTES.tools}>{t("tabs.tools")}</NavbarDrawerItem>
                   <Divider />
 
                   {/* menu */}
-                  <Button variant="ghost" justifyContent="flex-start" leftIcon={<FaRegUser size="1rem" />}>{t("menu.profile")}</Button>
-                  <Button variant="ghost" justifyContent="flex-start" leftIcon={<FaRegQuestionCircle size="1rem" />}>{t("menu.settings")}</Button>
-                  <Button variant="ghost" justifyContent="flex-start" leftIcon={<FaCog size="1rem" />}>{t("menu.aboutPage")}</Button>
+                  <NavbarDrawerMenuItem icon={<FaRegUser size="1rem" />}>
+                    {t("menu.profile")}
+                  </NavbarDrawerMenuItem>
+
+                  <NavbarDrawerMenuItem icon={<FaRegQuestionCircle size="1rem" />}>
+                    {t("menu.settings")}
+                  </NavbarDrawerMenuItem>
+
+                  <NavbarDrawerMenuItem icon={<FaCog size="1rem" />}>
+                    {t("menu.aboutPage")}
+                  </NavbarDrawerMenuItem>
 
                   <Flex alignItems="center" gap={2} pl={2}>
                     <BsFillMoonStarsFill size="1rem" />

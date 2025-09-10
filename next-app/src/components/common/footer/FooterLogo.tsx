@@ -25,7 +25,7 @@ export default function FooterLogo() {
           text={baseConfig.appName}
           showBar={false}
           fontSize="4xl"
-          color="white"
+          color="bg"
           whiteSpace="nowrap"
         />
       </Flex>

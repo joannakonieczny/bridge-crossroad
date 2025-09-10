@@ -41,25 +41,25 @@ export default function Footer() {
           <ResponsiveHeading
             text={t("quickAccess.title")}
             fontSize="xl"
-            color="white"
+            color="bg"
           />
-          <ResponsiveText as={ChakraLink} href={ROUTES.dashboard} color="white">
+          <ResponsiveText as={ChakraLink} href={ROUTES.dashboard} color="bg">
             {t("quickAccess.content.dashboard")}
           </ResponsiveText>
-          <ResponsiveText as={ChakraLink} href={ROUTES.calendar} color="white">
+          <ResponsiveText as={ChakraLink} href={ROUTES.calendar} color="bg">
             {t("quickAccess.content.calendar")}
           </ResponsiveText>
-          <ResponsiveText as={ChakraLink} href={ROUTES.groups} color="white">
+          <ResponsiveText as={ChakraLink} href={ROUTES.groups} color="bg">
             {t("quickAccess.content.groups")}
           </ResponsiveText>
           <ResponsiveText
             as={ChakraLink}
             href={ROUTES.find_partner}
-            color="white"
+            color="bg"
           >
             {t("quickAccess.content.findPartner")}
           </ResponsiveText>
-          <ResponsiveText as={ChakraLink} href={ROUTES.tools} color="white">
+          <ResponsiveText as={ChakraLink} href={ROUTES.tools} color="bg">
             {t("quickAccess.content.tools")}
           </ResponsiveText>
         </Flex>
@@ -69,12 +69,12 @@ export default function Footer() {
           <ResponsiveHeading
             text={t("help.title")}
             fontSize="xl"
-            color="white"
+            color="bg"
           />
-          <ResponsiveText color="white">
+          <ResponsiveText color="bg">
             {t("help.content.privacyPolice")}
           </ResponsiveText>
-          <ResponsiveText color="white">
+          <ResponsiveText color="bg">
             {t("help.content.technicalHelp")}
           </ResponsiveText>
         </Flex>
@@ -84,9 +84,9 @@ export default function Footer() {
           <ResponsiveHeading
             text={t("socialMedia.title")}
             fontSize="xl"
-            color="white"
+            color="bg"
           />
-          <ResponsiveText color="white">
+          <ResponsiveText color="bg">
             {baseConfig.socialMedia.clubEmail}
           </ResponsiveText>
           <Flex gap="2rem">
@@ -95,21 +95,21 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <BsFacebook size="3rem" color="white" />
+              <BsFacebook size="3rem" color="bg" />
             </ChakraLink>
             <ChakraLink
               href={baseConfig.socialMedia.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaInstagramSquare size="3rem" color="white" />
+              <FaInstagramSquare size="3rem" color="bg" />
             </ChakraLink>
             <ChakraLink
               href={baseConfig.socialMedia.youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaYoutube size="3rem" color="white" />
+              <FaYoutube size="3rem" color="bg" />
             </ChakraLink>
           </Flex>
         </Flex>

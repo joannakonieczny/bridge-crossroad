@@ -40,7 +40,7 @@ export default function InfoTable() {
                 {rows.map((row, index) => (
                   <Tr
                     key={row.label}
-                    bg={index % 2 === 0 ? "border.100" : "white"}
+                    bg={index % 2 === 0 ? "border.100" : "bg"}
                   >
                     <Td
                       fontWeight="semibold"
