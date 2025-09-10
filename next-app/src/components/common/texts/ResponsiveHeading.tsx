@@ -7,11 +7,13 @@ export type IResponsiveHeadingProps = FlexProps & {
   text: string;
   fontSize: FontSizeToken;
   showBar?: boolean;
+  barOrientation?: "vertical" | "horizontal"
 };
 
 export default function ResponsiveHeading({
   text,
   showBar = true,
+  barOrientation = "vertical",
   fontSize,
   textAlign = "left",
   justifyContent = "left",
@@ -25,12 +27,16 @@ export default function ResponsiveHeading({
       alignItems="stretch"
       textAlign={textAlign}
       justifyContent={justifyContent}
+      direction={barOrientation === "vertical" ? "row" : "column"}
       {...rest}
     >
-      {showBar && <Box w="6px" bg="accent.400" />}
+      {showBar && barOrientation === "vertical" && <Box w="6px" bg="accent.400" />}
+
       <Text fontSize={responsiveFontSize} fontWeight="bold">
         {text}
       </Text>
+
+      {showBar && barOrientation === "horizontal" && <Box w="20px" h="1px" bg="accent.400"></Box>}
     </Flex>
   );
 }
