@@ -52,7 +52,7 @@ export default function PeopleList() {
      direction={"column"}
      backgroundColor={"border.50"}
      padding={"2rem"}>
-      <Flex flex={1} backgroundColor="white" padding="2rem" direction="column" gap={6}>
+      <Flex flex={1} backgroundColor="bg" padding="2rem" direction="column" gap={6}>
         <MainHeading text="Członkowie Klubu" />
         <SearchInput
           value={search}

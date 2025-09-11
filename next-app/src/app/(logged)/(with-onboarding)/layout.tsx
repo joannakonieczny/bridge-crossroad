@@ -1,5 +1,5 @@
 import { requireUserOnboarding } from "@/services/onboarding/simple-action";
-import Navbar from "@/components/pages/with-onboarding/Navbar";
+import Navbar from "@/components/pages/with-onboarding/navbar/Navbar";
 import { Flex } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 
