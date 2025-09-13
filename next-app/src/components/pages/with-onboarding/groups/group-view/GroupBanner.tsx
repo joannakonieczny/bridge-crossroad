@@ -46,7 +46,7 @@ export default function GroupBanner(props: IGroupBannerProps) {
                 </Flex>
             </Flex>
             <Flex direction="column"> {/* opis grupy */}
-                <ResponsiveHeading barOrientation="horizontal" fontSize="md" text="Opis grupy" showBar={false}/>
+                <ResponsiveHeading barOrientation="horizontal" fontSize="md" text="Opis grupy" showBar={true}/>
                 <ResponsiveText>pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies pies </ResponsiveText>
             </Flex>
         </Flex>
