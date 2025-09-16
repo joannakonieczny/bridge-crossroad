@@ -1,70 +1,61 @@
+"use client";
+
 import { Tr, Td, Text, Box, Link } from "@chakra-ui/react";
 
 type UserTableRowProps = {
   fullName: string;
   nickname?: string;
-  pzbsId?: string;
-  bboId?: string;
-  cuebidsId?: string;
+  badges: string;
+  cezarNumber: string;
 };
 
 export default function UserTableRow({
   fullName,
   nickname,
-  pzbsId,
-  bboId,
-  cuebidsId,
+  badges,
+  cezarNumber,
 }: UserTableRowProps) {
   return (
     <Tr>
+      {/* Imię i nazwisko + nickname */}
       <Td>
         <Box>
           <Text fontWeight="bold" fontSize="md">
             {fullName}
           </Text>
           {nickname && (
-            <Text fontSize="sm" color="border.500" mt={2} fontStyle={"italic"}>
+            <Text
+              fontSize="sm"
+              color="border.500"
+              mt={2}
+              fontStyle={"italic"}
+            >
               {nickname}
             </Text>
           )}
         </Box>
       </Td>
 
+      {/* Odznaki */}
       <Td>
-        {pzbsId ? (
+        <Text fontSize="sm">{badges}</Text>
+      </Td>
+
+      {/* Numer Cezar */}
+      <Td>
+        {cezarNumber ? (
           <Link
-            href={`https://msc.com.pl/cezar/?p=21&pid_search=${pzbsId}`}
+            href={`https://msc.com.pl/cezar/?p=21&pid_search=${cezarNumber}`}
             isExternal
             fontWeight="semibold"
-            //color="blue.600"
             color="accent.600"
             fontSize="sm"
           >
-            {pzbsId}
+            {cezarNumber}
           </Link>
         ) : (
           <Text color="border.400">-</Text>
         )}
-      </Td>
-
-      <Td>
-        <Text fontSize="sm">
-          {bboId || (
-            <Text as="span" color="border.400">
-              -
-            </Text>
-          )}
-        </Text>
-      </Td>
-
-      <Td>
-        <Text fontSize="sm">
-          {cuebidsId || (
-            <Text as="span" color="border.400">
-              -
-            </Text>
-          )}
-        </Text>
       </Td>
     </Tr>
   );

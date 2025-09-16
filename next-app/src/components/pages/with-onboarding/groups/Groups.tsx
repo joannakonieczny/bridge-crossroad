@@ -1,8 +1,17 @@
 import { Box, Flex, Stack, Button, Input } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 
 export default function Groups() {
+
+    // const { data: users, isLoading, isError, refetch } = useActionQuery({
+    //   action: ,            // Twoja funkcja asynchroniczna
+    //   staleTime: 1000 * 60,          // 1 minuta
+    //   retry: 1,
+    //   queryKey: ['groups'], 
+    // });
+
   return (
     <Flex
       minHeight="100vh"
