@@ -1,16 +1,13 @@
+"use client";
+
 import { Box, Flex, Stack, Button, Input } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import AddGroupModal from "./AddGroupModal";
+import { useState } from "react";
 
 export default function Groups() {
-
-    // const { data: users, isLoading, isError, refetch } = useActionQuery({
-    //   action: ,            // Twoja funkcja asynchroniczna
-    //   staleTime: 1000 * 60,          // 1 minuta
-    //   retry: 1,
-    //   queryKey: ['groups'], 
-    // });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Flex
@@ -61,6 +58,7 @@ export default function Groups() {
             colorScheme="accent"
             variant="outline"
             w={{ base: "100%", md: "auto" }}
+            onClick={() => setIsModalOpen(true)} // <- otwieranie modala
           >
             Stwórz grupę
           </Button>
@@ -69,6 +67,12 @@ export default function Groups() {
         {/* Grid z grupami */}
         <GroupsGrid />
       </Box>
+
+      {/* Modal grupy */}
+      <AddGroupModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // <- zamykanie na X i Anuluj
+      />
     </Flex>
   );
 }
