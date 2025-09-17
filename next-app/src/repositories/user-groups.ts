@@ -17,37 +17,48 @@ type UserAndGroupUpdate = {
   groupId: GroupIdType;
 };
 
-export async function addUserToGroup({ groupId, userId }: UserAndGroupUpdate) {
+export async function addUserToGroup({
+  groupId,
+  userId,
+  session,
+}: UserAndGroupUpdate & {
+  session?: mongoose.ClientSession;
+}) {
+  const execute = async (session: mongoose.ClientSession) => {
+    const [updatedGroup, updatedUser] = await Promise.all([
+      Group.findByIdAndUpdate(
+        groupId,
+        { $addToSet: { members: userId } },
+        { new: true, session }
+      ).lean<IGroupDTO | null>(),
+      User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { groups: groupId } },
+        { new: true, session }
+      ).lean<IUserDTO | null>(),
+    ]);
+
+    if (!updatedGroup || !updatedUser) {
+      throw new RepositoryError("Failed to update user or group");
+    }
+
+    return {
+      user: updatedUser,
+      group: updatedGroup,
+    };
+  };
+
   await dbConnect();
+  if (session) {
+    return execute(session);
+  }
 
-  const session = await mongoose.startSession();
+  const s = await mongoose.startSession();
 
-  return await session
-    .withTransaction(async () => {
-      const [updatedGroup, updatedUser] = await Promise.all([
-        Group.findByIdAndUpdate(
-          groupId,
-          { $addToSet: { members: userId } },
-          { new: true, session }
-        ).lean<IGroupDTO | null>(),
-        User.findByIdAndUpdate(
-          userId,
-          { $addToSet: { groups: groupId } },
-          { new: true, session }
-        ).lean<IUserDTO | null>(),
-      ]);
-
-      if (!updatedGroup || !updatedUser) {
-        throw new RepositoryError("Failed to update user or group");
-      }
-
-      return {
-        user: updatedUser,
-        group: updatedGroup,
-      };
-    })
+  return await s
+    .withTransaction(() => execute(s))
     .finally(async () => {
-      await session.endSession();
+      await s.endSession();
     });
 }
 
