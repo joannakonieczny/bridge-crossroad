@@ -4,6 +4,8 @@ import { Schema } from "mongoose";
 import type { IUserId } from "../user/user-types";
 import type { Timestamps } from "../utils";
 
+export const GroupTableName = "Group";
+
 export const GroupId = Schema.Types.ObjectId;
 export type IGroupId = typeof GroupId;
 

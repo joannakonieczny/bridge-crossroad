@@ -4,7 +4,7 @@ import mongoose, { Schema } from "mongoose";
 import { UserId, UserTableName } from "../user/user-types";
 import { GroupValidationConstants as c } from "@/schemas/model/group/group-const";
 import type { IUserId } from "../user/user-types";
-import type { IGroupDTO } from "./group-types";
+import { GroupTableName, type IGroupDTO } from "./group-types";
 
 const Group = new Schema<IGroupDTO>(
   {
@@ -67,4 +67,4 @@ Group.index(
 );
 
 export default mongoose.models.Group ||
-  mongoose.model<IGroupDTO>("Group", Group);
+  mongoose.model<IGroupDTO>(GroupTableName, Group);

@@ -3,6 +3,7 @@
 import { UserValidationConstants as c } from "@/schemas/model/user/user-const";
 import mongoose, { Schema, model } from "mongoose";
 import { UserId, UserTableName, type IUserDTO } from "./user-types";
+import { GroupTableName } from "../group/group-types";
 
 const UserSchema = new Schema<IUserDTO>(
   {
@@ -47,7 +48,7 @@ const UserSchema = new Schema<IUserDTO>(
       match: c.nickname.regex,
     },
     groups: {
-      type: [{ type: UserId, ref: "Group" }],
+      type: [{ type: UserId, ref: GroupTableName }],
       default: [],
       required: true,
     },
