@@ -1,4 +1,6 @@
-import { Box, Flex } from "@chakra-ui/react";
+"use client"
+
+import { Box, Flex, Icon } from "@chakra-ui/react";
 import FooterLogo from "./FooterLogo";
 import ResponsiveHeading from "../texts/ResponsiveHeading";
 import ResponsiveText from "../texts/ResponsiveText";
@@ -95,21 +97,21 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <BsFacebook size="3rem" color="bg" />
+              <Icon as={BsFacebook} boxSize="3rem" color="bg" />
             </ChakraLink>
             <ChakraLink
               href={baseConfig.socialMedia.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaInstagramSquare size="3rem" color="bg" />
+              <Icon as={FaInstagramSquare} boxSize="3rem" color="bg" />
             </ChakraLink>
             <ChakraLink
               href={baseConfig.socialMedia.youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaYoutube size="3rem" color="bg" />
+              <Icon as={FaYoutube} boxSize="3rem" color="bg" />
             </ChakraLink>
           </Flex>
         </Flex>

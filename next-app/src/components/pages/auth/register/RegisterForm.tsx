@@ -8,10 +8,10 @@ import {
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 import FormHeading from "../FormHeading";
-import FormInput from "../FormInput";
+import FormInput from "../../../common/form/FormInput";
 import GoogleButton from "../FormGoogleButton";
-import FormMainButton from "../FormMainButton";
-import FormCheckbox from "../FormCheckbox";
+import FormMainButton from "../../../common/form/FormMainButton";
+import FormCheckbox from "../../../common/form/FormCheckbox";
 import { register } from "@/services/auth/api";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -10,10 +10,10 @@ import {
 } from "@/lib/typed-translations";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 import FormHeading from "../FormHeading";
-import FormInput from "../FormInput";
+import FormInput from "../../../common/form/FormInput";
 import GoogleButton from "../FormGoogleButton";
-import FormMainButton from "../FormMainButton";
-import FormCheckbox from "../FormCheckbox";
+import FormMainButton from "../../../common/form/FormMainButton";
+import FormCheckbox from "../../../common/form/FormCheckbox";
 import { login } from "@/services/auth/api";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
