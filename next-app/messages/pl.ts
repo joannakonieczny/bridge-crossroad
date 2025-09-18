@@ -236,6 +236,27 @@ const landingPage = {
   },
 };
 
+const groupsPage = {
+  AddGroupModal: {
+    header: "Dodaj grupę",
+    form: {
+      name: {
+        placeholder: "Nazwa grupy",
+      },
+      description: {
+        placeholder: "Opis grupy (opcjonalnie)",
+      },
+    },
+    submitButton: "Utwórz",
+    cancelButton: "Anuluj",
+    toast: {
+      loading: "Tworzenie grupy...",
+      success: "Utworzono grupę!",
+      errorDefault: "Wystąpił błąd podczas tworzenia grupy",
+    },
+  },
+};
+
 const userModelValidation = {
   name: {
     firstName: {
@@ -439,6 +460,7 @@ const messages = {
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,
     LandingPage: landingPage,
+    GroupsPage: groupsPage,
   },
   components: {
     Navbar: navbar,
