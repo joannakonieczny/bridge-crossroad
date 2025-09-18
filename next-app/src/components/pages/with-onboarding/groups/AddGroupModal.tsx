@@ -22,7 +22,7 @@ import FormMainButton from "../../../common/form/FormMainButton";
 
 import { z } from "zod";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/create-group-form-schema";
-import { create } from "domain";
+import { useTranslations } from "@/lib/typed-translations";
 
 // Losowy kod zaproszenia
 function generateInvitationCode(length: number = 8) {
@@ -39,6 +39,7 @@ type Props = {
 
 export default function AddGroupModal({ isOpen, onClose }: Props) {
   const toast = useToast();
+  const t = useTranslations("pages.GroupsPage.AddGroupModal");
 
   const { handleSubmit, control, setError } = useForm<CreateGroupInput>({
     resolver: zodResolver(createGroupFormSchema),
@@ -52,9 +53,8 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
 
   const createGroupAction = useActionMutation({
     action: async (data: CreateGroupInput) => {
-      console.log("Tworzenie grupy:", data);
       try {
-        // Tutaj dodaj logikę tworzenia grupy
+        // logika tworzenia grupy
         return { data: true };
       } catch (error) {
         return { error };
@@ -62,7 +62,7 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
     },
     onSuccess: () => {
       toast({
-        title: "Utworzono grupę!",
+        title: t("toast.success"),
         status: "success",
       });
       onClose();
@@ -76,11 +76,11 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
   const onSubmit = (data: CreateGroupInput) => {
     const promise = createGroupAction.mutateAsync(data);
     toast.promise(promise, {
-      loading: { title: "Tworzenie grupy..." },
-      success: { title: "Utworzono grupę!" },
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
       error: (err: MutationOrQuerryError<typeof createGroupAction>) => {
         const errKey = getMessageKeyFromError(err);
-        return { title: errKey };
+        return { title: errKey || t("toast.errorDefault") };
       },
     });
   };
@@ -89,67 +89,50 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Dodaj grupę</ModalHeader>
+        <ModalHeader>{t("header")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack spacing={4} mt={4}>
-                <Controller
-                  control={control}
-                  name="name"
-                  render={({ field, fieldState: { error } }) => (
-                    <FormInput
-                      placeholder="Nazwa grupy"
-                      errorMessage={error?.message}
-                      isInvalid={!!error}
-                      id="name"
-                      type="text"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={4} mt={4}>
+              <Controller
+                control={control}
+                name="name"
+                render={({ field, fieldState: { error } }) => (
+                  <FormInput
+                    placeholder={t("form.name.placeholder")}
+                    errorMessage={error?.message}
+                    isInvalid={!!error}
+                    id="name"
+                    type="text"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
 
-                <Controller
-                  control={control}
-                  name="description"
-                  render={({ field, fieldState: { error } }) => (
-                    <FormInput
-                      type="textarea"
-                      placeholder="Opis grupy (opcjonalnie)"
-                      errorMessage={error?.message}
-                      isInvalid={!!error}
-                      id="description"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
+              <Controller
+                control={control}
+                name="description"
+                render={({ field, fieldState: { error } }) => (
+                  <FormInput
+                    type="textarea"
+                    placeholder={t("form.description.placeholder")}
+                    errorMessage={error?.message}
+                    isInvalid={!!error}
+                    id="description"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
 
-
-
-                <Controller
-                  control={control}
-                  name="imageUrl"
-                  render={({ field, fieldState: { error } }) => (
-                    <FormInput
-                      placeholder="Link do zdjęcia grupy (opcjonalnie)"
-                      errorMessage={error?.message}
-                      isInvalid={!!error}
-                      id="imageUrl"
-                      type="text"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-                <FormMainButton text="Utwórz" type="submit" />
-              </Stack>
-            </form>
+              <FormMainButton text={t("submitButton")} type="submit" />
+            </Stack>
+          </form>
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" onClick={onClose}>
-            Anuluj
+            {t("cancelButton")}
           </Button>
         </ModalFooter>
       </ModalContent>
