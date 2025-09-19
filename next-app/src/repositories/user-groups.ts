@@ -8,9 +8,12 @@ import { GroupTableName, type IGroupDTO } from "@/models/group/group-types";
 import { check, RepositoryError, executeWithinTransaction } from "./common";
 import type { WithSession } from "./common";
 import type { UserIdType } from "@/schemas/model/user/user-types";
-import type { IUserDTO } from "@/models/user/user-types";
+import { UserTableName, type IUserDTO } from "@/models/user/user-types";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
-import type { IUserDTOWithPopulatedGroups } from "@/models/mixed-types";
+import type {
+  IGroupDTOWithPopulatedMembersAdmins,
+  IUserDTOWithPopulatedGroups,
+} from "@/models/mixed-types";
 
 type UserAndGroupUpdate = {
   userId: UserIdType;
@@ -87,6 +90,33 @@ export async function getUserWithGroupsData(userId: UserIdType) {
   if (res.groups.some((g) => g === null)) {
     throw new RepositoryError(
       "One or more groups referenced by the user were not found"
+    );
+  }
+
+  return res;
+}
+
+export async function getGroupOverview(groupId: GroupIdType) {
+  await dbConnect();
+
+  const group = await Group.findById(groupId)
+    .populate<{ members: IUserDTO[]; admins: IUserDTO[] }>([
+      { path: "members", model: UserTableName },
+      { path: "admins", model: UserTableName },
+    ])
+    .lean<IGroupDTOWithPopulatedMembersAdmins>();
+
+  const res = check(
+    group,
+    `Group not found with id: ${groupId} or query failed`
+  );
+
+  if (
+    res.members.some((u) => u === null) ||
+    res.admins.some((u) => u === null)
+  ) {
+    throw new RepositoryError(
+      "One or more users referenced by the group were not found"
     );
   }
 

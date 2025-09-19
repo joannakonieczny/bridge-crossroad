@@ -34,15 +34,21 @@ export function sanitizeOnboardingData(
   };
 }
 
-export function sanitizeUser(user: IUserDTO): SanitizedUser {
+export function sanitizeMinUserInfo(user: IUserDTO) {
   return {
     _id: user._id.toString(),
-    email: user.email,
     name: {
       firstName: user.name.firstName,
       lastName: user.name.lastName,
     },
     nickname: user.nickname,
+  };
+}
+
+export function sanitizeUser(user: IUserDTO): SanitizedUser {
+  return {
+    ...sanitizeMinUserInfo(user),
+    email: user.email,
     onboardingData: sanitizeOnboardingData(user.onboardingData),
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,

@@ -3,6 +3,7 @@
 import {
   addAdminToGroup,
   addUserToGroup,
+  getGroupOverview,
   getUserWithGroupsData,
 } from "@/repositories/user-groups";
 import {
@@ -14,7 +15,12 @@ import type { TKey } from "@/lib/typed-translations";
 import { authAction } from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createGroup } from "@/repositories/groups";
-import { sanitizeGroup } from "@/sanitizers/server-only/group-sanitize";
+import {
+  sanitizeGroup,
+  sanitizeGroupsFullInfoPopulated,
+} from "@/sanitizers/server-only/group-sanitize";
+import { requireGroupAccess } from "./simple-action";
+import { idPropSchema } from "@/schemas/common";
 
 export const getJoinedGroupsInfo = authAction.action(
   async ({ ctx: { userId } }) => {
@@ -49,4 +55,12 @@ export const createNewGroup = authAction
         )
         .handle();
     });
+  });
+
+export const getGroupData = authAction
+  .inputSchema(idPropSchema)
+  .action(async ({ parsedInput: groupId, ctx: { userId } }) => {
+    await requireGroupAccess({ groupId, userId });
+    const res = await getGroupOverview(groupId);
+    return sanitizeGroupsFullInfoPopulated(res);
   });
