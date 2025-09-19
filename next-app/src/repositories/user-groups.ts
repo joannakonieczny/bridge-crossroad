@@ -2,11 +2,11 @@
 
 import User from "@/models/user/user-model";
 import Group from "@/models/group/group-model";
-import mongoose from "mongoose";
+import type mongoose from "mongoose";
 
 import dbConnect from "@/util/connect-mongo";
 import { GroupTableName, type IGroupDTO } from "@/models/group/group-types";
-import { check, RepositoryError } from "./common";
+import { check, RepositoryError, executeWithinTransaction } from "./common";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IUserDTO } from "@/models/user/user-types";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
@@ -24,17 +24,19 @@ export async function addUserToGroup({
 }: UserAndGroupUpdate & {
   session?: mongoose.ClientSession;
 }) {
-  const execute = async (session: mongoose.ClientSession) => {
+  await dbConnect();
+
+  return executeWithinTransaction(async (s) => {
     const [updatedGroup, updatedUser] = await Promise.all([
       Group.findByIdAndUpdate(
         groupId,
         { $addToSet: { members: userId } },
-        { new: true, session }
+        { new: true, session: s }
       ).lean<IGroupDTO | null>(),
       User.findByIdAndUpdate(
         userId,
         { $addToSet: { groups: groupId } },
-        { new: true, session }
+        { new: true, session: s }
       ).lean<IUserDTO | null>(),
     ]);
 
@@ -46,20 +48,7 @@ export async function addUserToGroup({
       user: updatedUser,
       group: updatedGroup,
     };
-  };
-
-  await dbConnect();
-  if (session) {
-    return execute(session);
-  }
-
-  const s = await mongoose.startSession();
-
-  return await s
-    .withTransaction(() => execute(s))
-    .finally(async () => {
-      await s.endSession();
-    });
+  }, session);
 }
 
 export async function addAdminToGroup({ groupId, userId }: UserAndGroupUpdate) {

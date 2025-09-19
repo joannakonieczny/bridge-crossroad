@@ -51,3 +51,26 @@ function onNullThrow<T>(value: T | null | undefined, errMessage: string): T {
 }
 
 export { onNullThrow as check };
+
+import mongoose from "mongoose";
+
+/**
+ * Executes the provided callback within a mongoose transaction.
+ * If an external session is provided it will be used directly (no session lifecycle management).
+ * If no session is provided this helper will create a session, run `withTransaction` and ensure the session is ended.
+ */
+export async function executeWithinTransaction<T>(
+  fn: (s: mongoose.ClientSession) => Promise<T>,
+  session?: mongoose.ClientSession
+): Promise<T> {
+  if (session) {
+    return fn(session);
+  }
+
+  const s = await mongoose.startSession();
+  try {
+    return await s.withTransaction(() => fn(s));
+  } finally {
+    await s.endSession();
+  }
+}
