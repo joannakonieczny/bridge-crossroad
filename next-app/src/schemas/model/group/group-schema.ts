@@ -40,3 +40,7 @@ export const imageUrlSchema = z
 export const havingGroupId = z.object({
   groupId: idPropSchema,
 });
+
+export const havingInvitationCode = z.object({
+  invitationCode: invitationCodeSchema,
+});

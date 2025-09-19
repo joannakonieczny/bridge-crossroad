@@ -425,6 +425,10 @@ const messages = {
       create: {
         nameExists: "Grupa o takiej nazwie już istnieje",
       },
+      join: {
+        alreadyMember: "Jesteś już członkiem tej grupy",
+        invalidInvitationCode: "Nieprawidłowy kod zaproszenia",
+      },
     },
   },
   pages: {

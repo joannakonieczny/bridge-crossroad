@@ -9,16 +9,18 @@ import {
 import {
   executeWithinTransaction,
   onDuplicateKey,
+  onRepoError,
 } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
 import { fullAuthAction, withinOwnGroupAction } from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
-import { createGroup } from "@/repositories/groups";
+import { createGroup, getGroupByInviteCode } from "@/repositories/groups";
 import {
   sanitizeGroup,
   sanitizeGroupsFullInfoPopulated,
 } from "@/sanitizers/server-only/group-sanitize";
+import { havingInvitationCode } from "@/schemas/model/group/group-schema";
 
 export const getJoinedGroupsInfo = fullAuthAction.action(
   async ({ ctx: { userId } }) => {
@@ -61,3 +63,25 @@ export const getGroupData = withinOwnGroupAction.action(
     return sanitizeGroupsFullInfoPopulated(res);
   }
 );
+
+export const addUserToGroupByInvitationCode = fullAuthAction
+  .inputSchema(havingInvitationCode)
+  .action(async ({ parsedInput: { invitationCode }, ctx: { userId } }) => {
+    const group = await getGroupByInviteCode(invitationCode).catch((err) =>
+      onRepoError(err, () =>
+        returnValidationErrors(havingInvitationCode, {
+          _errors: ["api.groups.join.invalidInvitationCode" satisfies TKey],
+        })
+      )
+    );
+    if (group.members.some((m) => m.toString() === userId)) {
+      returnValidationErrors(havingInvitationCode, {
+        _errors: ["api.groups.join.alreadyMember" satisfies TKey],
+      });
+    }
+    await addUserToGroup({
+      groupId: group._id.toString(),
+      userId,
+    });
+    return true;
+  });
