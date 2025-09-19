@@ -426,19 +426,19 @@ const messages = {
         nameExists: "Grupa o takiej nazwie już istnieje",
       },
     },
-    pages: {
-      Auth: {
-        LoginPage: loginPage,
-        RegisterPage: registerPage,
-      },
-      OnboardingPage: onboardingPage,
-      DashboardPage: dashboardPage,
-      LandingPage: landingPage,
+  },
+  pages: {
+    Auth: {
+      LoginPage: loginPage,
+      RegisterPage: registerPage,
     },
-    components: {
-      Navbar: navbar,
-      Footer: footer,
-    },
+    OnboardingPage: onboardingPage,
+    DashboardPage: dashboardPage,
+    LandingPage: landingPage,
+  },
+  components: {
+    Navbar: navbar,
+    Footer: footer,
   },
 };
 
