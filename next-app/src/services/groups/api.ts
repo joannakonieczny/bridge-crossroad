@@ -12,17 +12,15 @@ import {
 } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
-import { authAction } from "../action-lib";
+import { fullAuthAction, withinOwnGroupAction } from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createGroup } from "@/repositories/groups";
 import {
   sanitizeGroup,
   sanitizeGroupsFullInfoPopulated,
 } from "@/sanitizers/server-only/group-sanitize";
-import { requireGroupAccess } from "./simple-action";
-import { havingGroupId } from "@/schemas/model/group/group-schema";
 
-export const getJoinedGroupsInfo = authAction.action(
+export const getJoinedGroupsInfo = fullAuthAction.action(
   async ({ ctx: { userId } }) => {
     const userDataWithGroupsPopulated = await getUserWithGroupsData(userId);
     const res = userDataWithGroupsPopulated.groups.map(sanitizeGroup);
@@ -30,7 +28,7 @@ export const getJoinedGroupsInfo = authAction.action(
   }
 );
 
-export const createNewGroup = authAction
+export const createNewGroup = fullAuthAction
   .inputSchema(createGroupFormSchema)
   .action(async ({ parsedInput: createGroupData, ctx: { userId } }) => {
     return executeWithinTransaction(async (session) => {
@@ -57,10 +55,9 @@ export const createNewGroup = authAction
     });
   });
 
-export const getGroupData = authAction
-  .inputSchema(havingGroupId)
-  .action(async ({ parsedInput: { groupId }, ctx: { userId } }) => {
-    await requireGroupAccess({ groupId, userId });
+export const getGroupData = withinOwnGroupAction.action(
+  async ({ ctx: { groupId } }) => {
     const res = await getGroupOverview(groupId);
     return sanitizeGroupsFullInfoPopulated(res);
-  });
+  }
+);

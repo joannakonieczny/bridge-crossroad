@@ -3,8 +3,12 @@ import type { TKey } from "@/lib/typed-translations";
 import {
   createSafeActionClient,
   DEFAULT_SERVER_ERROR_MESSAGE,
+  returnValidationErrors,
 } from "next-safe-action";
 import { requireUserId } from "./auth/simple-action";
+import { requireUserOnboarding } from "./onboarding/simple-action";
+import { requireGroupAccess } from "./groups/simple-action";
+import { havingGroupId } from "@/schemas/model/group/group-schema";
 
 export const action = createSafeActionClient({
   async handleServerError(e, utils) {
@@ -33,3 +37,28 @@ export const authAction = action.use(async ({ next }) => {
   const userId = await requireUserId();
   return next({ ctx: { userId } });
 });
+
+export const fullAuthAction = authAction.use(async ({ next, ctx }) => {
+  await requireUserOnboarding(ctx.userId);
+  return next({ ctx: { ...(ctx ?? {}) } });
+});
+
+export const withinOwnGroupAction = fullAuthAction
+  .inputSchema(havingGroupId)
+  .use(async ({ next, ctx, clientInput }) => {
+    const parseResult = havingGroupId.safeParse(clientInput);
+
+    if (!parseResult.success) {
+      // rzuć validation error zamiast zwykłego Error
+      return returnValidationErrors(havingGroupId, {
+        groupId: {
+          _errors: ["common.validation.invalidGroupId"],
+        },
+      });
+    }
+
+    const { groupId } = parseResult.data;
+
+    await requireGroupAccess({ groupId, userId: ctx.userId });
+    return next({ ctx: { ...ctx, groupId } });
+  });
