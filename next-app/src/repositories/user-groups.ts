@@ -2,11 +2,11 @@
 
 import User from "@/models/user/user-model";
 import Group from "@/models/group/group-model";
-import type mongoose from "mongoose";
 
 import dbConnect from "@/util/connect-mongo";
 import { GroupTableName, type IGroupDTO } from "@/models/group/group-types";
 import { check, RepositoryError, executeWithinTransaction } from "./common";
+import type { WithSession } from "./common";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IUserDTO } from "@/models/user/user-types";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
@@ -21,9 +21,7 @@ export async function addUserToGroup({
   groupId,
   userId,
   session,
-}: UserAndGroupUpdate & {
-  session?: mongoose.ClientSession;
-}) {
+}: UserAndGroupUpdate & WithSession) {
   await dbConnect();
 
   return executeWithinTransaction(async (s) => {
@@ -51,21 +49,27 @@ export async function addUserToGroup({
   }, session);
 }
 
-export async function addAdminToGroup({ groupId, userId }: UserAndGroupUpdate) {
+export async function addAdminToGroup({
+  groupId,
+  userId,
+  session,
+}: UserAndGroupUpdate & WithSession) {
   await dbConnect();
 
-  const updatedGroup = await Group.findOneAndUpdate(
-    {
-      _id: groupId,
-      members: userId, // user must be a member to be promoted to admin
-    },
-    {
-      $addToSet: { admins: userId }, // add userId to admins if not already present
-    },
-    { new: true }
-  ).lean<IGroupDTO>();
+  return executeWithinTransaction(async (s) => {
+    const updatedGroup = await Group.findOneAndUpdate(
+      {
+        _id: groupId,
+        members: userId, // user must be a member to be promoted to admin
+      },
+      {
+        $addToSet: { admins: userId },
+      },
+      { new: true, session: s }
+    ).lean<IGroupDTO | null>();
 
-  return check(updatedGroup, "User must be a member to be promoted to admin");
+    return check(updatedGroup, "User must be a member to be promoted to admin");
+  }, session);
 }
 
 export async function getUserWithGroupsData(userId: UserIdType) {

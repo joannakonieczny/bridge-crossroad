@@ -188,8 +188,8 @@ const navbar = {
     profile: "Profil",
     settings: "Ustawienia",
     aboutPage: "O stronie",
-    darkMode: "Tryb ciemny"
-  }
+    darkMode: "Tryb ciemny",
+  },
 };
 
 const footer = {
@@ -421,19 +421,24 @@ const messages = {
         },
       },
     },
-  },
-  pages: {
-    Auth: {
-      LoginPage: loginPage,
-      RegisterPage: registerPage,
+    groups: {
+      create: {
+        nameExists: "Grupa o takiej nazwie już istnieje",
+      },
     },
-    OnboardingPage: onboardingPage,
-    DashboardPage: dashboardPage,
-    LandingPage: landingPage,
-  },
-  components: {
-    Navbar: navbar,
-    Footer: footer,
+    pages: {
+      Auth: {
+        LoginPage: loginPage,
+        RegisterPage: registerPage,
+      },
+      OnboardingPage: onboardingPage,
+      DashboardPage: dashboardPage,
+      LandingPage: landingPage,
+    },
+    components: {
+      Navbar: navbar,
+      Footer: footer,
+    },
   },
 };
 

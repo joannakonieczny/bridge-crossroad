@@ -74,3 +74,43 @@ export async function executeWithinTransaction<T>(
     await s.endSession();
   }
 }
+
+/**
+ * Chainable helper to handle Mongo duplicate key errors.
+ * Usage:
+ * onDuplicateKey(err)
+ *   .on('email', () => returnValidationErrors(schema, { email: { _errors: [...] } }))
+ *   .on('nickname', () => ...)
+ *   .handle();
+ */
+export function onDuplicateKey(error: unknown) {
+  const handlers = new Map<string, () => unknown>();
+
+  return {
+    on(field: string, fn: () => unknown) {
+      handlers.set(field, fn);
+      return this;
+    },
+    handle() {
+      if (
+        !(error instanceof Error) ||
+        !error.message.includes("duplicate key")
+      ) {
+        throw error;
+      }
+
+      for (const [field, fn] of handlers.entries()) {
+        if (error.message.includes(field)) {
+          return fn();
+        }
+      }
+
+      // If no handler matched, rethrow the original error
+      throw error;
+    },
+  };
+}
+
+export type WithSession = {
+  session?: mongoose.ClientSession;
+};

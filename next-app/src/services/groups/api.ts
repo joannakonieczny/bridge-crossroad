@@ -5,7 +5,12 @@ import {
   addUserToGroup,
   getUserWithGroupsData,
 } from "@/repositories/user-groups";
-import { executeWithinTransaction } from "@/repositories/common";
+import {
+  executeWithinTransaction,
+  onDuplicateKey,
+} from "@/repositories/common";
+import { returnValidationErrors } from "next-safe-action";
+import type { TKey } from "@/lib/typed-translations";
 import { authAction } from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createGroup } from "@/repositories/groups";
@@ -32,7 +37,16 @@ export const createNewGroup = authAction
       const group = await addAdminToGroup({
         groupId: groupCreated._id.toString(),
         userId,
+        session,
       });
       return sanitizeGroup(group);
+    }).catch((err) => {
+      onDuplicateKey(err)
+        .on("name", () =>
+          returnValidationErrors(createGroupFormSchema, {
+            name: { _errors: ["api.groups.create.nameExists" satisfies TKey] },
+          })
+        )
+        .handle();
     });
   });
