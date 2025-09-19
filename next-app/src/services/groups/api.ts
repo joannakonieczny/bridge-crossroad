@@ -20,7 +20,7 @@ import {
   sanitizeGroupsFullInfoPopulated,
 } from "@/sanitizers/server-only/group-sanitize";
 import { requireGroupAccess } from "./simple-action";
-import { idPropSchema } from "@/schemas/common";
+import { havingGroupId } from "@/schemas/model/group/group-schema";
 
 export const getJoinedGroupsInfo = authAction.action(
   async ({ ctx: { userId } }) => {
@@ -58,8 +58,8 @@ export const createNewGroup = authAction
   });
 
 export const getGroupData = authAction
-  .inputSchema(idPropSchema)
-  .action(async ({ parsedInput: groupId, ctx: { userId } }) => {
+  .inputSchema(havingGroupId)
+  .action(async ({ parsedInput: { groupId }, ctx: { userId } }) => {
     await requireGroupAccess({ groupId, userId });
     const res = await getGroupOverview(groupId);
     return sanitizeGroupsFullInfoPopulated(res);
