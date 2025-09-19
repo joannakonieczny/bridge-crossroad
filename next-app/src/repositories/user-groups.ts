@@ -72,7 +72,10 @@ export async function getUserWithGroupsData(userId: UserIdType) {
   await dbConnect();
   // populate groups so user.groups contains full group objects instead of ids
   const user = await User.findById(userId)
-    .populate<{ groups: IGroupDTO[] }>(GroupTableName)
+    .populate<{ groups: IGroupDTO[] }>({
+      path: "groups",
+      model: GroupTableName,
+    })
     .lean<IUserDTOWithPopulatedGroups>();
 
   const res = check(user, `User not found with id: ${userId} or querry failed`);
