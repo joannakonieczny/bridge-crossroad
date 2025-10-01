@@ -383,6 +383,33 @@ const onboardingPageValidation = {
   },
 };
 
+const usefulTools = {
+  title: "Przydatne narzędzia",
+  buttonText: "Zobacz więcej",
+  tools : {
+    bridgeBase : {
+      title: "Bridge Base Online",
+      description: "Najbardziej popularna platforma do gry w brydża umożliwiająca szeroki wachlarz ćwiczeń, wspólną grę ze znajomymi i branie udziału w turniejach online.",
+      link: "https://www.bridgebase.com/"
+    },
+    rpBridge : {
+      title: "RP Bridge",
+      description: "Niech nie zmyli Cię prosty wygląd. Ta strona zawiera naprawdę dużo narzędzi do ćwiczenia gry w brydża. Od profesjonalnych, aż po humorystyczne 🙂",
+      link: "http://www.rpbridge.net/"
+    },
+    simonsConventions: {
+      title: "Simon's Conventions",
+      description: "Rozbudowana baza konwencji licytacyjnych bez kompromisów",
+      link: "https://www.acblunit390.org/Simon/alpha.htm"
+    }, 
+    cuebids: {
+      title: "Cuebids",
+      description: "Nowoczesna aplikacja do ćwiczenia licytacji i porównywania się z botami o różnych stopniach zaawansowania",
+      link: "https://cuebids.com/login"
+    }, 
+  }
+}
+
 const messages = {
   common: {
     date: {
@@ -466,6 +493,7 @@ const messages = {
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,
     LandingPage: landingPage,
+    UsefulTools: usefulTools,
   },
   components: {
     Navbar: navbar,
