@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { GroupValidationConstants } from "./group-const";
 import type { TKey } from "@/lib/typed-translations";
+import { idPropSchema } from "@/schemas/common";
 
 const { name, description, invitationCode, imageUrl } =
   GroupValidationConstants;
@@ -34,3 +35,12 @@ export const imageUrlSchema = z
   .string()
   .max(imageUrl.max, "validation.model.group.imageUrl.max" satisfies TKey)
   .url("validation.model.group.imageUrl.url" satisfies TKey);
+
+// additional
+export const havingGroupId = z.object({
+  groupId: idPropSchema,
+});
+
+export const havingInvitationCode = z.object({
+  invitationCode: invitationCodeSchema,
+});

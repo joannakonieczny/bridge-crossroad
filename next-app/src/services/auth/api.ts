@@ -7,7 +7,7 @@ import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { returnValidationErrors } from "next-safe-action";
 import { isProbablyEmail } from "@/schemas/common";
-import { onRepoError } from "@/repositories/common";
+import { onRepoError, onDuplicateKey } from "@/repositories/common";
 import type { TKey } from "@/lib/typed-translations";
 
 export const login = action
@@ -40,26 +40,22 @@ export const register = action
       const user = await createNewUser(formData);
       await createSession(user._id.toString());
     } catch (error) {
-      if (error instanceof Error && error.message.includes("duplicate key")) {
-        if (error.message.includes("email")) {
-          // email duplicated
+      onDuplicateKey(error)
+        .on("email", () =>
           returnValidationErrors(registerFormSchema, {
             email: {
               _errors: ["api.auth.register.emailExists" satisfies TKey],
             },
-          });
-        } else if (error.message.includes("nickname")) {
-          // nickname duplicated
+          })
+        )
+        .on("nickname", () =>
           returnValidationErrors(registerFormSchema, {
             nickname: {
               _errors: ["api.auth.register.nicknameExists" satisfies TKey],
             },
-          });
-        }
-      } else {
-        // rethrow
-        throw error;
-      }
+          })
+        )
+        .handle();
     }
   });
 

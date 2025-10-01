@@ -188,8 +188,8 @@ const navbar = {
     profile: "Profil",
     settings: "Ustawienia",
     aboutPage: "O stronie",
-    darkMode: "Tryb ciemny"
-  }
+    darkMode: "Tryb ciemny",
+  },
 };
 
 const footer = {
@@ -419,6 +419,15 @@ const messages = {
         inviteCode: {
           invalid: "Nieprawidłowy kod zaproszenia do Just Bridge AGH",
         },
+      },
+    },
+    groups: {
+      create: {
+        nameExists: "Grupa o takiej nazwie już istnieje",
+      },
+      join: {
+        alreadyMember: "Jesteś już członkiem tej grupy",
+        invalidInvitationCode: "Nieprawidłowy kod zaproszenia",
       },
     },
   },
