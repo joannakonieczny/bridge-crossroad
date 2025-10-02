@@ -2,6 +2,7 @@
 
 import { Schema } from "mongoose";
 import type { IUserId } from "../user/user-types";
+import type { EventId } from "../event/event-types";
 import type { Timestamps } from "../utils";
 
 export const GroupTableName = "Group";
@@ -15,6 +16,7 @@ export type IGroupDTO = {
   description?: string;
   admins: IUserId[];
   members: IUserId[];
+  events: (typeof EventId)[];
   imageUrl?: string;
   invitationCode: string;
   isMain?: boolean;

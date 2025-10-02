@@ -5,6 +5,7 @@ import { UserId, UserTableName } from "../user/user-types";
 import { GroupValidationConstants as c } from "@/schemas/model/group/group-const";
 import type { IUserId } from "../user/user-types";
 import { GroupTableName, type IGroupDTO } from "./group-types";
+import { EventTableName } from "../event/event-types";
 
 const Group = new Schema<IGroupDTO>(
   {
@@ -37,6 +38,11 @@ const Group = new Schema<IGroupDTO>(
     },
     members: {
       type: [{ type: UserId, ref: UserTableName }],
+      default: [],
+      required: true,
+    },
+    events: {
+      type: [{ type: Schema.Types.ObjectId, ref: EventTableName }],
       default: [],
       required: true,
     },
