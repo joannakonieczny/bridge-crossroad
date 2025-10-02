@@ -3,7 +3,6 @@
 import mongoose, { Schema } from "mongoose";
 import { UserId, UserTableName } from "../user/user-types";
 import { GroupValidationConstants as c } from "@/schemas/model/group/group-const";
-import type { IUserId } from "../user/user-types";
 import { GroupTableName, type IGroupDTO } from "./group-types";
 import { EventTableName } from "../event/event-types";
 
@@ -28,7 +27,7 @@ const Group = new Schema<IGroupDTO>(
       required: true,
       validate: {
         // only members can be admins
-        validator: function (admins: IUserId[]) {
+        validator: function (admins: (typeof UserId)[]) {
           if (!Array.isArray(admins)) return false;
           const memberIds = (this.members || []).map((m) => m?.toString());
           return admins.every((a) => memberIds.includes(a?.toString()));

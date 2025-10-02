@@ -8,10 +8,9 @@ import type { GroupId } from "../group/group-types";
 export const EventTableName = "Event";
 
 export const EventId = Schema.Types.ObjectId;
-export type IEventId = typeof EventId;
 
 export type IEventDTO = {
-  _id: IEventId;
+  _id: typeof EventId;
   title: string;
   description?: string;
   startsAt: Date;
