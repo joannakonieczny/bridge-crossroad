@@ -13,6 +13,11 @@ const Event = new Schema<IEventDTO>(
     organizer: { type: UserId, ref: UserTableName, required: true },
     attendees: { type: [{ type: UserId, ref: UserTableName }], default: [] },
     group: { type: GroupId, ref: GroupTableName, required: true, index: true },
+    duration: {
+      startsAt: { type: Date, required: true },
+      endsAt: { type: Date, required: true },
+    },
+    additionalDescription: { type: String, required: false },
     imageUrl: { type: String, required: false },
   },
   { timestamps: true }

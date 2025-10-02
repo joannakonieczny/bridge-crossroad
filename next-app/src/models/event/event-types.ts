@@ -13,8 +13,11 @@ export type IEventDTO = {
   _id: typeof EventId;
   title: string;
   description?: string;
-  startsAt: Date;
-  endsAt?: Date;
+  duration: {
+    startsAt: Date;
+    endsAt: Date;
+  };
+  additionalDescription?: string;
   location?: string;
   organizer: typeof UserId;
   attendees: (typeof UserId)[];
