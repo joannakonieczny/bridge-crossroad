@@ -2,6 +2,7 @@ import { TrainingGroup } from "@/club-preset/training-group";
 import { Academy } from "@/club-preset/academy";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
+import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -306,6 +307,31 @@ const groupModelValidation = {
   },
 };
 
+const eventModelValidation = {
+  title: {
+    required: "Podaj tytuł wydarzenia",
+    min: `Min. ${EVENT.title.min} znaki`,
+    max: `Max. ${EVENT.title.max} znaków`,
+    regex: "Tytuł zawiera niedozwolone znaki",
+  },
+  description: {
+    max: `Opis nie może być dłuższy niż ${EVENT.description.max} znaków`,
+  },
+  location: {
+    max: `Lokalizacja nie może być dłuższa niż ${EVENT.location.max} znaków`,
+  },
+  imageUrl: {
+    max: `URL obrazka nie może być dłuższy niż ${EVENT.imageUrl.max} znaków`,
+    url: "Podaj poprawny adres URL",
+  },
+  duration: {
+    invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
+  },
+  data: {
+    invalid: "Nieprawidłowe dane specyficzne dla typu wydarzenia",
+  },
+};
+
 const loginPageValidation = {
   nicknameOrEmail: {
     required: "Podaj nick lub email",
@@ -395,6 +421,7 @@ const messages = {
     model: {
       user: userModelValidation,
       group: groupModelValidation,
+      event: eventModelValidation,
     },
     pages: {
       auth: {

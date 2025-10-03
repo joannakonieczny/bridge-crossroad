@@ -9,10 +9,12 @@ import type { IGroupDTO } from "@/models/group/group-types";
 import type { WithSession } from "./common";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { IEventDTO } from "@/models/event/event-types";
+import type { AddModifyEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import type { EventIdType } from "@/schemas/model/event/event-types";
 
 type AddEventInput = {
   groupId: GroupIdType;
-  event: Partial<IEventDTO>; //TODO: use type from schemas
+  event: AddModifyEventSchemaType;
 };
 
 export async function addEvent({
@@ -45,7 +47,7 @@ export async function addEvent({
 
 type RemoveEventInput = {
   groupId: GroupIdType;
-  eventId: string; //TODO: use type from schemas
+  eventId: EventIdType;
 };
 
 export async function removeEvent({
@@ -93,8 +95,8 @@ export async function removeEvent({
 
 type UpdateEventInput = {
   groupId: GroupIdType;
-  eventId: string; //TODO: use type from schemas
-  changes: Partial<IEventDTO>; //TODO: use type from schemas
+  eventId: EventIdType;
+  changes: Partial<AddModifyEventSchemaType>;
 };
 
 export async function updateEvent({
@@ -116,20 +118,11 @@ export async function updateEvent({
       throw new RepositoryError("Event does not belong to the provided group");
     }
 
-    // Prevent changing immutable or ownership fields, change when schema comes
-    const updatable = (() => {
-      const copy = JSON.parse(JSON.stringify(changes || {}));
-      delete copy._id;
-      delete copy.group;
-      delete copy.attendees;
-      return copy as Partial<IEventDTO>; //TODO: use type from schemas
-    })();
-
     const updated = check(
       await Event.findByIdAndUpdate(
         eventId,
-        { $set: updatable },
-        { new: true, session: s }
+        { $set: changes },
+        { new: true, session: s, runValidators: true }
       ).lean<IEventDTO>(),
       `Failed to update event with id: ${eventId}`
     );
