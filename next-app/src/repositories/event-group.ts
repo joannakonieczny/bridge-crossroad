@@ -4,7 +4,7 @@ import Event from "@/models/event/event-model";
 import Group from "@/models/group/group-model";
 
 import dbConnect from "@/util/connect-mongo";
-import { RepositoryError, executeWithinTransaction, check } from "./common";
+import { executeWithinTransaction, check, checkTrue } from "./common";
 import type { IGroupDTO } from "@/models/group/group-types";
 import type { WithSession } from "./common";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
@@ -64,10 +64,10 @@ export async function removeEvent({
       `Event not found with id: ${eventId}`
     );
 
-    // verify ownership
-    if (existingEvent.group.toString() !== groupId) {
-      throw new RepositoryError("Event does not belong to the provided group");
-    }
+    checkTrue(
+      existingEvent.group.toString() === groupId,
+      "Event does not belong to the provided group"
+    );
 
     // delete event
     const deletedEvent = check(
@@ -114,9 +114,10 @@ export async function updateEvent({
       `Event not found with id: ${eventId}`
     );
 
-    if (existingEvent.group.toString() !== groupId) {
-      throw new RepositoryError("Event does not belong to the provided group");
-    }
+    checkTrue(
+      existingEvent.group.toString() === groupId,
+      "Event does not belong to the provided group"
+    );
 
     const updated = check(
       await Event.findByIdAndUpdate(
@@ -157,11 +158,10 @@ export async function addAttendeeToEvent({
       `Group not found for event with id: ${eventId}`
     );
 
-    if (!group.members.map((m) => m?.toString()).includes(userId.toString())) {
-      throw new RepositoryError(
-        "User must be a member of the group to attend the event"
-      );
-    }
+    checkTrue(
+      group.members.map((m) => m?.toString()).includes(userId.toString()),
+      "User must be a member of the group to attend the event"
+    );
 
     const updatedEvent = check(
       await Event.findByIdAndUpdate(
@@ -188,12 +188,12 @@ export async function removeAttendeeFromEvent({
   );
 
   // ensure user is currently an attendee
-  const isAttendee = existingEvent.attendees
-    .map((a) => a?.toString())
-    .includes(userId.toString());
-  if (!isAttendee) {
-    throw new RepositoryError("User is not an attendee of this event");
-  }
+  checkTrue(
+    existingEvent.attendees
+      .map((a) => a?.toString())
+      .includes(userId.toString()),
+    "User is not an attendee of this event"
+  );
 
   const updatedEvent = check(
     await Event.findByIdAndUpdate(
