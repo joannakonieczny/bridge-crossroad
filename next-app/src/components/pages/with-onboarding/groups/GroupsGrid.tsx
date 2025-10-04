@@ -2,7 +2,7 @@
 
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import {
-  SimpleGrid,
+  Grid,
   Card,
   CardFooter,
   Image,
@@ -12,32 +12,75 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Skeleton,
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { getJoinedGroupsInfo } from "@/services/groups/api";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 
-const groups = [
-  {
-    id: 1,
-    name: "test group test grouptest grouptest grouptest grouptest grouptest grouptest grouptest group",
-    img: "https://occ-0-8407-116.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABcoYPuBqXkTl88_2Bq9qiYs2iTcQhagYIIAPAEevDP93tXqCnbXslyTy0YpOlu9r64DFdeN4_kCeqpX1bMgCsXzcgqrxU37ClodX.jpg?r=ce7"
-  },
-  // dodaj resztę grup
-];
+
 
 export default function GroupsGrid() {
+
+  const q = useActionQuery({
+    queryKey: ["groups"],
+    action: () => getJoinedGroupsInfo(), 
+    onError: (error) => {
+        if (error.serverError) {
+        console.error("Server error:", error.serverError);
+        }
+        if (error.validationErrors) {
+        console.warn("Validation errors:", error.validationErrors);
+        }
+        if (error.generalError) {
+        console.error("General error:", "something went wrong");
+        }
+    },
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (q.data) {
+      console.log(q.data);
+    }   
+  }, [q.data]);
   const router = useRouter();
+
+  const groupsToRender = q.data ?? [];
+  const itemsToShow = groupsToRender;
 
   const goToGroup = (id: number) => {
     router.push(`/groups/${id}`);
   };
 
   return (
-    <SimpleGrid minChildWidth="200px" spacing={6} p={6}>
-      {groups.map((group) => (
+  <Grid templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6} p={6}>
+      {q.isLoading ? (
+        [1, 2, 3, 4].map((i) => (
+          <Card
+            key={`skeleton-${i}`}
+            w="100%"
+            h="20rem"
+            border="none"
+            borderRadius="lg"
+            overflow="hidden"
+            shadow="sm"
+          >
+            <Box w="100%" h="13rem" overflow="hidden" position="relative">
+              <Skeleton h="100%" />
+            </Box>
+            <CardFooter>
+              <Skeleton height="20px" width="70%" />
+            </CardFooter>
+          </Card>
+        ))
+      ) : itemsToShow.length > 0 ? (
+        itemsToShow.map((group: any, idx: number) => (
         <Card
-          key={group.id}
-          w="20rem"
+          key={`${group.id}-${idx}`}
+          w="100%"
           h="20rem"
           border="none"
           borderRadius="lg"
@@ -52,14 +95,13 @@ export default function GroupsGrid() {
           }}
           position="relative"
         >
-          <Box w="20rem" h="13rem" overflow="hidden" position="relative">
+          <Box w="100%" h="13rem" overflow="hidden" position="relative">
             <Image
-              src={group.img}
+              src={group.imageUrl ?? 'https://blocks.astratic.com/img/general-img-portrait.png'}
+              w="100%"
               h="100%"
               objectFit="cover"
-              position="absolute"
-              top={0}
-              left={0}
+              alt={group.name ?? 'group image'}
             />
           </Box>
           <CardFooter>
@@ -84,7 +126,10 @@ export default function GroupsGrid() {
             </Menu>
           </Box>
         </Card>
-      ))}
-    </SimpleGrid>
+        ))
+      ) : (
+        <Box p={6}>Brak grup do wyświetlenia.</Box>
+      )}
+    </Grid>
   );
 }
