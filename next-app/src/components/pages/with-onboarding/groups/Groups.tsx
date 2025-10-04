@@ -4,22 +4,24 @@ import { Box, Flex, Stack, Button, Input } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
 import AddGroupModal from "./AddGroupModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import { getGroupData, getJoinedGroupsInfo } from "@/services/groups/api";
 
 export default function Groups() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <Flex
-      minHeight="100vh"
-      width="100%"
-      py={{ base: "2rem" }}
-      px={{ base: "2rem" }}
-      gap={{ base: "2rem" }}
-      backgroundColor="border.50"
-      direction="column"
-    >
-      <Box flex="1" width="100%">
+  <Box
+    width="100%"
+    py={{ base: "2rem" }}
+    px={{ base: "2rem" }}
+    gap={{ base: "2rem" }}
+    display="flex"
+    flexDirection="column"
+    overflowY="visible"
+  >
+  <Box width="100%">
         {/* Górny pasek */}
         <Stack
           direction={{ base: "column", md: "row" }}
@@ -58,7 +60,7 @@ export default function Groups() {
             colorScheme="accent"
             variant="outline"
             w={{ base: "100%", md: "auto" }}
-            onClick={() => setIsModalOpen(true)} // <- otwieranie modala
+            onClick={() => setIsModalOpen(true)}
           >
             Stwórz grupę
           </Button>
@@ -71,8 +73,8 @@ export default function Groups() {
       {/* Modal grupy */}
       <AddGroupModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} // <- zamykanie na X i Anuluj
+        onClose={() => setIsModalOpen(false)} 
       />
-    </Flex>
+    </Box>
   );
 }

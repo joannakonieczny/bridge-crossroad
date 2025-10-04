@@ -10,12 +10,11 @@ export default function GroupView(props: IGroupViewProps) {
 
 
     return (
-        // <PeopleList />
         <Flex
             direction="column"
             backgroundColor="border.50"
             width="100%"
-            minHeight="calc(100vh - 6rem)"
+            minHeight="calc(100vh - 5rem)"
             paddingY="2rem"
             paddingX="3rem"
             gap="3rem"
