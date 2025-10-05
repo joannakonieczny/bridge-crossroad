@@ -1,27 +1,22 @@
-"use-cliet";
+"use client";
 
 import { Box, Flex, VStack, Text, HStack, Button, Spacer, AbsoluteCenter, Link } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
-import { TbSquareLetterBFilled, TbFlagQuestion } from "react-icons/tb";
 import { FaGreaterThan } from "react-icons/fa";
-import { GrDatabase } from "react-icons/gr";
-import { GiSuits } from "react-icons/gi";
 import { useTranslations } from "@/lib/typed-translations";
+import tools from './tools';
+import type { IAppMessagesForLanguage } from '../../../../../messages/pl';
 
-const toolNames = {
-    "bridgeBase": TbSquareLetterBFilled,
-    "rpBridge": TbFlagQuestion,
-    "simonsConventions": GrDatabase,
-    "cuebids": GiSuits
-}
+type ToolKey = keyof IAppMessagesForLanguage['pages']['UsefulTools']['tools'];
 
 export default function UsefulTools() {
     const t = useTranslations("pages.UsefulTools")
 
     return (
     <Flex bg="border.50" 
-          align="center" 
-          justify="center">
+          justify="center"
+          w="full"
+          h="full">
         <VStack spacing="2rem">
             <Box h="4rem"
              w="100rem"
@@ -36,29 +31,30 @@ export default function UsefulTools() {
                 />
             </Box>
             <VStack spacing="2rem">
-                {Object.entries(toolNames).map(([Tool, Icon], i) => (
+                {Object.entries(tools).map(([Tool, {icon: ToolIcon, link: ToolLink}], i) => (
                     <Box h="13rem" w="100rem" bg="white" key={i} >
                         <HStack spacing={0} h="full" w="full">
                             <Box h="full" w="1rem" bg={ i%2 == 0 ? "accent.100" : "secondary.100"} alignSelf="start"/>
                             <Box h="full" w="13rem" bg={ i%2 == 0 ? "border.500" : "secondary.500"} alignSelf="start" position="relative">
                                 <AbsoluteCenter>
-                                    <Icon color="white" fontSize="8rem"/>
+                                    <ToolIcon color="white" fontSize="8rem"/>
                                 </AbsoluteCenter>
                             </Box>
                             <Box px={"2rem"} flex="1">
                                 <VStack align="start">
                                     <ResponsiveHeading
                                         fontSize="xl"
-                                        text={t(`tools.${Tool}.title`)} 
+                                        text={t(`tools.${Tool as ToolKey}.title`)} 
                                         showBar={false}
                                     />
                                     <Box h="2px" w="50rem" bg="accent.200" />
-                                    <Text> {t(`tools.${Tool}.description`)} </Text>
+                                    <Text> {t(`tools.${Tool as ToolKey}.description`)} </Text>
                                 </VStack>
                             </Box>
                             <Spacer/>
                             <Box alignSelf="end" px={"1rem"} py={"1rem"}>
-                                <Link href={t(`tools.${Tool}.link`)} isExternal> 
+                                <Link 
+                                    href={ToolLink} isExternal> 
                                     <Button 
                                         color="accent.500" 
                                         fontSize="sm" 
