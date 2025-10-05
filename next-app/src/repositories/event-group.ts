@@ -2,16 +2,18 @@
 
 import Event from "@/models/event/event-model";
 import Group from "@/models/group/group-model";
-import type { FilterQuery } from "mongoose";
-
+import User from "@/models/user/user-model";
 import dbConnect from "@/util/connect-mongo";
 import { executeWithinTransaction, check, checkTrue } from "./common";
+import type { IUserDTO } from "@/models/user/user-types";
+import type { FilterQuery } from "mongoose";
 import type { IGroupDTO } from "@/models/group/group-types";
 import type { WithSession } from "./common";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { IEventDTO } from "@/models/event/event-types";
 import type { AddModifyEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
+import type { UserIdType } from "@/schemas/model/user/user-types";
 
 type AddEventInput = {
   groupId: GroupIdType;
@@ -134,8 +136,8 @@ export async function updateEvent({
 }
 
 type AddAttendeeInput = {
-  eventId: string;
-  userId: string;
+  eventId: EventIdType;
+  userId: UserIdType;
 };
 
 export async function addAttendeeToEvent({
@@ -208,12 +210,14 @@ export async function removeAttendeeFromEvent({
   return { event: updatedEvent };
 }
 
+type TimeWindow = {
+  start?: Date;
+  end?: Date;
+};
+
 type ListEventsInput = {
   groupId: GroupIdType;
-  timeWindow?: {
-    start?: Date;
-    end?: Date;
-  };
+  timeWindow?: TimeWindow;
 };
 
 export async function listEventsInGroup({
@@ -247,4 +251,52 @@ export async function listEventsInGroup({
     .lean<IEventDTO[]>();
 
   return check(res, `Failed to list events for group ${groupId}`);
+}
+
+export async function listEventsForUserGroups(
+  userId: string,
+  timeWindow?: TimeWindow
+) {
+  await dbConnect();
+
+  // find user and extract group ids
+  const user = check(
+    await User.findById(userId).lean<IUserDTO | null>(),
+    `User not found with id: ${userId}`
+  );
+
+  const groupIds = (user.groups || []).map((g) => g?.toString());
+
+  // if user has no groups, return empty array early
+  if (groupIds.length === 0) {
+    return {
+      events: [] as IEventDTO[],
+      groupIds,
+    };
+  }
+
+  // Build date filter for overlapping intervals
+  const dateConditions: FilterQuery<IEventDTO>[] = [];
+  const start = timeWindow?.start;
+  const end = timeWindow?.end;
+
+  if (start)
+    dateConditions.push({ "duration.endsAt": { $gte: new Date(start) } });
+  if (end)
+    dateConditions.push({ "duration.startsAt": { $lte: new Date(end) } });
+
+  const query: FilterQuery<IEventDTO> = { group: { $in: groupIds } };
+  if (dateConditions.length > 0) query.$and = dateConditions;
+
+  const events = check(
+    await Event.find(query)
+      .sort({ "duration.startsAt": 1 })
+      .lean<IEventDTO[]>(),
+    `Failed to list events for user's groups: ${userId}`
+  );
+
+  return {
+    events,
+    groupIds,
+  };
 }

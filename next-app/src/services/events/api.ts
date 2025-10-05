@@ -21,6 +21,8 @@ import {
   removeAttendeeFromEvent,
 } from "@/repositories/event-group";
 import { z } from "zod";
+import { fullAuthAction } from "../action-lib";
+import { listEventsForUserGroups } from "@/repositories/event-group";
 
 export const createEvent = withinOwnGroupAsAdminAction
   .inputSchema(addModifyEventSchema)
@@ -59,9 +61,19 @@ export const removeAttendee = withinOwnGroupAction
     return sanitizeEvent(res.event);
   });
 
-export const listEvents = withinOwnGroupAction
+export const listEventsForGroup = withinOwnGroupAction
   .inputSchema(z.object({ timeWindow: timeWindowSchema }))
   .action(async ({ parsedInput: { timeWindow }, ctx: { groupId } }) => {
     const res = await listEventsInGroup({ groupId, timeWindow });
     return res.map((e) => sanitizeEvent(e));
+  });
+
+export const listEventsForUser = fullAuthAction
+  .inputSchema(z.object({ timeWindow: timeWindowSchema }))
+  .action(async ({ parsedInput: { timeWindow }, ctx: { userId } }) => {
+    const res = await listEventsForUserGroups(userId, timeWindow);
+    return {
+      events: res.events.map((e) => sanitizeEvent(e)),
+      groupIds: res.groupIds.map((id) => id.toString()),
+    };
   });
