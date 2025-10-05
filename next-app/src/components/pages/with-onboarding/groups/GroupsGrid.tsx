@@ -22,33 +22,15 @@ import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 
 
 
-export default function GroupsGrid() {
+type Props = {
+  groups?: any[];
+  isLoading?: boolean;
+};
 
-  const q = useActionQuery({
-    queryKey: ["groups"],
-    action: () => getJoinedGroupsInfo(), 
-    onError: (error) => {
-        if (error.serverError) {
-        console.error("Server error:", error.serverError);
-        }
-        if (error.validationErrors) {
-        console.warn("Validation errors:", error.validationErrors);
-        }
-        if (error.generalError) {
-        console.error("General error:", "something went wrong");
-        }
-    },
-    retry: false,
-  });
-
-  useEffect(() => {
-    if (q.data) {
-      console.log(q.data);
-    }   
-  }, [q.data]);
+export default function GroupsGrid({ groups, isLoading }: Props) {
   const router = useRouter();
 
-  const groupsToRender = q.data ?? [];
+  const groupsToRender = groups ?? [];
   const itemsToShow = groupsToRender;
 
   const goToGroup = (id: number) => {
@@ -57,7 +39,7 @@ export default function GroupsGrid() {
 
   return (
   <Grid templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6} p={6}>
-      {q.isLoading ? (
+      {isLoading ? (
         [1, 2, 3, 4].map((i) => (
           <Card
             key={`skeleton-${i}`}
