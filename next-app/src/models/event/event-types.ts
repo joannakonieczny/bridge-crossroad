@@ -4,12 +4,11 @@ import { Schema } from "mongoose";
 import type { Timestamps } from "../utils";
 import type { UserId } from "../user/user-types";
 import type { GroupId } from "../group/group-types";
+import type { EventType, TournamentType, Half } from "@/club-preset/event-type";
 
 export const EventTableName = "Event";
 
 export const EventId = Schema.Types.ObjectId;
-
-type TournamentType = "MAX" | "IMPS" | "CRAZY" | "TEAM" | "INDIVIDUAL" | "BAMY";
 
 type PlayingPair = {
   first: typeof UserId;
@@ -17,7 +16,7 @@ type PlayingPair = {
 };
 
 type TournamentData = {
-  type: "TOURNAMENT";
+  type: EventType.TOURNAMENT;
   contestantsPairs: Array<PlayingPair>;
   arbiter: typeof UserId;
   tournamentType?: TournamentType;
@@ -28,12 +27,12 @@ type TournamentData = {
 };
 
 type LeagueTournamentData = {
-  type: "LEAGUE_MEETING";
+  type: EventType.LEAGUE_MEETING;
   tournamentType?: TournamentType;
   session: Array<{
     _id?: typeof EventId;
     matchNumber: number;
-    half: "FIRST" | "SECOND";
+    half: Half;
     contestants: {
       firstPair: PlayingPair;
       secondPair: PlayingPair;
@@ -43,13 +42,13 @@ type LeagueTournamentData = {
 };
 
 type TrainingData = {
-  type: "TRAINING";
+  type: EventType.TRAINING;
   coach: typeof UserId;
   topic: string;
 };
 
 type OtherEventData = {
-  type: "OTHER";
+  type: EventType.OTHER;
 };
 
 export type IEventDTO = {

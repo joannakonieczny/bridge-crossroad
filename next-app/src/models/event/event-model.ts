@@ -60,7 +60,7 @@ const LeagueMeetingDataSchema = baseEventDataSchema.discriminator(
     tournamentType: {
       type: String,
       required: false,
-      enum: ["MAX", "IMPS", "CRAZY", "TEAM", "INDIVIDUAL", "BAMY"],
+      enum: Object.values(TournamentType),
     },
     session: {
       type: [
