@@ -2,6 +2,7 @@ import { z } from "zod";
 import { EventValidationConstants } from "./event-const";
 import type { TKey } from "@/lib/typed-translations";
 import { idPropSchema } from "@/schemas/common";
+import { EventType, Half } from "@/club-preset/event-type";
 
 const { title, description, location, imageUrl } = EventValidationConstants;
 
@@ -39,7 +40,7 @@ export const durationSchema = z
 
 // Data discriminators
 export const tournamentDataSchema = z.object({
-  type: z.literal("TOURNAMENT"),
+  type: z.literal(EventType.TOURNAMENT),
   contestantsPairs: z
     .array(
       z.object({
@@ -56,14 +57,14 @@ export const tournamentDataSchema = z.object({
 });
 
 export const leagueMeetingDataSchema = z.object({
-  type: z.literal("LEAGUE_MEETING"),
+  type: z.literal(EventType.LEAGUE_MEETING),
   tournamentType: z.string().optional(),
   session: z
     .array(
       z.object({
         _id: idPropSchema.optional(),
         matchNumber: z.number().int(),
-        half: z.enum(["FIRST", "SECOND"]),
+        half: z.nativeEnum(Half),
         contestants: z.object({
           firstPair: z.object({ first: idPropSchema, second: idPropSchema }),
           secondPair: z.object({ first: idPropSchema, second: idPropSchema }),
@@ -75,12 +76,12 @@ export const leagueMeetingDataSchema = z.object({
 });
 
 export const trainingDataSchema = z.object({
-  type: z.literal("TRAINING"),
+  type: z.literal(EventType.TRAINING),
   coach: idPropSchema,
   topic: z.string().nonempty(),
 });
 
-export const otherDataSchema = z.object({ type: z.literal("OTHER") });
+export const otherDataSchema = z.object({ type: z.literal(EventType.OTHER) });
 
 export const dataSchema = z.discriminatedUnion("type", [
   tournamentDataSchema,

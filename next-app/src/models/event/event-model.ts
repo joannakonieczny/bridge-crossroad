@@ -5,6 +5,7 @@ import mongoose, { Schema } from "mongoose";
 import { UserId, UserTableName } from "../user/user-types";
 import { GroupId, GroupTableName } from "../group/group-types";
 import { EventTableName, type IEventDTO } from "./event-types";
+import { EventType, TournamentType, Half } from "@/club-preset/event-type";
 
 // Base sub-schema for event data with discriminator
 const baseEventDataSchema = new Schema(
@@ -12,7 +13,7 @@ const baseEventDataSchema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: ["TOURNAMENT", "LEAGUE_MEETING", "TRAINING", "OTHER"],
+      enum: Object.values(EventType),
     },
   },
   { discriminatorKey: "type", _id: false }
@@ -20,7 +21,7 @@ const baseEventDataSchema = new Schema(
 
 // Tournament discriminator
 const TournamentDataSchema = baseEventDataSchema.discriminator(
-  "TOURNAMENT",
+  EventType.TOURNAMENT,
   new Schema({
     contestantsPairs: {
       type: [
@@ -35,7 +36,7 @@ const TournamentDataSchema = baseEventDataSchema.discriminator(
     tournamentType: {
       type: String,
       required: false,
-      enum: ["MAX", "IMPS", "CRAZY", "TEAM", "INDIVIDUAL", "BAMY"],
+      enum: Object.values(TournamentType),
     },
     teams: {
       type: [
@@ -54,7 +55,7 @@ const TournamentDataSchema = baseEventDataSchema.discriminator(
 
 // League Meeting discriminator
 const LeagueMeetingDataSchema = baseEventDataSchema.discriminator(
-  "LEAGUE_MEETING",
+  EventType.LEAGUE_MEETING,
   new Schema({
     tournamentType: {
       type: String,
@@ -66,7 +67,7 @@ const LeagueMeetingDataSchema = baseEventDataSchema.discriminator(
         {
           _id: { type: Schema.Types.ObjectId, required: false },
           matchNumber: { type: Number, required: true },
-          half: { type: String, enum: ["FIRST", "SECOND"], required: true },
+          half: { type: String, enum: Object.values(Half), required: true },
           contestants: {
             firstPair: {
               first: { type: UserId, ref: UserTableName, required: true },
@@ -87,7 +88,7 @@ const LeagueMeetingDataSchema = baseEventDataSchema.discriminator(
 
 // Training discriminator
 const TrainingDataSchema = baseEventDataSchema.discriminator(
-  "TRAINING",
+  EventType.TRAINING,
   new Schema({
     coach: { type: UserId, ref: UserTableName, required: true },
     topic: { type: String, required: true },
@@ -96,7 +97,7 @@ const TrainingDataSchema = baseEventDataSchema.discriminator(
 
 // Other discriminator
 const OtherDataSchema = baseEventDataSchema.discriminator(
-  "OTHER",
+  EventType.OTHER,
   new Schema({})
 );
 
