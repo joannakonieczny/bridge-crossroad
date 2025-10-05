@@ -7,7 +7,7 @@ import {
 } from "next-safe-action";
 import { requireUserId } from "./auth/simple-action";
 import { requireUserOnboarding } from "./onboarding/simple-action";
-import { requireGroupAccess } from "./groups/simple-action";
+import { requireGroupAccess, requireGroupAdmin } from "./groups/simple-action";
 import { havingGroupId } from "@/schemas/model/group/group-schema";
 
 export const action = createSafeActionClient({
@@ -62,3 +62,10 @@ export const withinOwnGroupAction = fullAuthAction
     await requireGroupAccess({ groupId, userId: ctx.userId });
     return next({ ctx: { ...ctx, groupId } });
   });
+
+export const withinOwnGroupAsAdminAction = withinOwnGroupAction.use(
+  async ({ next, ctx }) => {
+    await requireGroupAdmin({ groupId: ctx.groupId, userId: ctx.userId });
+    return next({ ctx });
+  }
+);
