@@ -1,15 +1,49 @@
 "use client";
 
-import { Box, Flex, Stack, Button, Input } from "@chakra-ui/react";
+import { Box, Flex, Stack, Button, Input, useToast } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
 import AddGroupModal from "./AddGroupModal";
 import { useEffect, useState } from "react";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { getGroupData, getJoinedGroupsInfo } from "@/services/groups/api";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import { getGroupData, getJoinedGroupsInfo, addUserToGroupByInvitationCode } from "@/services/groups/api";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import { useTranslationsWithFallback } from "@/lib/typed-translations";
 
 export default function Groups() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [invitationCode, setInvitationCode] = useState("");
+  const toast = useToast();
+  const tValidation = useTranslationsWithFallback();
+
+  const groupsQ = useActionQuery({
+    queryKey: ["groups"],
+    action: () => getJoinedGroupsInfo(),
+    retry: false,
+  });
+  const joinMutation = useActionMutation({
+    action: async (data: { invitationCode: string }) => {
+      return await addUserToGroupByInvitationCode(data);
+    },
+    onSuccess: async () => {
+      // reload groups so newly joined group appears
+      try {
+        await groupsQ.refetch();
+      } catch (e) {
+        // ignore
+      }
+      // show toast with success
+      toast({ title: "Dołączono do grupy", status: "success" });
+      setInvitationCode("");
+    },
+    onError: (err) => {
+      const errKey = getMessageKeyFromError(err);
+      const msg = tValidation(errKey);
+      toast({ title: msg, status: "error" });
+    },
+  });
+  
 
   return (
   <Box
@@ -43,12 +77,23 @@ export default function Groups() {
               placeholder="Wpisz kod grupy"
               borderRadius={{ base: "0.25rem", md: "0.25rem 0 0 0.25rem" }}
               w={{ base: "100%", md: "20rem" }}
+              value={invitationCode}
+              onChange={(e) => setInvitationCode(e.target.value)}
             />
             <Button
               rightIcon={<FaArrowAltCircleRight size="1.5rem" />}
               colorScheme="accent"
               borderRadius={{ base: "0.25rem", md: "0 0.25rem 0.25rem 0" }}
               w={{ base: "100%", md: "auto" }}
+              type="button"
+              disabled={joinMutation.status === "pending"}
+              onClick={async () => {
+                try {
+                  await joinMutation.mutateAsync({ invitationCode });
+                } catch (err) {
+                  // error toast is handled in onError
+                }
+              }}
             >
               Dołącz
             </Button>
@@ -67,7 +112,7 @@ export default function Groups() {
         </Stack>
 
         {/* Grid z grupami */}
-        <GroupsGrid />
+        <GroupsGrid groups={groupsQ.data} isLoading={groupsQ.isLoading} />
       </Box>
 
       {/* Modal grupy */}
@@ -75,6 +120,7 @@ export default function Groups() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)} 
       />
+      {/* join result now shown via toasts */}
     </Box>
   );
 }
