@@ -2,6 +2,7 @@
 
 import Event from "@/models/event/event-model";
 import Group from "@/models/group/group-model";
+import type { FilterQuery } from "mongoose";
 
 import dbConnect from "@/util/connect-mongo";
 import { executeWithinTransaction, check, checkTrue } from "./common";
@@ -205,4 +206,45 @@ export async function removeAttendeeFromEvent({
   );
 
   return { event: updatedEvent };
+}
+
+type ListEventsInput = {
+  groupId: GroupIdType;
+  timeWindow?: {
+    start?: Date;
+    end?: Date;
+  };
+};
+
+export async function listEventsInGroup({
+  groupId,
+  timeWindow,
+}: ListEventsInput) {
+  await dbConnect();
+  // Build date filter for overlapping intervals
+  const dateConditions: FilterQuery<IEventDTO>[] = [];
+
+  const start = timeWindow?.start;
+  const end = timeWindow?.end;
+
+  // If start is provided, require events that end at or after start
+  if (start) {
+    dateConditions.push({ "duration.endsAt": { $gte: new Date(start) } });
+  }
+
+  // If end is provided, require events that start at or before end
+  if (end) {
+    dateConditions.push({ "duration.startsAt": { $lte: new Date(end) } });
+  }
+
+  const querry: FilterQuery<IEventDTO> = { group: groupId };
+  if (dateConditions.length > 0) {
+    querry.$and = dateConditions;
+  }
+
+  const res = await Event.find(querry)
+    .sort({ "duration.startsAt": 1 })
+    .lean<IEventDTO[]>();
+
+  return check(res, `Failed to list events for group ${groupId}`);
 }

@@ -19,3 +19,16 @@ export const addModifyEventSchema = z.object({
   data: dataSchema,
   imageUrl: imageUrlSchema.optional(),
 });
+
+export const timeWindowSchema = z
+  .object({
+    start: z.preprocess(
+      (v) => (v ? new Date(v as string) : undefined),
+      z.date().optional()
+    ),
+    end: z.preprocess(
+      (v) => (v ? new Date(v as string) : undefined),
+      z.date().optional()
+    ),
+  })
+  .optional();
