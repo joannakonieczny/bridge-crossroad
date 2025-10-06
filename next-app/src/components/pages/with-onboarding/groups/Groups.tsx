@@ -26,22 +26,7 @@ export default function Groups() {
     action: async (data: { invitationCode: string }) => {
       return await addUserToGroupByInvitationCode(data);
     },
-    onSuccess: async () => {
-      // reload groups so newly joined group appears
-      try {
-        await groupsQ.refetch();
-      } catch (e) {
-        // ignore
-      }
-      // show toast with success
-      toast({ title: "Dołączono do grupy", status: "success" });
-      setInvitationCode("");
-    },
-    onError: (err) => {
-      const errKey = getMessageKeyFromError(err);
-      const msg = tValidation(errKey);
-      toast({ title: msg, status: "error" });
-    },
+    // keep handlers local to the submit flow to avoid re-triggering toasts on re-renders
   });
   
 
@@ -88,10 +73,25 @@ export default function Groups() {
               type="button"
               disabled={joinMutation.status === "pending"}
               onClick={async () => {
+                const promise = joinMutation.mutateAsync({ invitationCode });
+                toast.promise(promise, {
+                  loading: { title: "Dołączanie..." },
+                  success: { title: "Dołączono" },
+                  error: (err: any) => {
+                    const errKey = getMessageKeyFromError(err);
+                    return { title: tValidation(errKey) };
+                  },
+                });
                 try {
-                  await joinMutation.mutateAsync({ invitationCode });
-                } catch (err) {
-                  // error toast is handled in onError
+                  await promise;
+                  try {
+                    await groupsQ.refetch();
+                  } catch (e) {
+                    // ignore refetch errors
+                  }
+                  setInvitationCode("");
+                } catch (e) {
+                  // error toast already shown via toast.promise
                 }
               }}
             >
