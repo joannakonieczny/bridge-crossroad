@@ -1,10 +1,10 @@
 "use client";
 
-import { Box, Flex, VStack, Text, HStack, Button, Spacer, AbsoluteCenter, Link } from "@chakra-ui/react";
+import { Box, Flex, VStack, Text, Button, Link, Icon } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import { FaGreaterThan } from "react-icons/fa";
 import { useTranslations } from "@/lib/typed-translations";
-import tools from './tools';
+import tools from '../../../../club-preset/useful-tools';
 import type { IAppMessagesForLanguage } from '../../../../../messages/pl';
 
 type ToolKey = keyof IAppMessagesForLanguage['pages']['UsefulTools']['tools'];
@@ -13,65 +13,88 @@ export default function UsefulTools() {
     const t = useTranslations("pages.UsefulTools")
 
     return (
-    <Flex bg="border.50" 
-          justify="center"
-          w="full"
-          h="full">
-        <VStack spacing="2rem">
-            <Box h="4rem"
-             w="100rem"
-             px="2rem"
-             mt="2rem"
-             boxShadow="sm"
-             bg="white"
-             alignContent="center">
+    <Box bg="border.50">
+    <Flex 
+        justify="center"
+        minH="calc(100dvh - 5rem)"
+        w="100vw">
+        <VStack spacing={{ base: "1.25rem", md: "2rem" }}>
+            <Box bg="bg"
+                h={{ base: "2.5rem", md: "3.5rem"}}
+                w="80%"
+                mt={{ base: "2rem", md: "3rem" }}
+                display="flex"
+                alignContent="center">
                 <ResponsiveHeading
                     fontSize="3xl"
                     text={t("title")}
                 />
             </Box>
-            <VStack spacing="2rem">
+            <VStack spacing={{ base: "1rem", md: "2rem" }} mb={{ base: "1rem", md: "2rem" }} w="100%">
                 {Object.entries(tools).map(([Tool, {icon: ToolIcon, link: ToolLink}], i) => (
-                    <Box h="13rem" w="100rem" bg="white" key={i} >
-                        <HStack spacing={0} h="full" w="full">
-                            <Box h="full" w="1rem" bg={ i%2 == 0 ? "accent.100" : "secondary.100"} alignSelf="start"/>
-                            <Box h="full" w="13rem" bg={ i%2 == 0 ? "border.500" : "secondary.500"} alignSelf="start" position="relative">
-                                <AbsoluteCenter>
-                                    <ToolIcon color="white" fontSize="8rem"/>
-                                </AbsoluteCenter>
-                            </Box>
-                            <Box px={"2rem"} flex="1">
-                                <VStack align="start">
+                    <Box 
+                        minH={{ base: "15rem", md: "13rem" }} 
+                        w="80%" 
+                        bg="bg" 
+                        key={Tool}
+                    >
+                        <Flex direction={{ base: "column", lg: "row" }} minH="100%" w="100%"> 
+                            <Flex 
+                                direction="row" 
+                                h={{ base: "8rem", lg: "auto" }} 
+                                w={{ base: "100%", lg: "15rem" }} 
+                                flexShrink={0}
+                                alignSelf={{ base: "center", lg: "stretch" }}
+                            >
+                                <Box 
+                                    h="100%"
+                                    w={{ base: "0.75rem", md: "1rem" }} 
+                                    bg={i % 2 === 0 ? "accent.100" : "secondary.100"} 
+                                />
+                                <Box 
+                                    h="100%"
+                                    flex={1} 
+                                    bg={i % 2 === 0 ? "border.500" : "secondary.500"} 
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                >
+                                    <Icon as={ToolIcon} color="bg" boxSize={{ base: "4.5rem", md: "8rem" }} />
+                                </Box>
+                            </Flex>
+                            <Flex direction={{ base: "column", lg: "row" }} flex={1} p={4} gap={3}> 
+                                <VStack align="start" spacing={3} w="100%">
                                     <ResponsiveHeading
                                         fontSize="xl"
-                                        text={t(`tools.${Tool as ToolKey}.title`)} 
+                                        text={t(`tools.${Tool as ToolKey}.title`)}
                                         showBar={false}
                                     />
-                                    <Box h="2px" w="50rem" bg="accent.200" />
-                                    <Text> {t(`tools.${Tool as ToolKey}.description`)} </Text>
+                                    <Box h="2px" w="100%" maxW="50rem" bg="accent.200" />
+                                    <Text fontSize={{ base: "sm", md: "md" }}>
+                                        {t(`tools.${Tool as ToolKey}.description`)}
+                                    </Text>
                                 </VStack>
-                            </Box>
-                            <Spacer/>
-                            <Box alignSelf="end" px={"1rem"} py={"1rem"}>
-                                <Link 
-                                    href={ToolLink} isExternal> 
-                                    <Button 
-                                        color="accent.500" 
-                                        fontSize="sm" 
-                                        bgColor="white" 
-                                        borderColor="accent.500" 
-                                        borderWidth="0.125rem" 
+                            </Flex>
+                            <Flex p={4} alignItems="flex-end" justifyContent="flex-end">
+                                <Link href={ToolLink} isExternal>
+                                    <Button
+                                        color="accent.500"
+                                        fontSize={{ base: "xs", md: "sm" }}
+                                        bgColor="bg"
+                                        borderColor="accent.500"
+                                        borderWidth="0.125rem"
                                         rightIcon={<FaGreaterThan />}
-                                        >
-                                        {t("buttonText")} 
+                                    >
+                                        {t("buttonText")}
                                     </Button>
                                 </Link>
-                            </Box>
-                        </HStack>
+                            </Flex>
+                        </Flex>
                     </Box>
                 ))}
             </VStack>
         </VStack>
     </Flex>
+    </Box>
     );
 }

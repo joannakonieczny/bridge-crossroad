@@ -397,12 +397,12 @@ const usefulTools = {
     },
     simonsConventions: {
       title: "Simon's Conventions",
-      description: "Rozbudowana baza konwencji licytacyjnych bez kompromisów"
+      description: "Rozbudowana baza konwencji licytacyjnych bez kompromisów."
       
     }, 
     cuebids: {
       title: "Cuebids",
-      description: "Nowoczesna aplikacja do ćwiczenia licytacji i porównywania się z botami o różnych stopniach zaawansowania"
+      description: "Nowoczesna aplikacja do ćwiczenia licytacji i porównywania się z botami o różnych stopniach zaawansowania."
     }
   }
 }
