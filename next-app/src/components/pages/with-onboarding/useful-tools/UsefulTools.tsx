@@ -13,88 +13,91 @@ export default function UsefulTools() {
     const t = useTranslations("pages.UsefulTools")
 
     return (
-    <Box bg="border.50">
-    <Flex 
-        justify="center"
-        minH="calc(100dvh - 5rem)"
-        w="100vw">
-        <VStack spacing={{ base: "1.25rem", md: "2rem" }}>
-            <Box bg="bg"
-                h={{ base: "2.5rem", md: "3.5rem"}}
-                w="80%"
-                mt={{ base: "2rem", md: "3rem" }}
-                display="flex"
-                alignContent="center">
-                <ResponsiveHeading
-                    fontSize="3xl"
-                    text={t("title")}
-                />
-            </Box>
-            <VStack spacing={{ base: "1rem", md: "2rem" }} mb={{ base: "1rem", md: "2rem" }} w="100%">
-                {Object.entries(tools).map(([Tool, {icon: ToolIcon, link: ToolLink}], i) => (
-                    <Box 
-                        minH={{ base: "15rem", md: "13rem" }} 
-                        w="80%" 
-                        bg="bg" 
-                        key={Tool}
-                    >
-                        <Flex direction={{ base: "column", lg: "row" }} minH="100%" w="100%"> 
+    <Box bg="border.50" >
+        <Flex 
+            justify="center"
+            w="100vw"
+            minH="calc(100dvh - 5rem)">
+            <VStack spacing={{ base: "1.25rem", md: "2rem" }}>
+                <Box bg="bg"
+                    h={{ base: "2.5rem", md: "3.5rem"}}
+                    w="80%"
+                    mt={{ base: "2rem", md: "3rem" }}
+                    display="flex"
+                    alignContent="center">
+                    <ResponsiveHeading
+                        fontSize="3xl"
+                        text={t("title")}
+                    />
+                </Box>
+                <VStack spacing={{ base: "1rem", md: "2rem" }} mb={{ base: "1rem", md: "2rem" }} w="100%">
+                    {Object.entries(tools).map(([Tool, {icon: ToolIcon, link: ToolLink}], i) => (
+                        <Box 
+                            minH={{ base: "auto", md: "13rem" }} 
+                            w="80%" 
+                            bg="bg" 
+                            key={Tool}
+                        >
                             <Flex 
-                                direction="row" 
-                                h={{ base: "8rem", lg: "auto" }} 
-                                w={{ base: "100%", lg: "15rem" }} 
-                                flexShrink={0}
-                                alignSelf={{ base: "center", lg: "stretch" }}
-                            >
-                                <Box 
-                                    h="100%"
-                                    w={{ base: "0.75rem", md: "1rem" }} 
-                                    bg={i % 2 === 0 ? "accent.100" : "secondary.100"} 
-                                />
-                                <Box 
-                                    h="100%"
-                                    flex={1} 
-                                    bg={i % 2 === 0 ? "border.500" : "secondary.500"} 
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
+                                direction={{ base: "column", md: "row" }} 
+                                h="100%" 
+                                w="100%"
+                            > 
+                                <Flex 
+                                    direction="row" 
+                                    h={{ base: "8rem", md: "100%" }}
+                                    w={{ base: "100%", md: "15rem" }} 
+                                    flexShrink={0}
                                 >
-                                    <Icon as={ToolIcon} color="bg" boxSize={{ base: "4.5rem", md: "8rem" }} />
-                                </Box>
-                            </Flex>
-                            <Flex direction={{ base: "column", lg: "row" }} flex={1} p={4} gap={3}> 
-                                <VStack align="start" spacing={3} w="100%">
-                                    <ResponsiveHeading
-                                        fontSize="xl"
-                                        text={t(`tools.${Tool as ToolKey}.title`)}
-                                        showBar={false}
+                                    <Box 
+                                        h="100%"
+                                        w={{ base: "0.75rem", md: "1rem" }} 
+                                        bg={i % 2 === 0 ? "accent.100" : "secondary.100"} 
                                     />
-                                    <Box h="2px" w="100%" maxW="50rem" bg="accent.200" />
-                                    <Text fontSize={{ base: "sm", md: "md" }}>
-                                        {t(`tools.${Tool as ToolKey}.description`)}
-                                    </Text>
-                                </VStack>
-                            </Flex>
-                            <Flex p={4} alignItems="flex-end" justifyContent="flex-end">
-                                <Link href={ToolLink} isExternal>
-                                    <Button
-                                        color="accent.500"
-                                        fontSize={{ base: "xs", md: "sm" }}
-                                        bgColor="bg"
-                                        borderColor="accent.500"
-                                        borderWidth="0.125rem"
-                                        rightIcon={<FaGreaterThan />}
+                                    <Box 
+                                        h="100%"
+                                        flex={1} 
+                                        bg={i % 2 === 0 ? "border.500" : "secondary.500"} 
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
                                     >
-                                        {t("buttonText")}
-                                    </Button>
-                                </Link>
+                                        <Icon as={ToolIcon} color="bg" boxSize={{ base: "4.5rem", md: "8rem" }} />
+                                    </Box>
+                                </Flex>
+                                <Flex direction={{ base: "column", md: "row" }} flex={1} p={4} gap={3}> 
+                                    <VStack align="start" spacing={3} w="100%">
+                                        <ResponsiveHeading
+                                            fontSize="xl"
+                                            text={t(`tools.${Tool as ToolKey}.title`)}
+                                            showBar={false}
+                                        />
+                                        <Box h="2px" w="100%" maxW="50rem" bg="accent.200" />
+                                        <Text fontSize={{ base: "sm", md: "md" }}>
+                                            {t(`tools.${Tool as ToolKey}.description`)}
+                                        </Text>
+                                    </VStack>
+                                </Flex>
+                                <Flex p={4} alignItems="flex-end" justifyContent="flex-end">
+                                    <Link href={ToolLink} isExternal>
+                                        <Button
+                                            color="accent.500"
+                                            fontSize={{ base: "xs", md: "sm" }}
+                                            bgColor="bg"
+                                            borderColor="accent.500"
+                                            borderWidth="0.125rem"
+                                            rightIcon={<FaGreaterThan />}
+                                        >
+                                            {t("buttonText")}
+                                        </Button>
+                                    </Link>
+                                </Flex>
                             </Flex>
-                        </Flex>
-                    </Box>
-                ))}
+                        </Box>
+                    ))}
+                </VStack>
             </VStack>
-        </VStack>
-    </Flex>
+        </Flex>
     </Box>
     );
 }
