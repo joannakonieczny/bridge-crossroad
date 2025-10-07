@@ -11,6 +11,7 @@ import {
   Stack,
   useToast,
   Button,
+  Input,
 } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +23,7 @@ import FormMainButton from "../../../common/form/FormMainButton";
 
 import { z } from "zod";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/create-group-form-schema";
+import { createNewGroup } from "@/services/groups/api";
 import { useTranslations } from "@/lib/typed-translations";
 
 // Losowy kod zaproszenia
@@ -35,13 +37,16 @@ type CreateGroupInput = z.infer<typeof createGroupFormSchema>;
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onCreated?: () => Promise<void> | void;
 };
 
-export default function AddGroupModal({ isOpen, onClose }: Props) {
+export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
   const toast = useToast();
   const t = useTranslations("pages.GroupsPage.AddGroupModal");
 
-  const { handleSubmit, control, setError } = useForm<CreateGroupInput>({
+  // debug logs removed
+
+  const { handleSubmit, control, setError, register } = useForm<CreateGroupInput>({
     resolver: zodResolver(createGroupFormSchema),
     defaultValues: {
       name: "",
@@ -52,20 +57,15 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
   });
 
   const createGroupAction = useActionMutation({
-    action: async (data: CreateGroupInput) => {
+    action: createNewGroup,
+    onSuccess: async () => {
+      // If parent provided onCreated (e.g. to refetch groups), call it
       try {
-        // logika tworzenia grupy
-        return { data: true };
-      } catch (error) {
-        return { error };
+        await (onCreated ? onCreated() : undefined);
+      } catch (e) {
+        // ignore
       }
-    },
-    onSuccess: () => {
-      toast({
-        title: t("toast.success"),
-        status: "success",
-      });
-      onClose();
+      // do not toast or close here - UI will show toast via toast.promise and modal is closed on submit
     },
     onError: (err) => {
       const errKey = getMessageKeyFromError(err);
@@ -74,6 +74,8 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
   });
 
   const onSubmit = (data: CreateGroupInput) => {
+    // close modal immediately on submit
+    onClose();
     const promise = createGroupAction.mutateAsync(data);
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
@@ -94,6 +96,8 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4} mt={4}>
+              {/* keep invitationCode in form data (hidden input) so it's passed to createNewGroup */}
+              <input type="hidden" {...register("invitationCode")} />
               <Controller
                 control={control}
                 name="name"
@@ -125,6 +129,8 @@ export default function AddGroupModal({ isOpen, onClose }: Props) {
                   />
                 )}
               />
+
+              {/* invitationCode is generated automatically and not shown in the form */}
 
               <FormMainButton text={t("submitButton")} type="submit" />
             </Stack>
