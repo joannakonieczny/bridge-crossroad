@@ -28,6 +28,17 @@ export async function addEvent({
   await dbConnect();
 
   return executeWithinTransaction(async (s) => {
+    // ensure organizer (if provided) is a member of the group
+    const groupForCheck = check(
+      await Group.findById(groupId).session(s).lean<IGroupDTO>(),
+      `Group not found with id: ${groupId}`
+    );
+
+    checkTrue(
+      groupForCheck.members.map((m) => m.toString()).includes(event.organizer),
+      "Event organizer must be a member of the group"
+    );
+
     // create new event and ensure it's bound to the group
     const newEventDoc = new Event({ ...event, group: groupId });
     await newEventDoc.save({ session: s });
@@ -121,6 +132,21 @@ export async function updateEvent({
       existingEvent.group.toString() === groupId,
       "Event does not belong to the provided group"
     );
+
+    // if organizer is being changed, ensure the new organizer is a member of the group
+    if (changes.organizer) {
+      const groupForCheck = check(
+        await Group.findById(groupId).session(s).lean<IGroupDTO>(),
+        `Group not found with id: ${groupId}`
+      );
+
+      checkTrue(
+        groupForCheck.members
+          .map((m) => m?.toString())
+          .includes(changes.organizer),
+        "Event organizer must be a member of the group"
+      );
+    }
 
     const updated = check(
       await Event.findByIdAndUpdate(
