@@ -118,8 +118,16 @@ export default function Groups() {
       {/* Modal grupy */}
       <AddGroupModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} 
+        onClose={() => setIsModalOpen(false)}
+        onCreated={async () => {
+          try {
+            await groupsQ.refetch();
+          } catch (e) {
+            // ignore
+          }
+        }}
       />
+      {/* debug removed */}
       {/* join result now shown via toasts */}
     </Box>
   );
