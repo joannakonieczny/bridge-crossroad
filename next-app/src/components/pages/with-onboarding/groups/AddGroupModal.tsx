@@ -11,7 +11,6 @@ import {
   Stack,
   useToast,
   Button,
-  Input,
 } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,8 +24,10 @@ import { z } from "zod";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/create-group-form-schema";
 import { createNewGroup } from "@/services/groups/api";
 import { useTranslations } from "@/lib/typed-translations";
+import { useQueryClient } from "@tanstack/react-query";
 
-// Losowy kod zaproszenia
+export const GROUPS_QUERY_KEY = { groups: ["groups"] };
+
 function generateInvitationCode(length: number = 8) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
@@ -43,15 +44,14 @@ type Props = {
 export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
   const toast = useToast();
   const t = useTranslations("pages.GroupsPage.AddGroupModal");
-
-  // debug logs removed
+  const queryClient = useQueryClient();
 
   const { handleSubmit, control, setError, register } = useForm<CreateGroupInput>({
     resolver: zodResolver(createGroupFormSchema),
     defaultValues: {
       name: "",
       description: "",
-      imageUrl: "",
+      imageUrl: "https://blocks.astratic.com/img/general-img-portrait.png",
       invitationCode: generateInvitationCode(),
     },
   });
@@ -59,13 +59,12 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
   const createGroupAction = useActionMutation({
     action: createNewGroup,
     onSuccess: async () => {
-      // If parent provided onCreated (e.g. to refetch groups), call it
+      queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY.groups });
       try {
         await (onCreated ? onCreated() : undefined);
       } catch (e) {
         // ignore
       }
-      // do not toast or close here - UI will show toast via toast.promise and modal is closed on submit
     },
     onError: (err) => {
       const errKey = getMessageKeyFromError(err);
@@ -74,9 +73,9 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
   });
 
   const onSubmit = (data: CreateGroupInput) => {
-    // close modal immediately on submit
-    onClose();
+    onClose(); 
     const promise = createGroupAction.mutateAsync(data);
+
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
@@ -96,7 +95,6 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4} mt={4}>
-              {/* keep invitationCode in form data (hidden input) so it's passed to createNewGroup */}
               <input type="hidden" {...register("invitationCode")} />
               <Controller
                 control={control}
@@ -129,8 +127,6 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
                   />
                 )}
               />
-
-              {/* invitationCode is generated automatically and not shown in the form */}
 
               <FormMainButton text={t("submitButton")} type="submit" />
             </Stack>
