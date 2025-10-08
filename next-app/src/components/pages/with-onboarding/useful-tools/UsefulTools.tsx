@@ -13,28 +13,35 @@ export default function UsefulTools() {
     const t = useTranslations("pages.UsefulTools")
 
     return (
-    <Box bg="border.50" >
+    <Box bg="border.50" h="full" w="full">
         <Flex 
             justify="center"
-            w="100vw"
-            minH="calc(100dvh - 5rem)">
+            w="full"
+            minH="calc(100dvh - 5rem)"
+            px={{ base: 4, md: 8 }} // ensure spacing from screen edges on all sizes
+        >
             <VStack spacing={{ base: "1.25rem", md: "2rem" }}>
-                <Box bg="bg"
-                    h={{ base: "2.5rem", md: "3.5rem"}}
-                    w="80%"
+                <Box
+                    bg="bg"
+                    w="full"                                 
+                    maxW={{ base: "full", md: "70rem" }}
+                    mx="auto"                              // center and respect outer px
                     mt={{ base: "2rem", md: "3rem" }}
                     display="flex"
-                    alignContent="center">
+                    alignItems="center"
+                >
                     <ResponsiveHeading
                         fontSize="3xl"
                         text={t("title")}
                     />
                 </Box>
-                <VStack spacing={{ base: "1rem", md: "2rem" }} mb={{ base: "1rem", md: "2rem" }} w="100%">
+                <VStack spacing={{ base: "1rem", md: "2rem" }} mb={{ base: "1rem", md: "2rem" }} w="full" align="center">
                     {Object.entries(tools).map(([Tool, {icon: ToolIcon, link: ToolLink}], i) => (
                         <Box 
                             minH={{ base: "auto", md: "13rem" }} 
-                            w="80%" 
+                            w="full"
+                            maxW={{ base: "full", md: "70rem" }}
+                            mx="auto"                             // center each card and keep side gap
                             bg="bg" 
                             key={Tool}
                         >
@@ -61,11 +68,12 @@ export default function UsefulTools() {
                                         display="flex"
                                         alignItems="center"
                                         justifyContent="center"
+                                        minW={0}
                                     >
                                         <Icon as={ToolIcon} color="bg" boxSize={{ base: "4.5rem", md: "8rem" }} />
                                     </Box>
                                 </Flex>
-                                <Flex direction={{ base: "column", md: "row" }} flex={1} p={4} gap={3}> 
+                                <Flex direction={{ base: "column", md: "row" }} flex={1} p={4} gap={3} minW={0}> 
                                     <VStack align="start" spacing={3} w="100%">
                                         <ResponsiveHeading
                                             fontSize="xl"
@@ -73,12 +81,12 @@ export default function UsefulTools() {
                                             showBar={false}
                                         />
                                         <Box h="2px" w="100%" maxW="50rem" bg="accent.200" />
-                                        <Text fontSize={{ base: "sm", md: "md" }}>
+                                        <Text fontSize={{ base: "sm", md: "md" }} wordBreak="break-word" overflowWrap="anywhere">
                                             {t(`tools.${Tool as ToolKey}.description`)}
                                         </Text>
                                     </VStack>
                                 </Flex>
-                                <Flex p={4} alignItems="flex-end" justifyContent="flex-end">
+                                <Flex p={4} alignItems="flex-end" justifyContent="flex-end" flexShrink={0}>
                                     <Link href={ToolLink} isExternal>
                                         <Button
                                             color="accent.500"
