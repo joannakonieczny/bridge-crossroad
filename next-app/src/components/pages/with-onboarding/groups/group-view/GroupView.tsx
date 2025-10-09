@@ -1,13 +1,28 @@
-import { Flex } from "@chakra-ui/react";
-import PeopleList from "./PeopleList";
+"use client";
+
+import { Flex, Button, VStack, Text } from "@chakra-ui/react";
+import PeopleList from "../PeopleList";
 import GroupBanner from "./GroupBanner";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import { getGroupData } from "@/services/groups/api";
+import { useRouter } from "next/navigation";
 
 interface IGroupViewProps {
-    id: number;
+    id: string | number;
 }
 
 export default function GroupView(props: IGroupViewProps) {
+    const idStr = String(props.id);
 
+    const router = useRouter();
+
+    const groupQ = useActionQuery({
+        queryKey: ["group", idStr],
+        action: () => getGroupData({ groupId: idStr }),
+        retry: false,
+    });
+
+    const group = groupQ.data;
 
     return (
         <Flex
@@ -20,8 +35,31 @@ export default function GroupView(props: IGroupViewProps) {
             gap="3rem"
             overflowY="auto"
         >
-            <GroupBanner />
-            <PeopleList />
+            <GroupBanner group={group} isLoading={groupQ.isLoading} />
+
+            {groupQ.isError || (!group && !groupQ.isLoading) ? (
+                <VStack spacing={4} align="flex-start">
+                    <Text color="red.600">Nie udało się wczytać danych grupy.</Text>
+                    <Text color="muted">Pozostajesz na tej stronie — możesz spróbować ponownie lub wrócić do listy grup.</Text>
+                    <VStack spacing={2} direction="row" align="stretch">
+                        <Button
+                            onClick={() => groupQ.refetch()}
+                            colorScheme="blue"
+                        >
+                            Spróbuj ponownie
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => router.push('/with-onboarding/groups')}
+                        >
+                            Wróć do grup
+                        </Button>
+                    </VStack>
+                </VStack>
+            ) : (
+                // Only render members list when we have data (or when loading)
+                <PeopleList members={group?.members ?? []} isLoading={groupQ.isLoading} />
+            )}
         </Flex>
     );
 }

@@ -28,11 +28,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export const GROUPS_QUERY_KEY = { groups: ["groups"] };
 
-function generateInvitationCode(length: number = 8) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
-}
-
 type CreateGroupInput = z.infer<typeof createGroupFormSchema>;
 
 type Props = {
@@ -52,7 +47,7 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
       name: "",
       description: "",
       imageUrl: "https://blocks.astratic.com/img/general-img-portrait.png",
-      invitationCode: generateInvitationCode(),
+      invitationCode: "11111111",
     },
   });
 

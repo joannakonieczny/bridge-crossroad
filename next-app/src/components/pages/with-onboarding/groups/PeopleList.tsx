@@ -1,16 +1,27 @@
 'use client';
 
-import { Flex, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react';
+import { Flex, Table, Thead, Tbody, Tr, Th, Skeleton, Tfoot } from '@chakra-ui/react';
 import { useState } from 'react';
 import MainHeading from '@/components/common/texts/MainHeading';
 import SearchInput from '@/components/common/SearchInput';
-import UserTableRow from './UserTableRow';
+import UserTableRow from './group-view/UserTableRow';
 
-export default function PeopleList() {
+type MemberMin = {
+  _id: string;
+  name: { firstName: string; lastName: string };
+  nickname?: string;
+};
+
+interface PeopleListProps {
+  members?: MemberMin[];
+  isLoading?: boolean;
+}
+
+export default function PeopleList({ members, isLoading }: PeopleListProps) {
   const [search, setSearch] = useState('');
 
 
-  // mock
+  // mock (used when server members are not provided)
   const sampleData = [
     {
       fullName: 'Jan Kowalski',
@@ -35,7 +46,18 @@ export default function PeopleList() {
     },
   ];
 
-  const filteredData = sampleData.filter((user) => {
+  // If server members are present, map them to the table shape
+  const serverData = members?.map((m) => ({
+    fullName: `${m.name.firstName} ${m.name.lastName}`,
+    nickname: m.nickname ?? '',
+    pzbsId: '',
+    bboId: '',
+    cuebidsId: '',
+  }));
+
+  const sourceData = serverData ?? sampleData;
+
+  const filteredData = sourceData.filter((user) => {
     const query = search.toLowerCase();
     return (
       user.fullName.toLowerCase().includes(query) ||
@@ -69,17 +91,35 @@ export default function PeopleList() {
             </Tr>
           </Thead>
           <Tbody>
-            {filteredData.map((user, index) => (
-              <UserTableRow
-                key={index}
-                fullName={user.fullName}
-                nickname={user.nickname}
-                pzbsId={user.pzbsId}
-                bboId={user.bboId}
-                cuebidsId={user.cuebidsId}
-              />
-            ))}
+            {isLoading
+              ? // show 4 skeleton rows while loading
+                Array.from({ length: 4 }).map((_, i) => (
+                  <Tr key={i}>
+                    <Th>
+                      <Skeleton height="12px" width="120px" />
+                    </Th>
+                    <Th>
+                      <Skeleton height="12px" width="80px" />
+                    </Th>
+                    <Th>
+                      <Skeleton height="12px" width="100px" />
+                    </Th>
+                    <Th>
+                      <Skeleton height="12px" width="120px" />
+                    </Th>
+                  </Tr>
+                ))
+              : filteredData.map((user, index) => (
+                  <UserTableRow
+                    key={index}
+                    fullName={user.fullName}
+                    nickname={user.nickname}
+                    badges={user.pzbsId}
+                    cezarNumber={user.cuebidsId}
+                  />
+                ))}
           </Tbody>
+          {/** optional footer could go here */}
         </Table>
       </Flex>
     </Flex>
