@@ -13,7 +13,7 @@ import {
 } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
-import { fullAuthAction, withinOwnGroupAction } from "../action-lib";
+import { fullAuthAction, getWithinOwnGroupAction } from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createGroup, getGroupByInviteCode } from "@/repositories/groups";
 import {
@@ -21,6 +21,7 @@ import {
   sanitizeGroupsFullInfoPopulated,
 } from "@/sanitizers/server-only/group-sanitize";
 import { havingInvitationCode } from "@/schemas/model/group/group-schema";
+import z from "zod";
 
 export const getJoinedGroupsInfo = fullAuthAction.action(
   async ({ ctx: { userId } }) => {
@@ -57,7 +58,7 @@ export const createNewGroup = fullAuthAction
     });
   });
 
-export const getGroupData = withinOwnGroupAction.action(
+export const getGroupData = getWithinOwnGroupAction(z.object({})).action(
   async ({ ctx: { groupId } }) => {
     const res = await getGroupOverview(groupId);
     return sanitizeGroupsFullInfoPopulated(res);

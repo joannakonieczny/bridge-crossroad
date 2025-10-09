@@ -9,6 +9,7 @@ import { requireUserId } from "./auth/simple-action";
 import { requireUserOnboarding } from "./onboarding/simple-action";
 import { requireGroupAccess, requireGroupAdmin } from "./groups/simple-action";
 import { havingGroupId } from "@/schemas/model/group/group-schema";
+import type { ZodObject, ZodRawShape } from "zod";
 
 export const action = createSafeActionClient({
   async handleServerError(e, utils) {
@@ -43,29 +44,35 @@ export const fullAuthAction = authAction.use(async ({ next, ctx }) => {
   return next({ ctx: { ...(ctx ?? {}) } });
 });
 
-export const withinOwnGroupAction = fullAuthAction
-  .inputSchema(havingGroupId)
-  .use(async ({ next, ctx, clientInput }) => {
-    const parseResult = havingGroupId.safeParse(clientInput);
+export function getWithinOwnGroupAction<T extends ZodRawShape>(
+  schema: ZodObject<T>
+) {
+  return fullAuthAction
+    .inputSchema(havingGroupId.merge(schema))
+    .use(async ({ next, ctx, clientInput }) => {
+      const parseResult = havingGroupId.safeParse(clientInput);
 
-    if (!parseResult.success) {
-      // rzuć validation error zamiast zwykłego Error
-      return returnValidationErrors(havingGroupId, {
-        groupId: {
-          _errors: ["common.validation.invalidGroupId"],
-        },
-      });
-    }
+      if (!parseResult.success) {
+        // rzuć validation error zamiast zwykłego Error
+        return returnValidationErrors(havingGroupId, {
+          groupId: {
+            _errors: ["common.validation.invalidGroupId"],
+          },
+        });
+      }
 
-    const { groupId } = parseResult.data;
+      const { groupId } = parseResult.data;
 
-    await requireGroupAccess({ groupId, userId: ctx.userId });
-    return next({ ctx: { ...ctx, groupId } });
-  });
+      await requireGroupAccess({ groupId, userId: ctx.userId });
+      return next({ ctx: { ...ctx, groupId } });
+    });
+}
 
-export const withinOwnGroupAsAdminAction = withinOwnGroupAction.use(
-  async ({ next, ctx }) => {
+export function getWithinOwnGroupAsAdminAction<T extends ZodRawShape>(
+  schema: ZodObject<T>
+) {
+  return getWithinOwnGroupAction(schema).use(async ({ next, ctx }) => {
     await requireGroupAdmin({ groupId: ctx.groupId, userId: ctx.userId });
     return next({ ctx });
-  }
-);
+  });
+}
