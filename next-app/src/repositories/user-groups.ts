@@ -33,18 +33,16 @@ export async function addUserToGroup({
         groupId,
         { $addToSet: { members: userId } },
         { new: true, session: s }
-      ).lean<IGroupDTO | null>(),
+      ).lean<IGroupDTO>(),
       User.findByIdAndUpdate(
         userId,
         { $addToSet: { groups: groupId } },
         { new: true, session: s }
-      ).lean<IUserDTO | null>(),
+      ).lean<IUserDTO>(),
     ]);
-    checkTrue(updatedGroup && updatedUser, "Failed to update user or group");
-    return {
-      user: updatedUser,
-      group: updatedGroup,
-    };
+    const user = check(updatedUser, "Failed to add group to user");
+    const group = check(updatedGroup, "Failed to add user to group");
+    return { user, group };
   }, session);
 }
 
@@ -65,7 +63,7 @@ export async function addAdminToGroup({
         $addToSet: { admins: userId },
       },
       { new: true, session: s }
-    ).lean<IGroupDTO | null>();
+    ).lean<IGroupDTO>();
 
     return check(updatedGroup, "User must be a member to be promoted to admin");
   }, session);
