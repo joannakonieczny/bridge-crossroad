@@ -49,20 +49,21 @@ export default function UsefulTools() {
                                 direction={{ base: "column", md: "row" }} 
                                 h="100%" 
                                 w="100%"
+                                align="stretch" 
                             > 
                                 <Flex 
                                     direction="row" 
-                                    h={{ base: "8rem", md: "100%" }}
+                                    h={{ base: "8rem", md: "13rem" }}
                                     w={{ base: "100%", md: "15rem" }} 
                                     flexShrink={0}
                                 >
                                     <Box 
-                                        h={{ base: "8rem", md: "100%" }}
+                                        h="100%"
                                         w={{ base: "0.75rem", md: "1rem" }} 
                                         bg={i % 2 === 0 ? "accent.100" : "secondary.100"} 
                                     />
                                     <Box 
-                                        h={{ base: "8rem", md: "100%" }}
+                                        h="100%"
                                         flex={1} 
                                         bg={i % 2 === 0 ? "border.500" : "secondary.500"} 
                                         display="flex"
@@ -81,7 +82,7 @@ export default function UsefulTools() {
                                             showBar={false}
                                         />
                                         <Box h="2px" w="100%" maxW="50rem" bg="accent.200" />
-                                        <Text fontSize={{ base: "sm", md: "md" }} wordBreak="break-word" overflowWrap="anywhere">
+                                        <Text fontSize={{ base: "xs", md: "sm" }} wordBreak="break-word">
                                             {t(`tools.${Tool as ToolKey}.description`)}
                                         </Text>
                                     </VStack>
