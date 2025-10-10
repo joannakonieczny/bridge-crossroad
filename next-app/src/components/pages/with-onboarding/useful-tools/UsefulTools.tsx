@@ -13,19 +13,19 @@ export default function UsefulTools() {
     const t = useTranslations("pages.UsefulTools")
 
     return (
-    <Box bg="border.50" h="full" w="full">
+    <Box bg="border.50">
         <Flex 
             justify="center"
             w="full"
             minH="calc(100dvh - 5rem)"
-            px={{ base: 4, md: 8 }} // ensure spacing from screen edges on all sizes
+            px={{ base: 4, md: 8 }}
         >
             <VStack spacing={{ base: "1.25rem", md: "2rem" }}>
                 <Box
                     bg="bg"
                     w="full"                                 
                     maxW={{ base: "full", md: "70rem" }}
-                    mx="auto"                              // center and respect outer px
+                    mx="auto"                         
                     mt={{ base: "2rem", md: "3rem" }}
                     display="flex"
                     alignItems="center"
@@ -41,7 +41,7 @@ export default function UsefulTools() {
                             minH={{ base: "auto", md: "13rem" }} 
                             w="full"
                             maxW={{ base: "full", md: "70rem" }}
-                            mx="auto"                             // center each card and keep side gap
+                            mx="auto"                             
                             bg="bg" 
                             key={Tool}
                         >
@@ -57,12 +57,12 @@ export default function UsefulTools() {
                                     flexShrink={0}
                                 >
                                     <Box 
-                                        h="100%"
+                                        h={{ base: "8rem", md: "100%" }}
                                         w={{ base: "0.75rem", md: "1rem" }} 
                                         bg={i % 2 === 0 ? "accent.100" : "secondary.100"} 
                                     />
                                     <Box 
-                                        h="100%"
+                                        h={{ base: "8rem", md: "100%" }}
                                         flex={1} 
                                         bg={i % 2 === 0 ? "border.500" : "secondary.500"} 
                                         display="flex"
