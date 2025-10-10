@@ -6,19 +6,18 @@ import GroupBanner from "./GroupBanner";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { getGroupData } from "@/services/groups/api";
 import { useRouter } from "next/navigation";
+import { GroupIdType } from "@/schemas/model/group/group-types";
 
 interface IGroupViewProps {
-    id: string | number;
+    id: GroupIdType;
 }
 
 export default function GroupView(props: IGroupViewProps) {
-    const idStr = String(props.id);
-
     const router = useRouter();
-
+    console.log(props.id)
     const groupQ = useActionQuery({
-        queryKey: ["group", idStr],
-        action: () => getGroupData({ groupId: idStr }),
+        queryKey: ["group", props.id],
+        action: () => getGroupData({ groupId: props.id }),
         retry: false,
     });
 

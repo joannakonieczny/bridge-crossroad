@@ -1,3 +1,8 @@
+"use client";
+
+import { GroupIdType } from "@/schemas/model/group/group-types";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import { getGroupData } from "@/services/groups/api";
 import {
   Box,
   Flex,
@@ -6,6 +11,7 @@ import {
   Avatar,
   Divider,
   Link,
+  Skeleton,
 } from "@chakra-ui/react";
 import {
   FiArrowLeft,
@@ -14,85 +20,98 @@ import {
   FiFolder,
   FiGrid,
 } from "react-icons/fi";
-
-const group = { id: 1, name: "test group", img: "/assets/dashboard/splash-art.svg" };
-
-const members = [
-    {
-      fullName: 'Jan Kowalski',
-      nickname: 'jan123',
-      pzbsId: '123456',
-      bboId: 'jk_bbo',
-      cuebidsId: 'ABCABC',
-    },
-    {
-      fullName: 'Michał Wiśniewski',
-      nickname: 'MWisnia',
-      pzbsId: '654321',
-      bboId: 'michal_wisnia',
-      cuebidsId: 'XYZXYZ',
-    },
-    {
-      fullName: 'Piotr Nowak',
-      nickname: 'pionowak',
-      pzbsId: '',
-      bboId: '',
-      cuebidsId: '',
-    },
-];
+import type { IconType } from "react-icons";
+import { useRouter } from "next/navigation";
 
 interface ISidebarProps {
-  id: number;
+  id: GroupIdType;
 }
 
-export default function Sidebar(props: ISidebarProps) {
+export default function Sidebar({ id }: ISidebarProps) {
+  const router = useRouter();
+
+  const groupQ = useActionQuery({
+    queryKey: ["group", id],
+    action: () => getGroupData({ groupId: id }),
+    retry: false,
+  });
+
+  const group = groupQ.data;
+  const isLoading = groupQ.isLoading;
+  const groupName = group?.name ?? "Grupa";
+  const membersCount = group?.members?.length ?? 0;
+
+  const navItems: { icon: IconType; label: string }[] = [
+    { icon: FiUser, label: "O grupie" },
+    { icon: FiMessageCircle, label: "Czat" },
+    { icon: FiFolder, label: "Materiały" },
+    { icon: FiGrid, label: "Rozdania" },
+  ];
+
   return (
     <Box w="17rem" p={4}>
       <VStack align="start" spacing={4}>
-        <Link fontSize="sm" color="purple.500">
+        <Link
+          fontSize="sm"
+          color="purple.500"
+          onClick={() => router.push("/groups")}
+          _hover={{ textDecoration: "none" }}
+        >
           <Flex align="center" gap={2}>
             <FiArrowLeft size={18} />
             <Text>Wróć</Text>
           </Flex>
         </Link>
 
-        <Avatar
-          size="lg"
-          name={group.name}
-          src={group.img}
-          borderRadius="md"
-        />
+        {isLoading ? (
+          <Skeleton height="64px" width="64px" borderRadius="md" />
+        ) : (
+          <Avatar
+            size="lg"
+            name={groupName}
+            src={group?.imageUrl ?? undefined}
+            borderRadius="md"
+          />
+        )}
+
         <Box>
-          <Text fontWeight="bold">{group.name}{props.id}</Text>
-          <Text fontSize="sm" color="gray.500">
-            {members.length} członków
-          </Text>
+          {isLoading ? (
+            <>
+              <Skeleton height="16px" width="8rem" mb={2} />
+              <Skeleton height="12px" width="4rem" />
+            </>
+          ) : (
+            <>
+              <Text fontWeight="bold">{groupName}</Text>
+              <Text fontSize="sm" color="gray.500">
+                {membersCount === 1 ? "1 członek" : `${membersCount} członków`}
+              </Text>
+            </>
+          )}
         </Box>
       </VStack>
 
       <Divider my={4} />
 
       <VStack align="stretch" spacing={1}>
-        {[
-            { icon: FiUser, label: "O grupie" },
-            { icon: FiMessageCircle, label: "Czat" },
-            { icon: FiFolder, label: "Materiały" },
-            { icon: FiGrid, label: "Rozdania" },
-        ].map((item, idx) => (
+        {navItems.map((item, idx) => {
+          const Icon = item.icon;
+          return (
             <Link key={idx} _hover={{ textDecoration: "none" }}>
-            <Flex
+              <Flex
                 align="center"
                 gap={3}
                 p={2}
                 borderRadius="md"
                 _hover={{ bg: "gray.100", color: "purple.500" }}
-            >
-                <item.icon size={18} />
+              >
+                <Icon size={18} />
                 <Text>{item.label}</Text>
-            </Flex>
+              </Flex>
             </Link>
-        ))}
-        </VStack>
+          );
+        })}
+      </VStack>
     </Box>
   );
 }

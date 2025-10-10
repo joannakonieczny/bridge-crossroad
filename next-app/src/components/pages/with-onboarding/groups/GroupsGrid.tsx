@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { getJoinedGroupsInfo } from "@/services/groups/api";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import { GroupIdType } from "@/schemas/model/group/group-types";
 
 
 
@@ -33,7 +34,7 @@ export default function GroupsGrid({ groups, isLoading }: Props) {
   const groupsToRender = groups ?? [];
   const itemsToShow = groupsToRender;
 
-  const goToGroup = (id: number) => {
+  const goToGroup = (id: GroupIdType) => {
     router.push(`/groups/${id}`);
   };
 

@@ -8,6 +8,6 @@ export default async function GroupPage(props: GroupPageProps) {
   const { id } = await props.params;
 
   return (
-    <GroupView id={Number(id)}/>
+    <GroupView id={id}/>
   );
 }
