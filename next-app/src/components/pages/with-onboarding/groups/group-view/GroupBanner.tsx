@@ -1,6 +1,6 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import { Box, Flex, HStack, Skeleton, SkeletonText } from "@chakra-ui/react";
+import { Box, Flex, HStack, Skeleton, SkeletonText, Image } from "@chakra-ui/react";
 
 type MemberMin = {
     _id: string;
@@ -72,9 +72,24 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
             gap="2rem"
         >
             <Flex width="100%"> {/* top */}
-                <Flex width="10rem" height="10rem" marginRight="1.5rem">
-                    <Box backgroundColor="accent.100" width="1rem" height="100%"></Box>
-                    <Box backgroundColor="border.300" width="100%" height="100%"></Box>
+                <Flex
+                    width="10rem"
+                    height="10rem"
+                    marginRight="1.5rem"
+                    overflow="hidden"
+                    borderRadius="md"
+                    align="stretch"
+                >
+                    {/* wąski prostokąt zawsze obecny */}
+                    <Box backgroundColor="accent.100" width="1rem" height="100%" flex="0 0 1rem" />
+                    {/* główne pole obrazka / fallback kwadrat */}
+                    {group?.imageUrl ? (
+                        <Box width="100%" height="100%" flex="1 1 auto">
+                            <Image src={group.imageUrl} alt={title} objectFit="cover" w="100%" h="100%" />
+                        </Box>
+                    ) : (
+                        <Box backgroundColor="border.300" width="100%" height="100%" flex="1 1 auto" />
+                    )}
                 </Flex>
                 <Flex direction="column" flex="1"> {/* details */}
                     <ResponsiveHeading fontSize="xl" text={title} showBar={false} width="100%" />
