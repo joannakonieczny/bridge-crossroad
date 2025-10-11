@@ -52,6 +52,18 @@ function onNullThrow<T>(value: T | null | undefined, errMessage: string): T {
 
 export { onNullThrow as check };
 
+function onNullThrowWithBoolean<T>(
+  value: T | null | undefined | false,
+  errMessage: string
+): T {
+  if (value === null || value === undefined || value === false) {
+    throw new RepositoryError(errMessage);
+  }
+  return value;
+}
+
+export { onNullThrowWithBoolean as checkTrue };
+
 import mongoose from "mongoose";
 
 /**

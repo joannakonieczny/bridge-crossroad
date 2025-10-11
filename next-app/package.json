@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "test": "echo 'No tests specified' && exit 0",
+    "test": "next build",
     "analyze": "ANALYZE=true next build",
     "ts": "tsx --tsconfig tsconfig.node.json",
     "add:master-admin": "npm run ts -- scripts/jobs/add-master-admin-account.ts",

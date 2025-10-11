@@ -1,20 +1,21 @@
 "server-only";
 
 import { Schema } from "mongoose";
-import type { IUserId } from "../user/user-types";
+import type { EventId } from "../event/event-types";
 import type { Timestamps } from "../utils";
+import type { UserId } from "../user/user-types";
 
 export const GroupTableName = "Group";
 
 export const GroupId = Schema.Types.ObjectId;
-export type IGroupId = typeof GroupId;
 
 export type IGroupDTO = {
-  _id: IGroupId;
+  _id: typeof GroupId;
   name: string;
   description?: string;
-  admins: IUserId[];
-  members: IUserId[];
+  admins: (typeof UserId)[];
+  members: (typeof UserId)[];
+  events: (typeof EventId)[];
   imageUrl?: string;
   invitationCode: string;
   isMain?: boolean;

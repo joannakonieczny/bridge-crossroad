@@ -5,7 +5,7 @@ import Group from "@/models/group/group-model";
 
 import dbConnect from "@/util/connect-mongo";
 import { GroupTableName, type IGroupDTO } from "@/models/group/group-types";
-import { check, RepositoryError, executeWithinTransaction } from "./common";
+import { check, executeWithinTransaction, checkTrue } from "./common";
 import type { WithSession } from "./common";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import { UserTableName, type IUserDTO } from "@/models/user/user-types";
@@ -33,22 +33,16 @@ export async function addUserToGroup({
         groupId,
         { $addToSet: { members: userId } },
         { new: true, session: s }
-      ).lean<IGroupDTO | null>(),
+      ).lean<IGroupDTO>(),
       User.findByIdAndUpdate(
         userId,
         { $addToSet: { groups: groupId } },
         { new: true, session: s }
-      ).lean<IUserDTO | null>(),
+      ).lean<IUserDTO>(),
     ]);
-
-    if (!updatedGroup || !updatedUser) {
-      throw new RepositoryError("Failed to update user or group");
-    }
-
-    return {
-      user: updatedUser,
-      group: updatedGroup,
-    };
+    const user = check(updatedUser, "Failed to add group to user");
+    const group = check(updatedGroup, "Failed to add user to group");
+    return { user, group };
   }, session);
 }
 
@@ -69,7 +63,7 @@ export async function addAdminToGroup({
         $addToSet: { admins: userId },
       },
       { new: true, session: s }
-    ).lean<IGroupDTO | null>();
+    ).lean<IGroupDTO>();
 
     return check(updatedGroup, "User must be a member to be promoted to admin");
   }, session);
@@ -86,12 +80,10 @@ export async function getUserWithGroupsData(userId: UserIdType) {
     .lean<IUserDTOWithPopulatedGroups>();
 
   const res = check(user, `User not found with id: ${userId} or querry failed`);
-
-  if (res.groups.some((g) => g === null)) {
-    throw new RepositoryError(
-      "One or more groups referenced by the user were not found"
-    );
-  }
+  checkTrue(
+    res.groups.every((g) => g !== null),
+    "One or more groups referenced by the user were not found"
+  );
 
   return res;
 }
@@ -111,14 +103,14 @@ export async function getGroupOverview(groupId: GroupIdType) {
     `Group not found with id: ${groupId} or query failed`
   );
 
-  if (
-    res.members.some((u) => u === null) ||
-    res.admins.some((u) => u === null)
-  ) {
-    throw new RepositoryError(
-      "One or more users referenced by the group were not found"
-    );
-  }
+  checkTrue(
+    res.members.every((u) => u !== null),
+    "One or more members referenced by the group were not found"
+  );
+  checkTrue(
+    res.admins.every((u) => u !== null),
+    "One or more admins referenced by the group were not found"
+  );
 
   return res;
 }
