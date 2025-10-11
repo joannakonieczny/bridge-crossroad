@@ -1,3 +1,5 @@
+import UsefulTools from "@/components/pages/with-onboarding/useful-tools/UsefulTools";
+
 export default function UsefulToolsPage() {
-  return <>useful-tools</>;
+  return <UsefulTools />;
 }
