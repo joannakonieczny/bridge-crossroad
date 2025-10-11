@@ -53,7 +53,6 @@ export function getWithinOwnGroupAction<T extends ZodRawShape>(
       const parseResult = havingGroupId.safeParse(clientInput);
 
       if (!parseResult.success) {
-        // rzuć validation error zamiast zwykłego Error
         return returnValidationErrors(havingGroupId, {
           groupId: {
             _errors: ["common.validation.invalidGroupId"],
