@@ -22,6 +22,7 @@ import {
 } from "react-icons/fi";
 import type { IconType } from "react-icons";
 import { useRouter } from "next/navigation";
+import { useTranslationsWithFallback } from "@/lib/typed-translations";
 
 interface ISidebarProps {
   id: GroupIdType;
@@ -29,6 +30,7 @@ interface ISidebarProps {
 
 export default function Sidebar({ id }: ISidebarProps) {
   const router = useRouter();
+  const t = useTranslationsWithFallback("pages.GroupsPage.Sidebar");
 
   const groupQ = useActionQuery({
     queryKey: ["group", id],
@@ -59,7 +61,7 @@ export default function Sidebar({ id }: ISidebarProps) {
         >
           <Flex align="center" gap={2}>
             <FiArrowLeft size={18} />
-            <Text>Wróć</Text>
+            <Text>{t("back")}</Text>
           </Flex>
         </Link>
 
@@ -106,7 +108,7 @@ export default function Sidebar({ id }: ISidebarProps) {
                 _hover={{ bg: "gray.100", color: "purple.500" }}
               >
                 <Icon size={18} />
-                <Text>{item.label}</Text>
+                <Text>{t(`nav.${idx}`)}</Text>
               </Flex>
             </Link>
           );

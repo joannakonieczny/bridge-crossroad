@@ -10,18 +10,19 @@ import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getGroupData, getJoinedGroupsInfo, addUserToGroupByInvitationCode } from "@/services/groups/api";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
-
 export default function Groups() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [invitationCode, setInvitationCode] = useState("");
   const toast = useToast();
   const tValidation = useTranslationsWithFallback();
+  const t = useTranslationsWithFallback("pages.GroupsPage.Groups");
 
   const groupsQ = useActionQuery({
     queryKey: ["groups"],
     action: () => getJoinedGroupsInfo(),
     retry: false,
   });
+  
   const joinMutation = useActionMutation({
     action: async (data: { invitationCode: string }) => {
       return await addUserToGroupByInvitationCode(data);
@@ -59,7 +60,7 @@ export default function Groups() {
             width={{ base: "100%", md: "auto" }}
           >
             <Input
-              placeholder="Wpisz kod grupy"
+              placeholder={t("input.invitationPlaceholder")}
               borderRadius={{ base: "0.25rem", md: "0.25rem 0 0 0.25rem" }}
               w={{ base: "100%", md: "20rem" }}
               value={invitationCode}
@@ -75,8 +76,8 @@ export default function Groups() {
               onClick={async () => {
                 const promise = joinMutation.mutateAsync({ invitationCode });
                 toast.promise(promise, {
-                  loading: { title: "Dołączanie..." },
-                  success: { title: "Dołączono" },
+                  loading: { title: t("toast.loading") },
+                  success: { title: t("toast.success") },
                   error: (err: any) => {
                     const errKey = getMessageKeyFromError(err);
                     return { title: tValidation(errKey) };
@@ -107,8 +108,8 @@ export default function Groups() {
             w={{ base: "100%", md: "auto" }}
             onClick={() => setIsModalOpen(true)}
           >
-            Stwórz grupę
-          </Button>
+            {t("createButton")}
+           </Button>
         </Stack>
 
         {/* Grid z grupami */}
