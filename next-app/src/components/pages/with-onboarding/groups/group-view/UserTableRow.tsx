@@ -1,20 +1,25 @@
 "use client";
 
 import { Tr, Td, Text, Box, Link } from "@chakra-ui/react";
+import { useTranslationsWithFallback } from "@/lib/typed-translations";
 
 type UserTableRowProps = {
   fullName: string;
   nickname?: string;
-  badges: string;
-  cezarNumber: string;
+  pzbsNumber?: string;
+  bboNickname?: string;
+  cuebidsCode?: string;
 };
 
 export default function UserTableRow({
   fullName,
   nickname,
-  badges,
-  cezarNumber,
+  pzbsNumber,
+  bboNickname,
+  cuebidsCode,
 }: UserTableRowProps) {
+  const t = useTranslationsWithFallback("pages.GroupsPage.UserTableRow");
+
   return (
     <Tr>
       {/* Imię i nazwisko + nickname */}
@@ -36,25 +41,30 @@ export default function UserTableRow({
         </Box>
       </Td>
 
-      {/* Odznaki */}
+      {/* Numer PZBS */}
       <Td>
-        <Text fontSize="sm">{badges}</Text>
+        <Text fontSize="sm">{pzbsNumber ?? t("placeholder")}</Text>
       </Td>
 
-      {/* Numer Cezar */}
+      {/* Nickname na BBO */}
       <Td>
-        {cezarNumber ? (
+        <Text fontSize="sm">{bboNickname ?? t("placeholder")}</Text>
+      </Td>
+
+      {/* Kod zaproszenia na Cuebids */}
+      <Td>
+        {cuebidsCode ? (
           <Link
-            href={`https://msc.com.pl/cezar/?p=21&pid_search=${cezarNumber}`}
+            href={`https://msc.com.pl/cezar/?p=21&pid_search=${cuebidsCode}`}
             isExternal
             fontWeight="semibold"
             color="accent.600"
             fontSize="sm"
           >
-            {cezarNumber}
+            {cuebidsCode}
           </Link>
         ) : (
-          <Text color="border.400">-</Text>
+          <Text color="border.400">{t("placeholder")}</Text>
         )}
       </Td>
     </Tr>

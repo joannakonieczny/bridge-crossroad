@@ -255,6 +255,88 @@ const groupsPage = {
       errorDefault: "Wystąpił błąd podczas tworzenia grupy",
     },
   },
+
+  // now added translations used across group components
+  GroupsGrid: {
+    noGroups: "Brak grup do wyświetlenia",
+    menu: {
+      open: "Otwórz",
+      edit: "Edytuj",
+      delete: "Usuń",
+    },
+  },
+
+  Groups: {
+    input: {
+      invitationPlaceholder: "Wpisz kod grupy",
+    },
+    toast: {
+      loading: "Dołączanie...",
+      success: "Dołączono",
+      errorDefault: "Wystąpił błąd podczas dołączania do grupy",
+    },
+    createButton: "Stwórz grupę",
+    joinButton: "Dołącz",
+  },
+
+  UserTableRow: {
+    placeholder: "-",
+  },
+
+  Sidebar: {
+    back: "Wróć",
+    nav: {
+      0: "O grupie",
+      1: "Czat",
+      2: "Materiały",
+      3: "Rozdania",
+    },
+    members: {
+      single: "1 członek",
+      multiple: "{count} członków",
+    },
+  },
+
+  PeopleList: {
+    heading: "Członkowie Klubu",
+    searchPlaceholder: "Szukaj po imieniu, nazwisku, nicku...",
+    table: {
+      name: "Imię i nazwisko",
+      pzbs: "Numer PZBS",
+      bbo: "Nickname na BBO",
+      cuebids: "Kod zaproszenia na Cuebids",
+    },
+  },
+
+  GroupView: {
+    error: {
+      loadFailed: "Nie udało się wczytać danych grupy.",
+      stayInfo: "Pozostajesz na tej stronie — możesz spróbować ponownie lub wrócić do listy grup.",
+    },
+    buttons: {
+      retry: "Spróbuj ponownie",
+      backToList: "Wróć do grup",
+    },
+  },
+
+  GroupBanner: {
+    fallback: {
+      name: "Brak nazwy",
+      description: "Brak opisu",
+    },
+    admin: {
+      title: "Administrator",
+    },
+    createdAt: {
+      title: "Data założenia",
+    },
+    membersCount: {
+      title: "Liczba członków",
+    },
+    description: {
+      title: "Opis grupy",
+    },
+  },
 };
 
 const userModelValidation = {

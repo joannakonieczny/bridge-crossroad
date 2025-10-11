@@ -1,6 +1,7 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { Box, Flex, HStack, Skeleton, SkeletonText, Image } from "@chakra-ui/react";
+import { useTranslationsWithFallback } from "@/lib/typed-translations";
 
 type MemberMin = {
     _id: string;
@@ -27,6 +28,8 @@ interface IGroupBannerProps {
 }
 
 export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
+    const t = useTranslationsWithFallback("pages.GroupsPage.GroupBanner");
+
     if (isLoading) {
         return (
             <Flex
@@ -55,8 +58,8 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
         );
     }
 
-    const title = group?.name ?? "Brak nazwy";
-    const description = group?.description ?? "Brak opisu";
+    const title = group?.name ?? t("fallback.name");
+    const description = group?.description ?? t("fallback.description");
     const adminName = group?.admins?.[0]
         ? `${group!.admins![0].name.firstName} ${group!.admins![0].name.lastName}`
         : "-";
@@ -80,9 +83,8 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
                     borderRadius="md"
                     align="stretch"
                 >
-                    {/* wąski prostokąt zawsze obecny */}
                     <Box backgroundColor="accent.100" width="1rem" height="100%" flex="0 0 1rem" />
-                    {/* główne pole obrazka / fallback kwadrat */}
+                    {/* główne pole obrazka / fallback kwadrat - TODO może kiedys kiedys beda placeholdery generowane*/}
                     {group?.imageUrl ? (
                         <Box width="100%" height="100%" flex="1 1 auto">
                             <Image src={group.imageUrl} alt={title} objectFit="cover" w="100%" h="100%" />
@@ -96,24 +98,24 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
 
                     <HStack width="100%" spacing="2rem" justify="space-between">
                         <Flex direction="column">
-                            <ResponsiveHeading fontSize="md" text="Administrator" showBar={false} />
+                            <ResponsiveHeading fontSize="md" text={t("admin.title")} showBar={false} />
                             <ResponsiveText>{adminName}</ResponsiveText>
                         </Flex>
                         <Flex direction="column">
-                            <ResponsiveHeading fontSize="md" text="Data założenia" showBar={false} />
+                            <ResponsiveHeading fontSize="md" text={t("createdAt.title")} showBar={false} />
                             <ResponsiveText>
                                 {group?.createdAt ? new Date(group.createdAt).toLocaleDateString() : "-"}
                             </ResponsiveText>
                         </Flex>
                         <Flex direction="column">
-                            <ResponsiveHeading fontSize="md" text="Liczba członków" showBar={false} />
+                            <ResponsiveHeading fontSize="md" text={t("membersCount.title")} showBar={false} />
                             <ResponsiveText>{membersCount}</ResponsiveText>
                         </Flex>
                     </HStack>
                 </Flex>
             </Flex>
             <Flex direction="column"> {/* description */}
-                <ResponsiveHeading barOrientation="horizontal" fontSize="md" text="Opis grupy" showBar={true} />
+                <ResponsiveHeading barOrientation="horizontal" fontSize="md" text={t("description.title")} showBar={true} />
                 <ResponsiveText>{description}</ResponsiveText>
             </Flex>
         </Flex>
