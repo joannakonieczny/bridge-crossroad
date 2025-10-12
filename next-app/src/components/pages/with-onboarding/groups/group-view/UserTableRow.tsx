@@ -25,7 +25,7 @@ export default function UserTableRow({
       {/* Imię i nazwisko + nickname */}
       <Td>
         <Box>
-          <Text fontWeight="bold" fontSize="md">
+          <Text fontWeight="bold" fontSize={{ base: "sm", md: "md" }}>
             {fullName}
           </Text>
           {nickname && (
@@ -43,12 +43,16 @@ export default function UserTableRow({
 
       {/* Numer PZBS */}
       <Td>
-        <Text fontSize="sm">{pzbsNumber ?? t("placeholder")}</Text>
+        <Text fontSize={{ base: "xs", md: "sm" }}>
+          {pzbsNumber ?? t("placeholder")}
+        </Text>
       </Td>
 
       {/* Nickname na BBO */}
       <Td>
-        <Text fontSize="sm">{bboNickname ?? t("placeholder")}</Text>
+        <Text fontSize={{ base: "xs", md: "sm" }}>
+          {bboNickname ?? t("placeholder")}
+        </Text>
       </Td>
 
       {/* Kod zaproszenia na Cuebids */}
@@ -59,12 +63,14 @@ export default function UserTableRow({
             isExternal
             fontWeight="semibold"
             color="accent.600"
-            fontSize="sm"
+            fontSize={{ base: "xs", md: "sm" }}
           >
             {cuebidsCode}
           </Link>
         ) : (
-          <Text color="border.400">{t("placeholder")}</Text>
+          <Text color="border.400" fontSize={{ base: "xs", md: "sm" }}>
+            {t("placeholder")}
+          </Text>
         )}
       </Td>
     </Tr>

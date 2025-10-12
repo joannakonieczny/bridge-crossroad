@@ -14,7 +14,8 @@ export default async function GroupsLayout(props: GroupsLayoutProps) {
   const { id } = params ?? ({} as { id: GroupIdType });
 
   return (
-    <Flex minHeight="calc(100vh - 6rem)" width="100%">
+    // direction zmienia się na kolumnę na mniejszych ekranach
+    <Flex minHeight="calc(100vh - 6rem)" width="100%" direction={{ base: "column", md: "row" }}>
       <Sidebar id={id} />
       {children}
     </Flex>

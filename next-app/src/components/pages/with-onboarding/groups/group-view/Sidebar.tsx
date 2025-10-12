@@ -12,6 +12,9 @@ import {
   Divider,
   Link,
   Skeleton,
+  HStack,
+  IconButton,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import {
   FiArrowLeft,
@@ -50,9 +53,66 @@ export default function Sidebar({ id }: ISidebarProps) {
     { icon: FiGrid, label: "Rozdania" },
   ];
 
+  const avatarSize = useBreakpointValue({ base: "md", md: "lg" });
+
   return (
-    <Box w="17rem" p={4}>
-      <VStack align="start" spacing={4}>
+    <Box
+      w={{ base: "100%", md: "17rem" }}
+      p={{ base: 3, md: 4 }}
+      borderBottom={{ base: "1px solid", md: "none" }}
+      borderColor={{ base: "gray.200", md: "transparent" }}
+    >
+      <Flex
+        display={{ base: "flex", md: "none" }}
+        direction="row"
+        align="flex-start" 
+        gap={4}
+      >
+        {isLoading ? (
+          <Skeleton height="64px" width="64px" borderRadius="md" />
+        ) : (
+          <Avatar
+            size={avatarSize}
+            name={groupName}
+            src={group?.imageUrl ?? undefined}
+            borderRadius="md"
+            alignSelf="flex-start" 
+          />
+        )}
+
+        <Flex direction="column" flex="1" minW={0}>
+          <Box>
+            <Text fontWeight="bold" isTruncated>
+              {groupName}
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              {membersCount === 1
+                ? t("members.single")
+                : t("members.multiple", { count: membersCount })}
+            </Text>
+          </Box>
+
+          <HStack mt={2} spacing={2} justify="center">
+            {navItems.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <IconButton
+                  key={idx}
+                  aria-label={item.label}
+                  icon={<Icon size={20} />}
+                  size="lg"
+                  variant="ghost"
+                  onClick={() => {
+                    /* na mobile nie ma na razie podstron, więc nie robi nic */
+                  }}
+                />
+              );
+            })}
+          </HStack>
+        </Flex>
+      </Flex>
+
+      <VStack display={{ base: "none", md: "flex" }} align="start" spacing={4}>
         <Link
           fontSize="sm"
           color="purple.500"
@@ -93,28 +153,28 @@ export default function Sidebar({ id }: ISidebarProps) {
             </>
           )}
         </Box>
-      </VStack>
 
-      <Divider my={4} />
+        <Divider my={4} />
 
-      <VStack align="stretch" spacing={1}>
-        {navItems.map((item, idx) => {
-          const Icon = item.icon;
-          return (
-            <Link key={idx} _hover={{ textDecoration: "none" }}>
-              <Flex
-                align="center"
-                gap={3}
-                p={2}
-                borderRadius="md"
-                _hover={{ bg: "gray.100", color: "purple.500" }}
-              >
-                <Icon size={18} />
-                <Text>{t(`nav.${idx}`)}</Text>
-              </Flex>
-            </Link>
-          );
-        })}
+        <VStack align="stretch" spacing={1} w="100%">
+          {navItems.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <Link key={idx} _hover={{ textDecoration: "none" }}>
+                <Flex
+                  align="center"
+                  gap={3}
+                  p={2}
+                  borderRadius="md"
+                  _hover={{ bg: "gray.100", color: "purple.500" }}
+                >
+                  <Icon size={18} />
+                  <Text>{t(`nav.${idx}`)}</Text>
+                </Flex>
+              </Link>
+            );
+          })}
+        </VStack>
       </VStack>
     </Box>
   );

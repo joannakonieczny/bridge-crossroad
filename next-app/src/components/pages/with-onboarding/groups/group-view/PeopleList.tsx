@@ -1,6 +1,6 @@
 'use client';
 
-import { Flex, Table, Thead, Tbody, Tr, Th, Skeleton } from '@chakra-ui/react';
+import { Flex, Table, Thead, Tbody, Tr, Th, Skeleton, Box, useBreakpointValue, VStack, Text } from '@chakra-ui/react';
 import { useState } from 'react';
 import MainHeading from '@/components/common/texts/MainHeading';
 import SearchInput from '@/components/common/SearchInput';
@@ -41,61 +41,86 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
     );
   });
 
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
     <Flex
       flex={1}
       direction={'column'}
       backgroundColor={'border.50'}
-      padding={'2rem'}
+      padding={{ base: '1rem', md: '2rem' }}
     >
-      <Flex flex={1} backgroundColor="bg" padding="2rem" direction="column" gap={6}>
+      <Flex flex={1} backgroundColor="bg" padding={{ base: '1rem', md: '2rem' }} direction="column" gap={6}>
         <MainHeading text={t("heading")} />
         <SearchInput
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("searchPlaceholder")}
         />
-        <Table variant="simple" width="100%">
-          <Thead>
-            <Tr>
-              <Th>{t("table.name")}</Th>
-              <Th>{t("table.pzbs")}</Th>
-              <Th>{t("table.bbo")}</Th>
-              <Th>{t("table.cuebids")}</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+
+        {isMobile ? (
+          // mobile: list of cards (PZBS etc. data hidden on mobile)
+          <VStack spacing={3} align="stretch">
             {isLoading
-              ? 
-                Array.from({ length: 4 }).map((_, i) => (
-                  <Tr key={i}>
-                    <Th>
-                      <Skeleton height="12px" width="120px" />
-                    </Th>
-                    <Th>
-                      <Skeleton height="12px" width="80px" />
-                    </Th>
-                    <Th>
-                      <Skeleton height="12px" width="100px" />
-                    </Th>
-                    <Th>
-                      <Skeleton height="12px" width="120px" />
-                    </Th>
-                  </Tr>
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <Box key={i} p={3} bg="white" borderRadius="md" boxShadow="sm">
+                    <Skeleton height="14px" width="60%" mb={2} />
+                    <Skeleton height="12px" width="40%" />
+                  </Box>
                 ))
-              : 
-                filteredData.map((user, index) => (
-                  <UserTableRow
-                    key={index}
-                    fullName={user.fullName}
-                    nickname={user.nickname}
-                    pzbsNumber={user.pzbsId}
-                    bboNickname={user.bboId}
-                    cuebidsCode={user.cuebidsId}
-                  />
+              : filteredData.map((user, idx) => (
+                  <Box key={idx} p={3} bg="white" borderRadius="md" boxShadow="sm">
+                    <Text fontWeight="bold" fontSize="sm">{user.fullName}</Text>
+                    <Text fontSize="sm" color="gray.500">{user.nickname || t("placeholder")}</Text>
+                  </Box>
                 ))}
-          </Tbody>
-        </Table>
+          </VStack>
+        ) : (
+          // desktop: table
+          <Box overflowX="auto" width="100%">
+            <Table variant="simple" width="100%">
+              <Thead>
+                <Tr>
+                  <Th>{t("table.name")}</Th>
+                  <Th>{t("table.pzbs")}</Th>
+                  <Th>{t("table.bbo")}</Th>
+                  <Th>{t("table.cuebids")}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {isLoading
+                  ? 
+                    Array.from({ length: 4 }).map((_, i) => (
+                      <Tr key={i}>
+                        <Th>
+                          <Skeleton height="12px" width="120px" />
+                        </Th>
+                        <Th>
+                          <Skeleton height="12px" width="80px" />
+                        </Th>
+                        <Th>
+                          <Skeleton height="12px" width="100px" />
+                        </Th>
+                        <Th>
+                          <Skeleton height="12px" width="120px" />
+                        </Th>
+                      </Tr>
+                    ))
+                  : 
+                    filteredData.map((user, index) => (
+                      <UserTableRow
+                        key={index}
+                        fullName={user.fullName}
+                        nickname={user.nickname}
+                        pzbsNumber={user.pzbsId}
+                        bboNickname={user.bboId}
+                        cuebidsCode={user.cuebidsId}
+                      />
+                    ))}
+              </Tbody>
+            </Table>
+          </Box>
+        )}
       </Flex>
     </Flex>
   );
