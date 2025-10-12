@@ -1,6 +1,6 @@
 "use client";
 
-import { GroupIdType } from "@/schemas/model/group/group-types";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { getGroupData } from "@/services/groups/api";
 import {
@@ -86,7 +86,9 @@ export default function Sidebar({ id }: ISidebarProps) {
             <>
               <Text fontWeight="bold">{groupName}</Text>
               <Text fontSize="sm" color="gray.500">
-                {membersCount === 1 ? "1 członek" : `${membersCount} członków`}
+                {membersCount === 1
+                  ? t("members.single")
+                  : t("members.multiple", { count: membersCount })}
               </Text>
             </>
           )}

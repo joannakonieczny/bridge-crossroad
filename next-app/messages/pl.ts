@@ -260,17 +260,21 @@ const groupsPage = {
       loading: "Tworzenie grupy...",
       success: "Utworzono grupę!",
       errorDefault: "Wystąpił błąd podczas tworzenia grupy",
+      errorNameExists: "Grupa o takiej nazwie już istnieje",
+      errorInvalidData: "Nieprawidłowe dane. Sprawdź pola formularza",
+      errorUnknown: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później",
     },
   },
 
-  // now added translations used across group components
   GroupsGrid: {
     noGroups: "Brak grup do wyświetlenia",
     menu: {
       open: "Otwórz",
       edit: "Edytuj",
       delete: "Usuń",
+      ariaLabel: "Opcje",
     },
+    imageAlt: "obraz grupy",
   },
 
   Groups: {
@@ -339,6 +343,8 @@ const groupsPage = {
     },
     membersCount: {
       title: "Liczba członków",
+      single: "1 członek",
+      multiple: "{count} członków",
     },
     description: {
       title: "Opis grupy",
@@ -399,6 +405,8 @@ const userModelValidation = {
 const groupModelValidation = {
   name: {
     required: "Podaj nazwę grupy",
+    // fallback / server-side error message key
+    server: "Wystąpił błąd związany z nazwą grupy",
     min: `Min. ${GROUP.name.min} znaki`,
     max: `Max. ${GROUP.name.max} znaków`,
     regex: "Nazwa może zawierać litery, cyfry, spacje, - i _",
@@ -586,6 +594,7 @@ const messages = {
     groups: {
       create: {
         nameExists: "Grupa o takiej nazwie już istnieje",
+        unknown: "Wystąpił błąd podczas tworzenia grupy",
       },
       join: {
         alreadyMember: "Jesteś już członkiem tej grupy",
