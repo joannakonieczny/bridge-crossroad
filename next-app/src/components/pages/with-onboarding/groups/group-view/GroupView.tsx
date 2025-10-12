@@ -6,8 +6,7 @@ import GroupBanner from "./GroupBanner";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { getGroupData } from "@/services/groups/api";
 import { useRouter } from "next/navigation";
-import { GroupIdType } from "@/schemas/model/group/group-types";
-import { useEffect } from "react";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 
 interface IGroupViewProps {

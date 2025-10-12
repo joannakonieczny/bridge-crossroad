@@ -16,13 +16,32 @@ import {
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { getJoinedGroupsInfo } from "@/services/groups/api";
-import { GroupIdType } from "@/schemas/model/group/group-types";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
+import { z } from "zod";
+import { idPropSchema } from "@/schemas/common";
+import {
+  nameSchema,
+  descriptionSchema,
+  invitationCodeSchema,
+  imageUrlSchema,
+} from "@/schemas/model/group/group-schema";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 
-type SafeResult = Awaited<ReturnType<typeof getJoinedGroupsInfo>>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const GroupSchema = z.object({
+  id: idPropSchema,
+  name: nameSchema,
+  description: descriptionSchema.optional(),
+  imageUrl: imageUrlSchema.optional(),
+  invitationCode: invitationCodeSchema.optional(),
+  isMain: z.boolean().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  members: z.array(z.any()).optional(),
+  admins: z.array(z.any()).optional(),
+});
 
-type Group = NonNullable<SafeResult["data"]>[number];
+type Group = z.infer<typeof GroupSchema>;
 
 type Props = {
   groups?: Group[];
@@ -95,7 +114,7 @@ export default function GroupsGrid({ groups = [], isLoading }: Props) {
                 w="100%"
                 h="100%"
                 objectFit="cover"
-                alt={group.name ?? "group image"}
+                alt={group.name ?? t("imageAlt")}
               />
             </Box>
             <CardFooter>
@@ -117,15 +136,15 @@ export default function GroupsGrid({ groups = [], isLoading }: Props) {
               <Menu placement="top-end">
                 <MenuButton
                   as={IconButton}
-                  aria-label="Options"
+                  aria-label={t("menu.ariaLabel")}
                   icon={<FiMoreVertical />}
                   variant="ghost"
                   size="sm"
                 />
                 <MenuList>
-                  <MenuItem>Otwórz</MenuItem>
-                  <MenuItem>Edytuj</MenuItem>
-                  <MenuItem>Usuń</MenuItem>
+                  <MenuItem>{t("menu.open")}</MenuItem>
+                  <MenuItem>{t("menu.edit")}</MenuItem>
+                  <MenuItem>{t("menu.delete")}</MenuItem>
                 </MenuList>
               </Menu>
             </Box>

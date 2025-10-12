@@ -109,7 +109,12 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
                         </Flex>
                         <Flex direction="column">
                             <ResponsiveHeading fontSize="md" text={t("membersCount.title")} showBar={false} />
-                            <ResponsiveText>{membersCount}</ResponsiveText>
+                            {/* use translations for singular/plural */}
+                            <ResponsiveText>
+                                {membersCount === 1
+                                    ? t("membersCount.single")
+                                    : t("membersCount.multiple", { count: membersCount })}
+                            </ResponsiveText>
                         </Flex>
                     </HStack>
                 </Flex>

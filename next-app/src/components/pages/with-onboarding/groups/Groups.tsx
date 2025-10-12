@@ -4,12 +4,13 @@ import { Box, Flex, Stack, Button, Input, useToast } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
 import AddGroupModal from "./AddGroupModal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
-import { getGroupData, getJoinedGroupsInfo, addUserToGroupByInvitationCode } from "@/services/groups/api";
+import { getJoinedGroupsInfo, addUserToGroupByInvitationCode } from "@/services/groups/api";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import type { ActionError } from "@/lib/tanstack-action/types";
 export default function Groups() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [invitationCode, setInvitationCode] = useState("");
@@ -27,7 +28,6 @@ export default function Groups() {
     action: async (data: { invitationCode: string }) => {
       return await addUserToGroupByInvitationCode(data);
     },
-    // keep handlers local to the submit flow to avoid re-triggering toasts on re-renders
   });
   
 
@@ -40,6 +40,8 @@ export default function Groups() {
     display="flex"
     flexDirection="column"
     overflowY="visible"
+    minHeight="calc(100vh - 5rem)"
+    backgroundColor="border.50"
   >
   <Box width="100%">
         {/* Górny pasek */}
@@ -53,7 +55,6 @@ export default function Groups() {
           padding="0.5rem"
           mb={4}
         >
-          {/* Input + Dołącz */}
           <Flex
             direction={{ base: "column", md: "row" }}
             gap={{ base: 2, md: 0 }}
@@ -78,7 +79,7 @@ export default function Groups() {
                 toast.promise(promise, {
                   loading: { title: t("toast.loading") },
                   success: { title: t("toast.success") },
-                  error: (err: any) => {
+                  error: (err: ActionError) => {
                     const errKey = getMessageKeyFromError(err);
                     return { title: tValidation(errKey) };
                   },
@@ -87,12 +88,12 @@ export default function Groups() {
                   await promise;
                   try {
                     await groupsQ.refetch();
-                  } catch (e) {
+                  } catch {
                     // ignore refetch errors
                   }
                   setInvitationCode("");
-                } catch (e) {
-                  // error toast already shown via toast.promise
+                } catch {
+                  // ignore, error shown via toast
                 }
               }}
             >
@@ -123,12 +124,11 @@ export default function Groups() {
         onCreated={async () => {
           try {
             await groupsQ.refetch();
-          } catch (e) {
+          } catch {
             // ignore
           }
         }}
       />
-      {/* debug removed */}
       {/* join result now shown via toasts */}
     </Box>
   );

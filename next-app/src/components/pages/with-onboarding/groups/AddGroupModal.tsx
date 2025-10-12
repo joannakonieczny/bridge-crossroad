@@ -20,10 +20,10 @@ import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import FormInput from "../../../common/form/FormInput";
 import FormMainButton from "../../../common/form/FormMainButton";
 
-import { z } from "zod";
+import type { z } from "zod";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/create-group-form-schema";
 import { createNewGroup } from "@/services/groups/api";
-import { useTranslations } from "@/lib/typed-translations";
+import { useTranslations, useTranslationsWithFallback } from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const GROUPS_QUERY_KEY = { groups: ["groups"] };
@@ -39,6 +39,9 @@ type Props = {
 export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
   const toast = useToast();
   const t = useTranslations("pages.GroupsPage.AddGroupModal");
+  // global translator to resolve keys like "validation.model.group.name.required"
+  const tValidation = useTranslationsWithFallback();
+
   const queryClient = useQueryClient();
 
   const { handleSubmit, control, setError, register } = useForm<CreateGroupInput>({
@@ -57,7 +60,7 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY.groups });
       try {
         await (onCreated ? onCreated() : undefined);
-      } catch (e) {
+      } catch {
         // ignore
       }
     },
@@ -76,7 +79,7 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
       success: { title: t("toast.success") },
       error: (err: MutationOrQuerryError<typeof createGroupAction>) => {
         const errKey = getMessageKeyFromError(err);
-        return { title: errKey || t("toast.errorDefault") };
+        return { title: tValidation(errKey) || t("toast.errorDefault") };
       },
     });
   };
@@ -97,7 +100,11 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
                 render={({ field, fieldState: { error } }) => (
                   <FormInput
                     placeholder={t("form.name.placeholder")}
-                    errorMessage={error?.message}
+                    errorMessage={
+                      typeof error?.message === "string"
+                        ? tValidation(error.message)
+                        : (error?.message as string | undefined)
+                    }
                     isInvalid={!!error}
                     id="name"
                     type="text"
@@ -114,7 +121,11 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
                   <FormInput
                     type="textarea"
                     placeholder={t("form.description.placeholder")}
-                    errorMessage={error?.message}
+                    errorMessage={
+                      typeof error?.message === "string"
+                        ? tValidation(error.message)
+                        : (error?.message as string | undefined)
+                    }
                     isInvalid={!!error}
                     id="description"
                     value={field.value}
