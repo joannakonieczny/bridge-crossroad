@@ -3,6 +3,7 @@ import { Academy } from "@/club-preset/academy";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
+import { log } from "console";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -189,7 +190,13 @@ const navbar = {
     profile: "Profil",
     settings: "Ustawienia",
     aboutPage: "O stronie",
+    logout: "Wyloguj się",
     darkMode: "Tryb ciemny",
+  },
+  logoutToast: {
+    loading: "Trwa wylogowywanie...",
+    success: "Pomyślnie wylogowano!",
+    error: "Wystąpił błąd podczas wylogowywania",
   },
 };
 
@@ -386,26 +393,28 @@ const onboardingPageValidation = {
 const usefulTools = {
   title: "Przydatne narzędzia",
   buttonText: "Zobacz więcej",
-  tools : {
-    bridgeBase : {
+  tools: {
+    bridgeBase: {
       title: "Bridge Base Online",
-      description: "Najbardziej popularna platforma do gry w brydża umożliwiająca szeroki wachlarz ćwiczeń, wspólną grę ze znajomymi i branie udziału w turniejach online."
+      description:
+        "Najbardziej popularna platforma do gry w brydża umożliwiająca szeroki wachlarz ćwiczeń, wspólną grę ze znajomymi i branie udziału w turniejach online.",
     },
-    rpBridge : {
+    rpBridge: {
       title: "RP Bridge",
-      description: "Niech nie zmyli Cię prosty wygląd. Ta strona zawiera naprawdę dużo narzędzi do ćwiczenia gry w brydża. Od profesjonalnych, aż po humorystyczne 🙂"
+      description:
+        "Niech nie zmyli Cię prosty wygląd. Ta strona zawiera naprawdę dużo narzędzi do ćwiczenia gry w brydża. Od profesjonalnych, aż po humorystyczne 🙂",
     },
     simonsConventions: {
       title: "Simon's Conventions",
-      description: "Rozbudowana baza konwencji licytacyjnych bez kompromisów."
-      
-    }, 
+      description: "Rozbudowana baza konwencji licytacyjnych bez kompromisów.",
+    },
     cuebids: {
       title: "Cuebids",
-      description: "Nowoczesna aplikacja do ćwiczenia licytacji i porównywania się z botami o różnych stopniach zaawansowania."
-    }
-  }
-}
+      description:
+        "Nowoczesna aplikacja do ćwiczenia licytacji i porównywania się z botami o różnych stopniach zaawansowania.",
+    },
+  },
+};
 
 const messages = {
   common: {
