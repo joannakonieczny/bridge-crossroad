@@ -1,19 +1,18 @@
-
 "use client";
 
 import { HStack, Stack, useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
-import FormLayout from "../FormLayout";
+import FormLayout from "@/components/pages/auth/FormLayout";
 import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
-import FormHeading from "../FormHeading";
-import FormInput from "../../../common/form/FormInput";
-import GoogleButton from "../FormGoogleButton";
-import FormMainButton from "../../../common/form/FormMainButton";
-import FormCheckbox from "../../../common/form/FormCheckbox";
+import FormHeading from "@/components/pages/auth/FormHeading";
+import FormInput from "@/components/common/form/FormInput";
+import GoogleButton from "@/components/pages/auth/FormGoogleButton";
+import FormMainButton from "@/components/common/form/FormMainButton";
+import FormCheckbox from "@/components/common/form/FormCheckbox";
 import { login } from "@/services/auth/api";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";

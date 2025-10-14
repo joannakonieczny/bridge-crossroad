@@ -9,10 +9,10 @@ export type IFormInputProps = {
   isInvalid?: boolean;
   id?: string;
   isRequired?: boolean;
-  type?: "password" | "text" | "email" | "number" | "textarea"; // <-- dodany textarea
+  type?: "password" | "text" | "email" | "number" | "textarea"; 
   onElementProps?: FormControlProps;
   value?: string;
-  onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>; // <-- dopasowane
+  onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 };
 
 export default function FormInput(props: IFormInputProps) {

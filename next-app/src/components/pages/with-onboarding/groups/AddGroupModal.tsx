@@ -17,8 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
-import FormInput from "../../../common/form/FormInput";
-import FormMainButton from "../../../common/form/FormMainButton";
+import FormInput from "@/components/common/form/FormInput";
+import FormMainButton from "@/components/common/form/FormMainButton";
 
 import type { z } from "zod";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/create-group-form-schema";
@@ -39,7 +39,6 @@ type Props = {
 export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
   const toast = useToast();
   const t = useTranslations("pages.GroupsPage.AddGroupModal");
-  // global translator to resolve keys like "validation.model.group.name.required"
   const tValidation = useTranslationsWithFallback();
 
   const queryClient = useQueryClient();
@@ -59,7 +58,9 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY.groups });
       try {
-        await (onCreated ? onCreated() : undefined);
+        if (onCreated) {
+          onCreated();
+        }
       } catch {
         // ignore
       }
@@ -95,43 +96,35 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
             <Stack spacing={4} mt={4}>
               <input type="hidden" {...register("invitationCode")} />
               <Controller
-                control={control}
-                name="name"
-                render={({ field, fieldState: { error } }) => (
-                  <FormInput
-                    placeholder={t("form.name.placeholder")}
-                    errorMessage={
-                      typeof error?.message === "string"
-                        ? tValidation(error.message)
-                        : (error?.message as string | undefined)
-                    }
-                    isInvalid={!!error}
-                    id="name"
-                    type="text"
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                )}
+              control={control}
+              name="name"
+              render={({ field, fieldState: { error } }) => (
+                <FormInput
+                placeholder={t("form.name.placeholder")}
+                errorMessage={tValidation(error?.message)}
+                isInvalid={!!error}
+                id="name"
+                type="text"
+                value={field.value}
+                onChange={field.onChange}
+                />
+              )}
               />
 
               <Controller
-                control={control}
-                name="description"
-                render={({ field, fieldState: { error } }) => (
-                  <FormInput
-                    type="textarea"
-                    placeholder={t("form.description.placeholder")}
-                    errorMessage={
-                      typeof error?.message === "string"
-                        ? tValidation(error.message)
-                        : (error?.message as string | undefined)
-                    }
-                    isInvalid={!!error}
-                    id="description"
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                )}
+              control={control}
+              name="description"
+              render={({ field, fieldState: { error } }) => (
+                <FormInput
+                type="textarea"
+                placeholder={t("form.description.placeholder")}
+                errorMessage={tValidation(error?.message)}
+                isInvalid={!!error}
+                id="description"
+                value={field.value}
+                onChange={field.onChange}
+                />
+              )}
               />
 
               <FormMainButton text={t("submitButton")} type="submit" />

@@ -1,7 +1,7 @@
 "use client";
 
 import { Tr, Td, Text, Box, Link } from "@chakra-ui/react";
-import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import { useTranslations } from "@/lib/typed-translations";
 
 type UserTableRowProps = {
   fullName: string;
@@ -18,7 +18,7 @@ export default function UserTableRow({
   bboNickname,
   cuebidsCode,
 }: UserTableRowProps) {
-  const t = useTranslationsWithFallback("pages.GroupsPage.UserTableRow");
+  const t = useTranslations("pages.GroupsPage.UserTableRow");
 
   return (
     <Tr>

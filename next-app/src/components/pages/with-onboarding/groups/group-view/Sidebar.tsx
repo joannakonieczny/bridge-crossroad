@@ -26,6 +26,7 @@ import {
 import type { IconType } from "react-icons";
 import { useRouter } from "next/navigation";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 interface ISidebarProps {
   id: GroupIdType;
@@ -36,7 +37,7 @@ export default function Sidebar({ id }: ISidebarProps) {
   const t = useTranslationsWithFallback("pages.GroupsPage.Sidebar");
 
   const groupQ = useActionQuery({
-    queryKey: ["group", id],
+    queryKey: QUERY_KEYS.group(id),
     action: () => getGroupData({ groupId: id }),
     retry: false,
   });
@@ -46,12 +47,7 @@ export default function Sidebar({ id }: ISidebarProps) {
   const groupName = group?.name ?? "Grupa";
   const membersCount = group?.members?.length ?? 0;
 
-  const navItems: { icon: IconType; label: string }[] = [
-    { icon: FiUser, label: "O grupie" },
-    { icon: FiMessageCircle, label: "Czat" },
-    { icon: FiFolder, label: "Materiały" },
-    { icon: FiGrid, label: "Rozdania" },
-  ];
+  const navItems: IconType[] = [FiUser, FiMessageCircle, FiFolder, FiGrid];
 
   const avatarSize = useBreakpointValue({ base: "md", md: "lg" });
 
@@ -74,7 +70,7 @@ export default function Sidebar({ id }: ISidebarProps) {
           <Avatar
             size={avatarSize}
             name={groupName}
-            src={group?.imageUrl ?? undefined}
+            src={group?.imageUrl}
             borderRadius="md"
             alignSelf="flex-start" 
           />
@@ -85,7 +81,7 @@ export default function Sidebar({ id }: ISidebarProps) {
             <Text fontWeight="bold" isTruncated>
               {groupName}
             </Text>
-            <Text fontSize="sm" color="gray.500">
+            <Text fontSize="sm" color="border.500">
               {membersCount === 1
                 ? t("members.single")
                 : t("members.multiple", { count: membersCount })}
@@ -93,12 +89,11 @@ export default function Sidebar({ id }: ISidebarProps) {
           </Box>
 
           <HStack mt={2} spacing={2} justify="center">
-            {navItems.map((item, idx) => {
-              const Icon = item.icon;
+            {navItems.map((Icon, idx) => {
               return (
                 <IconButton
                   key={idx}
-                  aria-label={item.label}
+                  aria-label={t(`nav.${idx}`)}
                   icon={<Icon size={20} />}
                   size="lg"
                   variant="ghost"
@@ -145,7 +140,7 @@ export default function Sidebar({ id }: ISidebarProps) {
           ) : (
             <>
               <Text fontWeight="bold">{groupName}</Text>
-              <Text fontSize="sm" color="gray.500">
+              <Text fontSize="sm" color="border.500">
                 {membersCount === 1
                   ? t("members.single")
                   : t("members.multiple", { count: membersCount })}
@@ -157,23 +152,20 @@ export default function Sidebar({ id }: ISidebarProps) {
         <Divider my={4} />
 
         <VStack align="stretch" spacing={1} w="100%">
-          {navItems.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <Link key={idx} _hover={{ textDecoration: "none" }}>
-                <Flex
-                  align="center"
-                  gap={3}
-                  p={2}
-                  borderRadius="md"
-                  _hover={{ bg: "gray.100", color: "purple.500" }}
-                >
-                  <Icon size={18} />
-                  <Text>{t(`nav.${idx}`)}</Text>
-                </Flex>
-              </Link>
-            );
-          })}
+          {navItems.map((Icon, idx) => (
+            <Link key={idx} _hover={{ textDecoration: "none" }}>
+              <Flex
+                align="center"
+                gap={3}
+                p={2}
+                borderRadius="md"
+                _hover={{ bg: "border.100", color: "accent.500" }}
+              >
+                <Icon size={18} />
+                <Text>{t(`nav.${idx}`)}</Text>
+              </Flex>
+            </Link>
+          ))}
         </VStack>
       </VStack>
     </Box>

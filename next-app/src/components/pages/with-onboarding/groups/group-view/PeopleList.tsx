@@ -18,6 +18,39 @@ interface PeopleListProps {
   isLoading?: boolean;
 }
 
+export function MobileMemberCard({ fullName, nickname }: { fullName: string; nickname: string }) {
+  const t = useTranslationsWithFallback("pages.GroupsPage.PeopleList");
+  return (
+    <Box p={3} bg="white" borderRadius="md" boxShadow="sm">
+      <Text fontWeight="bold" fontSize="sm">{fullName}</Text>
+      <Text fontSize="sm" color="gray.500">{nickname || t("placeholder")}</Text>
+    </Box>
+  );
+}
+
+export function DesktopTableSkeletons({ count = 4 }: { count?: number }) {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <Tr key={i}>
+          <Th>
+            <Skeleton height="12px" width="120px" />
+          </Th>
+          <Th>
+            <Skeleton height="12px" width="80px" />
+          </Th>
+          <Th>
+            <Skeleton height="12px" width="100px" />
+          </Th>
+          <Th>
+            <Skeleton height="12px" width="120px" />
+          </Th>
+        </Tr>
+      ))}
+    </>
+  );
+}
+
 export default function PeopleList({ members, isLoading }: PeopleListProps) {
   const [search, setSearch] = useState('');
   const t = useTranslationsWithFallback("pages.GroupsPage.PeopleList");
@@ -69,10 +102,7 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
                   </Box>
                 ))
               : filteredData.map((user, idx) => (
-                  <Box key={idx} p={3} bg="white" borderRadius="md" boxShadow="sm">
-                    <Text fontWeight="bold" fontSize="sm">{user.fullName}</Text>
-                    <Text fontSize="sm" color="gray.500">{user.nickname || t("placeholder")}</Text>
-                  </Box>
+                  <MobileMemberCard key={idx} fullName={user.fullName} nickname={user.nickname} />
                 ))}
           </VStack>
         ) : (
@@ -89,25 +119,8 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
               </Thead>
               <Tbody>
                 {isLoading
-                  ? 
-                    Array.from({ length: 4 }).map((_, i) => (
-                      <Tr key={i}>
-                        <Th>
-                          <Skeleton height="12px" width="120px" />
-                        </Th>
-                        <Th>
-                          <Skeleton height="12px" width="80px" />
-                        </Th>
-                        <Th>
-                          <Skeleton height="12px" width="100px" />
-                        </Th>
-                        <Th>
-                          <Skeleton height="12px" width="120px" />
-                        </Th>
-                      </Tr>
-                    ))
-                  : 
-                    filteredData.map((user, index) => (
+                  ? <DesktopTableSkeletons count={4} />
+                  : filteredData.map((user, index) => (
                       <UserTableRow
                         key={index}
                         fullName={user.fullName}

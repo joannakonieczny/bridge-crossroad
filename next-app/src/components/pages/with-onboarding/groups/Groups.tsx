@@ -11,6 +11,10 @@ import { getJoinedGroupsInfo, addUserToGroupByInvitationCode } from "@/services/
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import type { ActionError } from "@/lib/tanstack-action/types";
+import { useQueryClient } from "@tanstack/react-query";
+import type { InvitationCodeType } from "@/schemas/model/group/group-types";
+import { QUERY_KEYS } from "@/lib/query-keys";
+
 export default function Groups() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [invitationCode, setInvitationCode] = useState("");
@@ -18,14 +22,16 @@ export default function Groups() {
   const tValidation = useTranslationsWithFallback();
   const t = useTranslationsWithFallback("pages.GroupsPage.Groups");
 
+  const queryClient = useQueryClient();
+
   const groupsQ = useActionQuery({
-    queryKey: ["groups"],
+    queryKey: QUERY_KEYS.groups,
     action: () => getJoinedGroupsInfo(),
     retry: false,
   });
   
   const joinMutation = useActionMutation({
-    action: async (data: { invitationCode: string }) => {
+    action: async (data: { invitationCode: InvitationCodeType }) => {
       return await addUserToGroupByInvitationCode(data);
     },
   });
@@ -84,17 +90,10 @@ export default function Groups() {
                     return { title: tValidation(errKey) };
                   },
                 });
-                try {
-                  await promise;
-                  try {
-                    await groupsQ.refetch();
-                  } catch {
-                    // ignore refetch errors
-                  }
+                promise.then(() => {
+                  queryClient.invalidateQueries({ queryKey: ["groups"] });
                   setInvitationCode("");
-                } catch {
-                  // ignore, error shown via toast
-                }
+                });
               }}
             >
               Dołącz

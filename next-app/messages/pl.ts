@@ -271,8 +271,7 @@ const groupsPage = {
     menu: {
       open: "Otwórz",
       edit: "Edytuj",
-      delete: "Usuń",
-      ariaLabel: "Opcje",
+      delete: "Usuń"
     },
     imageAlt: "obraz grupy",
   },
