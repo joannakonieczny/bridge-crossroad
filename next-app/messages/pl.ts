@@ -3,7 +3,6 @@ import { Academy } from "@/club-preset/academy";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
-import { log } from "console";
 
 const MONTHS = {
   jan: "Styczeń",
