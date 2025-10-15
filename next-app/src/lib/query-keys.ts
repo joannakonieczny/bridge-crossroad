@@ -1,4 +1,6 @@
+import type { GroupIdType } from "@/schemas/model/group/group-types";
+
 export const QUERY_KEYS = {
-	groups: ["groups"] as const,
-	group: (id: string | number) => ["group", id] as const,
+  groups: ["groups"],
+  group: (id: GroupIdType) => ["groups", id],
 } as const;

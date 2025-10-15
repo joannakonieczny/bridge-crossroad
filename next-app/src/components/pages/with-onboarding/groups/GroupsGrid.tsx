@@ -16,20 +16,23 @@ import {
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import type { GroupIdType } from "@/schemas/model/group/group-types";
-import type { z } from "zod";
 import { useTranslations } from "@/lib/typed-translations";
-import type { GroupDataSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { ROUTES } from "@/routes";
+import type {
+  GroupBasicType,
+  GroupIdType,
+} from "@/schemas/model/group/group-types";
+import { STATIC } from "@/club-preset/static";
 
-type Group = z.infer<typeof GroupDataSchema>;
-
-type Props = {
-  groups?: Group[];
+type GroupsGridProps = {
+  groups?: GroupBasicType[];
   isLoading?: boolean;
 };
 
-export default function GroupsGrid({ groups = [], isLoading }: Props) {
+export default function GroupsGrid({
+  groups = [],
+  isLoading,
+}: GroupsGridProps) {
   const router = useRouter();
   const t = useTranslations("pages.GroupsPage.GroupsGrid");
 
@@ -53,7 +56,7 @@ export default function GroupsGrid({ groups = [], isLoading }: Props) {
       ) : groups.length > 0 ? (
         groups.map((group, idx) => (
           <Card
-            key={`${group.id}-${idx}`}
+            key={`${group._id}-${idx}`}
             w="100%"
             h="20rem"
             border="none"
@@ -64,17 +67,14 @@ export default function GroupsGrid({ groups = [], isLoading }: Props) {
             onClick={(e) => {
               const target = e.target as HTMLElement;
               if (!target.closest(".menu-button")) {
-                goToGroup(group.id);
+                goToGroup(group._id);
               }
             }}
             position="relative"
           >
             <Box w="100%" h="13rem" overflow="hidden" position="relative">
               <Image
-                src={
-                  group.imageUrl ??
-                  "https://blocks.astratic.com/img/general-img-portrait.png"
-                }
+                src={group.imageUrl ?? STATIC.groupImagePlaceholder}
                 w="100%"
                 h="100%"
                 objectFit="cover"

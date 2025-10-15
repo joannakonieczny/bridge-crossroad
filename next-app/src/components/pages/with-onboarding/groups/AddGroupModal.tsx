@@ -16,54 +16,45 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
-import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import FormInput from "@/components/common/form/FormInput";
 import FormMainButton from "@/components/common/form/FormMainButton";
-
-import type { z } from "zod";
-import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/create-group-form-schema";
+import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createNewGroup } from "@/services/groups/api";
-import { useTranslations, useTranslationsWithFallback } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
+import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
+import type { CreateGroupFormType } from "@/schemas/pages/with-onboarding/groups/groups-types";
 
-export const GROUPS_QUERY_KEY = { groups: ["groups"] };
-
-type CreateGroupInput = z.infer<typeof createGroupFormSchema>;
-
-type Props = {
+type AddGroupModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onCreated?: () => Promise<void> | void;
 };
 
-export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
+export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   const toast = useToast();
   const t = useTranslations("pages.GroupsPage.AddGroupModal");
   const tValidation = useTranslationsWithFallback();
 
   const queryClient = useQueryClient();
 
-  const { handleSubmit, control, setError, register } = useForm<CreateGroupInput>({
+  const { handleSubmit, control, setError, reset } = useForm({
     resolver: zodResolver(createGroupFormSchema),
     defaultValues: {
       name: "",
       description: "",
-      imageUrl: "https://blocks.astratic.com/img/general-img-portrait.png",
-      invitationCode: "11111111",
+      imageUrl: "",
     },
   });
 
   const createGroupAction = useActionMutation({
     action: createNewGroup,
-    onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY.groups });
-      try {
-        if (onCreated) {
-          onCreated();
-        }
-      } catch {
-        // ignore
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groups });
+      reset();
     },
     onError: (err) => {
       const errKey = getMessageKeyFromError(err);
@@ -71,16 +62,18 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
     },
   });
 
-  const onSubmit = (data: CreateGroupInput) => {
-    onClose(); 
+  const onSubmit = (data: CreateGroupFormType) => {
+    onClose();
     const promise = createGroupAction.mutateAsync(data);
 
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
       error: (err: MutationOrQuerryError<typeof createGroupAction>) => {
-        const errKey = getMessageKeyFromError(err);
-        return { title: tValidation(errKey) || t("toast.errorDefault") };
+        const errKey = getMessageKeyFromError(err, {
+          generalErrorKey: "pages.GroupsPage.AddGroupModal.toast.errorDefault",
+        });
+        return { title: tValidation(errKey) };
       },
     });
   };
@@ -94,37 +87,36 @@ export default function AddGroupModal({ isOpen, onClose, onCreated }: Props) {
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4} mt={4}>
-              <input type="hidden" {...register("invitationCode")} />
               <Controller
-              control={control}
-              name="name"
-              render={({ field, fieldState: { error } }) => (
-                <FormInput
-                placeholder={t("form.name.placeholder")}
-                errorMessage={tValidation(error?.message)}
-                isInvalid={!!error}
-                id="name"
-                type="text"
-                value={field.value}
-                onChange={field.onChange}
-                />
-              )}
+                control={control}
+                name="name"
+                render={({ field, fieldState: { error } }) => (
+                  <FormInput
+                    placeholder={t("form.name.placeholder")}
+                    errorMessage={tValidation(error?.message)}
+                    isInvalid={!!error}
+                    id="name"
+                    type="text"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
 
               <Controller
-              control={control}
-              name="description"
-              render={({ field, fieldState: { error } }) => (
-                <FormInput
-                type="textarea"
-                placeholder={t("form.description.placeholder")}
-                errorMessage={tValidation(error?.message)}
-                isInvalid={!!error}
-                id="description"
-                value={field.value}
-                onChange={field.onChange}
-                />
-              )}
+                control={control}
+                name="description"
+                render={({ field, fieldState: { error } }) => (
+                  <FormInput
+                    type="textarea"
+                    placeholder={t("form.description.placeholder")}
+                    errorMessage={tValidation(error?.message)}
+                    isInvalid={!!error}
+                    id="description"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
 
               <FormMainButton text={t("submitButton")} type="submit" />

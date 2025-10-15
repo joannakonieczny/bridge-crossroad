@@ -20,7 +20,7 @@ export default async function GroupsLayout({
       width="100%"
       direction={{ base: "column", md: "row" }}
     >
-      <Sidebar id={id} />
+      <Sidebar groupId={id} />
       {children}
     </Flex>
   );

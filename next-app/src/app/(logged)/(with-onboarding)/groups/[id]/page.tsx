@@ -8,7 +8,5 @@ interface GroupPageProps {
 export default async function GroupPage(props: GroupPageProps) {
   const { id } = await props.params;
 
-  return (
-    <GroupView id={id}/>
-  );
+  return <GroupView groupId={id} />;
 }

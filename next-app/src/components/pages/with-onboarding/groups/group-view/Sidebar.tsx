@@ -27,19 +27,19 @@ import type { IconType } from "react-icons";
 import { useRouter } from "next/navigation";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import { QUERY_KEYS } from "@/lib/query-keys";
+import { ROUTES } from "@/routes";
 
-interface ISidebarProps {
-  id: GroupIdType;
-}
+type ISidebarProps = {
+  groupId: GroupIdType;
+};
 
-export default function Sidebar({ id }: ISidebarProps) {
+export default function Sidebar({ groupId }: ISidebarProps) {
   const router = useRouter();
   const t = useTranslationsWithFallback("pages.GroupsPage.Sidebar");
 
   const groupQ = useActionQuery({
-    queryKey: QUERY_KEYS.group(id),
-    action: () => getGroupData({ groupId: id }),
-    retry: false,
+    queryKey: QUERY_KEYS.group(groupId),
+    action: () => getGroupData({ groupId: groupId }),
   });
 
   const group = groupQ.data;
@@ -56,12 +56,12 @@ export default function Sidebar({ id }: ISidebarProps) {
       w={{ base: "100%", md: "17rem" }}
       p={{ base: 3, md: 4 }}
       borderBottom={{ base: "1px solid", md: "none" }}
-      borderColor={{ base: "gray.200", md: "transparent" }}
+      borderColor={{ base: "border.200", md: "transparent" }}
     >
       <Flex
         display={{ base: "flex", md: "none" }}
         direction="row"
-        align="flex-start" 
+        align="flex-start"
         gap={4}
       >
         {isLoading ? (
@@ -72,7 +72,7 @@ export default function Sidebar({ id }: ISidebarProps) {
             name={groupName}
             src={group?.imageUrl}
             borderRadius="md"
-            alignSelf="flex-start" 
+            alignSelf="flex-start"
           />
         )}
 
@@ -111,7 +111,7 @@ export default function Sidebar({ id }: ISidebarProps) {
         <Link
           fontSize="sm"
           color="purple.500"
-          onClick={() => router.push("/groups")}
+          onClick={() => router.push(ROUTES.groups)}
           _hover={{ textDecoration: "none" }}
         >
           <Flex align="center" gap={2}>
@@ -126,7 +126,7 @@ export default function Sidebar({ id }: ISidebarProps) {
           <Avatar
             size="lg"
             name={groupName}
-            src={group?.imageUrl ?? undefined}
+            src={group?.imageUrl ?? undefined} //TODO: add proper fallback image
             borderRadius="md"
           />
         )}

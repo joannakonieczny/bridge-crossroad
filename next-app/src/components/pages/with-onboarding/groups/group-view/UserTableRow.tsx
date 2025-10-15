@@ -2,6 +2,7 @@
 
 import { Tr, Td, Text, Box, Link } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
+import { STATIC } from "@/club-preset/static";
 
 type UserTableRowProps = {
   fullName: string;
@@ -29,12 +30,7 @@ export default function UserTableRow({
             {fullName}
           </Text>
           {nickname && (
-            <Text
-              fontSize="sm"
-              color="border.500"
-              mt={2}
-              fontStyle={"italic"}
-            >
+            <Text fontSize="sm" color="border.500" mt={2} fontStyle={"italic"}>
               {nickname}
             </Text>
           )}
@@ -59,7 +55,7 @@ export default function UserTableRow({
       <Td>
         {cuebidsCode ? (
           <Link
-            href={`https://msc.com.pl/cezar/?p=21&pid_search=${cuebidsCode}`}
+            href={STATIC.getCuebidsInviteLink(cuebidsCode)}
             isExternal
             fontWeight="semibold"
             color="accent.600"

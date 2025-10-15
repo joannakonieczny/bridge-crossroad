@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { GroupValidationConstants } from "./group-const";
 import type { TKey } from "@/lib/typed-translations";
-import { idPropSchema } from "@/schemas/common";
+import { idPropSchema, withTimeStampsSchema } from "@/schemas/common";
+import { userSchemaBasic } from "../user/user-schema";
 
 const { name, description, invitationCode, imageUrl } =
   GroupValidationConstants;
@@ -44,3 +45,19 @@ export const havingGroupId = z.object({
 export const havingInvitationCode = z.object({
   invitationCode: invitationCodeSchema,
 });
+
+export const groupBasicSchema = z.object({
+  _id: idPropSchema,
+  name: nameSchema,
+  description: descriptionSchema.optional(),
+  imageUrl: imageUrlSchema.optional(),
+  isMain: z.boolean(),
+});
+
+export const groupFullSchema = groupBasicSchema
+  .extend({
+    invitationCode: invitationCodeSchema.optional(),
+    members: z.array(userSchemaBasic),
+    admins: z.array(userSchemaBasic),
+  })
+  .merge(withTimeStampsSchema);

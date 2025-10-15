@@ -14,6 +14,7 @@ import type {
   startPlayingDateSchema,
   trainingGroupSchema,
   userSchema,
+  userSchemaBasic,
   yearOfBirthSchema,
 } from "./user-schema";
 
@@ -33,10 +34,11 @@ export type CezarIdSchemaType = z.infer<typeof cezarIdSchema>;
 export type BboIdSchemaType = z.infer<typeof bboIdSchema>;
 export type CuebidsIdType = z.infer<typeof cuebidsIdSchema>;
 
-export type UserType = z.infer<typeof userSchema>;
-
 export type EmailType = z.infer<typeof emailSchema>;
 export type NicknameType = z.infer<typeof nicknameSchema>;
 
 export type PasswordTypeGeneric = string;
 export type UserIdType = string;
+
+export type UserType = z.infer<typeof userSchema>;
+export type UserTypeBasic = z.infer<typeof userSchemaBasic>;
