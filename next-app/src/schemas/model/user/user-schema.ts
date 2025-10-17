@@ -3,6 +3,7 @@ import { Academy } from "../../../club-preset/academy";
 import { TrainingGroup } from "../../../club-preset/training-group";
 import { UserValidationConstants } from "./user-const";
 import type { TKey } from "@/lib/typed-translations";
+import { idPropSchema } from "@/schemas/common";
 
 ///////////////////////////////
 // UserName - Schemas
@@ -123,9 +124,19 @@ export const nicknameSchema = z
   .max(nickname.max, "validation.model.user.nickname.max" satisfies TKey)
   .regex(nickname.regex, "validation.model.user.nickname.regex" satisfies TKey);
 
+///////////////////////////////
+// Full User - Schema
+
 export const userSchema = z.object({
-  email: emailSchema,
-  nickname: nicknameSchema.optional(),
+  _id: idPropSchema,
   name: nameSchema,
+  nickname: nicknameSchema.optional(),
+  email: emailSchema,
   onboardingData: onboardingDataSchema.optional(),
+});
+
+export const userSchemaBasic = z.object({
+  _id: idPropSchema,
+  name: nameSchema,
+  nickname: nicknameSchema.optional(),
 });

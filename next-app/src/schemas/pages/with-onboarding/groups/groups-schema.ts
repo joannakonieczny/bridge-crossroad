@@ -5,10 +5,13 @@ import {
   imageUrlSchema,
   invitationCodeSchema,
 } from "@/schemas/model/group/group-schema";
+import { transformEmptyStringsToUndefined } from "@/schemas/common";
 
 export const createGroupFormSchema = z.object({
   name: nameSchema,
-  description: descriptionSchema.optional(),
-  imageUrl: imageUrlSchema.optional(),
-  invitationCode: invitationCodeSchema.optional(),
+  description: transformEmptyStringsToUndefined(descriptionSchema.optional()),
+  imageUrl: transformEmptyStringsToUndefined(imageUrlSchema.optional()),
+  invitationCode: transformEmptyStringsToUndefined(
+    invitationCodeSchema.optional()
+  ),
 });

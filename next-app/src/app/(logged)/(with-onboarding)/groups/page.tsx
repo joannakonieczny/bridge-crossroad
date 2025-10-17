@@ -1,7 +1,10 @@
-//import Groups from "@/components/pages/with-onboarding/groups/Groups";
-
-import GroupView from "@/components/pages/with-onboarding/groups/group-view/GroupView";
+import Groups from "@/components/pages/with-onboarding/groups/Groups";
+import { Box } from "@chakra-ui/react";
 
 export default function GroupsPage() {
-  return <GroupView />
+  return (
+    <Box width="100%" backgroundColor="border.50">
+      <Groups />
+    </Box>
+  ); 
 }

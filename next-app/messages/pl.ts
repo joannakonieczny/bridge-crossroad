@@ -243,6 +243,114 @@ const landingPage = {
   },
 };
 
+const groupsPage = {
+  AddGroupModal: {
+    header: "Dodaj grupę",
+    form: {
+      name: {
+        placeholder: "Nazwa grupy",
+      },
+      description: {
+        placeholder: "Opis grupy (opcjonalnie)",
+      },
+    },
+    submitButton: "Utwórz",
+    cancelButton: "Anuluj",
+    toast: {
+      loading: "Tworzenie grupy...",
+      success: "Utworzono grupę!",
+      errorDefault: "Wystąpił błąd podczas tworzenia grupy",
+      errorNameExists: "Grupa o takiej nazwie już istnieje",
+      errorInvalidData: "Nieprawidłowe dane. Sprawdź pola formularza",
+      errorUnknown: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później",
+    },
+  },
+
+  GroupsGrid: {
+    noGroups: "Brak grup do wyświetlenia",
+    menu: {
+      open: "Otwórz",
+      edit: "Edytuj",
+      delete: "Usuń"
+    },
+    imageAlt: "obraz grupy",
+  },
+
+  Groups: {
+    input: {
+      invitationPlaceholder: "Wpisz kod grupy",
+    },
+    toast: {
+      loading: "Dołączanie...",
+      success: "Dołączono",
+      errorDefault: "Wystąpił błąd podczas dołączania do grupy",
+    },
+    createButton: "Stwórz grupę",
+    joinButton: "Dołącz",
+  },
+
+  UserTableRow: {
+    placeholder: "-",
+  },
+
+  Sidebar: {
+    back: "Wróć",
+    nav: {
+      0: "O grupie",
+      1: "Czat",
+      2: "Materiały",
+      3: "Rozdania",
+    },
+    members: {
+      single: "1 członek",
+      multiple: "{count} członków",
+    },
+  },
+
+  PeopleList: {
+    heading: "Członkowie Klubu",
+    searchPlaceholder: "Szukaj po imieniu, nazwisku, nicku...",
+    table: {
+      name: "Imię i nazwisko",
+      pzbs: "Numer PZBS",
+      bbo: "Nickname na BBO",
+      cuebids: "Kod zaproszenia na Cuebids",
+    },
+  },
+
+  GroupView: {
+    error: {
+      loadFailed: "Nie udało się wczytać danych grupy.",
+      stayInfo: "Pozostajesz na tej stronie — możesz spróbować ponownie lub wrócić do listy grup.",
+    },
+    buttons: {
+      retry: "Spróbuj ponownie",
+      backToList: "Wróć do grup",
+    },
+  },
+
+  GroupBanner: {
+    fallback: {
+      name: "Brak nazwy",
+      description: "Brak opisu",
+    },
+    admin: {
+      title: "Administrator",
+    },
+    createdAt: {
+      title: "Data założenia",
+    },
+    membersCount: {
+      title: "Liczba członków",
+      single: "1 członek",
+      multiple: "{count} członków",
+    },
+    description: {
+      title: "Opis grupy",
+    },
+  },
+};
+
 const userModelValidation = {
   name: {
     firstName: {
@@ -296,6 +404,8 @@ const userModelValidation = {
 const groupModelValidation = {
   name: {
     required: "Podaj nazwę grupy",
+    // fallback / server-side error message key
+    server: "Wystąpił błąd związany z nazwą grupy",
     min: `Min. ${GROUP.name.min} znaki`,
     max: `Max. ${GROUP.name.max} znaków`,
     regex: "Nazwa może zawierać litery, cyfry, spacje, - i _",
@@ -483,6 +593,7 @@ const messages = {
     groups: {
       create: {
         nameExists: "Grupa o takiej nazwie już istnieje",
+        unknown: "Wystąpił błąd podczas tworzenia grupy",
       },
       join: {
         alreadyMember: "Jesteś już członkiem tej grupy",
@@ -499,6 +610,7 @@ const messages = {
     DashboardPage: dashboardPage,
     LandingPage: landingPage,
     UsefulTools: usefulTools,
+    GroupsPage: groupsPage,
   },
   components: {
     Navbar: navbar,
