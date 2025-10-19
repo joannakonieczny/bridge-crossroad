@@ -1,0 +1,63 @@
+/* Apply Montserrat only to textual parts of FullCalendar — do NOT target all children (.fc *) to avoid breaking icon fonts/SVGs */
+.root :global(.fc),
+.root :global(.fc .fc-theme-standard),
+.root :global(.fc .fc-col-header),
+.root :global(.fc .fc-col-headerCell),
+.root :global(.fc .fc-col-header-cell),
+.root :global(.fc .fc-timegrid-col-header),
+.root :global(.fc .fc-timegrid-header),
+.root :global(.fc .fc-event-title),
+.root :global(.fc .fc-daygrid-day-number),
+.root :global(.fc .fc-timegrid-slot-label),
+.root :global(.fc .fc-button) {
+  font-family: var(--font-montserrat, "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif) !important;
+}
+
+/* toolbar spacing */
+.root :global(.fc .fc-toolbar) {
+  margin-bottom: 0.5rem;
+  background: transparent;
+}
+
+/* Base buttons: no borders, transparent by default, no shadows/outlines */
+.root :global(.fc .fc-button) {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Prev/Next/Today: use border tokens as background (no border) */
+.root :global(.fc .fc-prev-button),
+.root :global(.fc .fc-next-button),
+.root :global(.fc .fc-today-button) {
+  background: var(--chakra-colors-border-400) !important;
+  color: var(--chakra-colors-bg) !important; /* contrast text (and icons if they use currentColor) */
+  border: none !important;
+}
+
+/* Hover: stronger background (border-500) */
+.root :global(.fc .fc-button:hover),
+.root :global(.fc .fc-prev-button:hover),
+.root :global(.fc .fc-next-button:hover),
+.root :global(.fc .fc-today-button:hover) {
+  background: var(--chakra-colors-border-500) !important;
+  color: var(--chakra-colors-bg) !important;
+  box-shadow: none !important;
+}
+
+/* Podświetlenie kolumny z dniem dzisiejszym */
+.root :global(.fc .fc-day-today),
+.root :global(.fc .fc-col-header-cell.fc-day-today),
+.root :global(.fc .fc-timegrid-col.fc-day-today),
+.root :global(.fc .fc-daygrid-day.fc-day-today) {
+  background: var(--chakra-colors-secondary-100) !important;
+}
+
+/* Dodatkowo upewnij się, że komórki nagłówka dziedziczą tło */
+.root :global(.fc .fc-col-header-cell.fc-day-today),
+.root :global(.fc .fc-timegrid-col-header-cell.fc-day-today) {
+  background: var(--chakra-colors-secondary-100) !important;
+}
