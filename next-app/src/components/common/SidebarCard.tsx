@@ -36,7 +36,7 @@ export default function SidebarCard({
           rightIcon={<FiArrowRight />}
           w="100%"
         >
-          Zobacz więcej
+          Szczegóły
         </Button>
       </Box>
     </Card>
