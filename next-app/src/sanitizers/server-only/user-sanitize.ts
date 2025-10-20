@@ -5,13 +5,13 @@ import type {
   AcademyType,
   TrainingGroupType,
   UserOnboardingType,
+  UserType,
+  UserTypeBasic,
 } from "@/schemas/model/user/user-types";
-
-export type SanitizedOnboardingData = UserOnboardingType | undefined;
 
 export function sanitizeOnboardingData(
   onboardingData: IUserDTO["onboardingData"]
-): SanitizedOnboardingData {
+): UserOnboardingType | undefined {
   if (!onboardingData) return undefined;
 
   return {
@@ -26,7 +26,7 @@ export function sanitizeOnboardingData(
   };
 }
 
-export function sanitizeMinUserInfo(user: IUserDTO) {
+export function sanitizeMinUserInfo(user: IUserDTO): UserTypeBasic {
   return {
     id: user._id.toString(),
     name: {
@@ -37,7 +37,7 @@ export function sanitizeMinUserInfo(user: IUserDTO) {
   };
 }
 
-export function sanitizeUser(user: IUserDTO) {
+export function sanitizeUser(user: IUserDTO): UserType {
   return {
     ...sanitizeMinUserInfo(user),
     email: user.email,
