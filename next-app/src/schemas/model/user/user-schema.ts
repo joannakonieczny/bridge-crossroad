@@ -128,7 +128,7 @@ export const nicknameSchema = z
 // Full User - Schema
 
 export const userSchema = z.object({
-  _id: idPropSchema,
+  id: idPropSchema,
   name: nameSchema,
   nickname: nicknameSchema.optional(),
   email: emailSchema,
@@ -136,7 +136,7 @@ export const userSchema = z.object({
 });
 
 export const userSchemaBasic = z.object({
-  _id: idPropSchema,
+  id: idPropSchema,
   name: nameSchema,
   nickname: nicknameSchema.optional(),
 });

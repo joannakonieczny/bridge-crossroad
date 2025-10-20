@@ -6,7 +6,7 @@ export function sanitizeGroup(
   group: IGroupDTO | IGroupDTOWithPopulatedMembersAdmins
 ) {
   return {
-    _id: group._id.toString(),
+    id: group._id.toString(),
     name: group.name,
     description: group.description,
     imageUrl: group.imageUrl,

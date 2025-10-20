@@ -4,16 +4,8 @@ import type { IUserDTO } from "@/models/user/user-types";
 import type {
   AcademyType,
   TrainingGroupType,
-  UserIdType,
   UserOnboardingType,
-  UserType,
 } from "@/schemas/model/user/user-types";
-
-export type SanitizedUser = UserType & {
-  _id: UserIdType;
-  createdAt: Date;
-  updatedAt: Date;
-};
 
 export type SanitizedOnboardingData = UserOnboardingType | undefined;
 
@@ -36,7 +28,7 @@ export function sanitizeOnboardingData(
 
 export function sanitizeMinUserInfo(user: IUserDTO) {
   return {
-    _id: user._id.toString(),
+    id: user._id.toString(),
     name: {
       firstName: user.name.firstName,
       lastName: user.name.lastName,
@@ -45,7 +37,7 @@ export function sanitizeMinUserInfo(user: IUserDTO) {
   };
 }
 
-export function sanitizeUser(user: IUserDTO): SanitizedUser {
+export function sanitizeUser(user: IUserDTO) {
   return {
     ...sanitizeMinUserInfo(user),
     email: user.email,

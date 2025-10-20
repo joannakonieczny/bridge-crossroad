@@ -38,17 +38,15 @@ export const durationSchema = z
     message: "validation.model.event.duration.invalidRange" satisfies TKey,
   });
 
+export const playingPairSchema = z.object({
+  first: idPropSchema,
+  second: idPropSchema,
+});
+
 // Data discriminators
 export const tournamentDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT),
-  contestantsPairs: z
-    .array(
-      z.object({
-        first: idPropSchema,
-        second: idPropSchema,
-      })
-    )
-    .nonempty(),
+  contestantsPairs: z.array(playingPairSchema),
   arbiter: idPropSchema,
   tournamentType: z.nativeEnum(TournamentType).optional(),
   teams: z
@@ -59,20 +57,18 @@ export const tournamentDataSchema = z.object({
 export const leagueMeetingDataSchema = z.object({
   type: z.literal(EventType.LEAGUE_MEETING),
   tournamentType: z.nativeEnum(TournamentType).optional(),
-  session: z
-    .array(
-      z.object({
-        _id: idPropSchema.optional(),
-        matchNumber: z.number().int(),
-        half: z.nativeEnum(Half),
-        contestants: z.object({
-          firstPair: z.object({ first: idPropSchema, second: idPropSchema }),
-          secondPair: z.object({ first: idPropSchema, second: idPropSchema }),
-        }),
-        opponentTeamName: z.string().optional(),
-      })
-    )
-    .nonempty(),
+  session: z.array(
+    z.object({
+      id: idPropSchema.optional(),
+      matchNumber: z.number().int(),
+      half: z.nativeEnum(Half),
+      contestants: z.object({
+        firstPair: playingPairSchema,
+        secondPair: playingPairSchema,
+      }),
+      opponentTeamName: z.string().optional(),
+    })
+  ),
 });
 
 export const trainingDataSchema = z.object({
@@ -91,6 +87,7 @@ export const dataSchema = z.discriminatedUnion("type", [
 ]);
 
 export const eventSchema = z.object({
+  id: idPropSchema,
   title: titleSchema,
   description: descriptionSchema.optional(),
   location: locationSchema.optional(),
