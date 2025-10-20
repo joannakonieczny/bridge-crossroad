@@ -20,7 +20,7 @@ type IGroupBannerProps = {
 export function GroupBannerLoader() {
   return (
     <Flex
-      backgroundColor="white"
+      backgroundColor="bg"
       width="100%"
       paddingY="0.75rem"
       paddingX="2rem"
@@ -81,7 +81,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
 
   return (
     <Flex
-      backgroundColor="white"
+      backgroundColor="bg"
       width="100%"
       paddingY="0.75rem"
       paddingX="2rem"
