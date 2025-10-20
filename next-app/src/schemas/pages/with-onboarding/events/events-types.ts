@@ -1,4 +1,4 @@
 import type { z } from "zod";
-import type { addModifyEventSchema } from "./events-schema";
+import type * as s from "./events-schema";
 
-export type AddModifyEventSchemaType = z.infer<typeof addModifyEventSchema>;
+export type AddModifyEventSchemaType = z.infer<typeof s.addModifyEventSchema>;
