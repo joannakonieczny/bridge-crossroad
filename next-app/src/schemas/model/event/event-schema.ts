@@ -77,7 +77,7 @@ export const leagueMeetingDataSchema = z.object({
 
 export const trainingDataSchema = z.object({
   type: z.literal(EventType.TRAINING),
-  coach: idPropSchema,
+  coach: idPropSchema.optional(),
   topic: z.string().nonempty(),
 });
 

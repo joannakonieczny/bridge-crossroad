@@ -90,7 +90,7 @@ const LeagueMeetingDataSchema = baseEventDataSchema.discriminator(
 const TrainingDataSchema = baseEventDataSchema.discriminator(
   EventType.TRAINING,
   new Schema({
-    coach: { type: UserId, ref: UserTableName, required: true },
+    coach: { type: UserId, ref: UserTableName, required: false },
     topic: { type: String, required: true },
   })
 );

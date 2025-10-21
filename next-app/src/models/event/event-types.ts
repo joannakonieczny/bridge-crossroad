@@ -43,7 +43,7 @@ type LeagueTournamentData = {
 
 type TrainingData = {
   type: EventType.TRAINING;
-  coach: typeof UserId;
+  coach?: typeof UserId;
   topic: string;
 };
 
