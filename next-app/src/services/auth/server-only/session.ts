@@ -14,8 +14,9 @@ type SessionPayload = {
 };
 
 export async function createSession(userId: UserIdType) {
-  const ttl = config.EXPIRATION_TIME_MS;
-  const expiresDate = new Date(Date.now() + ttl);
+  const expiresDate = new Date(
+    Date.now() + config.EXPIRATION_TIME_SECONDS * 1000
+  );
 
   const payload: SessionPayload = {
     userId,
@@ -25,7 +26,7 @@ export async function createSession(userId: UserIdType) {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(`${Math.floor(ttl / 1000)}s`)
+    .setExpirationTime(`${config.EXPIRATION_TIME_SECONDS} seconds`)
     .sign(encodedKey);
 
   const cookieStore = await cookies();
@@ -43,11 +44,10 @@ export async function deleteSession() {
 }
 
 export async function encrypt(payload: SessionPayload) {
-  const ttl = config.EXPIRATION_TIME_MS;
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(`${Math.floor(ttl / 1000)}s`)
+    .setExpirationTime(`${config.EXPIRATION_TIME_SECONDS} seconds`)
     .sign(encodedKey);
 }
 
