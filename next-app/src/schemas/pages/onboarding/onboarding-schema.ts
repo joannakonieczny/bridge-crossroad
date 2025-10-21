@@ -10,7 +10,7 @@ import {
   cuebidsIdSchema,
   onboardingDataSchema,
 } from "@/schemas/model/user/user-schema";
-import { emptyStringToUndefined } from "@/schemas/common";
+import { transformEmptyStringsToUndefined } from "@/schemas/common";
 import { invitationCodeSchema } from "@/schemas/model/group/group-schema";
 import type { TKey } from "@/lib/typed-translations";
 
@@ -84,18 +84,9 @@ export const onboardingSecondPageSchema = z.object({
 
 // Third Page Schema
 export const onboardingThirdPageSchema = z.object({
-  cezarId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cezarIdSchema.optional()),
-  bboId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(bboIdSchema.optional()),
-  cuebidsId: z
-    .string()
-    .transform(emptyStringToUndefined)
-    .pipe(cuebidsIdSchema.optional()),
+  cezarId: transformEmptyStringsToUndefined(cezarIdSchema.optional()),
+  bboId: transformEmptyStringsToUndefined(bboIdSchema.optional()),
+  cuebidsId: transformEmptyStringsToUndefined(cuebidsIdSchema.optional()),
 });
 
 // Final Page Schema

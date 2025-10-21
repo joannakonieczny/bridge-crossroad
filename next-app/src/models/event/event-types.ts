@@ -10,14 +10,14 @@ export const EventTableName = "Event";
 
 export const EventId = Schema.Types.ObjectId;
 
-type PlayingPair = {
+export type IPlayingPair = {
   first: typeof UserId;
   second: typeof UserId;
 };
 
-type TournamentData = {
+export type ITournamentData = {
   type: EventType.TOURNAMENT;
-  contestantsPairs: Array<PlayingPair>;
+  contestantsPairs: Array<IPlayingPair>;
   arbiter: typeof UserId;
   tournamentType?: TournamentType;
   teams?: Array<{
@@ -26,7 +26,7 @@ type TournamentData = {
   }>;
 };
 
-type LeagueTournamentData = {
+export type ILeagueTournamentData = {
   type: EventType.LEAGUE_MEETING;
   tournamentType?: TournamentType;
   session: Array<{
@@ -34,20 +34,20 @@ type LeagueTournamentData = {
     matchNumber: number;
     half: Half;
     contestants: {
-      firstPair: PlayingPair;
-      secondPair: PlayingPair;
+      firstPair: IPlayingPair;
+      secondPair: IPlayingPair;
     };
     opponentTeamName?: string;
   }>;
 };
 
-type TrainingData = {
+export type ITrainingData = {
   type: EventType.TRAINING;
   coach: typeof UserId;
   topic: string;
 };
 
-type OtherEventData = {
+export type IOtherEventData = {
   type: EventType.OTHER;
 };
 
@@ -65,5 +65,9 @@ export type IEventDTO = {
   attendees: (typeof UserId)[];
   group: typeof GroupId;
   imageUrl?: string;
-  data: TournamentData | LeagueTournamentData | TrainingData | OtherEventData;
+  data:
+    | ITournamentData
+    | ILeagueTournamentData
+    | ITrainingData
+    | IOtherEventData;
 } & Timestamps;

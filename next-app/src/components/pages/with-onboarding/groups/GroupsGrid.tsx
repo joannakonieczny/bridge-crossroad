@@ -56,7 +56,7 @@ export default function GroupsGrid({
       ) : groups.length > 0 ? (
         groups.map((group, idx) => (
           <Card
-            key={`${group._id}-${idx}`}
+            key={`${group.id}-${idx}`}
             w="100%"
             h="20rem"
             border="none"
@@ -67,7 +67,7 @@ export default function GroupsGrid({
             onClick={(e) => {
               const target = e.target as HTMLElement;
               if (!target.closest(".menu-button")) {
-                goToGroup(group._id);
+                goToGroup(group.id);
               }
             }}
             position="relative"
