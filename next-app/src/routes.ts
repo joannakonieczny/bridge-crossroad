@@ -15,6 +15,10 @@ export const ROUTES = {
   dashboard: "/dashboard",
   calendar: "/calendar",
   groups: "/groups",
+  files: {
+    upload: "/files/upload",
+    shared: "/files/shared",
+  },
   find_partner: "/find-partner",
   tools: "/tools",
 } as const;
