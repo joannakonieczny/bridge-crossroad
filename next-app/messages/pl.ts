@@ -271,7 +271,7 @@ const groupsPage = {
     menu: {
       open: "Otwórz",
       edit: "Edytuj",
-      delete: "Usuń"
+      delete: "Usuń",
     },
     imageAlt: "obraz grupy",
   },
@@ -321,7 +321,8 @@ const groupsPage = {
   GroupView: {
     error: {
       loadFailed: "Nie udało się wczytać danych grupy.",
-      stayInfo: "Pozostajesz na tej stronie — możesz spróbować ponownie lub wrócić do listy grup.",
+      stayInfo:
+        "Pozostajesz na tej stronie — możesz spróbować ponownie lub wrócić do listy grup.",
     },
     buttons: {
       retry: "Spróbuj ponownie",
@@ -378,7 +379,7 @@ const userModelValidation = {
       invalid: "Nieprawidłowa grupa treningowa",
     },
     cezarId: {
-      regexLenght: `Numer Cezar musi składać się z ${USER.cezarId.length} cyfr`,
+      regex: `Numer Cezar musi składać się z 1-6 cyfr`,
     },
     bboId: {
       invalid: "Niepoprawny nick na BBO",
