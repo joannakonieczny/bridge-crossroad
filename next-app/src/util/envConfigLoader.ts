@@ -1,31 +1,28 @@
 "server-only";
 
-function getEnvVar(key: string, fallback?: string) {
-  const value = process.env[key];
-  if (value !== undefined) return value;
-  if (fallback !== undefined) {
-    console.warn(
-      `Environment variable (${key}) is not set. Using fallback value: ${fallback}`
-    );
-    return fallback;
-  }
-  throw new Error(
-    `Missing required environment variable (${key}) and no fallback is defined`
-  );
+import { z } from "zod";
+
+const envSchema = z.object({
+  SESSION_SECRET: z.string().default("123"),
+  EXPIRATION_TIME_MS: z.coerce
+    .number()
+    .default(3600)
+    .transform((s) => s * 1000),
+  SECURE_COOKIES: z.coerce.boolean().default(false),
+  MONGODB_URI: z.string(),
+  MONGODB_DB_NAME: z.string(),
+});
+
+const environment = envSchema.safeParse(process.env);
+
+if (!environment.success) {
+  console.error("FATAL ERROR: Environment validation failed:");
+  environment.error.issues.forEach((issue) => {
+    console.error(`- ${issue.path.join(".")} : ${issue.message}`);
+  });
+  process.exit(1);
 }
 
-type Config = {
-  SESSION_SECRET: string;
-  EXPIRATION_TIME_MS: number;
-  SECURE_COOKIES: boolean;
-  MONGODB_URI: string;
-  MONGODB_DB_NAME: string;
-}
+export type EnvVariables = z.infer<typeof envSchema>;
 
-export const config: Config = {
-  SESSION_SECRET: getEnvVar("SESSION_SECRET", "123"),
-  EXPIRATION_TIME_MS: Number(getEnvVar("EXPIRATION_TIME", "3600")) * 1000, // 3600000 ms = 3600 s = 60 min = 1h
-  SECURE_COOKIES: Boolean(getEnvVar("SECURE_COOKIES", "false")),
-  MONGODB_URI: getEnvVar("MONGODB_URI"),
-  MONGODB_DB_NAME: getEnvVar("MONGODB_DB_NAME"),
-};
+export const config: EnvVariables = environment.data;
