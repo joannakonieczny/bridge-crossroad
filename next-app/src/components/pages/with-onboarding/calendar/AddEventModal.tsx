@@ -17,6 +17,7 @@ import {
   FormLabel,
   Textarea,
   Box,
+  Spinner,
 } from "@chakra-ui/react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -27,6 +28,8 @@ import { useTranslations, useTranslationsWithFallback } from "@/lib/typed-transl
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { EventType } from "@/club-preset/event-type";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import { getJoinedGroupsInfo } from "@/services/groups/api";
 
 /* --- lokalny schema (używamy uproszczonej, ale zgodnej struktury z discriminat union) --- */
 const tournamentSchema = z.object({
@@ -79,6 +82,7 @@ const baseSchema = z.object({
 
 type CreateEventFormType = z.infer<typeof baseSchema>;
 
+// add missing props type
 type AddEventModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -90,7 +94,13 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
-  const { handleSubmit, control, reset, setError } = useForm<CreateEventFormType>({
+  // --- moved inside component: pobieramy dostępne grupy przez useActionQuery ---
+  const groupsQ = useActionQuery({
+    queryKey: QUERY_KEYS.groups,
+    action: getJoinedGroupsInfo,
+  });
+
+  const { handleSubmit, control, reset, setError, setValue } = useForm<CreateEventFormType>({
     resolver: zodResolver(baseSchema),
     defaultValues: {
       title: "",
@@ -102,6 +112,7 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
       organizer: "",
       group: "",
       additionalDescription: "",
+      imageUrl: "",
       // coach zahardcodowany w formularzu:
       data: { type: EventType.OTHER, note: "", coach: "coach-123" } as any,
     },
@@ -137,7 +148,7 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
         endsAt: new Date(data.endsAt),
       },
       additionalDescription: data.additionalDescription || undefined,
-      imageUrl: "", // wysyłamy pusty string zamiast pola
+      imageUrl: "", // changed: always send empty string instead of reading from form
       // minimalne mapowanie dla data w zależności od typu
       data: undefined,
     };
@@ -202,170 +213,210 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
         <ModalHeader>Dodaj wydarzenie</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={4} mt={2}>
-              <Controller
-                control={control}
-                name="title"
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <FormLabel htmlFor="title">Tytuł</FormLabel>
-                    <Input id="title" {...field} placeholder="Tytuł wydarzenia" />
-                    {/* minimal inline error */}
-                    {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                  </>
-                )}
-              />
+          {/* jeśli groupsQ ładuje — zablokuj formularz i pokaż prosty spinner */}
+          <Box position="relative">
+            {groupsQ.isLoading && (
+              <Box position="absolute" inset={0} display="flex" alignItems="center" justifyContent="center" zIndex={2}>
+                <Spinner />
+              </Box>
+            )}
 
-              <Controller
-                control={control}
-                name="description"
-                render={({ field }) => (
-                  <>
-                    <FormLabel htmlFor="description">Opis</FormLabel>
-                    <Textarea id="description" {...field} placeholder="Opis (opcjonalnie)" />
-                  </>
-                )}
-              />
-
-              <HStack>
-                <Controller
-                  control={control}
-                  name="startsAt"
-                  render={({ field, fieldState: { error } }) => (
-                    <Box flex={1}>
-                      <FormLabel>Start</FormLabel>
-                      <Input type="datetime-local" {...field} />
-                      {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                    </Box>
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="endsAt"
-                  render={({ field, fieldState: { error } }) => (
-                    <Box flex={1}>
-                      <FormLabel>Koniec</FormLabel>
-                      <Input type="datetime-local" {...field} />
-                      {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                    </Box>
-                  )}
-                />
-              </HStack>
-
-              <Controller
-                control={control}
-                name="data.type"
-                render={({ field }) => (
-                  <>
-                    <FormLabel>Typ wydarzenia</FormLabel>
-                    <Select {...field} value={field.value} onChange={(e) => field.onChange(e.target.value)}>
-                      <option value={EventType.TOURNAMENT}>Turniej</option>
-                      <option value={EventType.LEAGUE_MEETING}>Zjazd ligowy</option>
-                      <option value={EventType.TRAINING}>Trening</option>
-                      <option value={EventType.OTHER}>Inne</option>
-                    </Select>
-                  </>
-                )}
-              />
-
-              {/* pola warunkowe */}
-              {selectedType === EventType.TOURNAMENT && (
-                <>
+            <Box opacity={groupsQ.isLoading ? 0.6 : 1} pointerEvents={groupsQ.isLoading ? "none" : "auto"}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Stack spacing={4} mt={2}>
                   <Controller
                     control={control}
-                    name="data.arbiter"
+                    name="title"
                     render={({ field, fieldState: { error } }) => (
                       <>
-                        <Input placeholder="Sędzia (id)" {...field} />
+                        <FormLabel htmlFor="title">Tytuł</FormLabel>
+                        <Input id="title" {...field} placeholder="Tytuł wydarzenia" />
+                        {/* minimal inline error */}
                         {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
                       </>
                     )}
                   />
-                </>
-              )}
 
-              {selectedType === EventType.LEAGUE_MEETING && (
-                <>
-                  <FormLabel>Sesje (surowy tekst)</FormLabel>
                   <Controller
                     control={control}
-                    name="data.sessionRaw"
-                    render={({ field, fieldState: { error } }) => (
-                      <>
-                        <Textarea placeholder="session data..." {...field} />
-                        {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                      </>
-                    )}
-                  />
-                </>
-              )}
-
-              {selectedType === EventType.TRAINING && (
-                <>
-                  {/* coach jest zahardcodowany i nieedytowalny */}
-                  <Controller
-                    control={control}
-                    name="data.coach"
+                    name="description"
                     render={({ field }) => (
-                      <Input placeholder="Trener (id)" {...field} isDisabled readOnly />
+                      <>
+                        <FormLabel htmlFor="description">Opis</FormLabel>
+                        <Textarea id="description" {...field} placeholder="Opis (opcjonalnie)" />
+                      </>
                     )}
                   />
+
+                  <HStack>
+                    <Controller
+                      control={control}
+                      name="startsAt"
+                      render={({ field, fieldState: { error } }) => (
+                        <Box flex={1}>
+                          <FormLabel>Start</FormLabel>
+                          <Input type="datetime-local" {...field} />
+                          {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
+                        </Box>
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name="endsAt"
+                      render={({ field, fieldState: { error } }) => (
+                        <Box flex={1}>
+                          <FormLabel>Koniec</FormLabel>
+                          <Input type="datetime-local" {...field} />
+                          {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
+                        </Box>
+                      )}
+                    />
+                  </HStack>
+
                   <Controller
                     control={control}
-                    name="data.topic"
+                    name="data.type"
+                    render={({ field }) => (
+                      <>
+                        <FormLabel>Typ wydarzenia</FormLabel>
+                        <Select {...field} value={field.value} onChange={(e) => field.onChange(e.target.value)}>
+                          <option value={EventType.TOURNAMENT}>Turniej</option>
+                          <option value={EventType.LEAGUE_MEETING}>Zjazd ligowy</option>
+                          <option value={EventType.TRAINING}>Trening</option>
+                          <option value={EventType.OTHER}>Inne</option>
+                        </Select>
+                      </>
+                    )}
+                  />
+
+                  {/* pola warunkowe */}
+                  {selectedType === EventType.TOURNAMENT && (
+                    <>
+                      <Controller
+                        control={control}
+                        name="data.arbiter"
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <Input placeholder="Sędzia (id)" {...field} />
+                            {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
+                          </>
+                        )}
+                      />
+                    </>
+                  )}
+
+                  {selectedType === EventType.LEAGUE_MEETING && (
+                    <>
+                      <FormLabel>Sesje (surowy tekst)</FormLabel>
+                      <Controller
+                        control={control}
+                        name="data.sessionRaw"
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <Textarea placeholder="session data..." {...field} />
+                            {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
+                          </>
+                        )}
+                      />
+                    </>
+                  )}
+
+                  {selectedType === EventType.TRAINING && (
+                    <>
+                      {/* coach jest zahardcodowany i nieedytowalny */}
+                      <Controller
+                        control={control}
+                        name="data.coach"
+                        render={({ field }) => (
+                          <Input placeholder="Trener (id)" {...field} isDisabled readOnly />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="data.topic"
+                        render={({ field, fieldState: { error } }) => (
+                          <>
+                            <Input placeholder="Temat treningu" {...field} />
+                            {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
+                          </>
+                        )}
+                      />
+                    </>
+                  )}
+
+                  {/* organizer, attendees, group, additionalDescription, imageUrl */}
+                  <Controller
+                    control={control}
+                    name="organizer"
                     render={({ field, fieldState: { error } }) => (
                       <>
-                        <Input placeholder="Temat treningu" {...field} />
+                        <FormLabel>Organizator (id)</FormLabel>
+                        <Input {...field} placeholder="Organizer id" />
                         {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
                       </>
                     )}
                   />
-                </>
-              )}
 
-              {/* organizer, attendees, group, additionalDescription, imageUrl */}
-              <Controller
-                control={control}
-                name="organizer"
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <FormLabel>Organizator (id)</FormLabel>
-                    <Input {...field} placeholder="Organizer id" />
-                    {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                  </>
-                )}
-              />
+                  {/* zamienione pole "group" — Select z listą grup */}
+                  <Controller
+                    control={control}
+                    name="group"
+                    render={({ field, fieldState: { error } }) => (
+                      <>
+                        <FormLabel>Grupa</FormLabel>
+                        <Select
+                          /* removed placeholder prop to avoid implicit unkeyed option */
+                          value={field.value ?? ""}
+                          onChange={(e) => field.onChange(e.target.value || undefined)}
+                        >
+                          {/* explicit placeholder option with stable key */}
+                          <option key="placeholder" value="">
+                            {groupsQ.isLoading ? "Ładowanie grup..." : "Wybierz grupę"}
+                          </option>
 
-              <Controller
-                control={control}
-                name="group"
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <FormLabel>Grupa (id)</FormLabel>
-                    <Input {...field} placeholder="Group id" />
-                    {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                  </>
-                )}
-              />
+                          {/* mapped options with stable keys (prefer g.id, fallback to index) */}
+                          {Array.isArray(groupsQ.data) && groupsQ.data.length > 0 ? (
+                            groupsQ.data.map((g: any, idx: number) => {
+                              const key = g?.id ?? g?.groupId ?? `g-${idx}`;
+                              const val = String(g?.id ?? g?.groupId ?? key);
+                              const label = (g?.name ?? g?.title ?? val);
+                              return (
+                                <option key={String(key)} value={val}>
+                                  {label}
+                                </option>
+                              );
+                            })
+                          ) : null}
 
-              <Controller
-                control={control}
-                name="additionalDescription"
-                render={({ field }) => (
-                  <>
-                    <FormLabel>Additional description</FormLabel>
-                    <Textarea {...field} placeholder="Dodatkowy opis (opcjonalnie)" />
-                  </>
-                )}
-              />
+                          {/* when there are no groups at all, show a disabled entry (also keyed) */}
+                          {!groupsQ.isLoading && (!Array.isArray(groupsQ.data) || groupsQ.data.length === 0) && (
+                            <option key="no-groups" value="" disabled>
+                              Brak dostępnych grup
+                            </option>
+                          )}
+                        </Select>
+                        {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
+                      </>
+                    )}
+                  />
 
-              {/* pole imageUrl usunięte - wysyłamy pusty string na backend */}
+                  <Controller
+                    control={control}
+                    name="additionalDescription"
+                    render={({ field }) => (
+                      <>
+                        <FormLabel>Additional description</FormLabel>
+                        <Textarea {...field} placeholder="Dodatkowy opis (opcjonalnie)" />
+                      </>
+                    )}
+                  />
 
-              {/* submit */}
-              <Button type="submit" colorScheme="blue">Dodaj</Button>
-            </Stack>
-          </form>
+                  {/* submit */}
+                  <Button type="submit" colorScheme="blue">Dodaj</Button>
+                </Stack>
+              </form>
+            </Box>
+          </Box>
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" onClick={() => { reset(); onClose(); }}>
