@@ -110,7 +110,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
       <VStack display={{ base: "none", md: "flex" }} align="start" spacing={4}>
         <Link
           fontSize="sm"
-          color="purple.500"
+          color="accent.500"
           onClick={() => router.push(ROUTES.groups)}
           _hover={{ textDecoration: "none" }}
         >

@@ -117,13 +117,7 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
           <VStack spacing={3} align="stretch">
             {isLoading
               ? Array.from({ length: 3 }).map((_, i) => (
-                  <Box
-                    key={i}
-                    p={3}
-                    bg="white"
-                    borderRadius="md"
-                    boxShadow="sm"
-                  >
+                  <Box key={i} p={3} bg="bg" borderRadius="md" boxShadow="sm">
                     <Skeleton height="14px" width="60%" mb={2} />
                     <Skeleton height="12px" width="40%" />
                   </Box>
