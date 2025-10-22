@@ -49,7 +49,7 @@ export const tournamentDataSchema = z.object({
       })
     )
     .nonempty(),
-  arbiter: idPropSchema,
+  arbiter: idPropSchema.optional(),
   tournamentType: z.nativeEnum(TournamentType).optional(),
   teams: z
     .array(z.object({ name: z.string(), members: z.array(idPropSchema) }))

@@ -18,7 +18,7 @@ type PlayingPair = {
 type TournamentData = {
   type: EventType.TOURNAMENT;
   contestantsPairs: Array<PlayingPair>;
-  arbiter: typeof UserId;
+  arbiter?: typeof UserId;
   tournamentType?: TournamentType;
   teams?: Array<{
     name: string;

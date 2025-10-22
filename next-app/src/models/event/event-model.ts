@@ -32,7 +32,7 @@ const TournamentDataSchema = baseEventDataSchema.discriminator(
       ],
       required: true,
     },
-    arbiter: { type: UserId, ref: UserTableName, required: true },
+    arbiter: { type: UserId, ref: UserTableName, required: false },
     tournamentType: {
       type: String,
       required: false,
