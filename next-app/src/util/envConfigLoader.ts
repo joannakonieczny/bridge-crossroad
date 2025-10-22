@@ -25,6 +25,7 @@ type Config = {
   AWS_SECRET_ACCESS_KEY: string;
   AWS_SESSION_TOKEN: string;
   S3_BUCKET_NAME: string;
+  URL_EXPIRATION_TIME_SECONDS: number;
 };
 
 export const config: Config = {
@@ -38,4 +39,7 @@ export const config: Config = {
   AWS_SECRET_ACCESS_KEY: getEnvVar("AWS_SECRET_ACCESS_KEY"),
   AWS_SESSION_TOKEN: getEnvVar("AWS_SESSION_TOKEN"),
   S3_BUCKET_NAME: getEnvVar("S3_BUCKET_NAME"),
+  URL_EXPIRATION_TIME_SECONDS: Number(
+    getEnvVar("URL_EXPIRATION_TIME_SECONDS", "60")
+  ),
 };

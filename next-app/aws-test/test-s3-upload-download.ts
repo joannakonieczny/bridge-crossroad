@@ -13,15 +13,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { config } from "@/util/envConfigLoader";
-
-const {
-  AWS_ACCESS_KEY_ID,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_SESSION_TOKEN,
-  AWS_REGION,
-  S3_BUCKET_NAME,
-} = config;
+import * as dotenv from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,7 +28,7 @@ async function ensureBucketExists(
     console.log(`✅ Bucket "${bucket}" already exists.`);
   } catch (err: any) {
     if (err.name === "NotFound" || err.$metadata?.httpStatusCode === 404) {
-      console.log(`🪣  Bucket "${bucket}" not found. Creating it...`);
+      console.log(`🪣 Bucket "${bucket}" not found. Creating it...`);
 
       const createParams =
         region === "us-east-1"
@@ -142,7 +134,41 @@ async function downloadFile(
   console.log(`✅ File downloaded and saved locally as ${outputPath}`);
 }
 
+async function listObjectsFromBucket(
+  s3: S3Client,
+  bucket: string,
+  prefix = ""
+) {
+  console.log(
+    `📋 Listing objects in bucket "${bucket}" with prefix "${prefix}"...`
+  );
+  const listCommand = new ListObjectsV2Command({
+    Bucket: bucket,
+    Prefix: prefix,
+  });
+  const listResponse = await s3.send(listCommand);
+  if (listResponse.Contents) {
+    for (const obj of listResponse.Contents) {
+      console.log(`- ${obj.Key} (Size: ${obj.Size} bytes)`);
+    }
+  } else {
+    console.log("No objects found.");
+  }
+}
+
 async function main() {
+  // Load env vars
+  dotenv.config({ path: ".env.local" });
+
+  const {
+    AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY,
+    AWS_SESSION_TOKEN,
+    AWS_REGION,
+    S3_BUCKET_NAME,
+  } = process.env;
+
+  // Validate required vars
   if (
     !AWS_ACCESS_KEY_ID ||
     !AWS_SECRET_ACCESS_KEY ||
@@ -185,12 +211,13 @@ async function main() {
 
   // Run test
   await uploadFile(s3, S3_BUCKET_NAME, key, filePath);
+  await listObjectsFromBucket(s3, S3_BUCKET_NAME, "test-folder/");
   await downloadFile(s3, S3_BUCKET_NAME, key, downloadPath);
 
   console.log("🎉 Test completed successfully!");
 
   // Cleanup
-  // await cleanup(s3, S3_BUCKET_NAME, key, true);
+  await cleanup(s3, S3_BUCKET_NAME, key, true);
 }
 
 // Run the script
