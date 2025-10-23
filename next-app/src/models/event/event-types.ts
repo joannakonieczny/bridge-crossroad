@@ -18,7 +18,7 @@ export type IPlayingPair = {
 export type ITournamentData = {
   type: EventType.TOURNAMENT;
   contestantsPairs: Array<IPlayingPair>;
-  arbiter: typeof UserId;
+  arbiter?: typeof UserId;
   tournamentType?: TournamentType;
   teams?: Array<{
     name: string;
@@ -43,7 +43,7 @@ export type ILeagueTournamentData = {
 
 export type ITrainingData = {
   type: EventType.TRAINING;
-  coach: typeof UserId;
+  coach?: typeof UserId;
   topic: string;
 };
 

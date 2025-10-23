@@ -73,7 +73,7 @@ export const cezarIdSchema = z
   .string()
   .regex(
     cezarId.regex,
-    "validation.model.user.onboarding.cezarId.regexLenght" satisfies TKey
+    "validation.model.user.onboarding.cezarId.regex" satisfies TKey
   );
 
 export const bboIdSchema = z

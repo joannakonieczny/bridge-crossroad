@@ -47,7 +47,7 @@ export const playingPairSchema = z.object({
 export const tournamentDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT),
   contestantsPairs: z.array(playingPairSchema),
-  arbiter: idPropSchema,
+  arbiter: idPropSchema.optional(),
   tournamentType: z.nativeEnum(TournamentType).optional(),
   teams: z
     .array(z.object({ name: z.string(), members: z.array(idPropSchema) }))
@@ -73,7 +73,7 @@ export const leagueMeetingDataSchema = z.object({
 
 export const trainingDataSchema = z.object({
   type: z.literal(EventType.TRAINING),
-  coach: idPropSchema,
+  coach: idPropSchema.optional(),
   topic: z.string().nonempty(),
 });
 
