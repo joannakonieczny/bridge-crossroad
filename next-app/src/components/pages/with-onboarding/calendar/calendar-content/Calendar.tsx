@@ -1,5 +1,5 @@
 "use client";
-// importuje override styles dla FullCalendar (Montserrat)
+
 import styles from "./calendar-overrides.module.css";
 import "./calendar-overrides.module.css";
 import FullCalendar from "@fullcalendar/react";
@@ -31,9 +31,9 @@ function getEventDayColor(start: string | Date) {
 }
 
 export default function Calendar() {
-  // renderuj pełny kalendarz dopiero po zamontowaniu komponentu (uniknięcie błędów manipulacji DOM)
+  // ensures there is no SSR rendering of FullCalendar
   const [mounted, setMounted] = useState(false);
-  const locale = useLocale(); // next-intl hook, np. "pl" lub "en"
+  const locale = useLocale();
 
   useEffect(() => {
     setMounted(true);
@@ -76,6 +76,24 @@ export default function Calendar() {
       end: "2025-10-23T13:00:00",
       extendedProps: { description: "Integracja" },
     },
+    {
+      title: "Akademickie mistrzostwa Polski",
+      start: "2025-10-24T13:00:00",
+      end: "2025-10-24T16:00:00",
+      extendedProps: { description: "Akademickie mistrzostwa Polski" },
+    },
+    {
+      title: "Otwarty turniej teamów",
+      start: "2025-10-25T17:00:00",
+      end: "2025-10-25T19:00:00",
+      extendedProps: { description: "Otwarty turniej teamów" },
+    },
+    {
+      title: "Urodziny Just Bridge",
+      start: "2025-10-25T12:00:00",
+      end: "2025-10-25T13:00:00",
+      extendedProps: { description: "Urodziny Just Bridge" },
+    },
   ];
 
   const eventsWithColor = rawEvents.map((e) => ({
@@ -85,7 +103,7 @@ export default function Calendar() {
   }));
 
   const fcLocales = locale === "pl" ? [plLocale] : [enLocale];
-  const fcLocale = locale === "pl" ? "pl" : "en-gb"; //default to en-gb
+  const fcLocale = locale === "pl" ? "pl" : "en-gb";
 
   return (
     <Box className={styles.root} padding="1.5rem 1.5rem 0 1.5rem" overflowY="auto" height="calc(100vh - 6rem)">

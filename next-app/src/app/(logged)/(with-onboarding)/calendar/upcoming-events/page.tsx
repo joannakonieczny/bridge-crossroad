@@ -1,7 +1,6 @@
-import DummyCalendar from "@/components/dummy/DummyCalendar";
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
-export default function CalendarPage() {
+export default function UpcomingEventsPage() {
   return (
     <Flex align="stretch" minH="calc(100vh - 5rem)">
       
