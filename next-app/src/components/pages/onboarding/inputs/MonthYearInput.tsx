@@ -1,11 +1,8 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import type {
-  FormControlWrapperProps} from "./FormControlWrapper";
-import {
-  WithFormControlWrapper,
-} from "./FormControlWrapper";
+import type { FormControlWrapperProps } from "./FormControlWrapper";
+import { WithFormControlWrapper } from "./FormControlWrapper";
 import {
   Input,
   InputGroup,
@@ -168,7 +165,7 @@ function MonthYearInput(props: IMonthYearInputProps) {
           _focus={{ borderColor: "accent.500" }}
         />
         <InputRightElement>
-          <FiCalendar onClick={onOpen} cursor="pointer" color="gray.500" />
+          <FiCalendar onClick={onOpen} cursor="pointer" color="border.500" />
         </InputRightElement>
       </InputGroup>
 

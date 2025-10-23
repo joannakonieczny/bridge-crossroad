@@ -12,7 +12,7 @@ export default function LandingPage3() {
   return (
     <Box
       as="section"
-      bg="yellow.100"
+      bg="secondary.100"
       w="100%"
       minHeight="100vh"
       position="relative"
