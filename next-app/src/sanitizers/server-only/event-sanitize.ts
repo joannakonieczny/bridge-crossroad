@@ -27,7 +27,7 @@ function sanitizeTournamentData(data: ITournamentData): TournamentDataType {
   return {
     type: data.type,
     contestantsPairs: data.contestantsPairs.map(sanitizePlayingPair),
-    arbiter: data.arbiter.toString(),
+    arbiter: data.arbiter?.toString(),
     tournamentType: data.tournamentType,
     teams: (data.teams || []).map((t) => ({
       name: t.name,
@@ -58,7 +58,7 @@ function sanitizeLeagueTournamentData(
 function sanitizeTrainingData(data: ITrainingData): TrainingDataType {
   return {
     type: data.type,
-    coach: data.coach.toString(),
+    coach: data.coach?.toString(),
     topic: data.topic,
   };
 }

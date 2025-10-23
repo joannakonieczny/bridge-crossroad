@@ -37,8 +37,8 @@ environment.error?.issues.forEach((issue) => {
   }
 });
 
-warnings.forEach(console.warn);
-errors.forEach(console.error);
+warnings.forEach((w) => console.warn(w));
+errors.forEach((e) => console.error(e));
 if (errors.length > 0) {
   console.error("[ENV LOADER] FATAL ERROR: Environment validation failed.");
   process.exit(1);
