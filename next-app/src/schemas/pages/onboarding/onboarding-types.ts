@@ -1,17 +1,18 @@
 import type { z } from "zod";
-import type {
-  onboardingFirstPageSchema,
-  onboardingSecondPageSchema,
-  onboardingThirdPageSchema,
-  onboardingFinalPageSchema,
-} from "./onboarding-schema";
+import type * as s from "./onboarding-schema";
 
-export type OnboardingFirstPageType = z.infer<typeof onboardingFirstPageSchema>;
-
-export type OnboardingSecondPageType = z.infer<
-  typeof onboardingSecondPageSchema
+export type OnboardingFirstPageType = z.infer<
+  typeof s.onboardingFirstPageSchema
 >;
 
-export type OnboardingThirdPageType = z.infer<typeof onboardingThirdPageSchema>;
+export type OnboardingSecondPageType = z.infer<
+  typeof s.onboardingSecondPageSchema
+>;
 
-export type OnboardingFinalPageType = z.infer<typeof onboardingFinalPageSchema>;
+export type OnboardingThirdPageType = z.infer<
+  typeof s.onboardingThirdPageSchema
+>;
+
+export type OnboardingFinalPageType = z.infer<
+  typeof s.onboardingFinalPageSchema
+>;

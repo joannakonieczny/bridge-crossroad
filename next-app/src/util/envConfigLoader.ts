@@ -1,31 +1,50 @@
 "server-only";
 
-function getEnvVar(key: string, fallback?: string) {
-  const value = process.env[key];
-  if (value !== undefined) return value;
-  if (fallback !== undefined) {
-    console.warn(
-      `Environment variable (${key}) is not set. Using fallback value: ${fallback}`
+import { z } from "zod";
+
+const envSchema = z.object({
+  SESSION_SECRET: z.string(),
+  EXPIRATION_TIME_SECONDS: z.coerce.number(),
+  SECURE_COOKIES: z.coerce.boolean(),
+  MONGODB_URI: z.string(),
+  MONGODB_DB_NAME: z.string(),
+});
+export type EnvVariables = z.infer<typeof envSchema>;
+
+const fallbackSecret = {
+  SESSION_SECRET: "123",
+  EXPIRATION_TIME_SECONDS: 3600,
+  SECURE_COOKIES: false,
+} satisfies Partial<EnvVariables>;
+
+//////
+// EXECUTION
+
+const environment = envSchema.safeParse(process.env);
+
+const errors: string[] = [];
+const warnings: string[] = [];
+environment.error?.issues.forEach((issue) => {
+  const path = issue.path.join(".");
+  if (path in fallbackSecret) {
+    warnings.push(
+      `[ENV LOADER] WARNING : ${path} : using fallback value : ${
+        fallbackSecret[path as keyof typeof fallbackSecret]
+      }`
     );
-    return fallback;
+  } else {
+    errors.push(`[ENV LOADER] FATAL ERROR : ${path} : ${issue.message}`);
   }
-  throw new Error(
-    `Missing required environment variable (${key}) and no fallback is defined`
-  );
+});
+
+warnings.forEach((w) => console.warn(w));
+errors.forEach((e) => console.error(e));
+if (errors.length > 0) {
+  console.error("[ENV LOADER] FATAL ERROR: Environment validation failed.");
+  process.exit(1);
 }
 
-type Config = {
-  SESSION_SECRET: string;
-  EXPIRATION_TIME_MS: number;
-  SECURE_COOKIES: boolean;
-  MONGODB_URI: string;
-  MONGODB_DB_NAME: string;
-}
-
-export const config: Config = {
-  SESSION_SECRET: getEnvVar("SESSION_SECRET", "123"),
-  EXPIRATION_TIME_MS: Number(getEnvVar("EXPIRATION_TIME", "3600")) * 1000, // 3600000 ms = 3600 s = 60 min = 1h
-  SECURE_COOKIES: Boolean(getEnvVar("SECURE_COOKIES", "false")),
-  MONGODB_URI: getEnvVar("MONGODB_URI"),
-  MONGODB_DB_NAME: getEnvVar("MONGODB_DB_NAME"),
-};
+export const config: EnvVariables = envSchema.parse({
+  ...fallbackSecret,
+  ...process.env,
+});

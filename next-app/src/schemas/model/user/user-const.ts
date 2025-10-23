@@ -9,8 +9,7 @@ export const UserValidationConstants = {
     max: new Date().getFullYear(),
   },
   cezarId: {
-    length: 8,
-    regex: /^\d{8}$/,
+    regex: /^\d{1,6}$/,
   },
   platformIds: {
     max: 20,

@@ -1,12 +1,16 @@
 import type { IGroupDTO } from "@/models/group/group-types";
 import type { IGroupDTOWithPopulatedMembersAdmins } from "@/models/mixed-types";
+import type {
+  GroupBasicType,
+  GroupFullType,
+} from "@/schemas/model/group/group-types";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 
 export function sanitizeGroup(
   group: IGroupDTO | IGroupDTOWithPopulatedMembersAdmins
-) {
+): GroupBasicType {
   return {
-    _id: group._id.toString(),
+    id: group._id.toString(),
     name: group.name,
     description: group.description,
     imageUrl: group.imageUrl,
@@ -16,7 +20,7 @@ export function sanitizeGroup(
 
 export function sanitizeGroupsFullInfoPopulated(
   group: IGroupDTOWithPopulatedMembersAdmins
-) {
+): GroupFullType {
   return {
     ...sanitizeGroup(group),
     invitationCode: group.invitationCode,

@@ -3,7 +3,7 @@ import { Academy } from "../../../club-preset/academy";
 import { TrainingGroup } from "../../../club-preset/training-group";
 import { UserValidationConstants } from "./user-const";
 import type { TKey } from "@/lib/typed-translations";
-import { idPropSchema } from "@/schemas/common";
+import { idPropSchema, withTimeStampsSchema } from "@/schemas/common";
 
 ///////////////////////////////
 // UserName - Schemas
@@ -73,7 +73,7 @@ export const cezarIdSchema = z
   .string()
   .regex(
     cezarId.regex,
-    "validation.model.user.onboarding.cezarId.regexLenght" satisfies TKey
+    "validation.model.user.onboarding.cezarId.regex" satisfies TKey
   );
 
 export const bboIdSchema = z
@@ -127,16 +127,18 @@ export const nicknameSchema = z
 ///////////////////////////////
 // Full User - Schema
 
-export const userSchema = z.object({
-  _id: idPropSchema,
-  name: nameSchema,
-  nickname: nicknameSchema.optional(),
-  email: emailSchema,
-  onboardingData: onboardingDataSchema.optional(),
-});
+export const userSchema = z
+  .object({
+    id: idPropSchema,
+    name: nameSchema,
+    nickname: nicknameSchema.optional(),
+    email: emailSchema,
+    onboardingData: onboardingDataSchema.optional(),
+  })
+  .merge(withTimeStampsSchema);
 
 export const userSchemaBasic = z.object({
-  _id: idPropSchema,
+  id: idPropSchema,
   name: nameSchema,
   nickname: nicknameSchema.optional(),
 });

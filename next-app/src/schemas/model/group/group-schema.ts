@@ -47,7 +47,7 @@ export const havingInvitationCode = z.object({
 });
 
 export const groupBasicSchema = z.object({
-  _id: idPropSchema,
+  id: idPropSchema,
   name: nameSchema,
   description: descriptionSchema.optional(),
   imageUrl: imageUrlSchema.optional(),

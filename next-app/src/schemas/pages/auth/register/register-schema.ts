@@ -6,7 +6,7 @@ import {
   lastNameSchema,
 } from "../../../model/user/user-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
-import { emptyStringToUndefined } from "../../../common";
+import { transformEmptyStringsToUndefined } from "@/schemas/common";
 import type { TKey } from "@/lib/typed-translations";
 
 const { password } = UserValidationConstants;
@@ -49,11 +49,7 @@ export const registerFormSchema = z
   .object({
     firstName: firstNameSchema,
     lastName: lastNameSchema,
-    nickname: z
-      .string()
-      .transform(emptyStringToUndefined)
-      .pipe(nicknameSchema.optional())
-      .optional(),
+    nickname: transformEmptyStringsToUndefined(nicknameSchema.optional()),
     email: emailSchema,
     password: passwordSchema,
     repeatPassword: repeatPasswordSchema,
