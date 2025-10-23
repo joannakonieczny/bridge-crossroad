@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -29,12 +29,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { EventType } from "@/club-preset/event-type";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { getJoinedGroupsInfo } from "@/services/groups/api";
+import { getJoinedGroupsInfo, getGroupData } from "@/services/groups/api";
+import { GroupIdType } from "@/schemas/model/group/group-types";
 
-/* --- lokalny schema (używamy uproszczonej, ale zgodnej struktury z discriminat union) --- */
+/* --- lokalny schema --- */
 const tournamentSchema = z.object({
   type: z.literal(EventType.TOURNAMENT),
-  // proste pole: lista par w formacie "id1,id2" rozdzielonych enterem
   contestantsPairsRaw: z.string().optional(),
   arbiter: z.string().optional(),
   tournamentType: z.string().optional(),
@@ -42,7 +42,6 @@ const tournamentSchema = z.object({
 
 const leagueSchema = z.object({
   type: z.literal(EventType.LEAGUE_MEETING),
-  // prosty formularz: sesje jako tekst (można rozbudować)
   sessionRaw: z.string().optional(),
   tournamentType: z.string().optional(),
 });
@@ -50,7 +49,7 @@ const leagueSchema = z.object({
 const trainingSchema = z.object({
   type: z.literal(EventType.TRAINING),
   coach: z.string().optional(),
-  topic: z.string().nonempty("validation.model.event.data.invalid"), // use translation key
+  topic: z.string().nonempty("validation.model.event.data.invalid"),
 });
 
 const otherSchema = z.object({
@@ -58,49 +57,53 @@ const otherSchema = z.object({
   note: z.string().optional(),
 });
 
-const baseSchema = z.object({
-  title: z.string().min(1, "validation.model.event.title.required"),
-  description: z.string().optional(),
-  location: z.string().optional(),
-  startsAt: z.string().min(1, "validation.model.event.duration.invalidRange"),
-  endsAt: z.string().min(1, "validation.model.event.duration.invalidRange"),
-  // discriminated union on "type"
-  data: z.discriminatedUnion("type", [
-    tournamentSchema,
-    leagueSchema,
-    trainingSchema,
-    otherSchema,
-  ]),
-  organizer: z.string().optional(),
-  group: z.string().optional(),
-  additionalDescription: z.string().optional(),
-  imageUrl: z.string().optional(),
-}).refine((v) => new Date(v.startsAt) < new Date(v.endsAt), {
-  message: "validation.model.event.duration.invalidRange",
-  path: ["startsAt"],
-});
+const baseSchema = z
+  .object({
+    title: z.string().min(1, "validation.model.event.title.required"),
+    description: z.string().optional(),
+    location: z.string().optional(),
+    startsAt: z.string().min(1, "validation.model.event.duration.invalidRange"),
+    endsAt: z.string().min(1, "validation.model.event.duration.invalidRange"),
+    data: z.discriminatedUnion("type", [
+      tournamentSchema,
+      leagueSchema,
+      trainingSchema,
+      otherSchema,
+    ]),
+    organizer: z.string().optional(),
+    group: z.string().optional(),
+    additionalDescription: z.string().optional(),
+    imageUrl: z.string().optional(),
+  })
+  .refine((v) => new Date(v.startsAt) < new Date(v.endsAt), {
+    message: "validation.model.event.duration.invalidRange",
+    path: ["startsAt"],
+  });
 
-type CreateEventFormType = z.infer<typeof baseSchema>;
+type _ZodCreateEventForm = z.infer<typeof baseSchema>;
+type CreateEventFormType = Omit<_ZodCreateEventForm, "group"> & { group?: GroupIdType };
 
-// add missing props type
 type AddEventModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
+// helper do konwersji wartości z selecta
+const toGroupIdType = (val: string): GroupIdType => val as GroupIdType;
+
 export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
   const toast = useToast();
-  const t = useTranslations("pages.GroupsPage.AddGroupModal"); // reuse keys for generic labels or replace as needed
+  const t = useTranslations("pages.GroupsPage.AddGroupModal");
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
-  // --- moved inside component: pobieramy dostępne grupy przez useActionQuery ---
+  // --- dostępne grupy ---
   const groupsQ = useActionQuery({
     queryKey: QUERY_KEYS.groups,
     action: getJoinedGroupsInfo,
   });
 
-  const { handleSubmit, control, reset, setError, setValue } = useForm<CreateEventFormType>({
+  const { handleSubmit, control, reset, setValue } = useForm<CreateEventFormType>({
     resolver: zodResolver(baseSchema),
     defaultValues: {
       title: "",
@@ -108,101 +111,95 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
       location: "",
       startsAt: "",
       endsAt: "",
-      // pola zgodne z event-schema
       organizer: "",
-      group: "",
+      group: undefined,
       additionalDescription: "",
       imageUrl: "",
-      // coach zahardcodowany w formularzu:
       data: { type: EventType.OTHER, note: "", coach: "coach-123" } as any,
     },
   });
 
+  const selectedGroupId = useWatch({ control, name: "group" }) as GroupIdType | undefined;
   const selectedType = useWatch({ control, name: "data.type" }) as EventType | undefined;
+
+  const groupMembersQ = useActionQuery({
+    queryKey: [QUERY_KEYS.group, selectedGroupId],
+    action: async () => {
+      return await getGroupData({ groupId: selectedGroupId as GroupIdType });
+    },
+    enabled: !!selectedGroupId,
+  });
+
+  useEffect(() => {
+    if (!selectedGroupId) setValue("organizer", "");
+  }, [selectedGroupId, setValue]);
 
   const createEventAction = useActionMutation({
     action: createEvent,
     onSuccess: () => {
-      // Invalidate any events lists if you use such queries
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groups }); // placeholder; adapt if you have events keys
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groups });
       reset();
     },
     onError: (err: any) => {
-      // Example server-side error handling — map message key to field if provided
       const msg = err?.message ?? "Nieznany błąd";
       toast({ title: "Błąd", description: String(msg), status: "error", duration: 3000 });
     },
   });
 
   const onSubmit = async (data: CreateEventFormType) => {
-    // przygotuj payload zgodny z oczekiwanym shape (konwersja dat)
     const payload: any = {
       title: data.title,
       description: data.description,
       location: data.location,
       organizer: data.organizer || undefined,
-      attendees: [], // tymczasowo pusta lista uczestników
+      attendees: [],
       group: data.group || undefined,
       duration: {
         startsAt: new Date(data.startsAt),
         endsAt: new Date(data.endsAt),
       },
       additionalDescription: data.additionalDescription || undefined,
-      imageUrl: "", // changed: always send empty string instead of reading from form
-      // minimalne mapowanie dla data w zależności od typu
+      imageUrl: "",
       data: undefined,
     };
 
     switch (data.data.type) {
-      case EventType.TOURNAMENT: {
-        // tymczasowo nie zbieramy par z formularza — przekazujemy pustą listę
-        const pairs: Array<{ first: string; second: string }> = [];
-
+      case EventType.TOURNAMENT:
         payload.data = {
           type: EventType.TOURNAMENT,
-          contestantsPairs: pairs,
+          contestantsPairs: [],
           arbiter: (data.data as any).arbiter || undefined,
           tournamentType: (data.data as any).tournamentType || undefined,
         };
         break;
-      }
-      case EventType.LEAGUE_MEETING: {
+      case EventType.LEAGUE_MEETING:
         payload.data = {
           type: EventType.LEAGUE_MEETING,
-          session: [], // for now empty; you can parse sessionRaw similarly
+          session: [],
           tournamentType: (data.data as any).tournamentType || undefined,
         };
         break;
-      }
-      case EventType.TRAINING: {
+      case EventType.TRAINING:
         payload.data = {
           type: EventType.TRAINING,
           coach: (data.data as any).coach,
           topic: (data.data as any).topic,
         };
         break;
-      }
-      default: {
+      default:
         payload.data = { type: EventType.OTHER };
-      }
     }
 
-    // wywołaj akcję (testowo: akcja może wymagać uprawnień/group context)
     const promise = createEventAction.mutateAsync(payload);
-
     toast.promise(promise, {
       loading: { title: "Tworzenie wydarzenia..." },
       success: { title: "Utworzono wydarzenie" },
-      error: (err: any) => {
-        return { title: "Błąd podczas tworzenia wydarzenia" };
-      },
+      error: { title: "Błąd podczas tworzenia wydarzenia" },
     });
 
     await promise.then(() => {
       reset();
       onClose();
-    }).catch(() => {
-      // error handled by toast
     });
   };
 
@@ -213,7 +210,6 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
         <ModalHeader>Dodaj wydarzenie</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {/* jeśli groupsQ ładuje — zablokuj formularz i pokaż prosty spinner */}
           <Box position="relative">
             {groupsQ.isLoading && (
               <Box position="absolute" inset={0} display="flex" alignItems="center" justifyContent="center" zIndex={2}>
@@ -224,30 +220,32 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
             <Box opacity={groupsQ.isLoading ? 0.6 : 1} pointerEvents={groupsQ.isLoading ? "none" : "auto"}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack spacing={4} mt={2}>
+                  {/* --- Tytuł --- */}
                   <Controller
                     control={control}
                     name="title"
                     render={({ field, fieldState: { error } }) => (
                       <>
-                        <FormLabel htmlFor="title">Tytuł</FormLabel>
-                        <Input id="title" {...field} placeholder="Tytuł wydarzenia" />
-                        {/* minimal inline error */}
+                        <FormLabel>Tytuł</FormLabel>
+                        <Input {...field} placeholder="Tytuł wydarzenia" />
                         {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
                       </>
                     )}
                   />
 
+                  {/* --- Opis --- */}
                   <Controller
                     control={control}
                     name="description"
                     render={({ field }) => (
                       <>
-                        <FormLabel htmlFor="description">Opis</FormLabel>
-                        <Textarea id="description" {...field} placeholder="Opis (opcjonalnie)" />
+                        <FormLabel>Opis</FormLabel>
+                        <Textarea {...field} placeholder="Opis (opcjonalnie)" />
                       </>
                     )}
                   />
 
+                  {/* --- Daty --- */}
                   <HStack>
                     <Controller
                       control={control}
@@ -273,6 +271,7 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
                     />
                   </HStack>
 
+                  {/* --- Typ wydarzenia --- */}
                   <Controller
                     control={control}
                     name="data.type"
@@ -289,41 +288,9 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
                     )}
                   />
 
-                  {/* pola warunkowe */}
-                  {selectedType === EventType.TOURNAMENT && (
-                    <>
-                      <Controller
-                        control={control}
-                        name="data.arbiter"
-                        render={({ field, fieldState: { error } }) => (
-                          <>
-                            <Input placeholder="Sędzia (id)" {...field} />
-                            {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                          </>
-                        )}
-                      />
-                    </>
-                  )}
-
-                  {selectedType === EventType.LEAGUE_MEETING && (
-                    <>
-                      <FormLabel>Sesje (surowy tekst)</FormLabel>
-                      <Controller
-                        control={control}
-                        name="data.sessionRaw"
-                        render={({ field, fieldState: { error } }) => (
-                          <>
-                            <Textarea placeholder="session data..." {...field} />
-                            {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                          </>
-                        )}
-                      />
-                    </>
-                  )}
-
+                  {/* --- Pola warunkowe --- */}
                   {selectedType === EventType.TRAINING && (
                     <>
-                      {/* coach jest zahardcodowany i nieedytowalny */}
                       <Controller
                         control={control}
                         name="data.coach"
@@ -344,20 +311,7 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
                     </>
                   )}
 
-                  {/* organizer, attendees, group, additionalDescription, imageUrl */}
-                  <Controller
-                    control={control}
-                    name="organizer"
-                    render={({ field, fieldState: { error } }) => (
-                      <>
-                        <FormLabel>Organizator (id)</FormLabel>
-                        <Input {...field} placeholder="Organizer id" />
-                        {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
-                      </>
-                    )}
-                  />
-
-                  {/* zamienione pole "group" — Select z listą grup */}
+                  {/* --- Wybór grupy --- */}
                   <Controller
                     control={control}
                     name="group"
@@ -365,54 +319,100 @@ export default function AddEventModal({ isOpen, onClose }: AddEventModalProps) {
                       <>
                         <FormLabel>Grupa</FormLabel>
                         <Select
-                          /* removed placeholder prop to avoid implicit unkeyed option */
                           value={field.value ?? ""}
-                          onChange={(e) => field.onChange(e.target.value || undefined)}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? toGroupIdType(e.target.value) : undefined)
+                          }
                         >
-                          {/* explicit placeholder option with stable key */}
                           <option key="placeholder" value="">
                             {groupsQ.isLoading ? "Ładowanie grup..." : "Wybierz grupę"}
                           </option>
 
-                          {/* mapped options with stable keys (prefer g.id, fallback to index) */}
-                          {Array.isArray(groupsQ.data) && groupsQ.data.length > 0 ? (
+                          {Array.isArray(groupsQ.data) &&
                             groupsQ.data.map((g: any, idx: number) => {
                               const key = g?.id ?? g?.groupId ?? `g-${idx}`;
-                              const val = String(g?.id ?? g?.groupId ?? key);
-                              const label = (g?.name ?? g?.title ?? val);
+                              const val = String(g?.id ?? g?.groupId ?? key) as GroupIdType;
+                              const label = g?.name ?? g?.title ?? val;
                               return (
-                                <option key={String(key)} value={val}>
+                                <option key={key} value={val}>
                                   {label}
                                 </option>
                               );
-                            })
-                          ) : null}
+                            })}
 
-                          {/* when there are no groups at all, show a disabled entry (also keyed) */}
-                          {!groupsQ.isLoading && (!Array.isArray(groupsQ.data) || groupsQ.data.length === 0) && (
-                            <option key="no-groups" value="" disabled>
-                              Brak dostępnych grup
-                            </option>
-                          )}
+                          {!groupsQ.isLoading &&
+                            (!Array.isArray(groupsQ.data) || groupsQ.data.length === 0) && (
+                              <option key="no-groups" value="" disabled>
+                                Brak dostępnych grup
+                              </option>
+                            )}
                         </Select>
                         {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
                       </>
                     )}
                   />
 
+                  {/* --- Organizator (członkowie grupy) --- */}
+                  <Controller
+                    control={control}
+                    name="organizer"
+                    render={({ field, fieldState: { error } }) => (
+                      <>
+                        <FormLabel>Organizator</FormLabel>
+                        <Select
+                          value={field.value ?? ""}
+                          onChange={(e) => field.onChange(e.target.value || undefined)}
+                          isDisabled={!selectedGroupId || groupMembersQ.isLoading}
+                        >
+                          <option key="org-placeholder" value="">
+                            {!selectedGroupId
+                              ? "Wybierz grupę, aby zobaczyć członków"
+                              : groupMembersQ.isLoading
+                              ? "Ładowanie członków..."
+                              : "Wybierz organizatora"}
+                          </option>
+
+                          {Array.isArray(groupMembersQ.data?.members) &&
+                            groupMembersQ.data!.members.map((m: any, idx: number) => {
+                              const key = m?.id ?? m?._id ?? `m-${idx}`;
+                              const val = String(m?.id ?? m?._id ?? key);
+                              const label = m?.name ?? m?.fullName ?? m?.displayName ?? val;
+                              return (
+                                <option key={key} value={val}>
+                                  {label}
+                                </option>
+                              );
+                            })}
+
+                          {!groupMembersQ.isLoading &&
+                            selectedGroupId &&
+                            (!Array.isArray(groupMembersQ.data?.members) ||
+                              (groupMembersQ.data?.members ?? []).length === 0) && (
+                              <option key="no-members" value="" disabled>
+                                Brak członków w grupie
+                              </option>
+                            )}
+                        </Select>
+                        {error && <Box color="red.500" fontSize="sm">{tValidation(error.message)}</Box>}
+                      </>
+                    )}
+                  />
+
+                  {/* --- Dodatkowy opis --- */}
                   <Controller
                     control={control}
                     name="additionalDescription"
                     render={({ field }) => (
                       <>
-                        <FormLabel>Additional description</FormLabel>
+                        <FormLabel>Dodatkowy opis</FormLabel>
                         <Textarea {...field} placeholder="Dodatkowy opis (opcjonalnie)" />
                       </>
                     )}
                   />
 
-                  {/* submit */}
-                  <Button type="submit" colorScheme="blue">Dodaj</Button>
+                  <Button type="submit" colorScheme="blue">
+                    Dodaj
+                  </Button>
                 </Stack>
               </form>
             </Box>
