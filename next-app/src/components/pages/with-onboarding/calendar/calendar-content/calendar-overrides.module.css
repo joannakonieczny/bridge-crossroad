@@ -61,3 +61,16 @@
 .root :global(.fc .fc-timegrid-col-header-cell.fc-day-today) {
   background: var(--chakra-colors-secondary-100) !important;
 }
+
+/* small-screen tweak: make FullCalendar title smaller on < md screens */
+@media (max-width: 767px) {
+  .root :global(.fc .fc-toolbar-title) {
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+  }
+}
+
+/* make calendar events show pointer cursor on hover (and normally) */
+.root :global(.fc .fc-event) {
+  cursor: pointer !important;
+}

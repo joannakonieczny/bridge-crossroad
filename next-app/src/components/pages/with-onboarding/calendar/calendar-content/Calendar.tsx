@@ -7,7 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import plLocale from "@fullcalendar/core/locales/pl";
 import enLocale from "@fullcalendar/core/locales/en-gb";
-import { Box } from "@chakra-ui/react";
+import { Box, useBreakpointValue } from "@chakra-ui/react"; 
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 
@@ -34,6 +34,9 @@ export default function Calendar() {
   // ensures there is no SSR rendering of FullCalendar
   const [mounted, setMounted] = useState(false);
   const locale = useLocale();
+
+  const showSingleDay = useBreakpointValue({ base: true, md: false }) ?? false;
+  const initialView = showSingleDay ? "timeGridDay" : "timeGridWeek";
 
   useEffect(() => {
     setMounted(true);
@@ -107,14 +110,16 @@ export default function Calendar() {
 
   return (
     <Box className={styles.root} padding="1.5rem 1.5rem 0 1.5rem" overflowY="auto" height="calc(100vh - 6rem)">
+
       {mounted ? (
         <FullCalendar
+          key={initialView} // force reinit when breakpoint/view changes
           plugins={[dayGridPlugin, timeGridPlugin]}
           locales={fcLocales}
           locale={fcLocale}
           firstDay={1}
           themeSystem="bootstrap"
-          initialView="timeGridWeek"
+          initialView={initialView}
           weekends={true}
           events={eventsWithColor}
           slotMinTime="06:00:00"

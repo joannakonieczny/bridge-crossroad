@@ -352,6 +352,13 @@ const groupsPage = {
   },
 };
 
+const calendarPage = {
+  Sidebar: {
+    addEvent: "Dodaj wydarzenie",
+    seeMore: "Zobacz więcej",
+  },
+};
+
 const userModelValidation = {
   name: {
     firstName: {
@@ -612,6 +619,7 @@ const messages = {
     LandingPage: landingPage,
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,
+    CalendarPage: calendarPage,
   },
   components: {
     Navbar: navbar,

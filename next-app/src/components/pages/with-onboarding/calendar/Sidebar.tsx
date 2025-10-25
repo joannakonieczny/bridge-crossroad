@@ -1,14 +1,18 @@
 "use client";
 import React from "react";
-import { Box, VStack, Button, useDisclosure } from "@chakra-ui/react";
+import { Box, VStack, Button, useDisclosure, useBreakpointValue } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function Sidebar() {
   const router = useRouter();
   const { onOpen } = useDisclosure();
+  const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
 
+  const t = useTranslations("pages.CalendarPage.Sidebar");
+  if (!isVisible) return null;
   return (
     <Box
       w="16.5rem"
@@ -19,7 +23,7 @@ export default function Sidebar() {
       overflowY="auto"
       position="relative"
     >
-      <Box mb={4} width="100%">
+      <Box mb={4} width="100%" pr={2}>
         <Button
           w="100%"
           size="sm" 
@@ -29,7 +33,7 @@ export default function Sidebar() {
           onClick={onOpen}
           rightIcon={<FiPlus size={30} />}
         >
-          Dodaj wydarzenie
+          {t("addEvent")}
         </Button>
       </Box>
 
@@ -45,9 +49,9 @@ export default function Sidebar() {
           color="white"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
-          onClick={() => router.push("/upcoming-events/")}
+          onClick={() => router.push("calendar/upcoming-events/")}
         >
-          Zobacz więcej
+          {t("seeMore")}
         </Button>
       </Box>
     </Box>
