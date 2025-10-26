@@ -7,9 +7,9 @@ import { s3 } from "@/util/api/s3-client";
 import { checkGroupAccess, extractUserId } from "@/util/api/files-common";
 
 type ParamsType = {
-  params: {
+  params: Promise<{
     path: string[];
-  };
+  }>;
 };
 
 export async function GET(req: NextRequest, { params }: ParamsType) {
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, { params }: ParamsType) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const pathParts = params?.path || [];
+  const pathParts = (await params)?.path || [];
   if (!pathParts || pathParts.length === 0) {
     return NextResponse.json(
       { error: "No file path provided" },
