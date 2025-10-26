@@ -357,6 +357,7 @@ const calendarPage = {
     addEvent: "Dodaj wydarzenie",
     seeMore: "Zobacz więcej",
   },
+  showUpcomingEventsButton: "Zobacz nadchodzące wydarzenia",
 };
 
 const userModelValidation = {
@@ -624,6 +625,12 @@ const messages = {
   components: {
     Navbar: navbar,
     Footer: footer,
+    BackLink: {
+      fallbackText: "Wróć",
+    },
+    SidebarCard: {
+      detailsButtonText: "Szczegóły",
+    },
   },
 };
 

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Box, Flex, Icon } from "@chakra-ui/react";
 import FooterLogo from "./FooterLogo";
@@ -48,17 +48,17 @@ export default function Footer() {
           <ResponsiveText as={ChakraLink} href={ROUTES.dashboard} color="bg">
             {t("quickAccess.content.dashboard")}
           </ResponsiveText>
-          <ResponsiveText as={ChakraLink} href={ROUTES.calendar} color="bg">
+          <ResponsiveText
+            as={ChakraLink}
+            href={ROUTES.calendar.index}
+            color="bg"
+          >
             {t("quickAccess.content.calendar")}
           </ResponsiveText>
           <ResponsiveText as={ChakraLink} href={ROUTES.groups} color="bg">
             {t("quickAccess.content.groups")}
           </ResponsiveText>
-          <ResponsiveText
-            as={ChakraLink}
-            href={ROUTES.find_partner}
-            color="bg"
-          >
+          <ResponsiveText as={ChakraLink} href={ROUTES.find_partner} color="bg">
             {t("quickAccess.content.findPartner")}
           </ResponsiveText>
           <ResponsiveText as={ChakraLink} href={ROUTES.tools} color="bg">
@@ -68,11 +68,7 @@ export default function Footer() {
 
         {/* Pomoc */}
         <Flex direction="column" gap="1.5rem" width="100%">
-          <ResponsiveHeading
-            text={t("help.title")}
-            fontSize="xl"
-            color="bg"
-          />
+          <ResponsiveHeading text={t("help.title")} fontSize="xl" color="bg" />
           <ResponsiveText color="bg">
             {t("help.content.privacyPolice")}
           </ResponsiveText>

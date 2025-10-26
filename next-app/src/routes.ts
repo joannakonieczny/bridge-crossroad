@@ -13,7 +13,10 @@ export const ROUTES = {
     final: "/onboarding/final",
   },
   dashboard: "/dashboard",
-  calendar: "/calendar",
+  calendar: {
+    index: "/calendar",
+    upcoming_events: "/calendar/upcoming-events",
+  },
   groups: "/groups",
   find_partner: "/find-partner",
   tools: "/tools",
