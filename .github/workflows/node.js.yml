@@ -37,6 +37,7 @@ jobs:
           echo "AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID" >> .env
           echo "AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY" >> .env
           echo "AWS_S3_BUCKET_NAME=AWS_S3_BUCKET_NAME" >> .env
+          echo "AWS_SESSION_TOKEN=AWS_SESSION_TOKEN" >> .env
         working-directory: next-app
       - name: Build
         run: npm run build
