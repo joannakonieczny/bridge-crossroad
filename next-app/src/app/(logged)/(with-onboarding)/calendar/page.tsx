@@ -1,9 +1,18 @@
 "use client";
-import Calendar from "@/components/pages/with-onboarding/calendar/calendar-content/Calendar";
+import { FullPageLoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
 import { Flex, Box, Button, useBreakpointValue } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+
+const Calendar = dynamic(
+  () =>
+    import(
+      "@/components/pages/with-onboarding/calendar/calendar-content/Calendar"
+    ),
+  { loading: () => <FullPageLoadingSpinner /> }
+);
 
 export default function CalendarPage() {
   const router = useRouter();

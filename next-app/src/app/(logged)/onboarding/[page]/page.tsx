@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Spinner } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { ROUTES } from "@/routes";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const AVAILABLE_PAGES = ["1", "2", "3", "final"] as const;
 export type PageId = (typeof AVAILABLE_PAGES)[number];
@@ -13,35 +13,26 @@ export type PageId = (typeof AVAILABLE_PAGES)[number];
 const FirstPage = dynamic(
   () => import("@/components/pages/onboarding/pages/FirstPage"),
   {
-    loading: () => <LoadingFallback />,
+    loading: () => <LoadingSpinner />,
   }
 );
 const SecondPage = dynamic(
   () => import("@/components/pages/onboarding/pages/SecondPage"),
   {
-    loading: () => <LoadingFallback />,
+    loading: () => <LoadingSpinner />,
   }
 );
 const ThirdPage = dynamic(
   () => import("@/components/pages/onboarding/pages/ThirdPage"),
   {
-    loading: () => <LoadingFallback />,
+    loading: () => <LoadingSpinner />,
   }
 );
 const FinalPage = dynamic(
   () => import("@/components/pages/onboarding/pages/FinalPage"),
   {
-    loading: () => <LoadingFallback />,
+    loading: () => <LoadingSpinner />,
   }
-);
-
-const LoadingFallback = () => (
-  <Spinner
-    emptyColor="accent.200"
-    color="accent.500"
-    size="xl"
-    thickness="5px"
-  />
 );
 
 export default function OnboardingPage() {
