@@ -7,7 +7,7 @@ export default function CalendarLayout({ children }: PropsWithChildren) {
 	return (
 		<Flex align="stretch" minH="calc(100vh - 5rem)">
 			<Sidebar />
-			<Box flex="1" p={4}>
+			<Box flex="1">
 				{children}
 			</Box>
 		</Flex>

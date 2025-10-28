@@ -8,7 +8,7 @@ export default function CalendarPage() {
   const showButton = useBreakpointValue({ base: true, md: false }) ?? false;
 
   return (
-    <Flex align="stretch" minH="calc(100vh - 6rem)">
+    <Flex align="stretch" minH="calc(100vh - 5rem)">
       <Box flex="1" p={4}>
         {showButton && (
           <Box mb={4} px={4}>

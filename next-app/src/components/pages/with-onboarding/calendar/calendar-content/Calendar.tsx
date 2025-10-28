@@ -109,7 +109,7 @@ export default function Calendar() {
   const fcLocale = locale === "pl" ? "pl" : "en-gb";
 
   return (
-    <Box className={styles.root} padding="1.5rem 1.5rem 0 1.5rem" overflowY="auto" height="calc(100vh - 6rem)">
+    <Box className={styles.root} padding="1.5rem 1.5rem 0 1.5rem" overflowY="auto" p={4}>
 
       {mounted ? (
         <FullCalendar
