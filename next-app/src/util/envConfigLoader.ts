@@ -8,6 +8,11 @@ const envSchema = z.object({
   SECURE_COOKIES: z.coerce.boolean(),
   MONGODB_URI: z.string(),
   MONGODB_DB_NAME: z.string(),
+  AWS_SECRET_ACCESS_KEY: z.string(),
+  AWS_ACCESS_KEY_ID: z.string(),
+  AWS_REGION: z.string(),
+  AWS_S3_BUCKET_NAME: z.string(),
+  AWS_SESSION_TOKEN: z.string(),
 });
 export type EnvVariables = z.infer<typeof envSchema>;
 
