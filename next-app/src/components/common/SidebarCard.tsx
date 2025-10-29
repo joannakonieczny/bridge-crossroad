@@ -2,6 +2,8 @@
 import React from "react";
 import { Card, Image, Box, Button, Text } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
+import { STATIC } from "@/club-preset/static";
+import { useTranslations } from "@/lib/typed-translations";
 
 type SidebarCardProps = {
   title?: string;
@@ -9,9 +11,10 @@ type SidebarCardProps = {
 };
 
 export default function SidebarCard({
-  title = "Letnia Stasikówka",
-  imageUrl = "https://picsum.photos/200/300?grayscale",
+  title,
+  imageUrl = STATIC.eventSidebarImagePlaceholder,
 }: SidebarCardProps) {
+  const t = useTranslations("components.SidebarCard");
   return (
     <Card
       borderRadius="md"
@@ -36,7 +39,7 @@ export default function SidebarCard({
           rightIcon={<FiArrowRight />}
           w="100%"
         >
-          Szczegóły
+          {t("detailsButtonText")}
         </Button>
       </Box>
     </Card>
