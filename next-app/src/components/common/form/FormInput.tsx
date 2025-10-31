@@ -1,5 +1,10 @@
 import type { FormControlProps } from "@chakra-ui/react";
-import { FormControl, FormErrorMessage, Input, Textarea } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormErrorMessage,
+  Input,
+  Textarea,
+} from "@chakra-ui/react";
 import type { ChangeEventHandler } from "react";
 import PasswordInput from "./PasswordInput";
 
@@ -9,7 +14,7 @@ export type IFormInputProps = {
   isInvalid?: boolean;
   id?: string;
   isRequired?: boolean;
-  type?: "password" | "text" | "email" | "number" | "textarea"; 
+  type?: "password" | "text" | "email" | "number" | "textarea" | "datetime";
   onElementProps?: FormControlProps;
   value?: string;
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
@@ -39,6 +44,15 @@ export default function FormInput(props: IFormInputProps) {
           value={props.value}
           onChange={props.onChange}
           focusBorderColor="accent.500"
+          _focus={{ borderColor: "accent.500" }}
+        />
+      ) : props.type === "datetime" ? (
+        <Input
+          placeholder={props.placeholder}
+          type="datetime-local"
+          focusBorderColor="accent.500"
+          value={props.value}
+          onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
         />
       ) : (

@@ -8,7 +8,7 @@ import {
 } from "@/lib/typed-translations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { addModifyEventSchema } from "@/schemas/pages/with-onboarding/events/events-schema";
 import {
   TabList,
@@ -41,6 +41,7 @@ import {
   Box,
   Spinner,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
 import {
   Step,
@@ -53,8 +54,12 @@ import {
   StepTitle,
   Stepper,
   useSteps,
+  Progress,
 } from "@chakra-ui/react";
 import { Divider } from "@chakra-ui/react";
+import { EventType } from "@/club-preset/event-type";
+import FormInput from "@/components/common/form/FormInput";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 type EventFormProps = {
   isOpen: boolean;
@@ -108,21 +113,194 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   function PrimaryInfoStep() {
     return (
       <Stack spacing={4}>
-        <FormLabel htmlFor="title">Tytuł</FormLabel>
-        <Input id="title" placeholder="Tytuł wydarzenia" />
-        <FormLabel htmlFor="description">Opis</FormLabel>
-        <Textarea id="description" placeholder="Opis wydarzenia" />
-        <FormLabel htmlFor="location">Lokalizacja</FormLabel>
-        <Input id="location" placeholder="Lokalizacja wydarzenia" />
-        <FormLabel htmlFor="organizer">Organizator</FormLabel>
-        <Input id="organizer" placeholder="Organizator wydarzenia" />
-        <FormLabel htmlFor="duration">Czas trwania</FormLabel>
+        <Controller
+          control={formControl}
+          name="title"
+          render={({ field, fieldState: { error } }) => (
+            <FormInput
+              placeholder="Tytuł wydarzenia"
+              errorMessage="Niepoprawne coś tam coś"
+              isInvalid={!!error}
+              id="title"
+              type="text"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <Controller
+          control={formControl}
+          name="description"
+          render={({ field, fieldState: { error } }) => (
+            <FormInput
+              placeholder="Opis wydarzenia"
+              errorMessage="Niepoprawne coś tam coś"
+              isInvalid={!!error}
+              id="description"
+              type="textarea"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <Controller
+          control={formControl}
+          name="additionalDescription"
+          render={({ field, fieldState: { error } }) => (
+            <FormInput
+              placeholder="Dodatkowy opis wydarzenia"
+              errorMessage="Niepoprawne coś tam coś"
+              isInvalid={!!error}
+              id="additionalDescription"
+              type="textarea"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <Controller
+          control={formControl}
+          name="location"
+          render={({ field, fieldState: { error } }) => (
+            <FormInput
+              placeholder="Lokalizacja wydarzenia"
+              errorMessage="Niepoprawne coś tam coś"
+              isInvalid={!!error}
+              id="location"
+              type="text"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <Controller
+          control={formControl}
+          name="organizer"
+          render={({ field, fieldState: { error } }) => (
+            <FormInput
+              placeholder="Organizator wydarzenia"
+              errorMessage="Niepoprawne coś tam coś"
+              isInvalid={!!error}
+              id="organizer"
+              type="text"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
         <HStack spacing={4}>
-          <Input type="datetime-local" id="startsAt" />
-          <Input type="datetime-local" id="endsAt" />
+          <VStack flex={1}>
+            <Text color="gray.500" alignSelf="start">
+              Początek wydarzenia
+            </Text>
+            <Controller
+              control={formControl}
+              name="duration.startsAt"
+              render={({ field, fieldState: { error } }) => (
+                <FormInput
+                  placeholder="Start wydarzenia"
+                  errorMessage="Niepoprawne coś tam coś"
+                  isInvalid={!!error}
+                  id="startsAt"
+                  type="datetime"
+                  value={field.value.toString()}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </VStack>
+          <VStack flex={1}>
+            <Text color="gray.500" alignSelf="start">
+              Koniec wydarzenia
+            </Text>
+            <Controller
+              control={formControl}
+              name="duration.endsAt"
+              render={({ field, fieldState: { error } }) => (
+                <FormInput
+                  placeholder="Koniec wydarzenia"
+                  errorMessage="Niepoprawne coś tam coś"
+                  isInvalid={!!error}
+                  id="endsAt"
+                  type="datetime"
+                  value={field.value.toString()}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </VStack>
         </HStack>
-        <Button mt={4} colorScheme="blue">
+        <Controller
+          control={formControl}
+          name="data.type"
+          render={({ field, fieldState: { error } }) => (
+            <Select
+              placeholder="Typ wydarzenia"
+              value={field.value}
+              onChange={field.onChange}
+              focusBorderColor="accent.500"
+              _focus={{ borderColor: "accent.500" }}
+            >
+              <option value={EventType.TOURNAMENT}>Turniej</option>
+              <option value={EventType.LEAGUE_MEETING}>Spotkanie ligowe</option>
+              <option value={EventType.TRAINING}>Trening</option>
+              <option value={EventType.OTHER}>Inne</option>
+            </Select>
+          )}
+        />
+        <Button
+          colorScheme="blue"
+          onClick={() => {
+            setActiveStep(activeStep + 1);
+          }}
+          alignSelf="flex-end"
+          rightIcon={<MdArrowForwardIos />}
+        >
           Dalej
+        </Button>
+      </Stack>
+    );
+  }
+
+  function DetailedInfoStep() {
+    return (
+      <Stack spacing={4}>
+        <HStack justifyContent="space-between" width="100%">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setActiveStep(activeStep - 1);
+            }}
+            leftIcon={<MdArrowBackIos />}
+          >
+            Cofnij
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={() => {
+              setActiveStep(activeStep + 1);
+            }}
+            rightIcon={<MdArrowForwardIos />}
+          >
+            Dalej
+          </Button>
+        </HStack>
+      </Stack>
+    );
+  }
+
+  function SummaryStep() {
+    return (
+      <Stack spacing={4}>
+        <Button
+          variant="outline"
+          alignSelf="flex-start"
+          onClick={() => {
+            setActiveStep(activeStep - 1);
+          }}
+          leftIcon={<MdArrowBackIos />}
+        >
+          Cofnij
         </Button>
       </Stack>
     );
@@ -130,14 +308,16 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
 
   const steps = [
     { title: "Podstawowe informacje", content: <PrimaryInfoStep /> },
-    { title: "Szczegóły wydarzenia", content: <Box>Step 2 Content</Box> },
-    { title: "Podsumowanie", content: <Box>Step 3 Content</Box> },
+    { title: "Szczegóły wydarzenia", content: <DetailedInfoStep /> },
+    { title: "Podsumowanie", content: <SummaryStep /> },
   ];
 
-  const { activeStep } = useSteps({
+  const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
   });
+
+  const max = steps.length - 1;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -147,24 +327,33 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         <ModalCloseButton />
         <Divider />
         <ModalBody>
-          <Stepper index={activeStep}>
-            {steps.map((step, index) => (
-              <Step key={index}>
-                <StepIndicator>
-                  <StepStatus
-                    complete={<StepIcon />}
-                    incomplete={<StepNumber />}
-                    active={<StepNumber />}
-                  />
-                </StepIndicator>
-              </Step>
-            ))}
-          </Stepper>
-          <Divider mt={4} />
-          <PrimaryInfoStep />
+          <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
+          <Box position="relative">
+            <Stepper size="lg" index={activeStep}>
+              {steps.map((_, index) => (
+                <Step key={index}>
+                  <StepIndicator>
+                    <StepStatus
+                      complete={<StepIcon />}
+                      incomplete={<StepNumber />}
+                      active={<StepNumber />}
+                    />
+                  </StepIndicator>
+                  <StepSeparator />
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+          <Box mt={8}>{steps[activeStep].content}</Box>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue">Dodaj wydarzenie</Button>
+          <Button
+            colorScheme={activeStep == max ? "blue" : "gray"}
+            variant={activeStep == max ? "solid" : "outline"}
+            disabled={activeStep != max}
+          >
+            Dodaj wydarzenie
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
