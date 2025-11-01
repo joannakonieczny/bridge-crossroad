@@ -1,9 +1,11 @@
 "server-only";
 
+import dbConnect from "@/util/connect-mongo";
 import Event from "@/models/event/event-model";
 import Group from "@/models/group/group-model";
 import User from "@/models/user/user-model";
-import dbConnect from "@/util/connect-mongo";
+import { UserTableName } from "@/models/user/user-types";
+import { GroupTableName } from "@/models/group/group-types";
 import { executeWithinTransaction, check, checkTrue } from "./common";
 import type { IUserDTO } from "@/models/user/user-types";
 import type { FilterQuery } from "mongoose";
@@ -14,6 +16,8 @@ import type { IEventDTO } from "@/models/event/event-types";
 import type { AddModifyEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
+import type { IEventPopulated } from "@/models/mixed-types";
+import { EventType } from "@/club-preset/event-type";
 
 type AddEventInput = {
   groupId: GroupIdType;
@@ -234,6 +238,109 @@ export async function removeAttendeeFromEvent({
   );
 
   return { event: updatedEvent };
+}
+
+export async function getEvent({ eventId }: { eventId: EventIdType }) {
+  await dbConnect();
+
+  const existingEvent = check(
+    await Event.findById(eventId)
+      .populate<IEventPopulated>([
+        { path: "organizer", model: UserTableName },
+        { path: "attendees", model: UserTableName },
+        { path: "group", model: GroupTableName },
+
+        // Tournament
+        { path: "data.arbiter", model: UserTableName },
+        {
+          path: "data.contestantsPairs",
+          populate: [
+            {
+              path: "first",
+              model: UserTableName,
+            },
+            {
+              path: "second",
+              model: UserTableName,
+            },
+          ],
+        },
+        {
+          path: "data.teams",
+          populate: [
+            {
+              path: "members",
+              model: UserTableName,
+            },
+          ],
+        },
+
+        // League meeting sessions
+        {
+          path: "data.session",
+          populate: [
+            {
+              path: "contestants.firstPair.first",
+              model: UserTableName,
+            },
+            {
+              path: "contestants.firstPair.second",
+              model: UserTableName,
+            },
+            {
+              path: "contestants.secondPair.first",
+              model: UserTableName,
+            },
+            {
+              path: "contestants.secondPair.second",
+              model: UserTableName,
+            },
+          ],
+        },
+
+        // Training
+        { path: "data.coach", model: UserTableName },
+      ])
+      .lean<IEventPopulated>(),
+    `Event not found with id: ${eventId}`
+  );
+
+  check(existingEvent.organizer, "Event organizer data is missing");
+  check(existingEvent.group, "Event group data is missing");
+  existingEvent.attendees.forEach((a) =>
+    check(a, "Event attendee data is missing")
+  );
+
+  switch (existingEvent.data.type) {
+    case EventType.TOURNAMENT: {
+      const template = (pair: string) =>
+        `Tournament ${pair} player data is missing`;
+
+      existingEvent.data.contestantsPairs.forEach((pair) => {
+        check(pair.first, template("first"));
+        check(pair.second, template("second"));
+      });
+      existingEvent.data.teams?.forEach((team) => {
+        team.members.forEach((member) =>
+          check(member, "Tournament team member data is missing")
+        );
+      });
+      break;
+    }
+    case EventType.LEAGUE_MEETING: {
+      const template = (pair: string, position: string) =>
+        `League meeting session ${pair} pair: ${position} contestant data is missing`;
+
+      existingEvent.data.session.forEach((s) => {
+        check(s.contestants.firstPair.first, template("first", "first"));
+        check(s.contestants.firstPair.second, template("first", "second"));
+        check(s.contestants.secondPair.first, template("second", "first"));
+        check(s.contestants.secondPair.second, template("second", "second"));
+      });
+      break;
+    }
+  }
+  return existingEvent;
 }
 
 type TimeWindow = {

@@ -9,7 +9,10 @@ import {
   addModifyEventSchema,
   timeWindowSchema,
 } from "@/schemas/pages/with-onboarding/events/events-schema";
-import { sanitizeEvent } from "@/sanitizers/server-only/event-sanitize";
+import {
+  sanitizeEvent,
+  sanitizeEventPopulated,
+} from "@/sanitizers/server-only/event-sanitize";
 import { havingEventId } from "@/schemas/model/event/event-schema";
 import {
   removeEvent,
@@ -23,6 +26,8 @@ import {
 import { z } from "zod";
 import { fullAuthAction } from "../action-lib";
 import { listEventsForUserGroups } from "@/repositories/event-group";
+import { getEvent as getEventRepository } from "@/repositories/event-group";
+import { requireGroupAccess } from "../groups/simple-action";
 
 export const createEvent = getWithinOwnGroupAsAdminAction(
   addModifyEventSchema
@@ -74,4 +79,15 @@ export const listEventsForUser = fullAuthAction
       events: res.events.map(sanitizeEvent),
       groupIds: res.groupIds.map(toString),
     };
+  });
+
+export const getEvent = fullAuthAction
+  .inputSchema(havingEventId)
+  .action(async ({ parsedInput: { eventId }, ctx }) => {
+    const res = await getEventRepository({ eventId });
+    await requireGroupAccess({
+      groupId: res.group._id.toString(),
+      userId: ctx.userId,
+    });
+    return sanitizeEventPopulated(res);
   });
