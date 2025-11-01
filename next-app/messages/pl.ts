@@ -3,6 +3,7 @@ import { Academy } from "@/club-preset/academy";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
+import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -457,6 +458,14 @@ const eventModelValidation = {
   },
 };
 
+const chatMessageModelValidation = {
+  message: {
+    required: "Podaj wiadomość",
+    min: `Min. ${CHAT_MESSAGE.message.min} znaki`,
+    max: `Max. ${CHAT_MESSAGE.message.max} znaków`,
+  },
+};
+
 const loginPageValidation = {
   nicknameOrEmail: {
     required: "Podaj nick lub email",
@@ -573,6 +582,7 @@ const messages = {
       user: userModelValidation,
       group: groupModelValidation,
       event: eventModelValidation,
+      chatMessage: chatMessageModelValidation,
     },
     pages: {
       auth: {
