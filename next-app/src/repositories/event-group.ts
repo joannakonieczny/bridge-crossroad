@@ -17,6 +17,7 @@ import type { AddModifyEventSchemaType } from "@/schemas/pages/with-onboarding/e
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IEventPopulated } from "@/models/mixed-types";
+import { EventType } from "@/club-preset/event-type";
 
 type AddEventInput = {
   groupId: GroupIdType;
@@ -250,10 +251,29 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
         { path: "group", model: GroupTableName },
 
         // Tournament
-        { path: "data.contestantsPairs.first", model: UserTableName },
-        { path: "data.contestantsPairs.second", model: UserTableName },
         { path: "data.arbiter", model: UserTableName },
-        { path: "data.teams.members", model: UserTableName },
+        {
+          path: "data.contestantsPairs",
+          populate: [
+            {
+              path: "first",
+              model: UserTableName,
+            },
+            {
+              path: "second",
+              model: UserTableName,
+            },
+          ],
+        },
+        {
+          path: "data.teams",
+          populate: [
+            {
+              path: "members",
+              model: UserTableName,
+            },
+          ],
+        },
 
         // League meeting sessions
         {
@@ -285,7 +305,15 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
     `Event not found with id: ${eventId}`
   );
 
-  // TODO add null checks for populated fields?
+  check(existingEvent.organizer, "Event organizer data is missing");
+  check(existingEvent.group, "Event group data is missing");
+  existingEvent.attendees.forEach((a) =>
+    check(a, "Event attendee data is missing")
+  );
+
+  switch (existingEvent.data.type) {
+    case EventType.TOURNAMENT:
+  }
 
   return existingEvent;
 }
