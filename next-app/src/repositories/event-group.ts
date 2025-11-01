@@ -285,7 +285,9 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
     `Event not found with id: ${eventId}`
   );
 
-  return { event: existingEvent };
+  // TODO add null checks for populated fields?
+
+  return existingEvent;
 }
 
 type TimeWindow = {

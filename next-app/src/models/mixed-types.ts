@@ -24,13 +24,17 @@ export type IGroupDTOWithPopulatedMembersAdmins = Overwrite<
   }
 >;
 
-type ITournamentDataPopulated = Overwrite<
+// Events populated types
+
+export type IPlayingPairPopulated = {
+  first: IUserDTO;
+  second: IUserDTO;
+};
+
+export type ITournamentDataPopulated = Overwrite<
   ITournamentData,
   {
-    contestantsPairs: Array<{
-      first: IUserDTO;
-      second: IUserDTO;
-    }>;
+    contestantsPairs: Array<IPlayingPairPopulated>;
     arbiter?: IUserDTO;
     teams?: Array<{
       name: string;
@@ -39,7 +43,7 @@ type ITournamentDataPopulated = Overwrite<
   }
 >;
 
-type ILeagueTournamentDataPopulated = Overwrite<
+export type ILeagueTournamentDataPopulated = Overwrite<
   ILeagueTournamentData,
   {
     session: Array<
@@ -47,8 +51,8 @@ type ILeagueTournamentDataPopulated = Overwrite<
         ILeagueTournamentData["session"][number],
         {
           contestants: {
-            firstPair: { first: IUserDTO; second: IUserDTO };
-            secondPair: { first: IUserDTO; second: IUserDTO };
+            firstPair: IPlayingPairPopulated;
+            secondPair: IPlayingPairPopulated;
           };
         }
       >
@@ -56,7 +60,7 @@ type ILeagueTournamentDataPopulated = Overwrite<
   }
 >;
 
-type ITrainingDataPopulated = Overwrite<
+export type ITrainingDataPopulated = Overwrite<
   ITrainingData,
   {
     coach?: IUserDTO;
