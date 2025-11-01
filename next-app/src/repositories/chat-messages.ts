@@ -3,25 +3,41 @@
 import ChatMessage from "@/models/chat-message/chat-message-model";
 import dbConnect from "@/util/connect-mongo";
 import { check } from "./common";
+import { UserTableName } from "@/models/user/user-types";
 import type { IChatMessageDTO } from "@/models/chat-message/chat-message-types";
 import type { IChatMessageDTOWithPopulatedSender } from "@/models/mixed-types";
-import { UserTableName } from "@/models/user/user-types";
+import type {
+  ChatMessageIdType,
+  MessageType,
+} from "@/schemas/model/chat-message/chat-message-types";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
+import type { UserIdType } from "@/schemas/model/user/user-types";
 
-type PostMessageData = {
-  groupId: string;
-  senderId: string;
-  message: string;
+export async function getMessage(
+  messageId: ChatMessageIdType
+): Promise<IChatMessageDTO> {
+  await dbConnect();
+  return check(
+    await ChatMessage.findById(messageId).lean<IChatMessageDTO>(),
+    "Failed to get chat message"
+  );
+}
+
+type PostMessageProps = {
+  groupId: GroupIdType;
+  senderId: UserIdType;
+  message: MessageType;
 };
 
 export async function postMessage(
-  data: PostMessageData
+  p: PostMessageProps
 ): Promise<IChatMessageDTO> {
   await dbConnect();
 
   const doc = new ChatMessage({
-    groupId: data.groupId,
-    senderId: data.senderId,
-    message: data.message,
+    groupId: p.groupId,
+    senderId: p.senderId,
+    message: p.message,
   });
 
   const saved = await doc.save();
@@ -29,15 +45,19 @@ export async function postMessage(
   return check(saved?.toObject(), "Failed to post chat message");
 }
 
+type ModifyMessageProps = {
+  messageId: ChatMessageIdType;
+  newMessage: MessageType;
+};
+
 export async function modifyMessage(
-  messageId: string,
-  newMessage: string
+  p: ModifyMessageProps
 ): Promise<IChatMessageDTO> {
   await dbConnect();
 
   const updated = await ChatMessage.findOneAndUpdate(
-    { _id: messageId },
-    { $set: { message: newMessage } },
+    { _id: p.messageId },
+    { $set: { message: p.newMessage } },
     { new: true, runValidators: true }
   ).lean<IChatMessageDTO>();
 
@@ -45,7 +65,7 @@ export async function modifyMessage(
 }
 
 export async function deleteMessage(
-  messageId: string
+  messageId: ChatMessageIdType
 ): Promise<IChatMessageDTO> {
   await dbConnect();
 
@@ -57,7 +77,7 @@ export async function deleteMessage(
 }
 
 type GetMessagesParams = {
-  groupId: string;
+  groupId: GroupIdType;
   /**
    * Maximum number of messages to return per page. Server will fetch limit+1 to detect next page.
    */

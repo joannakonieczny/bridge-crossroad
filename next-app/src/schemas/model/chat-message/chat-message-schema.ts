@@ -22,3 +22,7 @@ export const chatMessageSchema = z
     message: messageSchema,
   })
   .merge(withTimeStampsSchema);
+
+export const havingChatMessageId = z.object({
+  chatMessageId: idPropSchema,
+});
