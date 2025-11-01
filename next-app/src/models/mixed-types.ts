@@ -1,3 +1,4 @@
+import type { IChatMessageDTO } from "./chat-message/chat-message-types";
 import type { IGroupDTO } from "./group/group-types";
 import type { IUserDTO } from "./user/user-types";
 
@@ -13,6 +14,9 @@ export type IGroupDTOWithPopulatedMembersAdmins = Omit<
   admins: IUserDTO[];
 };
 
-export type IChatMessageDTOWithPopulatedSender = Omit<IUserDTO, "senderId"> & {
+export type IChatMessageDTOWithPopulatedSender = Omit<
+  IChatMessageDTO,
+  "senderId"
+> & {
   senderId: IUserDTO;
 };
