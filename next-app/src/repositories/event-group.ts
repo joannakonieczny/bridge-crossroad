@@ -312,9 +312,34 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
   );
 
   switch (existingEvent.data.type) {
-    case EventType.TOURNAMENT:
-  }
+    case EventType.TOURNAMENT: {
+      const template = (pair: string) =>
+        `Tournament ${pair} player data is missing`;
 
+      existingEvent.data.contestantsPairs.forEach((pair) => {
+        check(pair.first, template("first"));
+        check(pair.second, template("second"));
+      });
+      existingEvent.data.teams?.forEach((team) => {
+        team.members.forEach((member) =>
+          check(member, "Tournament team member data is missing")
+        );
+      });
+      break;
+    }
+    case EventType.LEAGUE_MEETING: {
+      const template = (pair: string, position: string) =>
+        `League meeting session ${pair} pair: ${position} contestant data is missing`;
+
+      existingEvent.data.session.forEach((s) => {
+        check(s.contestants.firstPair.first, template("first", "first"));
+        check(s.contestants.firstPair.second, template("first", "second"));
+        check(s.contestants.secondPair.first, template("second", "first"));
+        check(s.contestants.secondPair.second, template("second", "second"));
+      });
+      break;
+    }
+  }
   return existingEvent;
 }
 
