@@ -4,6 +4,8 @@ import ChatMessage from "@/models/chat-message/chat-message-model";
 import dbConnect from "@/util/connect-mongo";
 import { check } from "./common";
 import type { IChatMessageDTO } from "@/models/chat-message/chat-message-types";
+import type { IChatMessageDTOWithPopulatedSender } from "@/models/mixed-types";
+import { UserTableName } from "@/models/user/user-types";
 
 type PostMessageData = {
   groupId: string;
@@ -68,7 +70,9 @@ type GetMessagesParams = {
   cursor?: Date;
 };
 
-export async function getMessagesForGroup(params: GetMessagesParams) {
+export async function getMessagesForGroupWithPopulatedSender(
+  params: GetMessagesParams
+) {
   await dbConnect();
 
   const limit = Math.max(1, Math.min(params.limit ?? 20, 200));
@@ -83,7 +87,8 @@ export async function getMessagesForGroup(params: GetMessagesParams) {
   const docs = await ChatMessage.find(query)
     .sort({ createdAt: -1 })
     .limit(limit + 1)
-    .lean<IChatMessageDTO[]>();
+    .populate({ path: "senderId", model: UserTableName })
+    .lean<IChatMessageDTOWithPopulatedSender[]>();
 
   const hasNext = docs.length > limit;
   const page = hasNext ? docs.slice(0, limit) : docs;

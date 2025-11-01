@@ -12,3 +12,7 @@ export type IGroupDTOWithPopulatedMembersAdmins = Omit<
   members: IUserDTO[];
   admins: IUserDTO[];
 };
+
+export type IChatMessageDTOWithPopulatedSender = Omit<IUserDTO, "senderId"> & {
+  senderId: IUserDTO;
+};
