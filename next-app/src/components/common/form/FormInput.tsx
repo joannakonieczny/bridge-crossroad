@@ -17,7 +17,9 @@ export type IFormInputProps = {
   type?: "password" | "text" | "email" | "number" | "textarea" | "datetime";
   onElementProps?: FormControlProps;
   value?: string;
-  onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onChange?: ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >;
 };
 
 export default function FormInput(props: IFormInputProps) {
