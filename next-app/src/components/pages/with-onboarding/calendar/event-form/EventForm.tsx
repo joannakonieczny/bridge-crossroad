@@ -1,14 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, FormProvider } from "react-hook-form";
 import { addEventSchema } from "@/schemas/pages/with-onboarding/events/events-schema";
 import {
   FormControl,
-  VStack,
-  Radio,
-  RadioGroup,
-  Wrap,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -23,6 +19,7 @@ import {
   FormLabel,
   Box,
   Text,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import {
   Step,
@@ -38,10 +35,10 @@ import { Divider } from "@chakra-ui/react";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-import { FormErrorMessage } from "@chakra-ui/react";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { getJoinedGroupsInfo, getGroupData } from "@/services/groups/api";
+import { getGroupData } from "@/services/groups/api";
+import PrimaryInfoStep from "./step/PrimaryInfoStep";
 import ContestantsPairsEditor from "./ContestantsPairsEditor";
 import SessionEditor from "./SessionEditor";
 
@@ -71,204 +68,11 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
 
   const selectedGroup = form.watch("group");
 
-  const groupsQ = useActionQuery({
-    queryKey: QUERY_KEYS.groups,
-    action: getJoinedGroupsInfo,
-  });
-
   const peopleQ = useActionQuery({
     queryKey: QUERY_KEYS.group(selectedGroup),
     action: () => getGroupData({ groupId: selectedGroup }),
     enabled: !!selectedGroup,
   });
-
-  function PrimaryInfoStep() {
-    return (
-      <Stack spacing={4}>
-        <Controller
-          control={form.control}
-          name="title"
-          render={({ field, fieldState: { error } }) => (
-            <FormInput
-              placeholder="Tytuł wydarzenia"
-              errorMessage="Niepoprawne coś tam coś"
-              isInvalid={!!error}
-              id="title"
-              type="text"
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
-        <Controller
-          control={form.control}
-          name="description"
-          render={({ field, fieldState: { error } }) => (
-            <FormInput
-              placeholder="Opis wydarzenia"
-              errorMessage="Niepoprawne coś tam coś"
-              isInvalid={!!error}
-              id="description"
-              type="textarea"
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
-        <Controller
-          control={form.control}
-          name="location"
-          render={({ field, fieldState: { error } }) => (
-            <FormInput
-              placeholder="Lokalizacja wydarzenia"
-              errorMessage="Niepoprawne coś tam coś"
-              isInvalid={!!error}
-              id="location"
-              type="text"
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
-        <Controller
-          control={form.control}
-          name="group"
-          render={({ field, fieldState: { error } }) => (
-            <FormControl isInvalid={!!error}>
-              {error && (
-                <FormErrorMessage mb={2}>
-                  Nie wybrano grupy dla wydarzenia
-                </FormErrorMessage>
-              )}
-              <Select
-                placeholder="Grupa"
-                id="group"
-                value={field.value as unknown as string}
-                onChange={(e) => field.onChange(e.target.value)}
-              >
-                {(groupsQ.data ?? []).map((group) => (
-                  <option key={group.id} value={group.id}>
-                    {group.name}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        />
-        <Controller
-          control={form.control}
-          name="organizer"
-          render={({ field, fieldState: { error } }) => (
-            <FormControl isInvalid={!!error}>
-              {error && (
-                <FormErrorMessage mb={2}>
-                  Nie wybrano grupy dla wydarzenia
-                </FormErrorMessage>
-              )}
-              <Select
-                placeholder="Organizator"
-                id="organizer"
-                value={field.value as unknown as string}
-                onChange={(e) => field.onChange(e.target.value)}
-              >
-                {(peopleQ.data?.members ?? []).map((member) => (
-                  <option key={member.id} value={member.id}>
-                    {member.nickname
-                      ? member.nickname
-                      : `${member.name.firstName} ${member.name.lastName}`}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        />
-        <HStack spacing={4}>
-          <VStack flex={1}>
-            <Text color="gray.500" alignSelf="start">
-              Początek wydarzenia
-            </Text>
-            <Controller
-              control={form.control}
-              name="duration.startsAt"
-              render={({ field, fieldState: { error } }) => (
-                <FormInput
-                  placeholder="Start wydarzenia"
-                  errorMessage="Niepoprawne coś tam coś"
-                  isInvalid={!!error}
-                  id="startsAt"
-                  type="datetime"
-                  value={field.value.toString()}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </VStack>
-          <VStack flex={1}>
-            <Text color="gray.500" alignSelf="start">
-              Koniec wydarzenia
-            </Text>
-            <Controller
-              control={form.control}
-              name="duration.endsAt"
-              render={({ field, fieldState: { error } }) => (
-                <FormInput
-                  placeholder="Koniec wydarzenia"
-                  errorMessage="Niepoprawne coś tam coś"
-                  isInvalid={!!error}
-                  id="endsAt"
-                  type="datetime"
-                  value={field.value.toString()}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </VStack>
-        </HStack>
-        <Text color="gray.500" alignSelf="start">
-          Typ Wydarzenia
-        </Text>
-        <Controller
-          control={form.control}
-          name="data.type"
-          render={({ field, fieldState: { error } }) => (
-            <FormControl as="fieldset" isInvalid={!!error}>
-              {error && (
-                <FormErrorMessage mb={2}>
-                  Niepoprawny typ wydarzenia
-                </FormErrorMessage>
-              )}
-              <RadioGroup
-                onChange={(value) => field.onChange(value as EventType)}
-                value={field.value as unknown as string}
-              >
-                <Wrap spacing="1rem">
-                  <Radio value={EventType.TOURNAMENT}>TOURNAMENT</Radio>
-                  <Radio value={EventType.LEAGUE_MEETING}>LEAGUE_MEETING</Radio>
-                  <Radio value={EventType.TRAINING}>TRAINING</Radio>
-                  <Radio value={EventType.OTHER}>OTHER</Radio>
-                </Wrap>
-              </RadioGroup>
-            </FormControl>
-          )}
-        />
-        <Button
-          colorScheme="blue"
-          onClick={async () => {
-            //const valid = await trigger();
-            //if (valid) {
-            setActiveStep(activeStep + 1);
-            //} else {
-            // opcjonalnie: możesz pokazać toast lub przewinąć do pierwszego błędu
-            //}
-          }}
-          alignSelf="flex-end"
-          rightIcon={<MdArrowForwardIos />}
-        >
-          Dalej
-        </Button>
-      </Stack>
-    );
-  }
 
   function DetailedInfoStep() {
     const dataType = form.getValues().data?.type;
@@ -453,16 +257,24 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     );
   }
 
+  const { activeStep, setActiveStep } = useSteps({
+    index: 0,
+    count: 3,
+  });
+
   const steps = [
-    { title: "Podstawowe informacje", content: <PrimaryInfoStep /> },
+    {
+      title: "Podstawowe informacje",
+      content: (
+        <PrimaryInfoStep
+          activeStep={activeStep}
+          setActiveStep={setActiveStep}
+        />
+      ),
+    },
     { title: "Szczegóły wydarzenia", content: <DetailedInfoStep /> },
     { title: "Podsumowanie", content: <SummaryStep /> },
   ];
-
-  const { activeStep, setActiveStep } = useSteps({
-    index: 0,
-    count: steps.length,
-  });
 
   const max = steps.length - 1;
 
@@ -474,24 +286,26 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         <ModalCloseButton />
         <Divider />
         <ModalBody>
-          <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
-          <Box position="relative">
-            <Stepper size="lg" index={activeStep}>
-              {steps.map((_, index) => (
-                <Step key={index}>
-                  <StepIndicator>
-                    <StepStatus
-                      complete={<StepIcon />}
-                      incomplete={<StepNumber />}
-                      active={<StepNumber />}
-                    />
-                  </StepIndicator>
-                  <StepSeparator />
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
-          <Box mt={8}>{steps[activeStep].content}</Box>
+          <FormProvider {...form}>
+            <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
+            <Box position="relative">
+              <Stepper size="lg" index={activeStep}>
+                {steps.map((_, index) => (
+                  <Step key={index}>
+                    <StepIndicator>
+                      <StepStatus
+                        complete={<StepIcon />}
+                        incomplete={<StepNumber />}
+                        active={<StepNumber />}
+                      />
+                    </StepIndicator>
+                    <StepSeparator />
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <Box mt={8}>{steps[activeStep].content}</Box>
+          </FormProvider>
         </ModalBody>
         <ModalFooter>
           <Button

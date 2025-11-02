@@ -21,7 +21,7 @@ export const addEventSchema = z.object({
   imageUrl: imageUrlSchema.optional(),
 });
 
-export const addModifyEventSchema = z.object({
+export const modifyEventSchema = z.object({
   title: titleSchema,
   description: descriptionSchema.optional(),
   location: locationSchema.optional(),

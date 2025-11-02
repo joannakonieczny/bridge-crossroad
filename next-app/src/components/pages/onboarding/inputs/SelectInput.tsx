@@ -1,10 +1,7 @@
-import type { SelectProps } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
-import type {
-  FormControlWrapperProps} from "./FormControlWrapper";
-import {
-  WithFormControlWrapper,
-} from "./FormControlWrapper";
+import { WithFormControlWrapper } from "./FormControlWrapper";
+import type { FormControlWrapperProps } from "./FormControlWrapper";
+import type { SelectProps } from "@chakra-ui/react";
 
 type ISelectInputProps = {
   placeholder?: string;
@@ -14,9 +11,9 @@ type ISelectInputProps = {
     label: string;
     disabled?: boolean;
   }>;
-}
+};
 
-function FormInput(props: ISelectInputProps) {
+function SelectInput(props: ISelectInputProps) {
   return (
     <Select
       placeholder={props.placeholder}
@@ -38,4 +35,4 @@ function FormInput(props: ISelectInputProps) {
 }
 
 export type IFormInputProps = ISelectInputProps & FormControlWrapperProps;
-export default WithFormControlWrapper<IFormInputProps>(FormInput);
+export default WithFormControlWrapper<IFormInputProps>(SelectInput);
