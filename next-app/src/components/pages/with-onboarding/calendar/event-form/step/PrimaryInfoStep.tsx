@@ -9,7 +9,6 @@ import {
   Wrap,
   Stack,
   Button,
-  Select,
   HStack,
   FormErrorMessage,
   Text,
@@ -20,11 +19,11 @@ import { MdArrowForwardIos } from "react-icons/md";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { getGroupData, getJoinedGroupsInfo } from "@/services/groups/api";
-import { useState } from "react";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import SelectInput from "@/components/common/form/SelectInput";
+import dayjs from "dayjs";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
-import SelectInput from "@/components/common/form/SelectInput";
 
 type PrimaryInfoStepProps = {
   activeStep: number;
@@ -35,15 +34,14 @@ export default function PrimaryInfoStep({
   activeStep,
   setActiveStep,
 }: PrimaryInfoStepProps) {
-  const { control } = useFormContext<AddEventSchemaType>();
-  const [selectedGroup, setSelectedGroup] = useState<GroupIdType | "">("");
+  const form = useFormContext<AddEventSchemaType>();
+  const selectedGroup = form.watch("group") as GroupIdType | "";
   const tValidation = useTranslationsWithFallback();
 
   const groupsQ = useActionQuery({
     queryKey: QUERY_KEYS.groups,
     action: getJoinedGroupsInfo,
   });
-
   const peopleQ = useActionQuery({
     queryKey: QUERY_KEYS.group(selectedGroup),
     action: () => getGroupData({ groupId: selectedGroup }),
@@ -51,13 +49,13 @@ export default function PrimaryInfoStep({
   });
 
   function RenderFormInput(p: {
-    name: keyof AddEventSchemaType;
+    name: "title" | "description";
     placeholder: string;
     type: "text" | "textarea";
   }) {
     return (
       <Controller
-        control={control}
+        control={form.control}
         name={p.name}
         render={({ field, fieldState: { error } }) => (
           <FormInput
@@ -74,6 +72,64 @@ export default function PrimaryInfoStep({
     );
   }
 
+  function RenderSelectInput(p: {
+    name: "group" | "organizer";
+    placeholder: string;
+    options: { value: string; label: string }[];
+    isLoading?: boolean;
+  }) {
+    return (
+      <Controller
+        control={form.control}
+        name={p.name}
+        render={({ field, fieldState: { error } }) => (
+          <SelectInput
+            placeholder={p.placeholder}
+            isInvalid={!!error}
+            errorMessage={tValidation(error?.message)}
+            options={p.options}
+            value={field.value as string}
+            isLoading={p.isLoading}
+          />
+        )}
+      />
+    );
+  }
+
+  function RenderDateTimeInput(p: {
+    name: "duration.startsAt" | "duration.endsAt";
+    placeholder: string;
+  }) {
+    return (
+      <Controller
+        control={form.control}
+        name={p.name}
+        render={({ field, fieldState: { error } }) => (
+          <FormInput
+            placeholder={p.placeholder}
+            errorMessage={tValidation(error?.message)}
+            isInvalid={!!error}
+            id={p.name}
+            type="datetime"
+            value={
+              field.value
+                ? dayjs(field.value as unknown as Date).format(
+                    "YYYY-MM-DDTHH:mm"
+                  )
+                : ""
+            }
+            onChange={(event) => {
+              const parsed = event.target.value //should be string in format "YYYY-MM-DDTHH:mm"
+                ? dayjs(event.target.value).toDate()
+                : undefined;
+              field.onChange(parsed);
+            }}
+          />
+        )}
+      />
+    );
+  }
+
   return (
     <Stack spacing={4}>
       <RenderFormInput
@@ -84,96 +140,45 @@ export default function PrimaryInfoStep({
       <RenderFormInput
         name="description"
         placeholder="Opis wydarzenia"
-        type="textarea"
-      />
-      <RenderFormInput
-        name="description"
-        placeholder="Opis wydarzenia"
         type="text"
       />
-      <Controller
-        control={control}
+      <RenderSelectInput
         name="group"
-        render={({ field, fieldState: { error } }) => (
-          <SelectInput
-            placeholder="Grupa"
-            isInvalid={!!error}
-            errorMessage={tValidation(error?.message)}
-            options={(groupsQ.data ?? []).map((group) => ({
-              value: group.id,
-              label: group.name,
-            }))}
-            value={field.value}
-            isLoading={groupsQ.isLoading}
-          />
-        )}
+        placeholder="Grupa"
+        options={(groupsQ.data ?? []).map((group) => ({
+          value: group.id,
+          label: group.name,
+        }))}
+        isLoading={groupsQ.isLoading}
       />
-      <Controller
-        control={control}
+      <RenderSelectInput
         name="organizer"
-        render={({ field, fieldState: { error } }) => (
-          <FormControl isInvalid={!!error}>
-            {error && (
-              <FormErrorMessage mb={2}>
-                Nie wybrano grupy dla wydarzenia
-              </FormErrorMessage>
-            )}
-            <Select
-              placeholder="Organizator"
-              id="organizer"
-              value={field.value as unknown as string}
-              onChange={(e) => field.onChange(e.target.value)}
-            >
-              {(peopleQ.data?.members ?? []).map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.nickname
-                    ? member.nickname
-                    : `${member.name.firstName} ${member.name.lastName}`}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-        )}
+        placeholder="Organizator"
+        options={(peopleQ.data?.members ?? []).map((member) => ({
+          value: member.id,
+          label: member.nickname
+            ? `${member.nickname} (${member.name.firstName} ${member.name.lastName})`
+            : `${member.name.firstName} ${member.name.lastName}`,
+        }))}
+        isLoading={peopleQ.isLoading}
       />
       <HStack spacing={4}>
         <VStack flex={1}>
           <Text color="gray.500" alignSelf="start">
             Początek wydarzenia
           </Text>
-          <Controller
-            control={control}
+          <RenderDateTimeInput
             name="duration.startsAt"
-            render={({ field, fieldState: { error } }) => (
-              <FormInput
-                placeholder="Start wydarzenia"
-                errorMessage="Niepoprawne coś tam coś"
-                isInvalid={!!error}
-                id="startsAt"
-                type="datetime"
-                value={(field.value as Date).toString()}
-                onChange={field.onChange}
-              />
-            )}
+            placeholder="Start wydarzenia"
           />
         </VStack>
         <VStack flex={1}>
           <Text color="gray.500" alignSelf="start">
             Koniec wydarzenia
           </Text>
-          <Controller
-            control={control}
+          <RenderDateTimeInput
             name="duration.endsAt"
-            render={({ field, fieldState: { error } }) => (
-              <FormInput
-                placeholder="Koniec wydarzenia"
-                errorMessage="Niepoprawne coś tam coś"
-                isInvalid={!!error}
-                id="endsAt"
-                type="datetime"
-                value={(field.value as Date).toString()}
-                onChange={field.onChange}
-              />
-            )}
+            placeholder="Koniec wydarzenia"
           />
         </VStack>
       </HStack>
@@ -181,7 +186,7 @@ export default function PrimaryInfoStep({
         Typ Wydarzenia
       </Text>
       <Controller
-        control={control}
+        control={form.control}
         name="data.type"
         render={({ field, fieldState: { error } }) => (
           <FormControl as="fieldset" isInvalid={!!error}>
@@ -211,6 +216,7 @@ export default function PrimaryInfoStep({
         }}
         alignSelf="flex-end"
         rightIcon={<MdArrowForwardIos />}
+        disabled={groupsQ.isLoading || peopleQ.isLoading}
       >
         Dalej
       </Button>
