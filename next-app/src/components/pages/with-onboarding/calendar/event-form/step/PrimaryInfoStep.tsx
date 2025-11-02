@@ -24,6 +24,7 @@ import { useState } from "react";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import SelectInput from "@/components/common/form/SelectInput";
 
 type PrimaryInfoStepProps = {
   activeStep: number;
@@ -94,25 +95,17 @@ export default function PrimaryInfoStep({
         control={control}
         name="group"
         render={({ field, fieldState: { error } }) => (
-          <FormControl isInvalid={!!error}>
-            {error && (
-              <FormErrorMessage mb={2}>
-                Nie wybrano grupy dla wydarzenia
-              </FormErrorMessage>
-            )}
-            <Select
-              placeholder="Grupa"
-              id="group"
-              value={field.value as unknown as string}
-              onChange={(e) => field.onChange(e.target.value)}
-            >
-              {(groupsQ.data ?? []).map((group) => (
-                <option key={group.id} value={group.id}>
-                  {group.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
+          <SelectInput
+            placeholder="Grupa"
+            isInvalid={!!error}
+            errorMessage={tValidation(error?.message)}
+            options={(groupsQ.data ?? []).map((group) => ({
+              value: group.id,
+              label: group.name,
+            }))}
+            value={field.value}
+            isLoading={groupsQ.isLoading}
+          />
         )}
       />
       <Controller
