@@ -1,33 +1,14 @@
 "use client";
 
-import { ROUTES } from "@/routes";
-import { useRouter } from "next/navigation";
-import {
-  useTranslations,
-  useTranslationsWithFallback,
-} from "@/lib/typed-translations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { Controller, useForm } from "react-hook-form";
 import { addEventSchema } from "@/schemas/pages/with-onboarding/events/events-schema";
 import {
   FormControl,
-  TabList,
-  TabPanel,
-  TabPanels,
-  useToast,
   VStack,
   Radio,
   RadioGroup,
   Wrap,
-} from "@chakra-ui/react";
-import { createEvent } from "@/services/events/api";
-import {
-  ActionInput,
-  MutationOrQuerryError,
-} from "@/lib/tanstack-action/types";
-import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
-import {
   Modal,
   ModalOverlay,
   ModalContent,
@@ -39,26 +20,19 @@ import {
   Button,
   Select,
   HStack,
-  Input,
   FormLabel,
-  Textarea,
   Box,
-  Spinner,
-  Tabs,
   Text,
 } from "@chakra-ui/react";
 import {
   Step,
-  StepDescription,
   StepIcon,
   StepIndicator,
   StepNumber,
   StepSeparator,
   StepStatus,
-  StepTitle,
   Stepper,
   useSteps,
-  Progress,
 } from "@chakra-ui/react";
 import { Divider } from "@chakra-ui/react";
 import { EventType, TournamentType } from "@/club-preset/event-type";
@@ -77,16 +51,7 @@ type EventFormProps = {
 };
 
 export default function EventForm({ isOpen, onClose }: EventFormProps) {
-  //const t = useTranslations("");
-  //const tValidation = useTranslationsWithFallback();
-  const {
-    handleSubmit: handleFormSubmit,
-    control: formControl,
-    setError: setFormError,
-    getValues,
-    watch,
-    trigger,
-  } = useForm({
+  const form = useForm({
     resolver: zodResolver(addEventSchema),
     defaultValues: {
       title: "",
@@ -104,7 +69,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     },
   });
 
-  const selectedGroup = watch("group");
+  const selectedGroup = form.watch("group");
 
   const groupsQ = useActionQuery({
     queryKey: QUERY_KEYS.groups,
@@ -117,31 +82,11 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     enabled: !!selectedGroup,
   });
 
-  const toast = useToast();
-
-  const createEventAction = useActionMutation({
-    action: createEvent,
-    onSuccess: () => {},
-    onError: (err) => {},
-  });
-
-  function handleWithToast(data: ActionInput<typeof createEvent>) {
-    const promise = createEventAction.mutateAsync(data);
-    toast.promise(promise, {
-      loading: { title: "Tworzenie wydarzenia..." },
-      success: { title: "Wydarzenie zostało utworzone." },
-      error: (err: MutationOrQuerryError<typeof createEventAction>) => {
-        const messageKey = getMessageKeyFromError(err);
-        return { title: "Wystąpił błąd podczas tworzenia wydarzenia." };
-      },
-    });
-  }
-
   function PrimaryInfoStep() {
     return (
       <Stack spacing={4}>
         <Controller
-          control={formControl}
+          control={form.control}
           name="title"
           render={({ field, fieldState: { error } }) => (
             <FormInput
@@ -156,7 +101,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           )}
         />
         <Controller
-          control={formControl}
+          control={form.control}
           name="description"
           render={({ field, fieldState: { error } }) => (
             <FormInput
@@ -171,7 +116,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           )}
         />
         <Controller
-          control={formControl}
+          control={form.control}
           name="location"
           render={({ field, fieldState: { error } }) => (
             <FormInput
@@ -186,7 +131,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           )}
         />
         <Controller
-          control={formControl}
+          control={form.control}
           name="group"
           render={({ field, fieldState: { error } }) => (
             <FormControl isInvalid={!!error}>
@@ -211,7 +156,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           )}
         />
         <Controller
-          control={formControl}
+          control={form.control}
           name="organizer"
           render={({ field, fieldState: { error } }) => (
             <FormControl isInvalid={!!error}>
@@ -243,7 +188,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
               Początek wydarzenia
             </Text>
             <Controller
-              control={formControl}
+              control={form.control}
               name="duration.startsAt"
               render={({ field, fieldState: { error } }) => (
                 <FormInput
@@ -263,7 +208,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
               Koniec wydarzenia
             </Text>
             <Controller
-              control={formControl}
+              control={form.control}
               name="duration.endsAt"
               render={({ field, fieldState: { error } }) => (
                 <FormInput
@@ -283,7 +228,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           Typ Wydarzenia
         </Text>
         <Controller
-          control={formControl}
+          control={form.control}
           name="data.type"
           render={({ field, fieldState: { error } }) => (
             <FormControl as="fieldset" isInvalid={!!error}>
@@ -326,14 +271,14 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   }
 
   function DetailedInfoStep() {
-    const dataType = getValues().data?.type;
+    const dataType = form.getValues().data?.type;
 
     return (
       <Stack spacing={4}>
         {dataType === EventType.TOURNAMENT ? (
           <>
             <Controller
-              control={formControl}
+              control={form.control}
               name="data.tournamentType"
               render={({ field, fieldState: { error } }) => (
                 <FormControl isInvalid={!!error}>
@@ -363,7 +308,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
               )}
             />
             <Controller
-              control={formControl}
+              control={form.control}
               name="data.arbiter"
               render={({ field, fieldState: { error } }) => (
                 <FormControl isInvalid={!!error}>
@@ -386,7 +331,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
             />
             {/* Editor par dla turnieju — przekazujemy listę członków z peopleQ */}
             <ContestantsPairsEditor
-              control={formControl}
+              control={form.control}
               name="data.contestantsPairs"
               label="Lista par"
               people={peopleQ.data?.members ?? []}
@@ -396,7 +341,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           <>
             {/* Edytor sesji dla spotkania ligowego */}
             <SessionEditor
-              control={formControl}
+              control={form.control}
               name="data.session"
               people={peopleQ.data?.members ?? []}
             />
@@ -404,7 +349,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         ) : dataType === EventType.TRAINING ? (
           <>
             <Controller
-              control={formControl}
+              control={form.control}
               name="data.coach"
               render={({ field, fieldState: { error } }) => (
                 <FormControl isInvalid={!!error}>
@@ -426,7 +371,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
               )}
             />
             <Controller
-              control={formControl}
+              control={form.control}
               name="data.topic"
               render={({ field, fieldState: { error } }) => (
                 <FormInput
@@ -445,7 +390,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           <></>
         )}
         <Controller
-          control={formControl}
+          control={form.control}
           name="additionalDescription"
           render={({ field, fieldState: { error } }) => (
             <FormInput
@@ -492,7 +437,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   function SummaryStep() {
     return (
       <Stack spacing={4}>
-        <Text>Tytuł wydarzenia: {getValues()?.title}</Text>
+        <Text>Tytuł wydarzenia: {form.getValues()?.title}</Text>
         <Text></Text>
         <Button
           variant="outline"
