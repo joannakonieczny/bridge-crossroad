@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Heading, Text, OrderedList, ListItem, SimpleGrid, List } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 
 export default function EventSpecificData({
@@ -10,6 +11,17 @@ export default function EventSpecificData({
   eventData?: any;
 }) {
   if (!eventType) return null;
+
+  // small helper to render a pair with colored slash
+  const PairInline = ({ first, second }: { first?: string; second?: string }) => (
+    <>
+      <Text as="span">{first ?? "-"}</Text>
+      <Text as="span" mx={1} color="border.400">
+        /
+      </Text>
+      <Text as="span">{second ?? "-"}</Text>
+    </>
+  );
 
   switch (eventType) {
     case EventType.TOURNAMENT: {
@@ -38,7 +50,7 @@ export default function EventSpecificData({
                     // color the marker (number) using theme token accent.500
                     sx={{ "::-webkit-list-marker": { color: "var(--chakra-colors-accent-500)" }, "::marker": { color: "var(--chakra-colors-accent-500)" } }}
                   >
-                    {p.first} — {p.second}
+                    <PairInline first={p.first} second={p.second} />
                   </ListItem>
                 ))}
               </OrderedList>
@@ -53,21 +65,63 @@ export default function EventSpecificData({
       return (
         <Box bgColor="bg" p={4}>
           <Heading size="sm" mb={2}>Dane zjazdu ligowego</Heading>
-          {d.tournamentType && <Text><b>Typ:</b> {d.tournamentType}</Text>}
-          {Array.isArray(d.session) && (
-            <>
-              <Heading size="xs" mt={3}>Sesje:</Heading>
-              <List spacing={2} mt={2}>
-                {d.session.map((s: any) => (
-                  <ListItem key={s.id}>
-                    <Text><b>Match #{s.matchNumber} (połowa {s.half})</b></Text>
-                    <Text>1: {s.contestants?.firstPair?.first}/{s.contestants?.firstPair?.second}</Text>
-                    <Text>2: {s.contestants?.secondPair?.first}/{s.contestants?.secondPair?.second}</Text>
-                    {s.opponentTeamName && <Text>Przeciwnik: {s.opponentTeamName}</Text>}
-                  </ListItem>
-                ))}
-              </List>
-            </>
+
+          {/* render sessions as a table for better readability */}
+          {Array.isArray(d.session) && d.session.length > 0 ? (
+            <TableContainer mt={3}>
+              <Table variant="simple" size="sm">
+                <Thead>
+                  <Tr>
+                    <Th>Mecz</Th>
+                    <Th>Połowa</Th>
+                    <Th>Para 1</Th>
+                    <Th>Para 2</Th>
+                    <Th>Przeciwnik</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {d.session.map((s: any, idx: number) => {
+                    const isMatchOdd = (s.matchNumber ?? 0) % 2 === 1;
+                    const isRowOdd = idx % 2 === 1; // row parity (0-based index)
+                    return (
+                      <Tr key={s.id}>
+                        {/* "Mecz" cell: accent.500 for odd matches, secondary.500 for even */}
+                        <Td
+                          bg={isMatchOdd ? "accent.300" : "secondary.300"}
+                          color="white"
+                          fontWeight="semibold"
+                        >
+                          {s.matchNumber}
+                        </Td>
+
+                        {/* "Połowa" cell: background depends on ROW parity (isRowOdd) */}
+                        <Td bg={isRowOdd ? "border.50" : "border.100"}>
+                          {s.half}
+                        </Td>
+
+                        <Td>
+                          {s.contestants?.firstPair ? (
+                            <PairInline first={s.contestants.firstPair.first} second={s.contestants.firstPair.second} />
+                          ) : (
+                            "-"
+                          )}
+                        </Td>
+                        <Td>
+                          {s.contestants?.secondPair ? (
+                            <PairInline first={s.contestants.secondPair.first} second={s.contestants.secondPair.second} />
+                          ) : (
+                            "-"
+                          )}
+                        </Td>
+                        <Td>{s.opponentTeamName ?? "-"}</Td>
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Text color="border.500">Brak sesji do wyświetlenia</Text>
           )}
         </Box>
       );

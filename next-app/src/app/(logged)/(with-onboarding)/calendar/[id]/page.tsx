@@ -8,13 +8,13 @@ import BackLink from "@/components/common/BackLink";
 
 export default function EventPage() {
   // zahardcodowany typ wydarzenia — zmień tu, żeby przetestować różne widoki
-  const selectedType = EventType.TOURNAMENT as EventType;
+  const selectedType = EventType.LEAGUE_MEETING as EventType;
 
   // wspólne pola mocka
   const mockCommon = {
     id: "evt-123",
-    title: "Turniej Czwartkowy",
-    description: "Cotygodniowy otwarty turniej o luźnej atmosferze. Zapraszamy do rywalizacji!",
+    title: "Zjazd III Ligi #1",
+    description: "Cykliczne rozgrywki ligowe dla zaawansowanych graczy.",
     location: "Sala 101, Budynek A",
     organizer: "Just Bridge AGH",
     attendees: ["user-1", "user-2", "user-3"],
@@ -39,18 +39,72 @@ export default function EventPage() {
       ],
     };
   } else if (selectedType === EventType.LEAGUE_MEETING) {
+    // 3 matches, each with two halves (half 1 and half 2) -> 6 session entries
     mockSpecificData = {
       tournamentType: "Liga regionalna",
       session: [
+        // match 1 halves
         {
-          id: "s1",
+          id: "m1-h1",
           matchNumber: 1,
           half: 1,
           contestants: {
-            firstPair: { first: "a1", second: "a2" },
-            secondPair: { first: "b1", second: "b2" },
+            firstPair: { first: "Adam Nowak", second: "Ewa Kowalska" },
+            secondPair: { first: "Piotr Zieliński", second: "Marta Wiśniewska" },
           },
-          opponentTeamName: "Przeciwnicy",
+          opponentTeamName: "Team Alfa",
+        },
+        {
+          id: "m1-h2",
+          matchNumber: 1,
+          half: 2,
+          contestants: {
+            firstPair: { first: "Adam Nowak", second: "Ewa Kowalska" },
+            secondPair: { first: "Piotr Zieliński", second: "Marta Wiśniewska" },
+          },
+          opponentTeamName: "Team Alfa",
+        },
+        // match 2 halves
+        {
+          id: "m2-h1",
+          matchNumber: 2,
+          half: 1,
+          contestants: {
+            firstPair: { first: "Kamil Nowicki", second: "Anna Lis" },
+            secondPair: { first: "Tomasz Górski", second: "Magda Malinowska" },
+          },
+          opponentTeamName: "Team Beta",
+        },
+        {
+          id: "m2-h2",
+          matchNumber: 2,
+          half: 2,
+          contestants: {
+            firstPair: { first: "Kamil Nowicki", second: "Anna Lis" },
+            secondPair: { first: "Tomasz Górski", second: "Magda Malinowska" },
+          },
+          opponentTeamName: "Team Beta",
+        },
+        // match 3 halves
+        {
+          id: "m3-h1",
+          matchNumber: 3,
+          half: 1,
+          contestants: {
+            firstPair: { first: "Łukasz Bąk", second: "Beata Krawczyk" },
+            secondPair: { first: "Robert Sawa", second: "Agnieszka Olszewska" },
+          },
+          opponentTeamName: "Team Gamma",
+        },
+        {
+          id: "m3-h2",
+          matchNumber: 3,
+          half: 2,
+          contestants: {
+            firstPair: { first: "Łukasz Bąk", second: "Beata Krawczyk" },
+            secondPair: { first: "Robert Sawa", second: "Agnieszka Olszewska" },
+          },
+          opponentTeamName: "Team Gamma",
         },
       ],
     };
