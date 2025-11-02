@@ -6,7 +6,7 @@ import { UserId, UserTableName } from "../user/user-types";
 import { GroupId, GroupTableName } from "../group/group-types";
 import type { IChatMessageDTO } from "./chat-message-types";
 
-const ChatMessage = new Schema<IChatMessageDTO>(
+const ChatMessageModel = new Schema<IChatMessageDTO>(
   {
     groupId: {
       type: GroupId,
@@ -21,7 +21,7 @@ const ChatMessage = new Schema<IChatMessageDTO>(
   }
 );
 
-ChatMessage.index({ groupId: 1, createdAt: -1 });
+ChatMessageModel.index({ groupId: 1, createdAt: -1 });
 
 export default mongoose.models.ChatMessage ||
-  mongoose.model<IChatMessageDTO>(ChatMessagesTableName, ChatMessage);
+  mongoose.model<IChatMessageDTO>(ChatMessagesTableName, ChatMessageModel);
