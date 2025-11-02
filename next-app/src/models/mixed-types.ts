@@ -1,3 +1,5 @@
+"sever-only";
+
 import type { IChatMessageDTO } from "./chat-message/chat-message-types";
 import type { IGroupDTO } from "./group/group-types";
 import type { IUserDTO } from "./user/user-types";

@@ -1,3 +1,5 @@
+"use server";
+
 import { getMessage } from "@/repositories/chat-messages";
 import { RepositoryError } from "@/repositories/common";
 import type { ChatMessageIdType } from "@/schemas/model/chat-message/chat-message-types";

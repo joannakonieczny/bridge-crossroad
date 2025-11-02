@@ -1,3 +1,5 @@
+"server-only";
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { TKey } from "@/lib/typed-translations";
 import type { ZodObject, ZodRawShape } from "zod";
