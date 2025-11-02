@@ -47,7 +47,7 @@ import { logout } from "@/services/auth/api";
 
 const navbarTabs = [
   ROUTES.dashboard,
-  ROUTES.calendar,
+  ROUTES.calendar.index,
   ROUTES.groups,
   ROUTES.find_partner,
   ROUTES.tools,
@@ -106,7 +106,9 @@ export default function Navbar() {
               <NavbarTab href={ROUTES.dashboard}>
                 {t("tabs.dashboard")}
               </NavbarTab>
-              <NavbarTab href={ROUTES.calendar}>{t("tabs.calendar")}</NavbarTab>
+              <NavbarTab href={ROUTES.calendar.index}>
+                {t("tabs.calendar")}
+              </NavbarTab>
               <NavbarTab href={ROUTES.groups}>{t("tabs.groups")}</NavbarTab>
               <NavbarTab href={ROUTES.find_partner}>
                 {t("tabs.findPartner")}
@@ -218,7 +220,7 @@ export default function Navbar() {
                   <NavbarDrawerItem href={ROUTES.dashboard}>
                     {t("tabs.dashboard")}
                   </NavbarDrawerItem>
-                  <NavbarDrawerItem href={ROUTES.calendar}>
+                  <NavbarDrawerItem href={ROUTES.calendar.index}>
                     {t("tabs.calendar")}
                   </NavbarDrawerItem>
                   <NavbarDrawerItem href={ROUTES.groups}>

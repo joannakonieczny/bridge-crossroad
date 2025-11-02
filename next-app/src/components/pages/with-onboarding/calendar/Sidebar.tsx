@@ -12,6 +12,7 @@ import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
 import EventForm from "./event-form/EventForm";
+import { ROUTES } from "@/routes";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -56,12 +57,11 @@ export default function Sidebar() {
           color="white"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
-          onClick={() => router.push("calendar/upcoming-events/")}
+          onClick={() => router.push(ROUTES.calendar.upcoming_events)}
         >
           {t("seeMore")}
         </Button>
       </Box>
-      {/* Render the EventForm modal and control it via disclosure from this component */}
       <EventForm isOpen={isOpen} onClose={onClose} />
     </Box>
   );

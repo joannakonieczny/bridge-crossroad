@@ -4,9 +4,11 @@ import { HStack, Icon } from "@chakra-ui/react";
 import { FiArrowLeft } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function BackLink({ children }: { children?: React.ReactNode }) {
   const router = useRouter();
+  const t = useTranslations("components.BackLink");
 
   const handle = () => router.back();
 
@@ -28,12 +30,11 @@ export default function BackLink({ children }: { children?: React.ReactNode }) {
       onKeyDown={onKeyDown}
       role="button"
       tabIndex={0}
-      aria-label="Wróć"
       userSelect="none"
     >
       <Icon as={FiArrowLeft} aria-hidden />
       <ResponsiveText fontSize="sm" fontWeight="medium">
-        {children ?? "wróć"}
+        {children ?? t("fallbackText")}
       </ResponsiveText>
     </HStack>
   );
