@@ -9,7 +9,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { Controller, useForm } from "react-hook-form";
-import { addModifyEventSchema } from "@/schemas/pages/with-onboarding/events/events-schema";
+import { addEventSchema } from "@/schemas/pages/with-onboarding/events/events-schema";
 import {
   FormControl,
   TabList,
@@ -87,11 +87,12 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     watch,
     trigger,
   } = useForm({
-    resolver: zodResolver(addModifyEventSchema),
+    resolver: zodResolver(addEventSchema),
     defaultValues: {
       title: "",
       description: "",
       location: "",
+      group: "",
       organizer: "",
       duration: {
         startsAt: new Date(),
@@ -103,7 +104,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     },
   });
 
-  const selectedGroup = watch("organizer");
+  const selectedGroup = watch("group");
 
   const groupsQ = useActionQuery({
     queryKey: QUERY_KEYS.groups,
@@ -186,6 +187,31 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         />
         <Controller
           control={formControl}
+          name="group"
+          render={({ field, fieldState: { error } }) => (
+            <FormControl isInvalid={!!error}>
+              {error && (
+                <FormErrorMessage mb={2}>
+                  Nie wybrano grupy dla wydarzenia
+                </FormErrorMessage>
+              )}
+              <Select
+                placeholder="Grupa"
+                id="group"
+                value={field.value as unknown as string}
+                onChange={(e) => field.onChange(e.target.value)}
+              >
+                {(groupsQ.data ?? []).map((group) => (
+                  <option key={group.id} value={group.id}>
+                    {group.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        />
+        <Controller
+          control={formControl}
           name="organizer"
           render={({ field, fieldState: { error } }) => (
             <FormControl isInvalid={!!error}>
@@ -200,16 +226,17 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                 value={field.value as unknown as string}
                 onChange={(e) => field.onChange(e.target.value)}
               >
-                {(groupsQ.data ?? []).map((group) => (
-                  <option key={group.id} value={group.id}>
-                    {group.name}
+                {(peopleQ.data?.members ?? []).map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.nickname
+                      ? member.nickname
+                      : `${member.name.firstName} ${member.name.lastName}`}
                   </option>
                 ))}
               </Select>
             </FormControl>
           )}
         />
-
         <HStack spacing={4}>
           <VStack flex={1}>
             <Text color="gray.500" alignSelf="start">

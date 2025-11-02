@@ -9,6 +9,18 @@ import {
   titleSchema,
 } from "@/schemas/model/event/event-schema";
 
+export const addEventSchema = z.object({
+  title: titleSchema,
+  description: descriptionSchema.optional(),
+  location: locationSchema.optional(),
+  group: idPropSchema,
+  organizer: idPropSchema,
+  duration: durationSchema,
+  additionalDescription: z.string().optional(),
+  data: dataSchema,
+  imageUrl: imageUrlSchema.optional(),
+});
+
 export const addModifyEventSchema = z.object({
   title: titleSchema,
   description: descriptionSchema.optional(),
