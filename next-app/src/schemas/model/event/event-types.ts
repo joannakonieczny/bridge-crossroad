@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import { z } from "zod";
 import type * as s from "./event-schema";
 import type { UserTypeBasic } from "../user/user-types";
 import type { Overwrite } from "@/lib/types-helpers";

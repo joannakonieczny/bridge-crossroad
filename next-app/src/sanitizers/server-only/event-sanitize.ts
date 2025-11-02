@@ -127,6 +127,7 @@ function sanitizeTournamentDataPopulated(
       name: t.name,
       members: t.members.map(sanitizeMinUserInfo),
     })),
+    arbiter: d.arbiter ? sanitizeMinUserInfo(d.arbiter) : undefined,
   };
 }
 

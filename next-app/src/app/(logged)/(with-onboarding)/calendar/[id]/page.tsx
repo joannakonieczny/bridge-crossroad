@@ -1,120 +1,41 @@
-import { Box, Flex, Heading, Text, VStack, HStack, Badge, List, ListItem, Image, Divider } from "@chakra-ui/react";
+"use client";
+
+import { Box, Flex, VStack } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useParams } from "next/navigation";
 import { EventType } from "@/club-preset/event-type";
 import EventBanner from "@/components/pages/with-onboarding/calendar/event-page/EventBanner";
 import EventDetails from "@/components/pages/with-onboarding/calendar/event-page/EventDetails";
 import EventSpecificData from "@/components/pages/with-onboarding/calendar/event-page/EventSpecificData";
 import EventEnrollment from "@/components/pages/with-onboarding/calendar/event-page/EventEnrollment";
 import BackLink from "@/components/common/BackLink";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import { getEvent } from "@/services/events/api";
+import { QUERY_KEYS } from "@/lib/query-keys";
+import { EventIdType } from "@/schemas/model/event/event-types";
 
 export default function EventPage() {
-  // zahardcodowany typ wydarzenia — zmień tu, żeby przetestować różne widoki
-  const selectedType = EventType.LEAGUE_MEETING as EventType;
+  const params = useParams() as { id?: string } | undefined;
+  const eventId = params?.id;
 
-  // wspólne pola mocka
-  const mockCommon = {
-    id: "evt-123",
-    title: "Zjazd III Ligi #1",
-    description: "Cykliczne rozgrywki ligowe dla zaawansowanych graczy.",
-    location: "Sala 101, Budynek A",
-    organizer: "Just Bridge AGH",
-    attendees: ["user-1", "user-2", "user-3"],
-    group: "group-789",
-    duration: {
-      startsAt: new Date("2025-10-25T12:00:00"),
-      endsAt: new Date("2025-10-25T13:30:00"),
-    },
-    additionalDescription: "Dodatkowe informacje o wydarzeniu.",
-    imageUrl: "https://picsum.photos/960/400",
-  };
+  const eventQ = useActionQuery({
+    queryKey: [QUERY_KEYS.event, eventId ?? "none"],
+    action: () => getEvent({ eventId: eventId as EventIdType }),
+    enabled: !!eventId,
+  });
 
-  // prepare mock specific data and pass it to EventSpecificData (page-level)
-  let mockSpecificData: any = null;
-  if (selectedType === EventType.TOURNAMENT) {
-    mockSpecificData = {
-      tournamentType: "MAXy",
-      arbiter: "Karol Kraska",
-      contestantsPairs: [
-        { first: "Szymon Kubiczek", second: "Asia Konieczny" },
-        { first: "Jacek Placek", second: "Placek Jacek" },
-      ],
-    };
-  } else if (selectedType === EventType.LEAGUE_MEETING) {
-    // 3 matches, each with two halves (half 1 and half 2) -> 6 session entries
-    mockSpecificData = {
-      tournamentType: "Liga regionalna",
-      session: [
-        // match 1 halves
-        {
-          id: "m1-h1",
-          matchNumber: 1,
-          half: 1,
-          contestants: {
-            firstPair: { first: "Adam Nowak", second: "Ewa Kowalska" },
-            secondPair: { first: "Piotr Zieliński", second: "Marta Wiśniewska" },
-          },
-          opponentTeamName: "Team Alfa",
-        },
-        {
-          id: "m1-h2",
-          matchNumber: 1,
-          half: 2,
-          contestants: {
-            firstPair: { first: "Adam Nowak", second: "Ewa Kowalska" },
-            secondPair: { first: "Piotr Zieliński", second: "Marta Wiśniewska" },
-          },
-          opponentTeamName: "Team Alfa",
-        },
-        // match 2 halves
-        {
-          id: "m2-h1",
-          matchNumber: 2,
-          half: 1,
-          contestants: {
-            firstPair: { first: "Kamil Nowicki", second: "Anna Lis" },
-            secondPair: { first: "Tomasz Górski", second: "Magda Malinowska" },
-          },
-          opponentTeamName: "Team Beta",
-        },
-        {
-          id: "m2-h2",
-          matchNumber: 2,
-          half: 2,
-          contestants: {
-            firstPair: { first: "Kamil Nowicki", second: "Anna Lis" },
-            secondPair: { first: "Tomasz Górski", second: "Magda Malinowska" },
-          },
-          opponentTeamName: "Team Beta",
-        },
-        // match 3 halves
-        {
-          id: "m3-h1",
-          matchNumber: 3,
-          half: 1,
-          contestants: {
-            firstPair: { first: "Łukasz Bąk", second: "Beata Krawczyk" },
-            secondPair: { first: "Robert Sawa", second: "Agnieszka Olszewska" },
-          },
-          opponentTeamName: "Team Gamma",
-        },
-        {
-          id: "m3-h2",
-          matchNumber: 3,
-          half: 2,
-          contestants: {
-            firstPair: { first: "Łukasz Bąk", second: "Beata Krawczyk" },
-            secondPair: { first: "Robert Sawa", second: "Agnieszka Olszewska" },
-          },
-          opponentTeamName: "Team Gamma",
-        },
-      ],
-    };
-  } else if (selectedType === EventType.TRAINING) {
-    mockSpecificData = { coach: "coach-999", topic: "Obrona w praktyce" };
-  } else {
-    mockSpecificData = { note: "Wydarzenie ogólne" };
-  }
+  useEffect(() => {
+    if (eventQ.data) {
+      // eslint-disable-next-line no-console
+      console.log("Loaded event:", eventQ.data);
+    }
+    if (eventQ.error) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to load event:", eventQ.error);
+    }
+  }, [eventQ.data, eventQ.error]);
 
-  const mockEvent = { ...mockCommon, data: { type: selectedType } };
+  const isLoading = eventQ.isLoading;
 
   return (
     <Flex align="stretch" height="calc(100vh - 5rem)" bgColor={"border.50"} overflowY="auto">
@@ -127,28 +48,30 @@ export default function EventPage() {
         {/* oba komponenty na całą szerokość, oddzielone 2rem gapu */}
         <VStack spacing="2rem" align="stretch" pb={8}>
           <EventBanner
-            title={mockEvent.title}
-            imageUrl={mockCommon.imageUrl}
-            group={mockEvent.group}
-            location={mockEvent.location}
-            duration={mockEvent.duration}
+            title={eventQ.data?.title}
+            imageUrl={"https://picsum.photos/id/237/200/300"}
+            group={eventQ.data?.group}
+            location={eventQ.data?.location}
+            duration={eventQ.data?.duration}
+            loading={isLoading}
           />
 
-          {/* Enrollment: tylko dla TURNIEST lub OTHER */}
-          {(selectedType === EventType.TOURNAMENT || selectedType === EventType.OTHER) && (
-            <EventEnrollment eventType={selectedType} />
+          {/* Enrollment: tylko gdy mamy określony typ (żadnych mocków podczas loading/error) */}
+          {(eventQ.data?.data?.type === EventType.TOURNAMENT || eventQ.data?.data?.type === EventType.OTHER) && (
+            <EventEnrollment eventType={eventQ.data?.data?.type} />
           )}
 
           <EventDetails
-            description={mockEvent.description}
-            additionalDescription={mockEvent.additionalDescription}
-            organizer={mockEvent.organizer}
-            attendees={mockEvent.attendees}
-            eventType={selectedType}
+            description={eventQ.data?.description}
+            additionalDescription={eventQ.data?.additionalDescription}
+            organizer={eventQ.data?.organizer}
+            attendees={eventQ.data?.attendees}
+            eventType={eventQ.data?.data?.type}
+            loading={isLoading}
           />
 
           {/* event-specific data is rendered at page level with 2rem gap from details */}
-          <EventSpecificData eventType={selectedType} eventData={mockSpecificData} />
+          <EventSpecificData eventType={eventQ.data?.data?.type} eventData={eventQ.data?.data} loading={isLoading} />
         </VStack>
       </Box>
     </Flex>
