@@ -38,12 +38,12 @@ export default function LeagueMeetingPanel({
               label: type, // TODO - translation
             }))}
             value={field.value}
-            isLoading={isPeopleLoading}
             onChange={field.onChange}
           />
         )}
       />
-      <SessionEditor people={people} />
+      {/* TODO handle step validation */}
+      <SessionEditor people={people} isPeopleLoading={isPeopleLoading} />
     </>
   );
 }

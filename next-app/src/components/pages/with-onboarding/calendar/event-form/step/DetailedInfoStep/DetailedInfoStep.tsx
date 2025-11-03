@@ -39,12 +39,12 @@ export function DetailedInfoStep({
       {dataType === EventType.TOURNAMENT ? (
         <TournamentPanel
           people={peopleQ.data?.members ?? []}
-          isPeopleLoading={peopleQ.isLoading}
+          isPeopleLoading={!!!peopleQ.data || peopleQ.isLoading}
         />
       ) : dataType === EventType.LEAGUE_MEETING ? (
         <LeagueMeetingPanel
           people={peopleQ.data?.members ?? []}
-          isPeopleLoading={peopleQ.isLoading}
+          isPeopleLoading={!!!peopleQ.data || peopleQ.isLoading}
         />
       ) : dataType === EventType.TRAINING ? (
         <>
