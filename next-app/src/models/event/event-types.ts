@@ -30,7 +30,6 @@ export type ILeagueTournamentData = {
   type: EventType.LEAGUE_MEETING;
   tournamentType?: TournamentType;
   session: Array<{
-    _id?: typeof EventId;
     matchNumber: number;
     half: Half;
     contestants: {

@@ -65,7 +65,6 @@ const LeagueMeetingDataSchema = baseEventDataSchema.discriminator(
     session: {
       type: [
         {
-          _id: { type: Schema.Types.ObjectId, required: false },
           matchNumber: { type: Number, required: true },
           half: { type: String, enum: Object.values(Half), required: true },
           contestants: {

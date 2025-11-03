@@ -59,7 +59,6 @@ export const leagueMeetingDataSchema = z.object({
   tournamentType: z.nativeEnum(TournamentType).optional(),
   session: z.array(
     z.object({
-      id: idPropSchema.optional(),
       matchNumber: z.number().int(),
       half: z.nativeEnum(Half),
       contestants: z.object({
