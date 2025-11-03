@@ -18,7 +18,7 @@ type PrimaryInfoStepProps = {
   setNextStep: () => void;
 };
 
-export default function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
+export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
   const form = useFormContext<AddEventSchemaType>();
   const selectedGroup = form.watch("group") as GroupIdType | "";
   const tValidation = useTranslationsWithFallback();
@@ -182,6 +182,7 @@ export default function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
         colorScheme="blue"
         onClick={async () => {
           setNextStep();
+          // TODO add step validation
         }}
         alignSelf="flex-end"
         rightIcon={<MdArrowForwardIos />}
