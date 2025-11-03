@@ -76,6 +76,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
             options={p.options}
             value={field.value as string}
             isLoading={p.isLoading}
+            onChange={field.onChange}
           />
         )}
       />

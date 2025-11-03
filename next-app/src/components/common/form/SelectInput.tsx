@@ -7,6 +7,7 @@ import {
 import { WithFormControlWrapper } from "./util/FormControlWrapper";
 import type { FormControlWrapperProps } from "./util/FormControlWrapper";
 import type { SelectProps } from "@chakra-ui/react";
+import type { ChangeEventHandler } from "react";
 
 type ISelectInputProps = {
   placeholder?: string;
@@ -18,6 +19,7 @@ type ISelectInputProps = {
   value?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
+  onChange?: ChangeEventHandler<HTMLSelectElement>;
   onSelectProps?: SelectProps;
 };
 
@@ -29,6 +31,7 @@ function SelectInputSolo(props: ISelectInputProps) {
       _focus={{ borderColor: "accent.500" }}
       value={props.value}
       disabled={props.isDisabled}
+      onChange={props.onChange}
       {...props.onSelectProps}
     >
       {props.options?.map((option) => (

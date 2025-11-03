@@ -39,6 +39,7 @@ export default function TournamentPanel({
             }))}
             value={field.value}
             isLoading={isPeopleLoading}
+            onChange={field.onChange}
           />
         )}
       />
@@ -56,6 +57,7 @@ export default function TournamentPanel({
             }))}
             value={field.value}
             isLoading={isPeopleLoading}
+            onChange={field.onChange}
           />
         )}
       />

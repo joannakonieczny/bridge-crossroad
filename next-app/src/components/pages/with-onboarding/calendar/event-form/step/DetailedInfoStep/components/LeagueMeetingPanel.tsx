@@ -39,6 +39,7 @@ export default function LeagueMeetingPanel({
             }))}
             value={field.value}
             isLoading={isPeopleLoading}
+            onChange={field.onChange}
           />
         )}
       />
