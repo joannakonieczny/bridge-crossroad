@@ -47,7 +47,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         endsAt: new Date(),
       },
       additionalDescription: "",
-      imageUrl: "",
+      imageUrl: undefined, //TODO add image upload in future
       data: {},
     },
   });
@@ -79,6 +79,18 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
 
   const max = steps.length - 1;
 
+  const onSubmit = (data: unknown) => {
+    // eslint-disable-next-line no-console
+    console.log("Form submit - valid data:", data);
+  };
+
+  const onError = (errors: unknown) => {
+    // eslint-disable-next-line no-console
+    console.log("Form submit - validation errors:", errors);
+    // eslint-disable-next-line no-console
+    console.log("Form current values:", form.getValues());
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -88,35 +100,41 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         <Divider />
         <ModalBody>
           <FormProvider {...form}>
-            <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
-            <Box position="relative">
-              <Stepper size="lg" index={activeStep}>
-                {steps.map((_, index) => (
-                  <Step key={index}>
-                    <StepIndicator>
-                      <StepStatus
-                        complete={<StepIcon />}
-                        incomplete={<StepNumber />}
-                        active={<StepNumber />}
-                      />
-                    </StepIndicator>
-                    <StepSeparator />
-                  </Step>
-                ))}
-              </Stepper>
-            </Box>
-            <Box mt={8}>{steps[activeStep].content}</Box>
+            <form
+              id="event-form"
+              onSubmit={form.handleSubmit(onSubmit, onError)}
+            >
+              <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
+              <Box position="relative">
+                <Stepper size="lg" index={activeStep}>
+                  {steps.map((_, index) => (
+                    <Step key={index}>
+                      <StepIndicator>
+                        <StepStatus
+                          complete={<StepIcon />}
+                          incomplete={<StepNumber />}
+                          active={<StepNumber />}
+                        />
+                      </StepIndicator>
+                      <StepSeparator />
+                    </Step>
+                  ))}
+                </Stepper>
+              </Box>
+              <Box mt={8}>{steps[activeStep].content}</Box>
+              <Button
+                colorScheme={activeStep == max ? "blue" : "gray"}
+                variant={activeStep == max ? "solid" : "outline"}
+                disabled={activeStep != max}
+                type="submit"
+                form="event-form"
+              >
+                Dodaj wydarzenie
+              </Button>
+            </form>
           </FormProvider>
         </ModalBody>
-        <ModalFooter>
-          <Button
-            colorScheme={activeStep == max ? "blue" : "gray"}
-            variant={activeStep == max ? "solid" : "outline"}
-            disabled={activeStep != max}
-          >
-            Dodaj wydarzenie
-          </Button>
-        </ModalFooter>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );

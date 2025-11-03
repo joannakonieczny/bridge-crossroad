@@ -21,8 +21,9 @@ type PrimaryInfoStepProps = {
 
 export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
   const form = useFormContext<AddEventSchemaType>();
-  const selectedGroup = form.watch("group") as GroupIdType | "";
   const tValidation = useTranslationsWithFallback();
+
+  const selectedGroup = form.watch("group") as GroupIdType | "";
 
   const groupsQ = useActionQuery({
     queryKey: QUERY_KEYS.groups,
@@ -63,6 +64,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
     placeholder: string;
     options: { value: string; label: string }[];
     isLoading?: boolean;
+    isDisabled?: boolean;
   }) {
     return (
       <Controller
@@ -76,6 +78,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
             options={p.options}
             value={field.value as string}
             isLoading={p.isLoading}
+            isDisabled={p.isDisabled}
             onChange={field.onChange}
           />
         )}
@@ -146,6 +149,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
           label: getPersonLabel(member),
         }))}
         isLoading={peopleQ.isLoading}
+        isDisabled={!!!selectedGroup}
       />
       <HStack spacing={4}>
         <VStack flex={1}>
@@ -186,7 +190,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
         }}
         alignSelf="flex-end"
         rightIcon={<MdArrowForwardIos />}
-        disabled={groupsQ.isLoading || peopleQ.isLoading}
+        disabled={groupsQ.isLoading || peopleQ.isLoading || !selectedGroup}
       >
         Dalej
       </Button>
