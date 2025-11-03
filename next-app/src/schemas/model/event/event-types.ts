@@ -17,3 +17,50 @@ export type EventDataType = z.infer<typeof s.dataSchema>;
 export type EventSchemaType = z.infer<typeof s.eventSchema>;
 
 export type EventIdType = string;
+
+// delete that:
+
+enum EventType {
+  TOURNAMENT = "TOURNAMENT",
+  LEAGUE_MEETING = "LEAGUE_MEETING",
+  TRAINING = "TRAINING",
+  OTHER = "OTHER",
+}
+
+type EventDataType2 = {
+    type: EventType.TOURNAMENT; ///////////////
+    // contestantsPairs: {
+    //     first: string;
+    //     second: string;
+    // }[];
+    arbiter?: string | undefined;
+    tournamentType?: TournamentType | undefined;
+    // teams?: {
+    //     name: string;
+    //     members: string[];
+    // }[] | undefined;
+} | {
+    type: EventType.LEAGUE_MEETING; /////////////
+    session: {
+        matchNumber: number;
+        half: Half;
+        contestants: {
+            firstPair: {
+                first: string;
+                second: string;
+            };
+            secondPair: {
+                first: string;
+                second: string;
+            };
+        };
+        opponentTeamName?: string | undefined;
+    }[];
+    tournamentType?: TournamentType | undefined;
+} | {
+    type: EventType.TRAINING;
+    topic: string;
+    coach?: string | undefined;
+} | {
+    ...;
+}

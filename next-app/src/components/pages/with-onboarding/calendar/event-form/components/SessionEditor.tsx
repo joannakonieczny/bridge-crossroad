@@ -1,5 +1,5 @@
 import React from "react";
-import { Controller, Control, useFieldArray } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import {
   VStack,
   HStack,
@@ -14,19 +14,22 @@ import {
 } from "@chakra-ui/react";
 import { MdAdd, MdDelete } from "react-icons/md";
 import { Half } from "@/club-preset/event-type";
+// import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import type { UserTypeBasic } from "@/schemas/model/user/user-types";
+import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 
 type Props = {
-  control: Control<any>;
-  name: string;
   label?: string;
   people: UserTypeBasic[];
 };
 
-export default function SessionEditor(props: Props) {
+export function SessionEditor(props: Props) {
+  const form = useFormContext<AddEventSchemaType>();
+  // const tValidation = useTranslationsWithFallback();
+
   const { fields, append, remove } = useFieldArray({
-    control: props.control,
-    name: props.name,
+    control: form.control,
+    name: "data.session",
   });
 
   const appendDefault = () =>
@@ -52,13 +55,13 @@ export default function SessionEditor(props: Props) {
             <VStack spacing={3} align="stretch">
               <HStack spacing={3}>
                 <Controller
-                  control={props.control}
-                  name={`${props.name}.${idx}.matchNumber`}
+                  control={form.control}
+                  name={`data.session.${idx}.matchNumber`}
                   //defaultValue={field.matchNumber ?? 1}
                   render={({ field: f }) => (
                     <NumberInput
                       min={1}
-                      value={f.value as any}
+                      value={f.value}
                       onChange={(v) => f.onChange(Number(v))}
                     >
                       <NumberInputField placeholder="Numer meczu" />
@@ -67,12 +70,12 @@ export default function SessionEditor(props: Props) {
                 />
 
                 <Controller
-                  control={props.control}
-                  name={`${props.name}.${idx}.half`}
+                  control={form.control}
+                  name={`data.session.${idx}.half`}
                   //defaultValue={field.half ?? Half.FIRST}
                   render={({ field: f }) => (
                     <Select
-                      value={f.value as any}
+                      value={f.value}
                       onChange={(e) => f.onChange(e.target.value as Half)}
                     >
                       <option value={Half.FIRST}>{Half.FIRST}</option>
@@ -92,13 +95,13 @@ export default function SessionEditor(props: Props) {
               <Text fontSize="sm">Pierwsza para</Text>
               <HStack spacing={2}>
                 <Controller
-                  control={props.control}
-                  name={`${props.name}.${idx}.contestants.firstPair.first`}
+                  control={form.control}
+                  name={`data.session.${idx}.contestants.firstPair.first`}
                   //defaultValue={field.contestants?.firstPair?.first ?? ""}
                   render={({ field: f }) => (
                     <Select
                       placeholder="Zawodnik A"
-                      value={f.value as any}
+                      value={f.value}
                       onChange={(e) => f.onChange(e.target.value)}
                     >
                       {(props.people ?? []).map((m) => (
@@ -112,13 +115,13 @@ export default function SessionEditor(props: Props) {
                   )}
                 />
                 <Controller
-                  control={props.control}
-                  name={`${props.name}.${idx}.contestants.firstPair.second`}
+                  control={form.control}
+                  name={`data.session.${idx}.contestants.firstPair.second`}
                   //defaultValue={field.contestants?.firstPair?.second ?? ""}
                   render={({ field: f }) => (
                     <Select
                       placeholder="Zawodnik B"
-                      value={f.value as any}
+                      value={f.value}
                       onChange={(e) => f.onChange(e.target.value)}
                     >
                       {(props.people ?? []).map((m) => (
@@ -136,13 +139,13 @@ export default function SessionEditor(props: Props) {
               <Text fontSize="sm">Druga para</Text>
               <HStack spacing={2}>
                 <Controller
-                  control={props.control}
-                  name={`${props.name}.${idx}.contestants.secondPair.first`}
+                  control={form.control}
+                  name={`data.session.${idx}.contestants.secondPair.first`}
                   //defaultValue={field.contestants?.secondPair?.first ?? ""}
                   render={({ field: f }) => (
                     <Select
                       placeholder="Zawodnik C"
-                      value={f.value as any}
+                      value={f.value}
                       onChange={(e) => f.onChange(e.target.value)}
                     >
                       {(props.people ?? []).map((m) => (
@@ -156,13 +159,13 @@ export default function SessionEditor(props: Props) {
                   )}
                 />
                 <Controller
-                  control={props.control}
-                  name={`${props.name}.${idx}.contestants.secondPair.second`}
+                  control={form.control}
+                  name={`data.session.${idx}.contestants.secondPair.second`}
                   // defaultValue={field.contestants?.secondPair?.second ?? ""}
                   render={({ field: f }) => (
                     <Select
                       placeholder="Zawodnik D"
-                      value={f.value as any}
+                      value={f.value}
                       onChange={(e) => f.onChange(e.target.value)}
                     >
                       {(props.people ?? []).map((m) => (
@@ -178,8 +181,8 @@ export default function SessionEditor(props: Props) {
               </HStack>
 
               <Controller
-                control={props.control}
-                name={`${props.name}.${idx}.opponentTeamName`}
+                control={form.control}
+                name={`data.session.${idx}.opponentTeamName`}
                 //defaultValue={field.opponentTeamName ?? ""}
                 render={({ field: f }) => (
                   <Input
