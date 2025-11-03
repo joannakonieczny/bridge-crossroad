@@ -1,18 +1,7 @@
 "use client";
 
 import { Controller, useFormContext } from "react-hook-form";
-import {
-  FormControl,
-  VStack,
-  Radio,
-  RadioGroup,
-  Wrap,
-  Stack,
-  Button,
-  HStack,
-  FormErrorMessage,
-  Text,
-} from "@chakra-ui/react";
+import { VStack, Stack, Button, HStack, Text } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
 import { MdArrowForwardIos } from "react-icons/md";
@@ -26,14 +15,10 @@ import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 
 type PrimaryInfoStepProps = {
-  activeStep: number;
-  setActiveStep: (n: number) => void;
+  setNextStep: () => void;
 };
 
-export default function PrimaryInfoStep({
-  activeStep,
-  setActiveStep,
-}: PrimaryInfoStepProps) {
+export default function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
   const form = useFormContext<AddEventSchemaType>();
   const selectedGroup = form.watch("group") as GroupIdType | "";
   const tValidation = useTranslationsWithFallback();
@@ -73,7 +58,7 @@ export default function PrimaryInfoStep({
   }
 
   function RenderSelectInput(p: {
-    name: "group" | "organizer";
+    name: "group" | "organizer" | "data.type";
     placeholder: string;
     options: { value: string; label: string }[];
     isLoading?: boolean;
@@ -185,34 +170,18 @@ export default function PrimaryInfoStep({
       <Text color="gray.500" alignSelf="start">
         Typ Wydarzenia
       </Text>
-      <Controller
-        control={form.control}
+      <RenderSelectInput
         name="data.type"
-        render={({ field, fieldState: { error } }) => (
-          <FormControl as="fieldset" isInvalid={!!error}>
-            {error && (
-              <FormErrorMessage mb={2}>
-                Niepoprawny typ wydarzenia
-              </FormErrorMessage>
-            )}
-            <RadioGroup
-              onChange={(value) => field.onChange(value as EventType)}
-              value={field.value as unknown as string}
-            >
-              <Wrap spacing="1rem">
-                <Radio value={EventType.TOURNAMENT}>TOURNAMENT</Radio>
-                <Radio value={EventType.LEAGUE_MEETING}>LEAGUE_MEETING</Radio>
-                <Radio value={EventType.TRAINING}>TRAINING</Radio>
-                <Radio value={EventType.OTHER}>OTHER</Radio>
-              </Wrap>
-            </RadioGroup>
-          </FormControl>
-        )}
+        placeholder="Typ wydarzenia"
+        options={Object.values(EventType).map((type) => ({
+          value: type,
+          label: type, //TODO add translations
+        }))}
       />
       <Button
         colorScheme="blue"
         onClick={async () => {
-          setActiveStep(activeStep + 1);
+          setNextStep();
         }}
         alignSelf="flex-end"
         rightIcon={<MdArrowForwardIos />}

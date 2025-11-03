@@ -265,12 +265,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const steps = [
     {
       title: "Podstawowe informacje",
-      content: (
-        <PrimaryInfoStep
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
-        />
-      ),
+      content: <PrimaryInfoStep setNextStep={() => setActiveStep(1)} />,
     },
     { title: "Szczegóły wydarzenia", content: <DetailedInfoStep /> },
     { title: "Podsumowanie", content: <SummaryStep /> },
