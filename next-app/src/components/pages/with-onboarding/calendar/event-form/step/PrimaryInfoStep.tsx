@@ -13,6 +13,7 @@ import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import { getPersonLabel } from "../util/helpers";
 
 type PrimaryInfoStepProps = {
   setNextStep: () => void;
@@ -141,9 +142,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
         placeholder="Organizator"
         options={(peopleQ.data?.members ?? []).map((member) => ({
           value: member.id,
-          label: member.nickname
-            ? `${member.nickname} (${member.name.firstName} ${member.name.lastName})`
-            : `${member.name.firstName} ${member.name.lastName}`,
+          label: getPersonLabel(member),
         }))}
         isLoading={peopleQ.isLoading}
       />

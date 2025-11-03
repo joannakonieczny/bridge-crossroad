@@ -1,20 +1,27 @@
 "use client";
 
+import SelectInput from "@/components/common/form/SelectInput";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormControl, Select, FormErrorMessage } from "@chakra-ui/react";
 import { TournamentType } from "@/club-preset/event-type";
-import type { EventType } from "@/club-preset/event-type";
-import ContestantsPairsEditor from "@/components/pages/with-onboarding/calendar/event-form/ContestantsPairsEditor";
+import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import { getPersonLabel } from "@/components/pages/with-onboarding/calendar/event-form/util/helpers";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 
-type Member = {
-  id: string;
-  nickname?: string;
-  name: { firstName: string; lastName: string };
+type TournamentPanelProps = {
+  people: {
+    id: string;
+    nickname?: string;
+    name: { firstName: string; lastName: string };
+  }[];
+  isPeopleLoading: boolean;
 };
 
-export default function TournamentPanel({ people }: { people: Member[] }) {
+export default function TournamentPanel({
+  people,
+  isPeopleLoading,
+}: TournamentPanelProps) {
   const form = useFormContext<AddEventSchemaType>();
+  const tValidation = useTranslationsWithFallback();
 
   return (
     <>
@@ -22,57 +29,35 @@ export default function TournamentPanel({ people }: { people: Member[] }) {
         control={form.control}
         name="data.tournamentType"
         render={({ field, fieldState: { error } }) => (
-          <FormControl isInvalid={!!error}>
-            {error && (
-              <FormErrorMessage mb={2}>
-                Niepoprawny typ turnieju
-              </FormErrorMessage>
-            )}
-            <Select
-              placeholder="Typ turnieju"
-              id="tournamentType"
-              value={field.value as unknown as string}
-              onChange={(e) => field.onChange(e.target.value as EventType)}
-            >
-              <option value={TournamentType.MAX}>MAX</option>
-              <option value={TournamentType.IMPS}>IMPS</option>
-              <option value={TournamentType.CRAZY}>CRAZY</option>
-              <option value={TournamentType.TEAM}>TEAM</option>
-              <option value={TournamentType.INDIVIDUAL}>INDIVIDUAL</option>
-              <option value={TournamentType.BAMY}>BAMY</option>
-            </Select>
-          </FormControl>
+          <SelectInput
+            placeholder={"Typ Turnieju"}
+            isInvalid={!!error}
+            errorMessage={tValidation(error?.message)}
+            options={Object.values(TournamentType).map((type) => ({
+              value: type,
+              label: type, // TODO - translation
+            }))}
+            value={field.value}
+            isLoading={isPeopleLoading}
+          />
         )}
       />
-
       <Controller
         control={form.control}
         name="data.arbiter"
-        render={({ field }) => (
-          <FormControl>
-            <Select
-              placeholder="Arbiter"
-              id="arbiter"
-              value={field.value as unknown as string}
-              onChange={(e) => field.onChange(e.target.value)}
-            >
-              {people.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.nickname
-                    ? member.nickname
-                    : `${member.name.firstName} ${member.name.lastName}`}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
+        render={({ field, fieldState: { error } }) => (
+          <SelectInput
+            placeholder={"Sędzia główny"}
+            isInvalid={!!error}
+            errorMessage={tValidation(error?.message)}
+            options={people.map((member) => ({
+              value: member.id,
+              label: getPersonLabel(member),
+            }))}
+            value={field.value}
+            isLoading={isPeopleLoading}
+          />
         )}
-      />
-
-      <ContestantsPairsEditor
-        control={form.control}
-        name="data.contestantsPairs"
-        label="Lista par"
-        people={people}
       />
     </>
   );
