@@ -5,7 +5,7 @@ import mongoose, { Schema } from "mongoose";
 import { UserId, UserTableName } from "../user/user-types";
 import { GroupId, GroupTableName } from "../group/group-types";
 import { EventTableName, type IEventDTO } from "./event-types";
-import { EventType, TournamentType, Half } from "@/club-preset/event-type";
+import { EventType, TournamentType } from "@/club-preset/event-type";
 
 // Base sub-schema for event data with discriminator
 const baseEventDataSchema = new Schema(
@@ -65,8 +65,6 @@ const LeagueMeetingDataSchema = baseEventDataSchema.discriminator(
     session: {
       type: [
         {
-          matchNumber: { type: Number, required: true },
-          half: { type: String, enum: Object.values(Half), required: true },
           contestants: {
             firstPair: {
               first: { type: UserId, ref: UserTableName, required: true },

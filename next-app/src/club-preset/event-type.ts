@@ -13,8 +13,3 @@ export enum TournamentType {
   INDIVIDUAL = "INDIVIDUAL",
   BAMY = "BAMY",
 }
-
-export enum Half {
-  FIRST = "FIRST",
-  SECOND = "SECOND",
-}

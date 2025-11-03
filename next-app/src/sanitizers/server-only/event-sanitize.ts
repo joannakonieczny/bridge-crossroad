@@ -52,8 +52,6 @@ function sanitizeLeagueTournamentData(
     type: data.type,
     tournamentType: data.tournamentType,
     session: data.session.map((s) => ({
-      matchNumber: s.matchNumber,
-      half: s.half,
       contestants: {
         firstPair: sanitizePlayingPair(s.contestants.firstPair),
         secondPair: sanitizePlayingPair(s.contestants.secondPair),
@@ -126,8 +124,6 @@ function sanitizeLeagueTournamentDataPopulated(
     type: data.type,
     tournamentType: data.tournamentType,
     session: data.session.map((s) => ({
-      matchNumber: s.matchNumber,
-      half: s.half,
       contestants: {
         firstPair: sanitizePlayingPairPopulated(s.contestants.firstPair),
         secondPair: sanitizePlayingPairPopulated(s.contestants.secondPair),

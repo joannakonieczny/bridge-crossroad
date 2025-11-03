@@ -2,7 +2,7 @@ import { z } from "zod";
 import { EventValidationConstants } from "./event-const";
 import type { TKey } from "@/lib/typed-translations";
 import { idPropSchema } from "@/schemas/common";
-import { EventType, Half, TournamentType } from "@/club-preset/event-type";
+import { EventType, TournamentType } from "@/club-preset/event-type";
 
 const { title, description, location, imageUrl } = EventValidationConstants;
 
@@ -59,8 +59,6 @@ export const leagueMeetingDataSchema = z.object({
   tournamentType: z.nativeEnum(TournamentType).optional(),
   session: z.array(
     z.object({
-      matchNumber: z.number().int(),
-      half: z.nativeEnum(Half),
       contestants: z.object({
         firstPair: playingPairSchema,
         secondPair: playingPairSchema,
