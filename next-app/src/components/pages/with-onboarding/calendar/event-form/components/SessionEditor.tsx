@@ -87,6 +87,7 @@ export function SessionEditor(props: SessionEditorProps) {
                 colorScheme="red"
                 icon={<MdDelete />}
                 onClick={() => remove(idx)}
+                disabled={!(fields.length - 1 === idx)} //only can delete last item, TODO add some label on hover?
               />
             </HStack>
 

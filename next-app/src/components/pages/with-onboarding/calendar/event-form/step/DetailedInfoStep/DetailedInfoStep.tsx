@@ -8,7 +8,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { getGroupData } from "@/services/groups/api";
-// SessionEditor is used inside LeagueMeetingPanel
+import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import TournamentPanel from "./components/TournamentPanel";
 import LeagueMeetingPanel from "./components/LeagueMeetingPanel";
 import TrainingPanel from "./components/TrainingPanel";
@@ -24,6 +24,8 @@ export function DetailedInfoStep({
   setPrevStep,
 }: DetailedInfoStepProps) {
   const form = useFormContext<AddEventSchemaType>();
+  const tValidation = useTranslationsWithFallback();
+
   const selectedGroup = form.watch("group");
 
   const peopleQ = useActionQuery({
@@ -48,7 +50,10 @@ export function DetailedInfoStep({
         />
       ) : dataType === EventType.TRAINING ? (
         <>
-          <TrainingPanel people={peopleQ.data?.members ?? []} />
+          <TrainingPanel
+            people={peopleQ.data?.members ?? []}
+            isPeopleLoading={!!!peopleQ.data || peopleQ.isLoading}
+          />
         </>
       ) : (
         <></>
@@ -59,10 +64,10 @@ export function DetailedInfoStep({
         render={({ field, fieldState: { error } }) => (
           <FormInput
             placeholder="Dodatkowy opis wydarzenia"
-            errorMessage="Niepoprawne coś tam coś"
+            errorMessage={tValidation(error?.message)}
             isInvalid={!!error}
-            id="additionalDescription"
             type="textarea"
+            id={field.name}
             value={field.value}
             onChange={field.onChange}
           />

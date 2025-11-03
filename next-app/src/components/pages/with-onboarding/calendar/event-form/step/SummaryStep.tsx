@@ -12,6 +12,8 @@ type Props = {
 export function SummaryStep({ setPrevStep }: Props) {
   const form = useFormContext<AddEventSchemaType>();
 
+  // TODO: add more summary details here
+
   return (
     <Stack spacing={4}>
       <Text>Tytuł wydarzenia: {form.getValues()?.title}</Text>
