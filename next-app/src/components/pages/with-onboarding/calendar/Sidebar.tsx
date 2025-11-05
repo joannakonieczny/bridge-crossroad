@@ -16,7 +16,7 @@ import { ROUTES } from "@/routes";
 export default function Sidebar() {
   const router = useRouter();
   const { onOpen } = useDisclosure();
-  const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
+  const isVisible = useBreakpointValue({ base: false, lg: true }) ?? false;
 
   const t = useTranslations("pages.CalendarPage.Sidebar");
   if (!isVisible) return null;

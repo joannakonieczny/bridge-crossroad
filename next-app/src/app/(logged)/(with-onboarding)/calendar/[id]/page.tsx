@@ -1,8 +1,8 @@
 "use client";
 
-import { Box, Flex, VStack } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useParams } from "next/navigation";
+import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
+import { useEffect, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { EventType } from "@/club-preset/event-type";
 import EventBanner from "@/components/pages/with-onboarding/calendar/event-page/EventBanner";
 import EventDetails from "@/components/pages/with-onboarding/calendar/event-page/EventDetails";
@@ -24,16 +24,36 @@ export default function EventPage() {
     enabled: !!eventId,
   });
 
+  const toast = useToast();
+  const router = useRouter();
+  const errorShownRef = useRef(false);
+
   useEffect(() => {
     if (eventQ.data) {
       // eslint-disable-next-line no-console
       console.log("Loaded event:", eventQ.data);
     }
-    if (eventQ.error) {
+
+    if (eventQ.error && !errorShownRef.current) {
+      errorShownRef.current = true;
+
+      // show error toast (Polish) and redirect to /calendar
+      toast({
+        title: "Nie udało się wczytać wydarzenia",
+        description: "Spróbuj ponownie później i upewnij się, że wydarzenie istnieje.",
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      // push to calendar (no delay needed; toast persists across routes)
+      router.push("/calendar");
+
       // eslint-disable-next-line no-console
       console.error("Failed to load event:", eventQ.error);
     }
-  }, [eventQ.data, eventQ.error]);
+  }, [eventQ.data, eventQ.error, toast, router]);
 
   const isLoading = eventQ.isLoading;
 
@@ -41,7 +61,7 @@ export default function EventPage() {
     <Flex align="stretch" height="calc(100vh - 5rem)" bgColor={"border.50"} overflowY="auto">
       <Box maxW="920px" w="100%" mx="auto">
         {/* Back link above all content */}
-        <Box pt={4} pb={2}>
+        <Box pt={4} pb={2} pl={4}>
           <BackLink>Wróć do kalendarza</BackLink>
         </Box>
 

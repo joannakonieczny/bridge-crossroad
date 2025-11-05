@@ -4,7 +4,6 @@ import React from "react";
 import {
   Box,
   VStack,
-  Heading,
   HStack,
   Badge,
   Image,
@@ -15,6 +14,8 @@ import {
   useDisclosure,
   Skeleton,
 } from "@chakra-ui/react";
+import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
 
 export default function EventBanner({
   title,
@@ -42,10 +43,11 @@ export default function EventBanner({
   const groupLabel = typeof group === "string" ? group : group?.name ?? undefined;
 
   return (
-    <Box w="100%" bgColor="bg" mt={4}>
+    // ensure the whole component never overflows the viewport on small screens
+    <Box w="100%" maxW="100%" overflowX="hidden" boxSizing="border-box" bgColor="bg" mt={4} px={{ base: 3, md: 0 }}>
       {/* image area: skeleton when loading, otherwise image if provided */}
       {loading ? (
-        <Skeleton height="220px" mb={4} borderTopRadius="md" />
+        <Skeleton height={{ base: "160px", md: "220px" }} mb={4} borderTopRadius="md" />
       ) : (
         imageUrl && (
           <>
@@ -54,7 +56,8 @@ export default function EventBanner({
               alt={typeof title === "string" ? title : ""}
               borderTopRadius="md"
               w="100%"
-              h="220px"
+              maxW="100%"
+              h={{ base: "160px", md: "220px" }}
               objectFit="cover"
               mb={4}
               cursor="zoom-in"
@@ -72,14 +75,17 @@ export default function EventBanner({
                 alignItems="center"
                 justifyContent="center"
                 onClick={onClose}
+                w="100%"
+                maxW="100vw"
+                px={{ base: 4, md: 0 }}
               >
                 <ModalBody display="flex" alignItems="center" justifyContent="center" p={0}>
                   {/* stopPropagation prevents clicks on the image from closing the modal */}
                   <Image
                     src={imageUrl}
                     alt={typeof title === "string" ? title : ""}
-                    maxH="90vh"
-                    maxW="90vw"
+                    maxH={{ base: "calc(100vh - 48px)", md: "90vh" }}
+                    maxW={{ base: "calc(100vw - 32px)", md: "90vw" }}
                     objectFit="contain"
                     borderRadius="md"
                     boxShadow="lg"
@@ -92,17 +98,21 @@ export default function EventBanner({
         )
       )}
 
-      <VStack align="start" spacing={2} p={4}>
-        {loading ? <Skeleton height="28px" w="40%" /> : <Heading size="lg">{title}</Heading>}
-        <HStack spacing={3}>
+      <VStack align="start" spacing={2} p={4} w="100%">
+        {loading ? (
+          <Skeleton height="28px" w="40%" />
+        ) : (
+          <ResponsiveHeading text={title ?? ""} fontSize="xl" />
+        )}
+        <HStack spacing={3} flexWrap="wrap">
           {loading ? (
             <Skeleton height="20px" w="20%" />
           ) : (
             <>
-              {groupLabel && <Badge colorScheme="yellow">{groupLabel}</Badge>}
+              {groupLabel && <Badge colorScheme="yellow" whiteSpace="normal">{groupLabel}</Badge>}
               {/* full date/time range shown as badge */}
-              <Badge colorScheme="purple">{dateRangeLabel}</Badge>
-              {location && <Badge>{location}</Badge>}
+              <Badge colorScheme="purple" whiteSpace="normal">{dateRangeLabel}</Badge>
+              {location && <Badge whiteSpace="normal">{location}</Badge>}
             </>
           )}
         </HStack>

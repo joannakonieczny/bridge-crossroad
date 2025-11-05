@@ -1,8 +1,10 @@
 import React from "react";
-import { Box, Heading, Text, OrderedList, ListItem, SimpleGrid, List, Spinner, Center } from "@chakra-ui/react";
+import { Box, OrderedList, ListItem, SimpleGrid, List, Spinner, Center } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import type { PersonWithName } from "@/schemas/model/event/event-types";
+import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
 
 // NOTE: use local UI-focused types (populated shapes) instead of repository/schema types
 type PlayingPairUI = {
@@ -82,9 +84,9 @@ export default function EventSpecificData({
 
     return (
       <>
-        <Text as="span">{leftLabel}</Text>
-        <Text as="span" mx={1} color="border.400">/</Text>
-        <Text as="span">{rightLabel}</Text>
+        <ResponsiveText as="span">{leftLabel}</ResponsiveText>
+        <ResponsiveText as="span" mx={1} color="border.400">/</ResponsiveText>
+        <ResponsiveText as="span">{rightLabel}</ResponsiveText>
       </>
     );
   };
@@ -94,11 +96,11 @@ export default function EventSpecificData({
       const d = eventData as TournamentUI;
       return (
         <Box bgColor="bg" p={4}>
-          <Heading size="sm" mb={2}>Dane turnieju</Heading>
+          <ResponsiveHeading text="Dane turnieju" fontSize="sm" barOrientation="horizontal" />
 
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={2}>
             <Box>
-              <Text><b>Typ:</b> {d.tournamentType}</Text>
+              <ResponsiveText><b>Typ:</b> {d.tournamentType}</ResponsiveText>
             </Box>
             <Box>
               {/* arbiter: use name.firstName/name.lastName or id/string fallback */}
@@ -112,12 +114,12 @@ export default function EventSpecificData({
                     : arb?.id
                     ? String(arb.id)
                     : undefined;
-                return <Text><b>Sędzia:</b> {arbLabel ?? "Brak sędziego"}</Text>;
+                return <ResponsiveText><b>Sędzia:</b> {arbLabel ?? "Brak sędziego"}</ResponsiveText>;
               })()}
             </Box>
           </SimpleGrid>
 
-          <Heading size="xs" mt={3}>Pary:</Heading>
+          <ResponsiveText fontWeight="bold">Pary</ResponsiveText>
           <OrderedList mt={1} spacing={2}>
             {d.contestantsPairs.map((p, i) => (
               <ListItem
@@ -136,8 +138,8 @@ export default function EventSpecificData({
       const d = eventData as LeagueUI;
       return (
         <Box bgColor="bg" p={4}>
-          <Heading size="sm" mb={2}>Dane zjazdu ligowego</Heading>
-          <Text mb={3}><b>Typ:</b> {d.tournamentType}</Text>
+          <ResponsiveHeading text="Dane zjazdu ligowego" fontSize="sm" barOrientation="horizontal" />
+          <ResponsiveText mb={3}><b>Typ:</b> {d.tournamentType}</ResponsiveText>
 
           <TableContainer mt={3}>
             <Table variant="simple" size="sm">
@@ -170,7 +172,7 @@ export default function EventSpecificData({
                       <Td>
                         <PairInline first={s.contestants.secondPair.first} second={s.contestants.secondPair.second} />
                       </Td>
-                      <Td>{s.opponentTeamName ?? "-"}</Td>
+                      <Td><ResponsiveText as="span">{s.opponentTeamName ?? "-"}</ResponsiveText></Td>
                     </Tr>
                   );
                 })}
@@ -185,7 +187,7 @@ export default function EventSpecificData({
       const d = eventData as TrainingUI;
       return (
         <Box bgColor="bg" p={4}>
-          <Heading size="sm" mb={2}>Dane treningu</Heading>
+          <ResponsiveHeading text="Dane treningu" fontSize="sm" barOrientation="horizontal" />
           {/* coach: use name.firstName/name.lastName or id/string fallback */}
           {(() => {
             const coach = d.coach as PersonWithName | string | undefined;
@@ -197,9 +199,9 @@ export default function EventSpecificData({
                 : coach?.id
                 ? String(coach.id)
                 : undefined;
-            return <Text><b>Trener:</b> {coachLabel ?? "Brak trenera"}</Text>;
+            return <ResponsiveText><b>Trener:</b> {coachLabel ?? "Brak trenera"}</ResponsiveText>;
           })()}
-           <Text><b>Temat:</b> {d.topic}</Text>
+          <ResponsiveText><b>Temat:</b> {d.topic}</ResponsiveText>
         </Box>
       );
     }
@@ -208,8 +210,8 @@ export default function EventSpecificData({
       const d = eventData as OtherUI;
       return (
         <Box bgColor="bg" p={4}>
-          <Heading size="sm" mb={2}>Dane (inne)</Heading>
-          <Text>{(d as any).note ?? "Brak dodatkowych danych"}</Text>
+          <ResponsiveHeading text="Dane (inne)" fontSize="sm" barOrientation="horizontal" />
+          <ResponsiveText>{(d as any).note ?? "Brak dodatkowych danych"}</ResponsiveText>
         </Box>
       );
     }

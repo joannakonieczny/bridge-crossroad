@@ -1,6 +1,8 @@
 import React from "react";
-import { Box, VStack, Heading, Text, List, ListItem, Divider, SimpleGrid, Skeleton } from "@chakra-ui/react";
+import { Box, VStack, List, ListItem, Divider, SimpleGrid, Skeleton } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
+import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
 
 function displayName(val: any) {
   if (!val) return "";
@@ -37,8 +39,8 @@ export default function EventDetails({
             </>
           ) : (
             <>
-              {description && <Text fontSize="md">{description}</Text>}
-              {additionalDescription && <Text color="border.500" mt={2}>{additionalDescription}</Text>}
+              {description && <ResponsiveText fontSize="md">{description}</ResponsiveText>}
+              {additionalDescription && <ResponsiveText color="border.500" fontSize="sm" mt={2}>{additionalDescription}</ResponsiveText>}
             </>
           )}
         </Box>
@@ -47,20 +49,20 @@ export default function EventDetails({
           {showParticipants ? (
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="100%">
               <Box>
-                <Heading size="xs" mb={2}>Organizator</Heading>
-                {loading ? <Skeleton height="14px" w="50%" /> : organizer ? <Text>{displayName(organizer)}</Text> : <Text color="gray.500">Brak organizatora</Text>}
+                {!loading && <ResponsiveHeading text="Organizator" fontSize="sm" barOrientation="horizontal" />}
+                {loading ? <Skeleton height="14px" w="50%" /> : organizer ? <ResponsiveText>{displayName(organizer)}</ResponsiveText> : <ResponsiveText color="gray.500">Brak organizatora</ResponsiveText>}
               </Box>
 
               <Box>
-                <Heading size="xs" mb={2}>Uczestnicy</Heading>
+                <ResponsiveHeading text="Uczestnicy" fontSize="sm" barOrientation="horizontal" />
                 {loading ? (
                   <Skeleton height="80px" />
                 ) : (
                   <List spacing={1}>
                     {attendees && attendees.length > 0 ? (
-                      attendees.map((a) => <ListItem key={typeof a === "string" ? a : a.id ?? displayName(a)}>{displayName(a)}</ListItem>)
+                      attendees.map((a) => <ListItem key={typeof a === "string" ? a : a.id ?? displayName(a)}><ResponsiveText as="span">{displayName(a)}</ResponsiveText></ListItem>)
                     ) : (
-                      <ListItem color="gray.500">Brak uczestników</ListItem>
+                      <ListItem><ResponsiveText color="gray.500">Brak uczestników</ResponsiveText></ListItem>
                     )}
                   </List>
                 )}
@@ -68,8 +70,8 @@ export default function EventDetails({
             </SimpleGrid>
           ) : (
             <Box>
-              <Heading size="xs" mb={2}>Organizator</Heading>
-              {loading ? <Skeleton height="14px" w="50%" /> : organizer ? <Text>{displayName(organizer)}</Text> : <Text color="gray.500">Brak organizatora</Text>}
+              {!loading && <ResponsiveHeading text="Organizator" fontSize="sm" barOrientation="horizontal" />}
+              {loading ? null : organizer ? <ResponsiveText>{displayName(organizer)}</ResponsiveText> : <ResponsiveText color="gray.500">Brak organizatora</ResponsiveText>}
             </Box>
           )}
         </Box>
