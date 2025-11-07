@@ -35,13 +35,13 @@ export default function FormInput(props: IFormInputProps) {
       {props.type === "password" ? (
         <PasswordInput
           placeholder={props.placeholder}
-          value={props.value}
+          value={props.value ?? ""}
           onChange={props.onChange}
         />
       ) : props.type === "textarea" ? (
         <Textarea
           placeholder={props.placeholder}
-          value={props.value}
+          value={props.value ?? ""}
           onChange={props.onChange}
           focusBorderColor="accent.500"
           _focus={{ borderColor: "accent.500" }}
@@ -51,7 +51,7 @@ export default function FormInput(props: IFormInputProps) {
           placeholder={props.placeholder}
           type="datetime-local"
           focusBorderColor="accent.500"
-          value={props.value}
+          value={props.value ?? ""}
           onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
         />
@@ -60,7 +60,7 @@ export default function FormInput(props: IFormInputProps) {
           placeholder={props.placeholder}
           type={props.type}
           focusBorderColor="accent.500"
-          value={props.value}
+          value={props.value ?? ""}
           onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
         />

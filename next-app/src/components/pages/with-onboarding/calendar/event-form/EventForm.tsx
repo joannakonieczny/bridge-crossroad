@@ -35,6 +35,8 @@ type EventFormProps = {
 
 export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const form = useForm({
+    mode: "onChange",
+    reValidateMode: "onChange",
     resolver: zodResolver(addEventSchema),
     defaultValues: {
       title: "",

@@ -35,6 +35,19 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
     enabled: !!selectedGroup,
   });
 
+  const handleNextStep = async () => {
+    const ok = await form.trigger([
+      "title",
+      "description",
+      "group",
+      "organizer",
+      "data.type",
+      "duration.startsAt",
+      "duration.endsAt",
+    ]);
+    if (ok) setNextStep();
+  };
+
   function RenderFormInput(p: {
     name: "title" | "description";
     placeholder: string;
@@ -184,10 +197,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
       />
       <Button
         colorScheme="blue"
-        onClick={async () => {
-          setNextStep();
-          // TODO add step validation
-        }}
+        onClick={handleNextStep}
         alignSelf="flex-end"
         rightIcon={<MdArrowForwardIos />}
         disabled={groupsQ.isLoading || peopleQ.isLoading || !selectedGroup}

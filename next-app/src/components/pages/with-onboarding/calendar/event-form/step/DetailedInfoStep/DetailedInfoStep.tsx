@@ -12,12 +12,39 @@ import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import TournamentPanel from "./components/TournamentPanel";
 import LeagueMeetingPanel from "./components/LeagueMeetingPanel";
 import TrainingPanel from "./components/TrainingPanel";
+import type { FieldPath } from "react-hook-form";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 
 type DetailedInfoStepProps = {
   setNextStep: () => void;
   setPrevStep: () => void;
 };
+
+type T =
+  | "allWithin"
+  | EventType.TOURNAMENT
+  | `get${EventType.LEAGUE_MEETING}`
+  | EventType.TRAINING;
+
+type F = FieldPath<AddEventSchemaType>[];
+
+export const detailedInfoStepFields = {
+  allWithin: ["additionalDescription"] satisfies F,
+  TOURNAMENT: ["data.tournamentType", "data.arbiter"] satisfies F,
+  getLEAGUE_MEETING: (max: number) => {
+    const res = ["data.tournamentType"];
+    for (let i = 0; i < max; i++) {
+      res.push(
+        `data.session.${i}.contestants.firstPair.first`,
+        `data.session.${i}.contestants.firstPair.second`,
+        `data.session.${i}.contestants.secondPair.first`,
+        `data.session.${i}.contestants.secondPair.second`
+      );
+    }
+    return res;
+  },
+  TRAINING: ["data.coach", "data.topic"] satisfies F,
+} satisfies Record<T, unknown>;
 
 export function DetailedInfoStep({
   setNextStep,
@@ -35,6 +62,40 @@ export function DetailedInfoStep({
   });
 
   const dataType = form.getValues().data.type;
+
+  const handleNextStep = async () => {
+    let ok = false;
+    const commonFields = [
+      "additionalDescription",
+    ] satisfies FieldPath<AddEventSchemaType>[];
+    switch (dataType) {
+      case EventType.TOURNAMENT: {
+        ok = await form.trigger([
+          ...commonFields,
+          "data.tournamentType",
+          "data.arbiter",
+        ]);
+        break;
+      }
+      case EventType.LEAGUE_MEETING: {
+        ok = await form.trigger([
+          ...commonFields,
+          "data.session",
+          "data.tournamentType",
+        ]);
+        break;
+      }
+      case EventType.TRAINING: {
+        ok = await form.trigger([...commonFields, "data.coach", "data.topic"]);
+        break;
+      }
+      case EventType.OTHER: {
+        ok = await form.trigger(commonFields);
+        break;
+      }
+    }
+    if (ok) setNextStep();
+  };
 
   return (
     <Stack spacing={4}>
@@ -83,10 +144,7 @@ export function DetailedInfoStep({
         </Button>
         <Button
           colorScheme="blue"
-          onClick={async () => {
-            setNextStep();
-            // TODO add step validation
-          }}
+          onClick={handleNextStep}
           alignSelf="flex-end"
           rightIcon={<MdArrowForwardIos />}
         >
