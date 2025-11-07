@@ -22,11 +22,25 @@ import {
   StepStatus,
   Stepper,
   useSteps,
+  useToast,
 } from "@chakra-ui/react";
 import { Divider } from "@chakra-ui/react";
 import { PrimaryInfoStep } from "./step/PrimaryInfoStep";
 import { DetailedInfoStep } from "./step/DetailedInfoStep/DetailedInfoStep";
 import { SummaryStep } from "./step/SummaryStep";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import { createEvent } from "@/services/events/api";
+import type {
+  ActionInput,
+  MutationOrQuerryError,
+} from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
+import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/query-keys";
 
 type EventFormProps = {
   isOpen: boolean;
@@ -53,6 +67,10 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       data: {},
     },
   });
+  const toast = useToast();
+  const t = useTranslations("pages.Auth.RegisterPage"); // TODO add proper path
+  const tValidation = useTranslationsWithFallback();
+  const queryClient = useQueryClient();
 
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
@@ -79,19 +97,29 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     },
   ];
 
-  const max = steps.length - 1;
+  const maxStep = steps.length - 1;
 
-  const onSubmit = (data: unknown) => {
-    // eslint-disable-next-line no-console
-    console.log("Form submit - valid data:", data);
-  };
+  const createEventAction = useActionMutation({
+    action: createEvent,
+    onSuccess: (d) => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.events(d.duration.startsAt, d.duration.endsAt),
+      });
+      form.reset();
+    },
+  });
 
-  const onError = (errors: unknown) => {
-    // eslint-disable-next-line no-console
-    console.log("Form submit - validation errors:", errors);
-    // eslint-disable-next-line no-console
-    console.log("Form current values:", form.getValues());
-  };
+  function handleWithToast(data: ActionInput<typeof createEvent>) {
+    const promise = createEventAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof createEvent>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -103,8 +131,10 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         <ModalBody>
           <FormProvider {...form}>
             <form
-              id="event-form"
-              onSubmit={form.handleSubmit(onSubmit, onError)}
+              onSubmit={form.handleSubmit(
+                (d) => handleWithToast({ ...d, groupId: d.group }), //TODO found out why ? misspeling group | groupId
+                (d) => console.log("validation error", d)
+              )}
             >
               <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
               <Box position="relative">
@@ -125,11 +155,9 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
               </Box>
               <Box mt={8}>{steps[activeStep].content}</Box>
               <Button
-                colorScheme={activeStep == max ? "blue" : "gray"}
-                variant={activeStep == max ? "solid" : "outline"}
-                disabled={activeStep != max}
+                colorScheme={activeStep == maxStep ? "blue" : "gray"}
+                variant={activeStep == maxStep ? "solid" : "outline"}
                 type="submit"
-                form="event-form"
               >
                 Dodaj wydarzenie
               </Button>

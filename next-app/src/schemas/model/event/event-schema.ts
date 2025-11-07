@@ -36,6 +36,7 @@ export const durationSchema = z
   })
   .refine((d) => d.startsAt < d.endsAt, {
     message: "validation.model.event.duration.invalidRange" satisfies TKey,
+    path: ["endsAt"],
   });
 
 export const playingPairSchema = z.object({
