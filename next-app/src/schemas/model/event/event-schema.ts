@@ -43,16 +43,6 @@ export const playingPairSchema = z.object({
   second: idPropSchema,
 });
 
-export const personWithNameSchema = z.object({
-  id: z.string().optional(),
-  name: z
-    .object({
-      firstName: z.string().optional(),
-      lastName: z.string().optional(),
-    })
-    .optional(),
-});
-
 // Data discriminators
 export const tournamentDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT),

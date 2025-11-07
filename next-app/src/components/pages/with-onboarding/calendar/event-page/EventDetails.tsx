@@ -1,13 +1,13 @@
 import React from "react";
 import { Box, VStack, List, ListItem, Divider, SimpleGrid, Skeleton } from "@chakra-ui/react";
+import { useTranslations } from "@/lib/typed-translations";
 import { EventType } from "@/club-preset/event-type";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import { PersonWithName } from "@/schemas/model/event/event-types";
 
-function displayName(val: any) {
-  if (!val) return "";
-  if (typeof val === "string") return val;
-  return val.nickname ?? `${val.firstName ?? ""} ${val.lastName ?? ""}`.trim() ?? val.name ?? val.id ?? "";
+function displayName(val: PersonWithName) {
+  return `${val.name?.firstName ?? ""} ${val.name?.lastName ?? ""}`.trim() ?? val.nickname ?? "";
 }
 
 export default function EventDetails({
@@ -20,14 +20,15 @@ export default function EventDetails({
 }: {
   description?: string;
   additionalDescription?: string;
-  organizer?: any; // string or populated
-  attendees?: any[]; // array of strings or populated
+  organizer?: PersonWithName;
+  attendees?: PersonWithName[];
   eventType?: EventType;
   loading?: boolean;
 }) {
+  const t = useTranslations("components.EventPage.EventDetails");
   const showParticipants =
     eventType === EventType.OTHER || eventType === EventType.TRAINING;
-
+  
   return (
     <Box w="100%" bgColor="bg" p={4}>
       <VStack align="start" spacing={4}>
@@ -49,12 +50,12 @@ export default function EventDetails({
           {showParticipants ? (
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="100%">
               <Box>
-                {!loading && <ResponsiveHeading text="Organizator" fontSize="sm" barOrientation="horizontal" />}
-                {loading ? <Skeleton height="14px" w="50%" /> : organizer ? <ResponsiveText>{displayName(organizer)}</ResponsiveText> : <ResponsiveText color="gray.500">Brak organizatora</ResponsiveText>}
+                {!loading && <ResponsiveHeading text={t("organizer")} fontSize="sm" barOrientation="horizontal" />}
+                {loading ? <Skeleton height="14px" w="50%" /> : organizer ? <ResponsiveText>{displayName(organizer)}</ResponsiveText> : <ResponsiveText color="gray.500">{t("noOrganizer")}</ResponsiveText>}
               </Box>
 
               <Box>
-                <ResponsiveHeading text="Uczestnicy" fontSize="sm" barOrientation="horizontal" />
+                <ResponsiveHeading text={t("participants")} fontSize="sm" barOrientation="horizontal" />
                 {loading ? (
                   <Skeleton height="80px" />
                 ) : (
@@ -62,7 +63,7 @@ export default function EventDetails({
                     {attendees && attendees.length > 0 ? (
                       attendees.map((a) => <ListItem key={typeof a === "string" ? a : a.id ?? displayName(a)}><ResponsiveText as="span">{displayName(a)}</ResponsiveText></ListItem>)
                     ) : (
-                      <ListItem><ResponsiveText color="gray.500">Brak uczestników</ResponsiveText></ListItem>
+                      <ListItem><ResponsiveText color="gray.500">{t("noParticipants")}</ResponsiveText></ListItem>
                     )}
                   </List>
                 )}
@@ -70,13 +71,11 @@ export default function EventDetails({
             </SimpleGrid>
           ) : (
             <Box>
-              {!loading && <ResponsiveHeading text="Organizator" fontSize="sm" barOrientation="horizontal" />}
-              {loading ? null : organizer ? <ResponsiveText>{displayName(organizer)}</ResponsiveText> : <ResponsiveText color="gray.500">Brak organizatora</ResponsiveText>}
+              {!loading && <ResponsiveHeading text={t("organizer")} fontSize="sm" barOrientation="horizontal" />}
+              {loading ? null : organizer ? <ResponsiveText>{displayName(organizer)}</ResponsiveText> : <ResponsiveText color="gray.500">{t("noOrganizer")}</ResponsiveText>}
             </Box>
           )}
         </Box>
-
-        <Divider />
       </VStack>
     </Box>
   );

@@ -29,7 +29,7 @@ export default function LandingPage1() {
           content: '" "',
           position: "absolute",
           width: "100%",
-          height: "4.6rem", //extended to resolve bug in rendering
+          height: "4.6rem",
           marginTop: "-1px",
         }}
       />

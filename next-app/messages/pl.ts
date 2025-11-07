@@ -223,6 +223,7 @@ const landingPage = {
     heading: "Jedyny portal w Polsce",
     text: "zapewniający wszystko, czego potrzebuje Twój klub brydżowy",
     highlight: "klub brydżowy",
+    ariaLabel: "Tło strony startowej",
     callToActionButton: "Załóż konto teraz",
   },
   landingPage2: {
@@ -637,6 +638,17 @@ const messages = {
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,
     LandingPage: landingPage,
+    EventPage: {
+      page: {
+        backLink: "Wróć do kalendarza",
+        toast: {
+          loadError: {
+            title: "Nie udało się wczytać wydarzenia",
+            description: "Spróbuj ponownie później i upewnij się, że wydarzenie istnieje.",
+          },
+        },
+      },
+    },
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,
     CalendarPage: calendarPage,
@@ -649,6 +661,65 @@ const messages = {
     },
     SidebarCard: {
       detailsButtonText: "Szczegóły",
+    },
+    EventPage: {
+      EventBanner: {
+        imageAltFallback: "Obraz wydarzenia",
+      },
+      EventDetails: {
+        organizer: "Organizator",
+        participants: "Uczestnicy",
+        noOrganizer: "Brak organizatora",
+        noParticipants: "Brak uczestników",
+      },
+      EventEnrollment: {
+        heading: "Zapisy",
+        placeholder: {
+          playerA: "Gracz A (id lub nick)",
+          playerB: "Gracz B (id lub nick)",
+        },
+        button: {
+          tournament: "Zapisz się na turniej",
+          event: "Zapisz się na wydarzenie",
+        },
+      },
+      EventSpecificData: {
+        tournamentHeading: "Dane turnieju",
+        leagueHeading: "Dane zjazdu ligowego",
+        trainingHeading: "Dane treningu",
+        otherHeading: "Dane (inne)",
+        labels: {
+          type: "Typ:",
+          arbiter: "Sędzia:",
+          coach: "Trener:",
+          topic: "Temat:",
+        },
+        noArbiter: "Brak sędziego",
+        noCoach: "Brak trenera",
+        noAdditionalData: "Brak dodatkowych danych",
+        pairs: "Pary",
+        half: {
+          first: "Pierwsza",
+          second: "Druga",
+        },
+        league: {
+          table: {
+            match: "Mecz",
+            half: "Połowa",
+            pair1: "Para 1",
+            pair2: "Para 2",
+            opponent: "Przeciwnik",
+          },
+        },
+        tournamentTypes: {
+          MAX: "MAXy",
+          IMPS: "IMPy",
+          CRAZY: "Crazy",
+          TEAM: "Drużynowy",
+          INDIVIDUAL: "Indywidualny",
+          BAMY: "BAMy",
+        },
+      },
     },
   },
 };

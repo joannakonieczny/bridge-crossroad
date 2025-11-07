@@ -13,8 +13,10 @@ import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { getEvent } from "@/services/events/api";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { EventIdType } from "@/schemas/model/event/event-types";
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function EventPage() {
+  const t = useTranslations("pages.EventPage.page");
   const params = useParams() as { id?: string } | undefined;
   const eventId = params?.id;
 
@@ -39,8 +41,8 @@ export default function EventPage() {
 
       // show error toast (Polish) and redirect to /calendar
       toast({
-        title: "Nie udało się wczytać wydarzenia",
-        description: "Spróbuj ponownie później i upewnij się, że wydarzenie istnieje.",
+        title: t("toast.loadError.title"),
+        description: t("toast.loadError.description"),
         status: "error",
         duration: 6000,
         isClosable: true,
@@ -53,7 +55,7 @@ export default function EventPage() {
       // eslint-disable-next-line no-console
       console.error("Failed to load event:", eventQ.error);
     }
-  }, [eventQ.data, eventQ.error, toast, router]);
+  }, [eventQ.data, eventQ.error, toast, router, t]);
 
   const isLoading = eventQ.isLoading;
 
@@ -62,7 +64,7 @@ export default function EventPage() {
       <Box maxW="920px" w="100%" mx="auto">
         {/* Back link above all content */}
         <Box pt={4} pb={2} pl={4}>
-          <BackLink>Wróć do kalendarza</BackLink>
+          <BackLink>{t("backLink")}</BackLink>
         </Box>
 
         {/* oba komponenty na całą szerokość, oddzielone 2rem gapu */}
