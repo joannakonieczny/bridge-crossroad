@@ -19,6 +19,7 @@ export default function EventEnrollment({ eventType }: { eventType?: EventType }
       <VStack align="start" spacing={4}>
         <ResponsiveHeading text={t("heading")} fontSize="sm" barOrientation="horizontal" />
         {eventType === EventType.TOURNAMENT ? (
+          //TODO: zapisy narazie nie działają, więc to tymczasowe
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} w="100%">
             <Input
               placeholder={t("placeholder.playerA")}
@@ -43,7 +44,8 @@ export default function EventEnrollment({ eventType }: { eventType?: EventType }
           w="100%"
           colorScheme="accent"
           variant="solid"
-          onClick={() => { /* noop for now */ }}
+          onClick={() => {//TODO: implement enrollment action
+          }}
           fontSize={{ base: "sm", md: "md" }}
           py={{ base: 2, md: 3 }}
         >

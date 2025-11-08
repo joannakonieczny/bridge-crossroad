@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, OrderedList, ListItem, SimpleGrid, List, Spinner, Center, Stack } from "@chakra-ui/react";
+import { Box, OrderedList, ListItem, SimpleGrid, Spinner, Center, Stack } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from "@chakra-ui/react";
 import { EventType, TournamentType, Half } from "@/club-preset/event-type";
 import type {
@@ -33,7 +33,7 @@ export default function EventSpecificData({
   }
   if (!eventType || !eventData) return null;
 
-  const tournamentLabelMap: Partial<Record<TournamentType, string>> = {
+  const tournamentLabelMap: Record<string, string> = {
     [TournamentType.MAX]: t("tournamentTypes.MAX"),
     [TournamentType.IMPS]: t("tournamentTypes.IMPS"),
     [TournamentType.CRAZY]: t("tournamentTypes.CRAZY"),
@@ -43,13 +43,13 @@ export default function EventSpecificData({
   };
   function getTournamentTypeLabel(tkey?: string | null) {
     if (!tkey) return "";
-    return (tournamentLabelMap as any)[tkey] ?? String(tkey);
+    return tournamentLabelMap[tkey] ?? String(tkey);
   }
   
-  const PairInline = ({ first, second }: { first?: any; second?: any }) => {
-    type PairMember = PersonWithName | { id?: string | number } | string | undefined;
-    const f = first as PairMember;
-    const s = second as PairMember;
+  type PairMember = PersonWithName | { id?: string | number } | string | undefined;
+  const PairInline = ({ first, second }: { first?: PairMember; second?: PairMember }) => {
+    const f = first;
+    const s = second;
 
     const fFirst = typeof f !== "string" ? (f as PersonWithName)?.name?.firstName ?? "" : "";
     const fLast = typeof f !== "string" ? (f as PersonWithName)?.name?.lastName ?? "" : "";
@@ -84,7 +84,6 @@ export default function EventSpecificData({
               <ResponsiveText><b>{t("labels.type")}</b> {getTournamentTypeLabel(d.tournamentType)}</ResponsiveText>
             </Box>
             <Box>
-              {/* arbiter: use name.firstName/name.lastName or id/string fallback */}
               {(() => {
                 const arb = d.arbiter as PersonWithName | string | undefined;
                 const arbLabel =

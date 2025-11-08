@@ -1,10 +1,10 @@
 import React from "react";
-import { Box, VStack, List, ListItem, Divider, SimpleGrid, Skeleton } from "@chakra-ui/react";
+import { Box, VStack, List, ListItem, SimpleGrid, Skeleton } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import { EventType } from "@/club-preset/event-type";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import { PersonWithName } from "@/schemas/model/event/event-types";
+import type { PersonWithName } from "@/schemas/model/event/event-types";
 
 function displayName(val: PersonWithName) {
   return `${val.name?.firstName ?? ""} ${val.name?.lastName ?? ""}`.trim() ?? val.nickname ?? "";

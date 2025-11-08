@@ -15,7 +15,7 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
-import { groupInfo } from "@/schemas/model/event/event-types";
+import type { GroupInfo } from "@/schemas/model/event/event-types";
 import { useTranslations } from "@/lib/typed-translations";
 
 export default function EventBanner({
@@ -28,7 +28,7 @@ export default function EventBanner({
 }: {
   title?: string;
   imageUrl?: string;
-  group?: groupInfo;
+  group?: GroupInfo;
   location?: string;
   duration?: { startsAt: Date; endsAt: Date };
   loading?: boolean;
