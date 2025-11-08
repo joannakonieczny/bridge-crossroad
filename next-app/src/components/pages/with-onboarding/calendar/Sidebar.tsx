@@ -34,7 +34,7 @@ export default function Sidebar() {
         <Button
           w="100%"
           size="sm"
-          color="white"
+          color="bg"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
           onClick={onOpen}
@@ -53,7 +53,7 @@ export default function Sidebar() {
         <Button
           w="100%"
           size="sm"
-          color="white"
+          color="bg"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
           onClick={() => router.push(ROUTES.calendar.upcoming_events)}

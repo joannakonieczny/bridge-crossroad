@@ -325,7 +325,6 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
           check(member, "Tournament team member data is missing")
         );
       });
-      check(existingEvent.data.arbiter, "Tournament arbiter data is missing");
       break;
     }
     case EventType.LEAGUE_MEETING: {

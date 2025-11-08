@@ -104,9 +104,9 @@ export default function EventBanner({
             <Skeleton height="20px" w="20%" />
           ) : (
             <>
-              {groupLabel && <Badge colorScheme="yellow" whiteSpace="normal">{groupLabel}</Badge>}
-              <Badge colorScheme="purple" whiteSpace="normal">{dateRangeLabel}</Badge>
-              {location && <Badge whiteSpace="normal">{location}</Badge>}
+              {groupLabel && <Badge bg="secondary.400" color="bg" whiteSpace="normal">{groupLabel}</Badge>}
+              <Badge bg="purple.300" color="bg" whiteSpace="normal">{dateRangeLabel}</Badge>
+              {location && <Badge bg="gray.400" color="bg" whiteSpace="normal">{location}</Badge>}
             </>
           )}
         </HStack>

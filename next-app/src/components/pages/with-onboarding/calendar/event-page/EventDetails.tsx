@@ -5,10 +5,7 @@ import { EventType } from "@/club-preset/event-type";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import type { PersonWithName } from "@/schemas/model/event/event-types";
-
-function displayName(val: PersonWithName) {
-  return `${val.name?.firstName ?? ""} ${val.name?.lastName ?? ""}`.trim() ?? val.nickname ?? "";
-}
+import { displayName } from "@/util/user";
 
 export default function EventDetails({
   description,

@@ -109,7 +109,7 @@ export default function Calendar() {
   const eventsWithColor = rawEvents.map((e) => ({
     ...e,
     color: getEventDayColor(e.start),
-    textColor: "white",
+    textColor: "bg",
   }));
 
   const fcLocales = locale === "pl" ? [plLocale] : [enLocale];

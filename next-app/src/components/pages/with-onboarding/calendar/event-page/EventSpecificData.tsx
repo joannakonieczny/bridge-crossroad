@@ -46,23 +46,14 @@ export default function EventSpecificData({
     return tournamentLabelMap[tkey] ?? String(tkey);
   }
   
-  type PairMember = PersonWithName | { id?: string | number } | string | undefined;
+  type PairMember = PersonWithName | undefined;
   const PairInline = ({ first, second }: { first?: PairMember; second?: PairMember }) => {
     const f = first;
     const s = second;
 
-    const fFirst = typeof f !== "string" ? (f as PersonWithName)?.name?.firstName ?? "" : "";
-    const fLast = typeof f !== "string" ? (f as PersonWithName)?.name?.lastName ?? "" : "";
-    const sFirst = typeof s !== "string" ? (s as PersonWithName)?.name?.firstName ?? "" : "";
-    const sLast = typeof s !== "string" ? (s as PersonWithName)?.name?.lastName ?? "" : "";
-
-    const leftLabel = (fFirst || fLast)
-      ? `${fFirst} ${fLast}`.trim()
-      : (typeof f === "string" ? f : f?.id ? String((f as { id?: string | number }).id) : "-");
-    const rightLabel = (sFirst || sLast)
-      ? `${sFirst} ${sLast}`.trim()
-      : (typeof s === "string" ? s : s?.id ? String((s as { id?: string | number }).id) : "-");
-
+    const leftLabel: string = f?.name ? `${f.name.firstName ?? ""} ${f.name.lastName ?? ""}`.trim() : "";
+    const rightLabel: string = s?.name ? `${s.name.firstName ?? ""} ${s.name.lastName ?? ""}`.trim() : "";
+    
     return (
       <>
         <ResponsiveText as="span">{leftLabel}</ResponsiveText>
@@ -121,7 +112,6 @@ export default function EventSpecificData({
           <ResponsiveHeading text={t("leagueHeading")} fontSize="sm" barOrientation="horizontal" />
           <ResponsiveText mb={3}><b>{t("labels.type")}</b> {getTournamentTypeLabel(d.tournamentType)}</ResponsiveText>
 
-          {/* Table for large screens (lg+) */}
           <TableContainer mt={3} display={{ base: "none", md: "none", lg: "block" }}>
             <Table variant="simple" size="sm">
               <Thead>
@@ -162,7 +152,6 @@ export default function EventSpecificData({
             </Table>
           </TableContainer>
 
-          {/* Column cards for md and smaller */}
           <Box display={{ base: "block", md: "block", lg: "none" }} mt={3}>
             <Stack spacing={3}>
               {d.session.map((s, idx) => {
@@ -177,11 +166,10 @@ export default function EventSpecificData({
                     borderRadius="md"
                     bg="bg"
                   >
-                    {/* first row: match, half, opponent */}
                     <SimpleGrid columns={3} spacing={2} alignItems  ="center" mb={2}>
                       <Box
                         bg={isMatchOdd ? "accent.300" : "secondary.300"}
-                        color="white"
+                        color="bg"
                         w="48px"
                         h="48px"
                         minW="48px"
@@ -191,7 +179,7 @@ export default function EventSpecificData({
                         flexDirection="column"
                         borderRadius="md"
                       >
-                        <ResponsiveText fontSize="xs" color="white" lineHeight="1">{t("league.table.match")}</ResponsiveText>
+                        <ResponsiveText fontSize="xs" color="bg" lineHeight="1">{t("league.table.match")}</ResponsiveText>
                         <ResponsiveText fontWeight="semibold" fontSize="lg" lineHeight="1">{s.matchNumber}</ResponsiveText>
                       </Box>
                       <Box bg={isRowOdd ? "border.50" : "border.100"} p={2} borderRadius="sm">
