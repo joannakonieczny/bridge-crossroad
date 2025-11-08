@@ -1,3 +1,6 @@
+"sever-only";
+
+import type { IChatMessageDTO } from "./chat-message/chat-message-types";
 import type { Overwrite } from "@/lib/types-helpers";
 import type { IGroupDTO } from "./group/group-types";
 import type { IUserDTO } from "./user/user-types";
@@ -30,6 +33,13 @@ export type IPlayingPairPopulated = {
   first: IUserDTO;
   second: IUserDTO;
 };
+
+export type IChatMessageDTOWithPopulatedSender = Overwrite<
+  IChatMessageDTO,
+  {
+    senderId: IUserDTO;
+  }
+>;
 
 export type ITournamentDataPopulated = Overwrite<
   ITournamentData,
