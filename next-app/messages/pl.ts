@@ -4,6 +4,7 @@ import { UserValidationConstants as USER } from "@/schemas/model/user/user-const
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
+import { send } from "process";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -543,6 +544,10 @@ const usefulTools = {
   },
 };
 
+const chatPage = {
+  sendMessagePlaceholder: "Napisz wiadomość...",
+};
+
 const messages = {
   common: {
     date: {
@@ -630,6 +635,7 @@ const messages = {
     LandingPage: landingPage,
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,
+    ChatPage: chatPage,
     CalendarPage: calendarPage,
   },
   components: {

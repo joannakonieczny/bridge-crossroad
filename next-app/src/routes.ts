@@ -18,6 +18,7 @@ export const ROUTES = {
     upcoming_events: "/calendar/upcoming-events",
   },
   groups: "/groups",
+  chat: "/chat",
   find_partner: "/find-partner",
   tools: "/tools",
 } as const;
