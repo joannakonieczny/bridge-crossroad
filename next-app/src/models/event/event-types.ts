@@ -26,7 +26,7 @@ export type ITournamentData = {
   }>;
 };
 
-export type ILeagueTournamentData = {
+export type ILeagueMeetingData = {
   type: EventType.LEAGUE_MEETING;
   tournamentType?: TournamentType;
   session: Array<{
@@ -65,9 +65,5 @@ export type IEventDTO = {
   attendees: (typeof UserId)[];
   group: typeof GroupId;
   imageUrl?: string;
-  data:
-    | ITournamentData
-    | ILeagueTournamentData
-    | ITrainingData
-    | IOtherEventData;
+  data: ITournamentData | ILeagueMeetingData | ITrainingData | IOtherEventData;
 } & Timestamps;

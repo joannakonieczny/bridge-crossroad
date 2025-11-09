@@ -1,5 +1,8 @@
 import type { z } from "zod";
 import type * as s from "./event-schema";
+import type { UserTypeBasic } from "../user/user-types";
+import type { Overwrite } from "@/lib/types-helpers";
+import type { GroupBasicType } from "../group/group-types";
 
 export type TitleType = z.infer<typeof s.titleSchema>;
 export type DescriptionType = z.infer<typeof s.descriptionSchema>;
@@ -17,3 +20,57 @@ export type EventDataType = z.infer<typeof s.dataSchema>;
 export type EventSchemaType = z.infer<typeof s.eventSchema>;
 
 export type EventIdType = string;
+
+export type PlayingPairTypePopulated = {
+  first: UserTypeBasic;
+  second: UserTypeBasic;
+};
+
+export type TournamentDataTypePopulated = Overwrite<
+  TournamentDataType,
+  {
+    contestantsPairs: PlayingPairTypePopulated[];
+    arbiter?: UserTypeBasic;
+    teams?: Array<{ name: string; members: UserTypeBasic[] }>;
+  }
+>;
+
+export type LeagueMeetingDataTypePopulated = Overwrite<
+  LeagueMeetingDataType,
+  {
+    session: Array<
+      Overwrite<
+        LeagueMeetingDataType["session"][number],
+        {
+          contestants: {
+            firstPair: PlayingPairTypePopulated;
+            secondPair: PlayingPairTypePopulated;
+          };
+        }
+      >
+    >;
+  }
+>;
+
+export type TrainingDataTypePopulated = Overwrite<
+  TrainingDataType,
+  {
+    coach?: UserTypeBasic;
+  }
+>;
+
+export type EventDataTypePopulated =
+  | TournamentDataTypePopulated
+  | LeagueMeetingDataTypePopulated
+  | TrainingDataTypePopulated
+  | OtherDataType;
+
+export type EventSchemaTypePopulated = Overwrite<
+  EventSchemaType,
+  {
+    data: EventDataTypePopulated;
+    organizer: UserTypeBasic;
+    attendees: UserTypeBasic[];
+    group: GroupBasicType;
+  }
+>;
