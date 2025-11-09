@@ -53,7 +53,7 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   const createGroupAction = useActionMutation({
     action: createNewGroup,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groups });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.joinedGroups });
       reset();
     },
     onError: (err) => {
