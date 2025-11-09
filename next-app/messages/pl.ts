@@ -453,6 +453,9 @@ const eventModelValidation = {
   duration: {
     invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
   },
+  session: {
+    duplicatePlayers: "Każdy zawodnik w sesji musi być unikalny",
+  },
   data: {
     invalid: "Nieprawidłowe dane specyficzne dla typu wydarzenia",
   },

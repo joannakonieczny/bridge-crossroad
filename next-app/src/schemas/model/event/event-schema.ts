@@ -55,18 +55,37 @@ export const tournamentDataSchema = z.object({
     .optional(),
 });
 
+const sessionItemSchema = z
+  .object({
+    contestants: z.object({
+      firstPair: playingPairSchema,
+      secondPair: playingPairSchema,
+    }),
+    opponentTeamName: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      const people = [
+        data.contestants.firstPair.first,
+        data.contestants.firstPair.second,
+        data.contestants.secondPair.first,
+        data.contestants.secondPair.second,
+      ].filter((id) => id && id.trim() !== "");
+
+      // Check if all selected people are unique
+      const uniquePeople = new Set(people);
+      return people.length === uniquePeople.size;
+    },
+    {
+      message: "validation.model.event.session.duplicatePlayers" satisfies TKey,
+      path: ["contestants"],
+    }
+  );
+
 export const leagueMeetingDataSchema = z.object({
   type: z.literal(EventType.LEAGUE_MEETING),
   tournamentType: z.nativeEnum(TournamentType).optional(),
-  session: z.array(
-    z.object({
-      contestants: z.object({
-        firstPair: playingPairSchema,
-        secondPair: playingPairSchema,
-      }),
-      opponentTeamName: z.string().optional(),
-    })
-  ),
+  session: z.array(sessionItemSchema),
 });
 
 export const trainingDataSchema = z.object({

@@ -17,6 +17,7 @@ import {
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { StepProps } from "../util/helpers";
+import { useEffect } from "react";
 
 export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
@@ -27,6 +28,13 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const groupsQ = useJoinedGroupsAsAdminQuery();
   const peopleQ = useGroupQuery(selectedGroup);
   const ownInfoQ = useUserInfoQuery();
+
+  useEffect(() => {
+    if (ownInfoQ.data?.id && !form.getValues("organizer")) {
+      form.setValue("organizer", ownInfoQ.data.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownInfoQ.data?.id]);
 
   const handleNextStep = async () => {
     const ok = await form.trigger([
@@ -71,7 +79,6 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
     options: { value: string; label: string }[];
     isLoading?: boolean;
     isDisabled?: boolean;
-    defaultValue?: string;
   }) {
     return (
       <Controller
@@ -83,7 +90,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             options={p.options}
-            value={field.value || p.defaultValue || ""}
+            value={field.value}
             isLoading={p.isLoading}
             isDisabled={p.isDisabled}
             onChange={field.onChange}
@@ -155,8 +162,9 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
           value: member.id,
           label: getPersonLabel(member),
         }))}
-        defaultValue={ownInfoQ.data?.id}
-        isLoading={peopleQ.isLoading || ownInfoQ.isLoading}
+        isLoading={
+          !!!selectedGroup ? false : peopleQ.isLoading || ownInfoQ.isLoading
+        }
         isDisabled={!!!selectedGroup}
       />
       <HStack spacing={4}>
