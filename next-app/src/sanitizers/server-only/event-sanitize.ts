@@ -2,7 +2,7 @@ import type {
   IEventDTO,
   IPlayingPair,
   ITournamentData,
-  ILeagueTournamentData,
+  ILeagueMeetingData,
   ITrainingData,
   IOtherEventData,
 } from "@/models/event/event-types";
@@ -21,7 +21,7 @@ import type {
 } from "@/schemas/model/event/event-types";
 import type {
   IEventPopulated,
-  ILeagueTournamentDataPopulated,
+  ILeagueMeetingDataPopulated,
   IPlayingPairPopulated,
   ITournamentDataPopulated,
   ITrainingDataPopulated,
@@ -50,8 +50,8 @@ function sanitizeTournamentData(data: ITournamentData): TournamentDataType {
   };
 }
 
-function sanitizeLeagueTournamentData(
-  data: ILeagueTournamentData
+function sanitizeLeagueMeetingData(
+  data: ILeagueMeetingData
 ): LeagueMeetingDataType {
   return {
     type: data.type,
@@ -96,7 +96,7 @@ export function sanitizeEvent(event: IEventDTO): EventSchemaType {
       event.data?.type === EventType.TOURNAMENT
         ? sanitizeTournamentData(event.data)
         : event.data?.type === EventType.LEAGUE_MEETING
-        ? sanitizeLeagueTournamentData(event.data)
+        ? sanitizeLeagueMeetingData(event.data)
         : event.data?.type === EventType.TRAINING
         ? sanitizeTrainingData(event.data)
         : sanitizeOtherEventData(event.data),
@@ -130,8 +130,8 @@ function sanitizeTournamentDataPopulated(
   };
 }
 
-function sanitizeLeagueTournamentDataPopulated(
-  data: ILeagueTournamentDataPopulated
+function sanitizeLeagueMeetingDataPopulated(
+  data: ILeagueMeetingDataPopulated
 ): LeagueMeetingDataTypePopulated {
   return {
     type: data.type,
@@ -176,7 +176,7 @@ export function sanitizeEventPopulated(
       event.data.type === EventType.TOURNAMENT
         ? sanitizeTournamentDataPopulated(event.data)
         : event.data.type === EventType.LEAGUE_MEETING
-        ? sanitizeLeagueTournamentDataPopulated(event.data)
+        ? sanitizeLeagueMeetingDataPopulated(event.data)
         : event.data.type === EventType.TRAINING
         ? sanitizeTrainingDataPopulated(event.data)
         : sanitizeOtherEventData(event.data),
