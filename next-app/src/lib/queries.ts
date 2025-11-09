@@ -33,6 +33,7 @@ export function useGroupQuery(
   return useActionQuery({
     queryKey: QUERY_KEYS.groupDetail(groupId),
     action: () => getGroupData({ groupId }),
+    enabled: !!groupId || props?.enabled,
     ...props,
   });
 }

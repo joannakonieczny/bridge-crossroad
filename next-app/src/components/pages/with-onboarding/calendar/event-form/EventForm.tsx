@@ -39,7 +39,7 @@ import {
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { QUERY_KEYS } from "@/lib/queries";
 
 type EventFormProps = {
   isOpen: boolean;
@@ -100,7 +100,10 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     action: createEvent,
     onSuccess: (d) => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.events(d.duration.startsAt, d.duration.endsAt),
+        queryKey: QUERY_KEYS.calendarEvents(
+          d.duration.startsAt,
+          d.duration.endsAt
+        ),
       });
       form.reset();
       setActiveStep(0);
@@ -131,8 +134,8 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           <FormProvider {...form}>
             <form
               onSubmit={form.handleSubmit(
-                (d) => handleWithToast({ ...d, groupId: d.group }), //TODO found out why ? misspeling group | groupId
-                (d) => console.log("validation error", d)
+                (d) => handleWithToast({ ...d, groupId: d.group }),
+                (d) => console.log("validation error", d) // TODO remove log
               )}
             >
               <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>

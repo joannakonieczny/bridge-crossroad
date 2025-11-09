@@ -4,9 +4,6 @@ import { Controller, useFormContext } from "react-hook-form";
 import { Stack } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { QUERY_KEYS } from "@/lib/query-keys";
-import { getGroupData } from "@/services/groups/api";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import TournamentPanel from "./components/TournamentPanel";
 import LeagueMeetingPanel from "./components/LeagueMeetingPanel";
@@ -15,6 +12,7 @@ import { SteeringButtons } from "../../components/SteeringButtons";
 import type { FieldPath } from "react-hook-form";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { StepProps } from "../../util/helpers";
+import { useGroupQuery } from "@/lib/queries";
 
 export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
@@ -22,11 +20,7 @@ export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
 
   const selectedGroup = form.watch("group");
 
-  const peopleQ = useActionQuery({
-    queryKey: QUERY_KEYS.group(selectedGroup),
-    action: () => getGroupData({ groupId: selectedGroup }),
-    enabled: !!selectedGroup,
-  });
+  const peopleQ = useGroupQuery(selectedGroup);
 
   const dataType = form.getValues().data.type;
 

@@ -4,17 +4,15 @@ import { Controller, useFormContext } from "react-hook-form";
 import { VStack, Stack, HStack, Text } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { QUERY_KEYS } from "@/lib/query-keys";
-import { getGroupData, getJoinedGroupsInfo } from "@/services/groups/api";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
+import { getPersonLabel } from "../util/helpers";
+import { SteeringButtons } from "../components/SteeringButtons";
+import { useGroupQuery, useJoinedGroupsQuery } from "@/lib/queries";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { StepProps } from "../util/helpers";
-import { getPersonLabel } from "../util/helpers";
-import { SteeringButtons } from "../components/SteeringButtons";
 
 export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
@@ -22,15 +20,8 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
 
   const selectedGroup = form.watch("group") as GroupIdType | "";
 
-  const groupsQ = useActionQuery({
-    queryKey: QUERY_KEYS.groups,
-    action: getJoinedGroupsInfo,
-  });
-  const peopleQ = useActionQuery({
-    queryKey: QUERY_KEYS.group(selectedGroup),
-    action: () => getGroupData({ groupId: selectedGroup }),
-    enabled: !!selectedGroup,
-  });
+  const groupsQ = useJoinedGroupsQuery();
+  const peopleQ = useGroupQuery(selectedGroup);
 
   const handleNextStep = async () => {
     const ok = await form.trigger([
