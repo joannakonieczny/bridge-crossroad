@@ -1,15 +1,12 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Stack, Button, Text } from "@chakra-ui/react";
-import { MdArrowBackIos } from "react-icons/md";
+import { Stack, Text } from "@chakra-ui/react";
+import { SteeringButtons } from "../components/SteeringButtons";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import type { StepProps } from "../util/helpers";
 
-type Props = {
-  setPrevStep: () => void;
-};
-
-export function SummaryStep({ setPrevStep }: Props) {
+export function SummaryStep({ setPrevStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
 
   // TODO: add more summary details here
@@ -18,16 +15,18 @@ export function SummaryStep({ setPrevStep }: Props) {
     <Stack spacing={4}>
       <Text>Tytuł wydarzenia: {form.getValues()?.title}</Text>
       <Text></Text>
-      <Button
-        variant="outline"
-        alignSelf="flex-start"
-        onClick={() => {
-          setPrevStep();
+      <SteeringButtons
+        prevButton={{
+          text: "Cofnij", //TODO - translation
+          onClick: setPrevStep,
         }}
-        leftIcon={<MdArrowBackIos />}
-      >
-        Cofnij
-      </Button>
+        nextButton={{
+          text: "Dodaj wydarzenie",
+          onElementProps: {
+            type: "submit",
+          },
+        }}
+      />
     </Stack>
   );
 }

@@ -11,7 +11,6 @@ import {
   ModalBody,
   ModalFooter,
   ModalCloseButton,
-  Button,
   FormLabel,
   Box,
   Step,
@@ -97,8 +96,6 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     },
   ];
 
-  const maxStep = steps.length - 1;
-
   const createEventAction = useActionMutation({
     action: createEvent,
     onSuccess: (d) => {
@@ -106,6 +103,8 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         queryKey: QUERY_KEYS.events(d.duration.startsAt, d.duration.endsAt),
       });
       form.reset();
+      setActiveStep(0);
+      onClose();
     },
   });
 
@@ -154,13 +153,6 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                 </Stepper>
               </Box>
               <Box mt={8}>{steps[activeStep].content}</Box>
-              <Button
-                colorScheme={activeStep == maxStep ? "blue" : "gray"}
-                variant={activeStep == maxStep ? "solid" : "outline"}
-                type="submit"
-              >
-                Dodaj wydarzenie
-              </Button>
             </form>
           </FormProvider>
         </ModalBody>

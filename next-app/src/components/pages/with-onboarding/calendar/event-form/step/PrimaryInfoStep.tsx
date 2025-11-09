@@ -1,10 +1,9 @@
 "use client";
 
 import { Controller, useFormContext } from "react-hook-form";
-import { VStack, Stack, Button, HStack, Text } from "@chakra-ui/react";
+import { VStack, Stack, HStack, Text } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
-import { MdArrowForwardIos } from "react-icons/md";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { getGroupData, getJoinedGroupsInfo } from "@/services/groups/api";
@@ -13,13 +12,11 @@ import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import type { StepProps } from "../util/helpers";
 import { getPersonLabel } from "../util/helpers";
+import { SteeringButtons } from "../components/SteeringButtons";
 
-type PrimaryInfoStepProps = {
-  setNextStep: () => void;
-};
-
-export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
+export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
 
@@ -45,7 +42,7 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
       "duration.startsAt",
       "duration.endsAt",
     ]);
-    if (ok) setNextStep();
+    if (ok) setNextStep?.();
   };
 
   function RenderFormInput(p: {
@@ -195,15 +192,15 @@ export function PrimaryInfoStep({ setNextStep }: PrimaryInfoStepProps) {
           label: type, //TODO add translations
         }))}
       />
-      <Button
-        colorScheme="blue"
-        onClick={handleNextStep}
-        alignSelf="flex-end"
-        rightIcon={<MdArrowForwardIos />}
-        disabled={groupsQ.isLoading || peopleQ.isLoading || !selectedGroup}
-      >
-        Dalej
-      </Button>
+      <SteeringButtons
+        nextButton={{
+          text: "Dalej", //TODO - translation
+          onClick: () => handleNextStep(),
+          onElementProps: {
+            disabled: groupsQ.isLoading || peopleQ.isLoading || !selectedGroup,
+          },
+        }}
+      />
     </Stack>
   );
 }

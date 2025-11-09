@@ -8,3 +8,8 @@ export function getPersonLabel(person: Person) {
     ? `${person.name.firstName} ${person.name.lastName} (${person.nickname})`
     : `${person.name.firstName} ${person.name.lastName}`;
 }
+
+export type StepProps = {
+  setNextStep?: () => void;
+  setPrevStep?: () => void;
+};
