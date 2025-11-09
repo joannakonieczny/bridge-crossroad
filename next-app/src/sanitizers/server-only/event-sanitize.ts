@@ -2,7 +2,7 @@ import type {
   IEventDTO,
   IPlayingPair,
   ITournamentData,
-  ILeagueTournamentData,
+  ILeagueMeetingData,
   ITrainingData,
   IOtherEventData,
 } from "@/models/event/event-types";
@@ -13,10 +13,15 @@ import type {
   LeagueMeetingDataType,
   TrainingDataType,
   OtherDataType,
+  PlayingPairTypePopulated,
+  TournamentDataTypePopulated,
+  LeagueMeetingDataTypePopulated,
+  TrainingDataTypePopulated,
+  EventSchemaTypePopulated,
 } from "@/schemas/model/event/event-types";
 import type {
   IEventPopulated,
-  ILeagueTournamentDataPopulated,
+  ILeagueMeetingDataPopulated,
   IPlayingPairPopulated,
   ITournamentDataPopulated,
   ITrainingDataPopulated,
@@ -45,8 +50,8 @@ function sanitizeTournamentData(data: ITournamentData): TournamentDataType {
   };
 }
 
-function sanitizeLeagueTournamentData(
-  data: ILeagueTournamentData
+function sanitizeLeagueMeetingData(
+  data: ILeagueMeetingData
 ): LeagueMeetingDataType {
   return {
     type: data.type,
@@ -88,7 +93,7 @@ export function sanitizeEvent(event: IEventDTO): EventSchemaType {
       event.data?.type === EventType.TOURNAMENT
         ? sanitizeTournamentData(event.data)
         : event.data?.type === EventType.LEAGUE_MEETING
-        ? sanitizeLeagueTournamentData(event.data)
+        ? sanitizeLeagueMeetingData(event.data)
         : event.data?.type === EventType.TRAINING
         ? sanitizeTrainingData(event.data)
         : sanitizeOtherEventData(event.data),
@@ -98,17 +103,22 @@ export function sanitizeEvent(event: IEventDTO): EventSchemaType {
 
 // Event - populated sanitization
 
-function sanitizePlayingPairPopulated(p: IPlayingPairPopulated) {
+function sanitizePlayingPairPopulated(
+  p: IPlayingPairPopulated
+): PlayingPairTypePopulated {
   return {
     first: sanitizeMinUserInfo(p.first),
     second: sanitizeMinUserInfo(p.second),
   };
 }
 
-function sanitizeTournamentDataPopulated(d: ITournamentDataPopulated) {
+function sanitizeTournamentDataPopulated(
+  d: ITournamentDataPopulated
+): TournamentDataTypePopulated {
   return {
     type: d.type,
     contestantsPairs: d.contestantsPairs.map(sanitizePlayingPairPopulated),
+    arbiter: d.arbiter ? sanitizeMinUserInfo(d.arbiter) : undefined,
     tournamentType: d.tournamentType,
     teams: (d.teams || []).map((t) => ({
       name: t.name,
@@ -117,9 +127,9 @@ function sanitizeTournamentDataPopulated(d: ITournamentDataPopulated) {
   };
 }
 
-function sanitizeLeagueTournamentDataPopulated(
-  data: ILeagueTournamentDataPopulated
-) {
+function sanitizeLeagueMeetingDataPopulated(
+  data: ILeagueMeetingDataPopulated
+): LeagueMeetingDataTypePopulated {
   return {
     type: data.type,
     tournamentType: data.tournamentType,
@@ -133,7 +143,9 @@ function sanitizeLeagueTournamentDataPopulated(
   };
 }
 
-function sanitizeTrainingDataPopulated(data: ITrainingDataPopulated) {
+function sanitizeTrainingDataPopulated(
+  data: ITrainingDataPopulated
+): TrainingDataTypePopulated {
   return {
     type: data.type,
     coach: data.coach ? sanitizeMinUserInfo(data.coach) : undefined,
@@ -141,7 +153,9 @@ function sanitizeTrainingDataPopulated(data: ITrainingDataPopulated) {
   };
 }
 
-export function sanitizeEventPopulated(event: IEventPopulated) {
+export function sanitizeEventPopulated(
+  event: IEventPopulated
+): EventSchemaTypePopulated {
   return {
     id: event._id.toString(),
     title: event.title,
@@ -156,7 +170,7 @@ export function sanitizeEventPopulated(event: IEventPopulated) {
       event.data.type === EventType.TOURNAMENT
         ? sanitizeTournamentDataPopulated(event.data)
         : event.data.type === EventType.LEAGUE_MEETING
-        ? sanitizeLeagueTournamentDataPopulated(event.data)
+        ? sanitizeLeagueMeetingDataPopulated(event.data)
         : event.data.type === EventType.TRAINING
         ? sanitizeTrainingDataPopulated(event.data)
         : sanitizeOtherEventData(event.data),

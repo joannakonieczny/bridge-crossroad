@@ -1,9 +1,12 @@
+"sever-only";
+
+import type { IChatMessageDTO } from "./chat-message/chat-message-types";
 import type { Overwrite } from "@/lib/types-helpers";
 import type { IGroupDTO } from "./group/group-types";
 import type { IUserDTO } from "./user/user-types";
 import type {
   IEventDTO,
-  ILeagueTournamentData,
+  ILeagueMeetingData,
   IOtherEventData,
   ITournamentData,
   ITrainingData,
@@ -31,6 +34,13 @@ export type IPlayingPairPopulated = {
   second: IUserDTO;
 };
 
+export type IChatMessageDTOWithPopulatedSender = Overwrite<
+  IChatMessageDTO,
+  {
+    senderId: IUserDTO;
+  }
+>;
+
 export type ITournamentDataPopulated = Overwrite<
   ITournamentData,
   {
@@ -43,12 +53,12 @@ export type ITournamentDataPopulated = Overwrite<
   }
 >;
 
-export type ILeagueTournamentDataPopulated = Overwrite<
-  ILeagueTournamentData,
+export type ILeagueMeetingDataPopulated = Overwrite<
+  ILeagueMeetingData,
   {
     session: Array<
       Overwrite<
-        ILeagueTournamentData["session"][number],
+        ILeagueMeetingData["session"][number],
         {
           contestants: {
             firstPair: IPlayingPairPopulated;
@@ -76,7 +86,7 @@ export type IEventPopulated = Overwrite<
     data:
       | IOtherEventData
       | ITournamentDataPopulated
-      | ILeagueTournamentDataPopulated
+      | ILeagueMeetingDataPopulated
       | ITrainingDataPopulated;
   }
 >;
