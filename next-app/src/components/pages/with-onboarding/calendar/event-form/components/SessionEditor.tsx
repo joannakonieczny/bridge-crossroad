@@ -16,17 +16,9 @@ import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/
 import SelectInput from "@/components/common/form/SelectInput";
 import { getPersonLabel } from "../util/helpers";
 import FormInput from "@/components/common/form/FormInput";
+import { useGroupQuery } from "@/lib/queries";
 
-type SessionEditorProps = {
-  people: {
-    id: string;
-    nickname?: string;
-    name: { firstName: string; lastName: string };
-  }[];
-  isPeopleLoading: boolean;
-};
-
-export function SessionEditor(props: SessionEditorProps) {
+export function SessionEditor() {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
 
@@ -43,6 +35,11 @@ export function SessionEditor(props: SessionEditorProps) {
       },
       opponentTeamName: "",
     });
+
+  const selectedGroup = form.watch("group");
+  const peopleQ = useGroupQuery(selectedGroup);
+
+  const people = peopleQ.data?.members ?? [];
 
   // TODO: add better validator to handle people here as set
   function RenderSelectInput(p: {
@@ -62,12 +59,12 @@ export function SessionEditor(props: SessionEditorProps) {
             placeholder={p.placeholder}
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
-            options={props.people.map((member) => ({
+            options={people.map((member) => ({
               value: member.id,
               label: getPersonLabel(member),
             }))}
             value={field.value}
-            isLoading={props.isPeopleLoading}
+            isLoading={peopleQ.isLoading}
             onChange={field.onChange}
           />
         )}

@@ -7,19 +7,7 @@ import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import { TournamentType } from "@/club-preset/event-type";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 
-type LeagueMeetingPanelProps = {
-  people: {
-    id: string;
-    nickname?: string;
-    name: { firstName: string; lastName: string };
-  }[];
-  isPeopleLoading: boolean;
-};
-
-export default function LeagueMeetingPanel({
-  people,
-  isPeopleLoading,
-}: LeagueMeetingPanelProps) {
+export default function LeagueMeetingPanel() {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
 
@@ -42,8 +30,7 @@ export default function LeagueMeetingPanel({
           />
         )}
       />
-      {/* TODO handle step validation */}
-      <SessionEditor people={people} isPeopleLoading={isPeopleLoading} />
+      <SessionEditor />
     </>
   );
 }

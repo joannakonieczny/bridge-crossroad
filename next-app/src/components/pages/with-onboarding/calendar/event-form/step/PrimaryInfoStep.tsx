@@ -9,7 +9,11 @@ import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
 import { getPersonLabel } from "../util/helpers";
 import { SteeringButtons } from "../components/SteeringButtons";
-import { useGroupQuery, useJoinedGroupsQuery } from "@/lib/queries";
+import {
+  useGroupQuery,
+  useJoinedGroupsAsAdminQuery,
+  useUserInfoQuery,
+} from "@/lib/queries";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { StepProps } from "../util/helpers";
@@ -20,8 +24,9 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
 
   const selectedGroup = form.watch("group") as GroupIdType | "";
 
-  const groupsQ = useJoinedGroupsQuery();
+  const groupsQ = useJoinedGroupsAsAdminQuery();
   const peopleQ = useGroupQuery(selectedGroup);
+  const ownInfoQ = useUserInfoQuery();
 
   const handleNextStep = async () => {
     const ok = await form.trigger([
@@ -52,7 +57,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
             isInvalid={!!error}
             id={p.name}
             type={p.type}
-            value={field.value as string}
+            value={field.value}
             onChange={field.onChange}
           />
         )}
@@ -66,6 +71,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
     options: { value: string; label: string }[];
     isLoading?: boolean;
     isDisabled?: boolean;
+    defaultValue?: string;
   }) {
     return (
       <Controller
@@ -77,7 +83,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             options={p.options}
-            value={field.value as string}
+            value={field.value || p.defaultValue || ""}
             isLoading={p.isLoading}
             isDisabled={p.isDisabled}
             onChange={field.onChange}
@@ -149,7 +155,8 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
           value: member.id,
           label: getPersonLabel(member),
         }))}
-        isLoading={peopleQ.isLoading}
+        defaultValue={ownInfoQ.data?.id}
+        isLoading={peopleQ.isLoading || ownInfoQ.isLoading}
         isDisabled={!!!selectedGroup}
       />
       <HStack spacing={4}>
@@ -188,7 +195,11 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
           text: "Dalej", //TODO - translation
           onClick: () => handleNextStep(),
           onElementProps: {
-            disabled: groupsQ.isLoading || peopleQ.isLoading || !selectedGroup,
+            disabled:
+              groupsQ.isLoading ||
+              peopleQ.isLoading ||
+              ownInfoQ.isLoading ||
+              !selectedGroup,
           },
         }}
       />

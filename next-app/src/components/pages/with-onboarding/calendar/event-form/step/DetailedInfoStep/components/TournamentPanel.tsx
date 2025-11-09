@@ -5,23 +5,17 @@ import { Controller, useFormContext } from "react-hook-form";
 import { TournamentType } from "@/club-preset/event-type";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import { getPersonLabel } from "@/components/pages/with-onboarding/calendar/event-form/util/helpers";
+import { useGroupQuery } from "@/lib/queries";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 
-type TournamentPanelProps = {
-  people: {
-    id: string;
-    nickname?: string;
-    name: { firstName: string; lastName: string };
-  }[];
-  isPeopleLoading: boolean;
-};
-
-export default function TournamentPanel({
-  people,
-  isPeopleLoading,
-}: TournamentPanelProps) {
+export default function TournamentPanel() {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
+
+  const selectedGroup = form.watch("group");
+  const peopleQ = useGroupQuery(selectedGroup);
+
+  const people = peopleQ.data?.members ?? [];
 
   return (
     <>
@@ -38,7 +32,7 @@ export default function TournamentPanel({
               label: type, // TODO - translation
             }))}
             value={field.value}
-            isLoading={isPeopleLoading}
+            isLoading={peopleQ.isLoading}
             onChange={field.onChange}
           />
         )}
@@ -56,7 +50,7 @@ export default function TournamentPanel({
               label: getPersonLabel(member),
             }))}
             value={field.value}
-            isLoading={isPeopleLoading}
+            isLoading={peopleQ.isLoading}
             onChange={field.onChange}
           />
         )}

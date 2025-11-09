@@ -4,24 +4,18 @@ import SelectInput from "@/components/common/form/SelectInput";
 import FormInput from "@/components/common/form/FormInput";
 import { Controller, useFormContext } from "react-hook-form";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import { useGroupQuery } from "@/lib/queries";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import { getPersonLabel } from "@/components/pages/with-onboarding/calendar/event-form/util/helpers";
 
-type TournamentPanelProps = {
-  people: {
-    id: string;
-    nickname?: string;
-    name: { firstName: string; lastName: string };
-  }[];
-  isPeopleLoading: boolean;
-};
-
-export default function TrainingPanel({
-  people,
-  isPeopleLoading,
-}: TournamentPanelProps) {
+export default function TrainingPanel() {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
+
+  const selectedGroup = form.watch("group");
+  const peopleQ = useGroupQuery(selectedGroup);
+
+  const people = peopleQ.data?.members ?? [];
 
   return (
     <>
@@ -38,7 +32,7 @@ export default function TrainingPanel({
               label: getPersonLabel(member),
             }))}
             value={field.value}
-            isLoading={isPeopleLoading}
+            isLoading={peopleQ.isLoading}
             onChange={field.onChange}
           />
         )}

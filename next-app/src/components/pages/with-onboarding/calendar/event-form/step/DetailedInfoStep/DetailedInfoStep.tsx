@@ -12,15 +12,10 @@ import { SteeringButtons } from "../../components/SteeringButtons";
 import type { FieldPath } from "react-hook-form";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { StepProps } from "../../util/helpers";
-import { useGroupQuery } from "@/lib/queries";
 
 export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
-
-  const selectedGroup = form.watch("group");
-
-  const peopleQ = useGroupQuery(selectedGroup);
 
   const dataType = form.getValues().data.type;
 
@@ -61,22 +56,11 @@ export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
   return (
     <Stack spacing={4}>
       {dataType === EventType.TOURNAMENT ? (
-        <TournamentPanel
-          people={peopleQ.data?.members ?? []}
-          isPeopleLoading={!!!peopleQ.data || peopleQ.isLoading}
-        />
+        <TournamentPanel />
       ) : dataType === EventType.LEAGUE_MEETING ? (
-        <LeagueMeetingPanel
-          people={peopleQ.data?.members ?? []}
-          isPeopleLoading={!!!peopleQ.data || peopleQ.isLoading}
-        />
+        <LeagueMeetingPanel />
       ) : dataType === EventType.TRAINING ? (
-        <>
-          <TrainingPanel
-            people={peopleQ.data?.members ?? []}
-            isPeopleLoading={!!!peopleQ.data || peopleQ.isLoading}
-          />
-        </>
+        <TrainingPanel />
       ) : (
         <></>
       )}
