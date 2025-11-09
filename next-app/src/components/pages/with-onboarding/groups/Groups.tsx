@@ -13,16 +13,12 @@ import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
 import { AddGroupModal } from "./AddGroupModal";
 import { useState } from "react";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
-import {
-  getJoinedGroupsInfo,
-  addUserToGroupByInvitationCode,
-} from "@/services/groups/api";
+import { addUserToGroupByInvitationCode } from "@/services/groups/api";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { useJoinedGroupsQuery } from "@/lib/queries";
 import type { ActionError } from "@/lib/tanstack-action/types";
 import type { InvitationCodeType } from "@/schemas/model/group/group-types";
 
@@ -35,10 +31,7 @@ export default function Groups() {
 
   const queryClient = useQueryClient();
 
-  const groupsQ = useActionQuery({
-    queryKey: QUERY_KEYS.groups,
-    action: getJoinedGroupsInfo,
-  });
+  const groupsQ = useJoinedGroupsQuery();
 
   const joinMutation = useActionMutation({
     action: (data: { invitationCode: InvitationCodeType }) =>
