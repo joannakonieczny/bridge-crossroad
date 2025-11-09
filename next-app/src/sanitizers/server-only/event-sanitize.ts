@@ -121,6 +121,7 @@ function sanitizeTournamentDataPopulated(
   return {
     type: d.type,
     contestantsPairs: d.contestantsPairs.map(sanitizePlayingPairPopulated),
+    arbiter: d.arbiter ? sanitizeMinUserInfo(d.arbiter) : undefined,
     tournamentType: d.tournamentType,
     teams: (d.teams || []).map((t) => ({
       name: t.name,
