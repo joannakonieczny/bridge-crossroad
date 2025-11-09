@@ -1,8 +1,6 @@
 "use client";
 
 import type { GroupIdType } from "@/schemas/model/group/group-types";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { getGroupData } from "@/services/groups/api";
 import {
   Box,
   Flex,
@@ -26,7 +24,7 @@ import {
 import type { IconType } from "react-icons";
 import { useRouter } from "next/navigation";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { useGroupQuery } from "@/lib/queries";
 import { ROUTES } from "@/routes";
 
 type ISidebarProps = {
@@ -37,10 +35,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
   const router = useRouter();
   const t = useTranslationsWithFallback("pages.GroupsPage.Sidebar");
 
-  const groupQ = useActionQuery({
-    queryKey: QUERY_KEYS.group(groupId),
-    action: () => getGroupData({ groupId: groupId }),
-  });
+  const groupQ = useGroupQuery(groupId);
 
   const group = groupQ.data;
   const isLoading = groupQ.isLoading;
