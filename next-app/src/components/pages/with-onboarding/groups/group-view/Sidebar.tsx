@@ -24,11 +24,10 @@ import {
   FiGrid,
 } from "react-icons/fi";
 import type { IconType } from "react-icons";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { ROUTES } from "@/routes";
-import path from "path";
 
 type ISidebarProps = {
   groupId: GroupIdType;

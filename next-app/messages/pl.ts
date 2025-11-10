@@ -3,11 +3,7 @@ import { Academy } from "@/club-preset/academy";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
-<<<<<<< HEAD
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
-=======
->>>>>>> 4dcbecdacc80037448b5efb2dc228045f2cfeca8
-import { send } from "process";
 
 const MONTHS = {
   jan: "Styczeń",

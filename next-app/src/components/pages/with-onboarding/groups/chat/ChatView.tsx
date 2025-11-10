@@ -3,21 +3,15 @@
 import {
   Box,
   Flex,
-  Text,
   useBreakpointValue,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Button,
   Stack,
-  IconButton,
-  ButtonGroup,
+  Divider,
 } from "@chakra-ui/react";
-import { GrFormAttachment } from "react-icons/gr";
-import { BsFillCursorFill } from "react-icons/bs";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
-import { useTranslations } from "@/lib/typed-translations";
 import MessageBox from "./MessageBox";
+import { TextInput } from "./TextInput";
+import { HeaderTile } from "@/components/common/HeaderTile";
+import { BsChatLeftDots } from "react-icons/bs";
 import { mockMessages } from "./mock";
 
 type IChatViewProps = {
@@ -25,8 +19,6 @@ type IChatViewProps = {
 };
 
 export default function ChatView(props: IChatViewProps) {
-  const t = useTranslations("pages.ChatPage");
-
   const gap = useBreakpointValue({ base: "1.25rem", md: "3rem" });
   const py = useBreakpointValue({ base: "1rem", md: "2rem" });
   const px = useBreakpointValue({ base: "1rem", md: "3rem" });
@@ -34,32 +26,52 @@ export default function ChatView(props: IChatViewProps) {
     base: "calc(100vh - 7rem)",
     md: "calc(100vh - 5rem)",
   });
-  const btnSize = useBreakpointValue({ base: "sm", md: "md" });
-  const btnDirection = useBreakpointValue({ base: "column", md: "row" }) as
-    | "column"
-    | "row";
-  const btnWidth = useBreakpointValue({ base: "100%", md: "auto" });
 
   return (
     <Flex
       backgroundColor="border.50"
       width="100%"
-      minHeight={minH}
+      h={minH}
       paddingY={py}
       paddingX={px}
       gap={gap}
-      overflowY="auto"
+      overflow="hidden"
+      direction="column"
+      alignContent="center"
     >
       <Box
         flex="1"
-        backgroundColor="white"
         gap={gap}
-        paddingX={px}
-        paddingY={py}
-        borderRadius="8px"
+        w="full"
+        maxW={{ base: "full", md: "70rem" }}
+        alignSelf="center"
+        display="flex"
+        flexDirection="column"
+        height="100%"
       >
-        <Flex>
-          <Stack spacing={4} width="100%">
+        <Box flexShrink={0}>
+          <HeaderTile
+            title={`Grupa ${props.groupId}`}
+            subtitle="chat"
+            icon={BsChatLeftDots}
+            mainColor="accent.400"
+            accentColor="accent.200"
+          />
+        </Box>
+        <Box
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          overflow="hidden"
+          bg="bg"
+        >
+          <Stack
+            spacing={{ base: 3, md: 4 }}
+            width="100%"
+            overflowY="auto"
+            flex="1"
+            pt="0.5rem"
+          >
             {mockMessages.map((msg, index) => (
               <MessageBox
                 key={index}
@@ -67,29 +79,15 @@ export default function ChatView(props: IChatViewProps) {
                 content={msg.content}
                 sender={msg.from}
                 isAdmin={msg.isAdmin}
+                isSelf={msg.isSelf}
               />
             ))}
           </Stack>
-        </Flex>
-        <InputGroup alignSelf="center">
-          <Input
-            focusBorderColor="accent.500"
-            placeholder={t("sendMessagePlaceholder")}
-          />
-          <InputRightElement>
-            <ButtonGroup isAttached variant="outline">
-              <IconButton
-                aria-label="Attach File"
-                icon={<GrFormAttachment />}
-              />
-              <IconButton
-                aria-label="Send Message"
-                backgroundColor="accent.500"
-                icon={<BsFillCursorFill color="white" />}
-              />
-            </ButtonGroup>
-          </InputRightElement>
-        </InputGroup>
+          <Divider flexShrink={0} />
+          <Box width="100%" pt="0.5rem" flexShrink={0}>
+            <TextInput />
+          </Box>
+        </Box>
       </Box>
     </Flex>
   );

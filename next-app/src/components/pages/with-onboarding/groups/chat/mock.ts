@@ -21,6 +21,7 @@ export const mockMessages = [
     },
     content: "Hello!",
     isAdmin: false,
+    isSelf: false,
   },
   {
     timestamp: new Date(2024, 2, 10, 2, 31),
@@ -29,8 +30,9 @@ export const mockMessages = [
       nickname: "Bob",
       name: { firstName: "Bob", lastName: "Smith" },
     },
-    content: "Hi there!",
+    content: "Hi there! This is a sample message.",
     isAdmin: false,
+    isSelf: true,
   },
   {
     timestamp: new Date(2024, 2, 10, 2, 32),
@@ -39,7 +41,75 @@ export const mockMessages = [
       nickname: "Charlie",
       name: { firstName: "Charlie", lastName: "Brown" },
     },
-    content: "How are you doing?",
+    content:
+      "How are you doing? This is a longer message to test text wrapping in the chat box.",
     isAdmin: true,
+    isSelf: false,
+  },
+  {
+    timestamp: new Date(2024, 2, 10, 2, 30),
+    from: {
+      id: "user1",
+      name: { firstName: "Alice", lastName: "Johnson" },
+    },
+    content: "Hello!",
+    isAdmin: false,
+    isSelf: false,
+  },
+  {
+    timestamp: new Date(2024, 2, 10, 2, 31),
+    from: {
+      id: "user2",
+      nickname: "Bob",
+      name: { firstName: "Bob", lastName: "Smith" },
+    },
+    content: "Hi there! This is a sample message.",
+    isAdmin: false,
+    isSelf: true,
+  },
+  {
+    timestamp: new Date(2024, 2, 10, 2, 32),
+    from: {
+      id: "user3",
+      nickname: "Charlie",
+      name: { firstName: "Charlie", lastName: "Brown" },
+    },
+    content:
+      "How are you doing? This is a longer message to test text wrapping in the chat box.",
+    isAdmin: true,
+    isSelf: false,
+  },
+  {
+    timestamp: new Date(2024, 2, 10, 2, 30),
+    from: {
+      id: "user1",
+      name: { firstName: "Alice", lastName: "Johnson" },
+    },
+    content: "Hello!",
+    isAdmin: false,
+    isSelf: false,
+  },
+  {
+    timestamp: new Date(2024, 2, 10, 2, 31),
+    from: {
+      id: "user2",
+      nickname: "Bob",
+      name: { firstName: "Bob", lastName: "Smith" },
+    },
+    content: "Hi there! This is a sample message.",
+    isAdmin: false,
+    isSelf: true,
+  },
+  {
+    timestamp: new Date(2024, 2, 10, 2, 32),
+    from: {
+      id: "user3",
+      nickname: "Charlie",
+      name: { firstName: "Charlie", lastName: "Brown" },
+    },
+    content:
+      "How are you doing? This is a longer message to test text wrapping in the chat box.",
+    isAdmin: true,
+    isSelf: false,
   },
 ];
