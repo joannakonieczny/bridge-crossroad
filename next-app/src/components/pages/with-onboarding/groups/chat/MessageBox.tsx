@@ -12,11 +12,12 @@ type IMessageBoxProps = {
 };
 
 export default function MessageBox(props: IMessageBoxProps) {
-  const colorScheme = props.isSelf
-    ? "accent.300"
+  const messageBoxColor = props.isSelf
+    ? "accent.500"
     : props.isAdmin
-    ? "secondary.300"
-    : "border.300";
+    ? "secondary.200"
+    : "border.100";
+  const messageFontColor = props.isSelf ? "bg" : "fonts.default";
 
   return (
     <Box
@@ -51,12 +52,16 @@ export default function MessageBox(props: IMessageBoxProps) {
         >
           <Flex flexDirection="column" gap="0">
             <Box
-              backgroundColor={colorScheme}
+              backgroundColor={messageBoxColor}
               padding="0.5rem 1rem"
               borderRadius="0.5rem"
               minW={{ base: "6ch", md: "10ch" }}
             >
-              <Text wordBreak="normal" whiteSpace="normal">
+              <Text
+                wordBreak="normal"
+                whiteSpace="normal"
+                color={messageFontColor}
+              >
                 {props.content}
               </Text>
             </Box>

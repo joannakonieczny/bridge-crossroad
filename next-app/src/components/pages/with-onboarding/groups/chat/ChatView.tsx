@@ -54,8 +54,8 @@ export default function ChatView(props: IChatViewProps) {
             title={`Grupa ${props.groupId}`}
             subtitle="chat"
             icon={BsChatLeftDots}
-            mainColor="accent.400"
-            accentColor="accent.200"
+            mainColor="accent.300"
+            accentColor="accent.100"
           />
         </Box>
         <Box
