@@ -5,11 +5,6 @@ import { UserValidationConstants as USER } from "@/schemas/model/user/user-const
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
-import EventForm from "@/components/pages/with-onboarding/calendar/event-form/EventForm";
-import TournamentPanel from "@/components/pages/with-onboarding/calendar/event-form/step/DetailedInfoStep/components/TournamentPanel";
-import { title } from "process";
-import { group } from "console";
-import next from "next";
 
 const MONTHS = {
   jan: "Styczeń",
