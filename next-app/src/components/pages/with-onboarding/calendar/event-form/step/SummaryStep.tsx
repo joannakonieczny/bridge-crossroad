@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Stack, Text, Box } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 import { SteeringButtons } from "../components/SteeringButtons";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { StepProps } from "../util/helpers";
