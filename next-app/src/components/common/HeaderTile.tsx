@@ -39,6 +39,27 @@ export function HeaderTile({
       bg="bg"
     >
       <Flex
+        display={{ base: "flex", md: "none" }}
+        align="center"
+        justify="space-between"
+        px={{ base: 3, md: 4 }}
+        py={{ base: 2, md: 3 }}
+      >
+        <ResponsiveHeading fontSize="lg" text={title} showBar={true} />
+        <Menu placement="top-end">
+          <MenuButton
+            as={IconButton}
+            aria-label="Opcje"
+            icon={<FiMoreVertical />}
+            variant="ghost"
+            size="sm"
+          />
+          <MenuList></MenuList>
+        </Menu>
+      </Flex>
+
+      <Flex
+        display={{ base: "none", md: "flex" }}
         direction={{ base: "column", md: "row" }}
         h="100%"
         w="100%"

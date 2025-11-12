@@ -8,11 +8,16 @@ export function TextInput() {
   const t = useTranslations("pages.ChatPage");
   return (
     <Stack width="100%" direction="row" spacing="0" padding="0.5rem">
-      <Input ringColor="border.200" placeholder={t("sendMessagePlaceholder")} />
+      <Input
+        ringColor="border.200"
+        placeholder={t("sendMessagePlaceholder")}
+        borderRightRadius={0}
+      />
       <ButtonGroup isAttached variant="outline">
         <IconButton
           aria-label="Insert Card"
           backgroundColor="border.200"
+          borderLeftRadius={0}
           icon={<TbCards />}
         />
         <IconButton

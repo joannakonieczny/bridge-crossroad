@@ -24,7 +24,7 @@ import {
   FiGrid,
 } from "react-icons/fi";
 import type { IconType } from "react-icons";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useTranslationsWithFallback } from "@/lib/typed-translations";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { ROUTES } from "@/routes";
@@ -35,6 +35,7 @@ type ISidebarProps = {
 
 export default function Sidebar({ groupId }: ISidebarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const t = useTranslationsWithFallback("pages.GroupsPage.Sidebar");
 
   const groupQ = useActionQuery({
@@ -50,6 +51,13 @@ export default function Sidebar({ groupId }: ISidebarProps) {
   const navItems: IconType[] = [FiUser, FiMessageCircle, FiFolder, FiGrid];
 
   const avatarSize = useBreakpointValue({ base: "md", md: "lg" });
+  const basePath = `/groups/${groupId}`;
+  const pagePaths = [
+    basePath,
+    `${basePath}/chat`,
+    `${basePath}/materials`,
+    `${basePath}/hands`,
+  ];
 
   return (
     <Box
@@ -90,6 +98,10 @@ export default function Sidebar({ groupId }: ISidebarProps) {
 
           <HStack mt={2} spacing={2} justify="center">
             {navItems.map((Icon, idx) => {
+              const path = pagePaths[idx];
+              const isActive =
+                !!pathname &&
+                (pathname === path || (idx !== 0 && pathname.startsWith(path)));
               return (
                 <IconButton
                   key={idx}
@@ -97,9 +109,8 @@ export default function Sidebar({ groupId }: ISidebarProps) {
                   icon={<Icon size={20} />}
                   size="lg"
                   variant="ghost"
-                  onClick={() => {
-                    /* na mobile nie ma na razie podstron, więc nie robi nic */
-                  }}
+                  color={isActive ? "accent.500" : undefined}
+                  onClick={() => router.push(path)}
                 />
               );
             })}
@@ -152,20 +163,30 @@ export default function Sidebar({ groupId }: ISidebarProps) {
         <Divider my={4} />
 
         <VStack align="stretch" spacing={1} w="100%">
-          {navItems.map((Icon, idx) => (
-            <Link key={idx} _hover={{ textDecoration: "none" }}>
-              <Flex
-                align="center"
-                gap={3}
-                p={2}
-                borderRadius="md"
-                _hover={{ bg: "border.100", color: "accent.500" }}
+          {navItems.map((Icon, idx) => {
+            const path = pagePaths[idx];
+            const isActive =
+              !!pathname &&
+              (pathname === path || (idx !== 0 && pathname.startsWith(path)));
+            return (
+              <Link
+                key={idx}
+                _hover={{ textDecoration: "none" }}
+                onClick={() => router.push(path)}
               >
-                <Icon size={18} />
-                <Text>{t(`nav.${idx}`)}</Text>
-              </Flex>
-            </Link>
-          ))}
+                <Flex
+                  align="center"
+                  gap={3}
+                  p={2}
+                  borderRadius="md"
+                  color={isActive ? "accent.500" : undefined} // keep color highlighting only
+                >
+                  <Icon size={18} />
+                  <Text>{t(`nav.${idx}`)}</Text>
+                </Flex>
+              </Link>
+            );
+          })}
         </VStack>
       </VStack>
     </Box>
