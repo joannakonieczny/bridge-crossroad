@@ -11,7 +11,10 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { MdAdd, MdDelete } from "react-icons/md";
-import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import {
+  useTranslationsWithFallback,
+  useTranslations,
+} from "@/lib/typed-translations";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import SelectInput from "@/components/common/form/SelectInput";
 import { getPersonLabel } from "../util/helpers";
@@ -20,6 +23,8 @@ import { useGroupQuery } from "@/lib/queries";
 
 export function SessionEditor() {
   const form = useFormContext<AddEventSchemaType>();
+
+  const t = useTranslations("pages.EventFormPage.sessionEditor");
   const tValidation = useTranslationsWithFallback();
 
   const { fields, append, remove } = useFieldArray({
@@ -150,7 +155,9 @@ export function SessionEditor() {
           >
             <VStack spacing={3} align="stretch">
               <HStack spacing={3}>
-                <Text fontWeight="semibold">Numer meczu: {idx + 1}</Text>
+                <Text fontWeight="semibold">
+                  {`${t("matchNumberPlaceholder")} ${idx + 1}`}
+                </Text>
                 <IconButton
                   aria-label="Delete session"
                   colorScheme="red"
@@ -165,11 +172,11 @@ export function SessionEditor() {
                 </Text>
               )}
 
-              <Text fontSize="sm">Pierwsza para</Text>
+              <Text fontSize="sm">{t("firstPairLabel")}</Text>
               <HStack spacing={2}>
                 <RenderSelectInput
                   name={`data.session.${idx}.contestants.firstPair.first`}
-                  placeholder="Zawodnik A"
+                  placeholder={t("firstPlayerPlaceholder")}
                   isInvalid={isDuplicate(
                     sessionData?.contestants?.firstPair?.first
                   )}
@@ -177,18 +184,18 @@ export function SessionEditor() {
                 />
                 <RenderSelectInput
                   name={`data.session.${idx}.contestants.firstPair.second`}
-                  placeholder="Zawodnik B"
+                  placeholder={t("secondPlayerPlaceholder")}
                   isInvalid={isDuplicate(
                     sessionData?.contestants?.firstPair?.second
                   )}
                   sessionIndex={idx}
                 />
               </HStack>
-              <Text fontSize="sm">Druga para</Text>
+              <Text fontSize="sm">{t("secondPairLabel")}</Text>
               <HStack spacing={2}>
                 <RenderSelectInput
                   name={`data.session.${idx}.contestants.secondPair.first`}
-                  placeholder="Zawodnik C"
+                  placeholder={t("firstPlayerPlaceholder")}
                   isInvalid={isDuplicate(
                     sessionData?.contestants?.secondPair?.first
                   )}
@@ -196,7 +203,7 @@ export function SessionEditor() {
                 />
                 <RenderSelectInput
                   name={`data.session.${idx}.contestants.secondPair.second`}
-                  placeholder="Zawodnik D"
+                  placeholder={t("secondPlayerPlaceholder")}
                   isInvalid={isDuplicate(
                     sessionData?.contestants?.secondPair?.second
                   )}
@@ -208,7 +215,7 @@ export function SessionEditor() {
                 name={`data.session.${idx}.opponentTeamName`}
                 render={({ field, fieldState: { error } }) => (
                   <FormInput
-                    placeholder={"Nazwa zespołu przeciwnika (opcjonalne)"}
+                    placeholder={t("opponentTeamNamePlaceholder")}
                     errorMessage={tValidation(error?.message)}
                     isInvalid={!!error}
                     id={field.name}
@@ -225,7 +232,7 @@ export function SessionEditor() {
 
       <HStack>
         <Button leftIcon={<MdAdd />} onClick={appendDefault} size="sm">
-          Dodaj sesję
+          {t("addSessionButton")}
         </Button>
       </HStack>
     </VStack>

@@ -3,13 +3,18 @@
 import SelectInput from "@/components/common/form/SelectInput";
 import FormInput from "@/components/common/form/FormInput";
 import { Controller, useFormContext } from "react-hook-form";
-import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import {
+  useTranslationsWithFallback,
+  useTranslations,
+} from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import { getPersonLabel } from "@/components/pages/with-onboarding/calendar/event-form/util/helpers";
 
 export default function TrainingPanel() {
   const form = useFormContext<AddEventSchemaType>();
+
+  const t = useTranslations("pages.EventFormPage.trainingPanel");
   const tValidation = useTranslationsWithFallback();
 
   const selectedGroup = form.watch("group");
@@ -24,7 +29,7 @@ export default function TrainingPanel() {
         name="data.coach"
         render={({ field, fieldState: { error } }) => (
           <SelectInput
-            placeholder={"Trener"}
+            placeholder={t("coachPlaceholder")}
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             options={people.map((member) => ({
@@ -42,7 +47,7 @@ export default function TrainingPanel() {
         name="data.topic"
         render={({ field, fieldState: { error } }) => (
           <FormInput
-            placeholder="Temat treningu"
+            placeholder={t("topicPlaceholder")}
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             type="text"

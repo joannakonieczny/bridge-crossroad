@@ -1,9 +1,15 @@
 import { TrainingGroup } from "@/club-preset/training-group";
 import { Academy } from "@/club-preset/academy";
+import { EventType, TournamentType } from "@/club-preset/event-type";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
+import EventForm from "@/components/pages/with-onboarding/calendar/event-form/EventForm";
+import TournamentPanel from "@/components/pages/with-onboarding/calendar/event-form/step/DetailedInfoStep/components/TournamentPanel";
+import { title } from "process";
+import { group } from "console";
+import next from "next";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -520,6 +526,40 @@ const onboardingPageValidation = {
   },
 };
 
+const eventForm = {
+  primaryInfo: {
+    titlePlaceholder: "Tytuł wydarzenia",
+    descriptionPlaceholder: "Opis wydarzenia",
+    groupPlaceholder: "Wybierz grupę",
+    organizerPlaceholder: "Wybierz organizatora",
+    eventStartPlaceholder: "Początek wydarzenia",
+    eventEndPlaceholder: "Koniec wydarzenia",
+    eventTypePlaceholder: "Typ wydarzenia",
+    nextButton: "Dalej",
+  },
+  trainingPanel: {
+    coachPlaceholder: "Wybierz trenera",
+    topicPlaceholder: "Temat treningu",
+  },
+  tournamentPanel: {
+    tournamentTypePlaceholder: "Wybierz typ turnieju",
+    arbiterPlaceholder: "Wybierz sędziego",
+  },
+  sessionEditor: {
+    addSessionButton: "Dodaj sesję",
+    firstPairLabel: "Pierwsza para",
+    secondPairLabel: "Druga para",
+    firstPlayerPlaceholder: "Wybierz pierwszego zawodnika",
+    secondPlayerPlaceholder: "Wybierz drugiego zawodnika",
+    opponentTeamNamePlaceholder: "Nazwa zespołu przeciwnika (opcjonalne)",
+    matchNumberPlaceholder: "Numer meczu: ",
+  },
+  summaryStep: {
+    title: "Tytuł wydarzenia:",
+    description: "Opis wydarzenia:",
+  },
+};
+
 const usefulTools = {
   title: "Przydatne narzędzia",
   buttonText: "Zobacz więcej",
@@ -571,6 +611,20 @@ const messages = {
       [TrainingGroup.ADVANCED]: "Zaawansowana",
       [TrainingGroup.COACH]: "Jestem trenerem!",
       [TrainingGroup.NONE]: "Nie chodzę na zajęcia z brydża na AGH",
+    },
+    eventType: {
+      [EventType.LEAGUE_MEETING]: "Zjazd ligowy",
+      [EventType.TOURNAMENT]: "Turniej",
+      [EventType.TRAINING]: "Trening",
+      [EventType.OTHER]: "Inne",
+    },
+    tournamentType: {
+      [TournamentType.MAX]: "MAX",
+      [TournamentType.IMPS]: "IMPS",
+      [TournamentType.CRAZY]: "Crazy",
+      [TournamentType.TEAM]: "Drużynowy",
+      [TournamentType.INDIVIDUAL]: "Indywidualny",
+      [TournamentType.BAMY]: "BAMY",
     },
     error: {
       messageKeyNotExisting: "Wystąpił błąd",
@@ -634,6 +688,7 @@ const messages = {
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,
     CalendarPage: calendarPage,
+    EventFormPage: eventForm,
   },
   components: {
     Navbar: navbar,

@@ -4,7 +4,10 @@ import { Controller, useFormContext } from "react-hook-form";
 import { VStack, Stack, HStack, Text } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
-import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import {
+  useTranslationsWithFallback,
+  useTranslations,
+} from "@/lib/typed-translations";
 import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
 import { getPersonLabel } from "../util/helpers";
@@ -21,6 +24,9 @@ import { useEffect } from "react";
 
 export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
+
+  const t = useTranslations("pages.EventFormPage.primaryInfo");
+  const tEvents = useTranslations("common.eventType");
   const tValidation = useTranslationsWithFallback();
 
   const selectedGroup = form.watch("group") as GroupIdType | "";
@@ -138,17 +144,17 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
     <Stack spacing={4}>
       <RenderFormInput
         name="title"
-        placeholder="Tytuł wydarzenia"
+        placeholder={t("titlePlaceholder")}
         type="text"
       />
       <RenderFormInput
         name="description"
-        placeholder="Opis wydarzenia"
+        placeholder={t("descriptionPlaceholder")}
         type="text"
       />
       <RenderSelectInput
         name="group"
-        placeholder="Grupa"
+        placeholder={t("groupPlaceholder")}
         options={(groupsQ.data ?? []).map((group) => ({
           value: group.id,
           label: group.name,
@@ -157,7 +163,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
       />
       <RenderSelectInput
         name="organizer"
-        placeholder="Organizator"
+        placeholder={t("organizerPlaceholder")}
         options={(peopleQ.data?.members ?? []).map((member) => ({
           value: member.id,
           label: getPersonLabel(member),
@@ -170,37 +176,37 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
       <HStack spacing={4}>
         <VStack flex={1}>
           <Text color="gray.500" alignSelf="start">
-            Początek wydarzenia
+            {t("eventStartPlaceholder")}
           </Text>
           <RenderDateTimeInput
             name="duration.startsAt"
-            placeholder="Start wydarzenia"
+            placeholder={t("eventStartPlaceholder")}
           />
         </VStack>
         <VStack flex={1}>
           <Text color="gray.500" alignSelf="start">
-            Koniec wydarzenia
+            {t("eventEndPlaceholder")}
           </Text>
           <RenderDateTimeInput
             name="duration.endsAt"
-            placeholder="Koniec wydarzenia"
+            placeholder={t("eventEndPlaceholder")}
           />
         </VStack>
       </HStack>
       <Text color="gray.500" alignSelf="start">
-        Typ Wydarzenia
+        {t("eventTypePlaceholder")}
       </Text>
       <RenderSelectInput
         name="data.type"
-        placeholder="Typ wydarzenia"
+        placeholder={t("eventTypePlaceholder")}
         options={Object.values(EventType).map((type) => ({
           value: type,
-          label: type, //TODO add translations
+          label: `${tEvents(type)}`, //TODO add translations
         }))}
       />
       <SteeringButtons
         nextButton={{
-          text: "Dalej", //TODO - translation
+          text: t("nextButton"), //TODO - translation
           onClick: () => handleNextStep(),
           onElementProps: {
             disabled:
