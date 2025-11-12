@@ -687,7 +687,6 @@ const messages = {
         tournamentHeading: "Dane turnieju",
         leagueHeading: "Dane zjazdu ligowego",
         trainingHeading: "Dane treningu",
-        otherHeading: "Dane (inne)",
         labels: {
           type: "Typ:",
           arbiter: "Sędzia:",

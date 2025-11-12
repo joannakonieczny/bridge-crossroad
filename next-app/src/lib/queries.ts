@@ -93,3 +93,11 @@ export function useEventQuery(
     ...props,
   });
 }
+
+export function useEventPageQuery(eventId?: string) {
+  return useActionQuery({
+    queryKey: ["event", eventId ?? "none"],
+    action: () => getEvent({ eventId: eventId as EventIdType }),
+    enabled: !!eventId,
+  });
+}

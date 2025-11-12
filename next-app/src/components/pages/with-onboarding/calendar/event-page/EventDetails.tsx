@@ -4,8 +4,8 @@ import { useTranslations } from "@/lib/typed-translations";
 import { EventType } from "@/club-preset/event-type";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import type { PersonWithName } from "@/schemas/model/event/event-types";
 import { displayName } from "@/util/user";
+import { UserTypeBasic } from "@/schemas/model/user/user-types";
 
 export default function EventDetails({
   description,
@@ -17,8 +17,8 @@ export default function EventDetails({
 }: {
   description?: string;
   additionalDescription?: string;
-  organizer?: PersonWithName;
-  attendees?: PersonWithName[];
+  organizer?: UserTypeBasic;
+  attendees?: UserTypeBasic[];
   eventType?: EventType;
   loading?: boolean;
 }) {

@@ -2,17 +2,11 @@ import React from "react";
 import { Box, OrderedList, ListItem, SimpleGrid, Spinner, Center, Stack } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from "@chakra-ui/react";
 import { EventType, TournamentType, Half } from "@/club-preset/event-type";
-import type {
-  PersonWithName,
-  TournamentUI,
-  LeagueUI,
-  TrainingUI,
-  OtherUI,
-  EventDataUI,
-} from "@/schemas/model/event/event-types";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { useTranslations } from "@/lib/typed-translations";
+import { EventDataTypePopulated, LeagueMeetingDataTypePopulated, OtherDataType, TournamentDataTypePopulated, TrainingDataTypePopulated } from "@/schemas/model/event/event-types";
+import { UserTypeBasic } from "@/schemas/model/user/user-types";
 
 export default function EventSpecificData({
   eventType,
@@ -20,7 +14,7 @@ export default function EventSpecificData({
   loading,
 }: {
   eventType?: EventType;
-  eventData?: EventDataUI;
+  eventData?: EventDataTypePopulated;
   loading?: boolean;
 }) {
   const t = useTranslations("components.EventPage.EventSpecificData");
@@ -33,20 +27,12 @@ export default function EventSpecificData({
   }
   if (!eventType || !eventData) return null;
 
-  const tournamentLabelMap: Record<string, string> = {
-    [TournamentType.MAX]: t("tournamentTypes.MAX"),
-    [TournamentType.IMPS]: t("tournamentTypes.IMPS"),
-    [TournamentType.CRAZY]: t("tournamentTypes.CRAZY"),
-    [TournamentType.TEAM]: t("tournamentTypes.TEAM"),
-    [TournamentType.INDIVIDUAL]: t("tournamentTypes.INDIVIDUAL"),
-    [TournamentType.BAMY]: t("tournamentTypes.BAMY"),
-  };
-  function getTournamentTypeLabel(tkey?: string | null) {
-    if (!tkey) return "";
-    return tournamentLabelMap[tkey] ?? String(tkey);
-  }
-  
-  type PairMember = PersonWithName | undefined;
+  const tournamentTypeOptions = Object.values(TournamentType).map((value) => ({
+    value,
+    label: t(`tournamentTypes.${value}`),
+  }));
+
+  type PairMember = UserTypeBasic | undefined;
   const PairInline = ({ first, second }: { first?: PairMember; second?: PairMember }) => {
     const f = first;
     const s = second;
@@ -65,18 +51,19 @@ export default function EventSpecificData({
 
   switch (eventType) {
     case EventType.TOURNAMENT: {
-      const d = eventData as TournamentUI;
+      const d = eventData as TournamentDataTypePopulated;
+      const tournamentTypeLabel = tournamentTypeOptions.find(o => o.value === d.tournamentType)?.label ?? String(d.tournamentType);
       return (
         <Box bgColor="bg" p={4}>
           <ResponsiveHeading text={t("tournamentHeading")} fontSize="sm" barOrientation="horizontal" />
 
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={2}>
             <Box>
-              <ResponsiveText><b>{t("labels.type")}</b> {getTournamentTypeLabel(d.tournamentType)}</ResponsiveText>
+              <ResponsiveText><b>{t("labels.type")}</b> {tournamentTypeLabel}</ResponsiveText>
             </Box>
             <Box>
               {(() => {
-                const arb = d.arbiter as PersonWithName | string | undefined;
+                const arb = d.arbiter as UserTypeBasic | string | undefined;
                 const arbLabel =
                   typeof arb === "string"
                     ? arb
@@ -106,11 +93,12 @@ export default function EventSpecificData({
     }
 
     case EventType.LEAGUE_MEETING: {
-      const d = eventData as LeagueUI;
+      const d = eventData as LeagueMeetingDataTypePopulated;
+      const tournamentTypeLabel = tournamentTypeOptions.find(o => o.value === d.tournamentType)?.label ?? String(d.tournamentType);
       return (
         <Box bgColor="bg" p={4}>
           <ResponsiveHeading text={t("leagueHeading")} fontSize="sm" barOrientation="horizontal" />
-          <ResponsiveText mb={3}><b>{t("labels.type")}</b> {getTournamentTypeLabel(d.tournamentType)}</ResponsiveText>
+          <ResponsiveText mb={3}><b>{t("labels.type")}</b> {tournamentTypeLabel}</ResponsiveText>
 
           <TableContainer mt={3} display={{ base: "none", md: "none", lg: "block" }}>
             <Table variant="simple" size="sm">
@@ -213,12 +201,12 @@ export default function EventSpecificData({
     }
 
     case EventType.TRAINING: {
-      const d = eventData as TrainingUI;
+      const d = eventData as TrainingDataTypePopulated;
       return (
         <Box bgColor="bg" p={4}>
           <ResponsiveHeading text={t("trainingHeading")} fontSize="sm" barOrientation="horizontal" />
           {(() => {
-            const coach = d.coach as PersonWithName | string | undefined;
+            const coach = d.coach as UserTypeBasic | string | undefined;
             const coachLabel =
               typeof coach === "string"
                 ? coach
@@ -235,13 +223,7 @@ export default function EventSpecificData({
     }
 
     default: {
-      const d = eventData as OtherUI;
-      return (
-        <Box bgColor="bg" p={4}>
-          <ResponsiveHeading text={t("otherHeading")} fontSize="sm" barOrientation="horizontal" />
-          <ResponsiveText>{d.note ?? t("noAdditionalData")}</ResponsiveText>
-        </Box>
-      );
+      return null;
     }
   }
 }

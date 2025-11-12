@@ -9,10 +9,7 @@ import EventDetails from "@/components/pages/with-onboarding/calendar/event-page
 import EventSpecificData from "@/components/pages/with-onboarding/calendar/event-page/EventSpecificData";
 import EventEnrollment from "@/components/pages/with-onboarding/calendar/event-page/EventEnrollment";
 import BackLink from "@/components/common/BackLink";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { getEvent } from "@/services/events/api";
-import { QUERY_KEYS } from "@/lib/query-keys";
-import type { EventIdType } from "@/schemas/model/event/event-types";
+import { useEventPageQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
 
 export default function EventPage() {
@@ -20,11 +17,7 @@ export default function EventPage() {
   const params = useParams() as { id?: string } | undefined;
   const eventId = params?.id;
 
-  const eventQ = useActionQuery({
-    queryKey: [QUERY_KEYS.event, eventId ?? "none"],
-    action: () => getEvent({ eventId: eventId as EventIdType }),
-    enabled: !!eventId,
-  });
+  const eventQ = useEventPageQuery(eventId);
 
   const toast = useToast();
   const router = useRouter();
