@@ -557,8 +557,27 @@ const eventForm = {
   summaryStep: {
     title: "Tytuł wydarzenia:",
     description: "Opis wydarzenia:",
-    submitButton: "Dodaj wydarzenie",
-    revButton: "Cofnij",
+    group: "Grupa:",
+    organizer: "Organizator:",
+    eventStart: "Początek wydarzenia:",
+    eventEnd: "Koniec wydarzenia:",
+    eventType: "Typ wydarzenia:",
+    tournament: {
+      type: "Typ turnieju:",
+      arbiter: "Sędzia:",
+    },
+    leagueMeeting: {
+      totalRounds: "Ilość sesji:",
+    },
+    training: {
+      coach: "Trener:",
+      topic: "Temat treningu:",
+    },
+    additionalDescription: "Dodatkowy opis:",
+    buttons: {
+      submitButton: "Dodaj wydarzenie",
+      revButton: "Cofnij",
+    },
   },
 };
 
