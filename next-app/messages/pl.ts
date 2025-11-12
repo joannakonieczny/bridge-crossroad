@@ -557,6 +557,8 @@ const eventForm = {
   summaryStep: {
     title: "Tytuł wydarzenia:",
     description: "Opis wydarzenia:",
+    submitButton: "Dodaj wydarzenie",
+    revButton: "Cofnij",
   },
 };
 
