@@ -522,7 +522,17 @@ const onboardingPageValidation = {
 };
 
 const eventForm = {
-  primaryInfo: {
+  buttons: {
+    prev: "Cofnij",
+    next: "Dalej",
+    submit: "Dodaj wydarzenie",
+  },
+  toast: {
+    loading: "Trwa dodawanie wydarzenia...",
+    success: "Wydarzenie zostało dodane!",
+    errorDefault: "Wystąpił błąd podczas dodawania wydarzenia",
+  },
+  primaryInfoStep: {
     titlePlaceholder: "Tytuł wydarzenia",
     descriptionPlaceholder: "Opis wydarzenia",
     groupPlaceholder: "Wybierz grupę",
@@ -530,24 +540,25 @@ const eventForm = {
     eventStartPlaceholder: "Początek wydarzenia",
     eventEndPlaceholder: "Koniec wydarzenia",
     eventTypePlaceholder: "Typ wydarzenia",
-    nextButton: "Dalej",
   },
-  trainingPanel: {
-    coachPlaceholder: "Wybierz trenera",
-    topicPlaceholder: "Temat treningu",
-  },
-  tournamentPanel: {
-    tournamentTypePlaceholder: "Wybierz typ turnieju",
-    arbiterPlaceholder: "Wybierz sędziego",
-  },
-  sessionEditor: {
-    addSessionButton: "Dodaj sesję",
-    firstPairLabel: "Pierwsza para",
-    secondPairLabel: "Druga para",
-    firstPlayerPlaceholder: "Wybierz pierwszego zawodnika",
-    secondPlayerPlaceholder: "Wybierz drugiego zawodnika",
-    opponentTeamNamePlaceholder: "Nazwa zespołu przeciwnika (opcjonalne)",
-    matchNumberPlaceholder: "Numer meczu: ",
+  detailedInfoStep: {
+    trainingPanel: {
+      coachPlaceholder: "Wybierz trenera",
+      topicPlaceholder: "Temat treningu",
+    },
+    tournamentPanel: {
+      tournamentTypePlaceholder: "Wybierz typ turnieju",
+      arbiterPlaceholder: "Wybierz sędziego",
+    },
+    sessionEditor: {
+      addSessionButton: "Dodaj sesję",
+      firstPairLabel: "Pierwsza para",
+      secondPairLabel: "Druga para",
+      firstPlayerPlaceholder: "Wybierz pierwszego zawodnika",
+      secondPlayerPlaceholder: "Wybierz drugiego zawodnika",
+      opponentTeamNamePlaceholder: "Nazwa zespołu przeciwnika (opcjonalne)",
+      matchNumberPlaceholder: "Numer meczu: ",
+    },
   },
   summaryStep: {
     title: "Tytuł wydarzenia:",
@@ -569,10 +580,6 @@ const eventForm = {
       topic: "Temat treningu:",
     },
     additionalDescription: "Dodatkowy opis:",
-    buttons: {
-      submitButton: "Dodaj wydarzenie",
-      revButton: "Cofnij",
-    },
   },
 };
 

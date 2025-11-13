@@ -25,7 +25,7 @@ import { useEffect } from "react";
 export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
 
-  const t = useTranslations("pages.EventFormPage.primaryInfo");
+  const t = useTranslations("pages.EventFormPage");
   const tEvents = useTranslations("common.eventType");
   const tValidation = useTranslationsWithFallback();
 
@@ -144,17 +144,17 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
     <Stack spacing={4}>
       <RenderFormInput
         name="title"
-        placeholder={t("titlePlaceholder")}
+        placeholder={t("primaryInfoStep.titlePlaceholder")}
         type="text"
       />
       <RenderFormInput
         name="description"
-        placeholder={t("descriptionPlaceholder")}
+        placeholder={t("primaryInfoStep.descriptionPlaceholder")}
         type="text"
       />
       <RenderSelectInput
         name="group"
-        placeholder={t("groupPlaceholder")}
+        placeholder={t("primaryInfoStep.groupPlaceholder")}
         options={(groupsQ.data ?? []).map((group) => ({
           value: group.id,
           label: group.name,
@@ -163,7 +163,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
       />
       <RenderSelectInput
         name="organizer"
-        placeholder={t("organizerPlaceholder")}
+        placeholder={t("primaryInfoStep.organizerPlaceholder")}
         options={(peopleQ.data?.members ?? []).map((member) => ({
           value: member.id,
           label: getPersonLabel(member),
@@ -176,37 +176,37 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
       <HStack spacing={4}>
         <VStack flex={1}>
           <Text color="gray.500" alignSelf="start">
-            {t("eventStartPlaceholder")}
+            {t("primaryInfoStep.eventStartPlaceholder")}
           </Text>
           <RenderDateTimeInput
             name="duration.startsAt"
-            placeholder={t("eventStartPlaceholder")}
+            placeholder={t("primaryInfoStep.eventStartPlaceholder")}
           />
         </VStack>
         <VStack flex={1}>
           <Text color="gray.500" alignSelf="start">
-            {t("eventEndPlaceholder")}
+            {t("primaryInfoStep.eventEndPlaceholder")}
           </Text>
           <RenderDateTimeInput
             name="duration.endsAt"
-            placeholder={t("eventEndPlaceholder")}
+            placeholder={t("primaryInfoStep.eventEndPlaceholder")}
           />
         </VStack>
       </HStack>
       <Text color="gray.500" alignSelf="start">
-        {t("eventTypePlaceholder")}
+        {t("primaryInfoStep.eventTypePlaceholder")}
       </Text>
       <RenderSelectInput
         name="data.type"
-        placeholder={t("eventTypePlaceholder")}
+        placeholder={t("primaryInfoStep.eventTypePlaceholder")}
         options={Object.values(EventType).map((type) => ({
           value: type,
-          label: `${tEvents(type)}`, //TODO add translations
+          label: tEvents(type),
         }))}
       />
       <SteeringButtons
         nextButton={{
-          text: t("nextButton"), //TODO - translation
+          text: t("buttons.next"),
           onClick: () => handleNextStep(),
           onElementProps: {
             disabled:

@@ -4,7 +4,10 @@ import { Controller, useFormContext } from "react-hook-form";
 import { Stack } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
-import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import {
+  useTranslationsWithFallback,
+  useTranslations,
+} from "@/lib/typed-translations";
 import TournamentPanel from "./components/TournamentPanel";
 import LeagueMeetingPanel from "./components/LeagueMeetingPanel";
 import TrainingPanel from "./components/TrainingPanel";
@@ -16,6 +19,7 @@ import type { StepProps } from "../../util/helpers";
 export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
+  const t = useTranslations("pages.EventFormPage");
 
   const dataType = form.getValues().data.type;
 
@@ -82,11 +86,11 @@ export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
       <SteeringButtons
         prevButton={{
           onClick: setPrevStep,
-          text: "Cofnij", //TODO - translation
+          text: t("buttons.prev"),
         }}
         nextButton={{
           onClick: handleNextStep,
-          text: "Dalej", //TODO - translation
+          text: t("buttons.next"),
         }}
       />
     </Stack>

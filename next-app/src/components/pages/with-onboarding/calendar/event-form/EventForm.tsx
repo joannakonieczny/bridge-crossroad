@@ -67,7 +67,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     },
   });
   const toast = useToast();
-  const t = useTranslations("pages.Auth.RegisterPage"); // TODO add proper path
+  const t = useTranslations("pages.EventFormPage");
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
@@ -117,7 +117,9 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
       error: (err: MutationOrQuerryError<typeof createEvent>) => {
-        const errKey = getMessageKeyFromError(err);
+        const errKey = getMessageKeyFromError(err, {
+          fallbackKey: "pages.EventFormPage.toast.errorDefault",
+        });
         return { title: tValidation(errKey) };
       },
     });
@@ -133,9 +135,8 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         <ModalBody>
           <FormProvider {...form}>
             <form
-              onSubmit={form.handleSubmit(
-                (d) => handleWithToast({ ...d, groupId: d.group }),
-                (d) => console.log("validation error", d) // TODO remove log
+              onSubmit={form.handleSubmit((d) =>
+                handleWithToast({ ...d, groupId: d.group })
               )}
             >
               <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>

@@ -14,7 +14,9 @@ import { getPersonLabel } from "@/components/pages/with-onboarding/calendar/even
 export default function TrainingPanel() {
   const form = useFormContext<AddEventSchemaType>();
 
-  const t = useTranslations("pages.EventFormPage.trainingPanel");
+  const t = useTranslations(
+    "pages.EventFormPage.detailedInfoStep.trainingPanel"
+  );
   const tValidation = useTranslationsWithFallback();
 
   const selectedGroup = form.watch("group");

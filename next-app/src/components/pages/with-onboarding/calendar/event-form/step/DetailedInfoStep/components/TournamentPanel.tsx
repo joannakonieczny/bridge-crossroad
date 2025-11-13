@@ -14,7 +14,9 @@ import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/
 export default function TournamentPanel() {
   const form = useFormContext<AddEventSchemaType>();
 
-  const t = useTranslations("pages.EventFormPage.tournamentPanel");
+  const t = useTranslations(
+    "pages.EventFormPage.detailedInfoStep.tournamentPanel"
+  );
   const tTournaments = useTranslations("common.tournamentType");
   const tValidation = useTranslationsWithFallback();
 

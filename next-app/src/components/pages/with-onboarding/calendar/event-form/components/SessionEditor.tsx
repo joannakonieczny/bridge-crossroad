@@ -24,7 +24,9 @@ import { useGroupQuery } from "@/lib/queries";
 export function SessionEditor() {
   const form = useFormContext<AddEventSchemaType>();
 
-  const t = useTranslations("pages.EventFormPage.sessionEditor");
+  const t = useTranslations(
+    "pages.EventFormPage.detailedInfoStep.sessionEditor"
+  );
   const tValidation = useTranslationsWithFallback();
 
   const { fields, append, remove } = useFieldArray({
