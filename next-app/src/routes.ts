@@ -17,8 +17,12 @@ export const ROUTES = {
     index: "/calendar",
     upcoming_events: "/calendar/upcoming-events",
   },
-  groups: "/groups",
-  chat: "/chat",
+  groups: {
+    index: "/groups",
+    chat: "/chat",
+    materials: "/materials",
+    hands: "/hands",
+  },
   find_partner: "/find-partner",
   tools: "/tools",
 } as const;

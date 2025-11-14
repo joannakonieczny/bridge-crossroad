@@ -37,7 +37,7 @@ export default function GroupsGrid({
   const t = useTranslations("pages.GroupsPage.GroupsGrid");
 
   const goToGroup = (id: GroupIdType) => {
-    router.push(`${ROUTES.groups}/${id}`);
+    router.push(`${ROUTES.groups.index}/${id}`);
   };
 
   return (

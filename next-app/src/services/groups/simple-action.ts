@@ -28,7 +28,7 @@ export async function requireGroupAccess({
     });
 
   if (!hasAccess) {
-    redirect(ROUTES.groups);
+    redirect(ROUTES.groups.index);
   }
 
   return true;
@@ -54,7 +54,7 @@ export async function requireGroupAdmin({
   const group = await getById(groupId); //thrown error results HTTP 500
 
   if (!group.admins.some((adminId) => adminId.toString() === userId)) {
-    redirect(ROUTES.groups);
+    redirect(ROUTES.groups.index);
   }
 
   return true;

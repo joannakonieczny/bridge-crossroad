@@ -54,9 +54,9 @@ export default function Sidebar({ groupId }: ISidebarProps) {
   const basePath = `/groups/${groupId}`;
   const pagePaths = [
     basePath,
-    `${basePath}/chat`,
-    `${basePath}/materials`,
-    `${basePath}/hands`,
+    `${basePath}${ROUTES.groups.chat}`,
+    `${basePath}${ROUTES.groups.materials}`,
+    `${basePath}${ROUTES.groups.hands}`,
   ];
 
   return (
@@ -122,7 +122,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
         <Link
           fontSize="sm"
           color="accent.500"
-          onClick={() => router.push(ROUTES.groups)}
+          onClick={() => router.push(ROUTES.groups.index)}
           _hover={{ textDecoration: "none" }}
         >
           <Flex align="center" gap={2}>
