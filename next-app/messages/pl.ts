@@ -554,8 +554,8 @@ const eventForm = {
       addSessionButton: "Dodaj sesję",
       firstPairLabel: "Pierwsza para",
       secondPairLabel: "Druga para",
-      firstPlayerPlaceholder: "Wybierz pierwszego zawodnika",
-      secondPlayerPlaceholder: "Wybierz drugiego zawodnika",
+      firstPlayerPlaceholder: "Pierwszy zawodnik",
+      secondPlayerPlaceholder: "Drugi zawodnik",
       opponentTeamNamePlaceholder: "Nazwa zespołu przeciwnika (opcjonalne)",
       matchNumberPlaceholder: "Numer meczu: ",
     },
@@ -574,6 +574,10 @@ const eventForm = {
     },
     leagueMeeting: {
       totalRounds: "Ilość sesji:",
+      sessionName: "Sesja ",
+      firstPlayer: "Pierwszy zawodnik:",
+      secondPlayer: "Drugi zawodnik:",
+      opponentTeamName: "Nazwa zespołu przeciwnika:",
     },
     training: {
       coach: "Trener:",
@@ -642,8 +646,8 @@ const messages = {
       [EventType.OTHER]: "Inne",
     },
     tournamentType: {
-      [TournamentType.MAX]: "MAX",
-      [TournamentType.IMPS]: "IMPS",
+      [TournamentType.MAX]: "MAXy",
+      [TournamentType.IMPS]: "IMPy",
       [TournamentType.CRAZY]: "Crazy",
       [TournamentType.TEAM]: "Drużynowy",
       [TournamentType.INDIVIDUAL]: "Indywidualny",

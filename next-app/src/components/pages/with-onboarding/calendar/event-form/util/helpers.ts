@@ -3,7 +3,8 @@ type Person = {
   name: { firstName: string; lastName: string };
 };
 
-export function getPersonLabel(person: Person) {
+export function getPersonLabel(person?: Person) {
+  if (!person) return "-";
   return person.nickname
     ? `${person.name.firstName} ${person.name.lastName} (${person.nickname})`
     : `${person.name.firstName} ${person.name.lastName}`;

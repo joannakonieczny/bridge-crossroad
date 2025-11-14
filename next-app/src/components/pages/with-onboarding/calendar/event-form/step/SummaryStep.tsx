@@ -1,12 +1,14 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Stack, Text } from "@chakra-ui/react";
+import { Stack, Text, Divider, Center, Spacer } from "@chakra-ui/react";
 import { SteeringButtons } from "../components/SteeringButtons";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { StepProps } from "../util/helpers";
 import { EventType } from "@/club-preset/event-type";
 import { useTranslations } from "@/lib/typed-translations";
+import { useGroupQuery } from "@/lib/queries";
+import { getPersonLabel } from "../util/helpers";
 import dayjs from "dayjs";
 
 export function SummaryStep({ setPrevStep }: StepProps) {
@@ -18,28 +20,35 @@ export function SummaryStep({ setPrevStep }: StepProps) {
   const values = form.getValues();
   const data = values?.data;
 
+  const groupQ = useGroupQuery(values.group);
+  const organizerMember = groupQ.data?.members.find(
+    (m) => m.id === values.organizer
+  );
+  const organizerName = getPersonLabel(organizerMember);
+
   return (
     <Stack spacing={4} direction="column">
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.title")}</Text>
         <Text fontWeight="bold">{values.title}</Text>
       </Stack>
-
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.description")}</Text>
         <Text fontWeight="bold">{values.description}</Text>
       </Stack>
-
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.group")}</Text>
-        <Text fontWeight="bold">{values.group}</Text>
+        <Text fontWeight="bold">{groupQ.data?.name ?? values.group}</Text>
       </Stack>
-
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.organizer")}</Text>
-        <Text fontWeight="bold">{values.organizer}</Text>
+        <Text fontWeight="bold">{organizerName ?? "-"}</Text>
       </Stack>
-
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.eventStart")}</Text>
         <Text fontWeight="bold">
@@ -48,7 +57,7 @@ export function SummaryStep({ setPrevStep }: StepProps) {
             : "-"}
         </Text>
       </Stack>
-
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.eventEnd")}</Text>
         <Text fontWeight="bold">
@@ -57,12 +66,12 @@ export function SummaryStep({ setPrevStep }: StepProps) {
             : "-"}
         </Text>
       </Stack>
-
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.eventType")}</Text>
         <Text fontWeight="bold">{tEvent(values.data?.type)}</Text>
       </Stack>
-
+      <Divider />
       {data?.type === EventType.TOURNAMENT && (
         <>
           <Stack direction="row" spacing={3}>
@@ -71,9 +80,14 @@ export function SummaryStep({ setPrevStep }: StepProps) {
               {data.tournamentType ? tTournament(data.tournamentType) : "-"}
             </Text>
           </Stack>
+          <Divider />
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.tournament.arbiter")}</Text>
-            <Text fontWeight="bold">{data.arbiter ?? "-"}</Text>
+            <Text fontWeight="bold">
+              {getPersonLabel(
+                groupQ.data?.members.find((m) => m.id === data.arbiter)
+              ) ?? "-"}
+            </Text>
           </Stack>
         </>
       )}
@@ -86,12 +100,159 @@ export function SummaryStep({ setPrevStep }: StepProps) {
               {data.tournamentType ? tTournament(data.tournamentType) : "-"}
             </Text>
           </Stack>
+          <Divider />
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.leagueMeeting.totalRounds")}</Text>
             <Text fontWeight="bold">
               {Array.isArray(data.session) ? data.session.length : 0}
             </Text>
           </Stack>
+          {data.session &&
+            data.session.length > 0 &&
+            data.session.map((session, index) => {
+              return (
+                <Stack key={index} width="100%" spacing={4}>
+                  <Divider />
+                  <Stack direction="column" spacing={3}>
+                    <Center>
+                      <Text fontWeight="bold">{`${t(
+                        "summaryStep.leagueMeeting.sessionName"
+                      )} ${index + 1}`}</Text>
+                    </Center>
+                    <Divider variant="dashed" />
+                    <Center>
+                      <Text fontWeight="bold">
+                        {t("detailedInfoStep.sessionEditor.firstPairLabel")}
+                      </Text>
+                    </Center>
+                    <Stack direction="row" spacing={3} width="100%">
+                      <Stack
+                        direction="column"
+                        spacing={3}
+                        alignItems="center"
+                        width="33%"
+                      >
+                        <Text>
+                          {t("summaryStep.leagueMeeting.firstPlayer")}
+                        </Text>
+                        <Text
+                          fontWeight="bold"
+                          textAlign="center"
+                          overflowWrap="anywhere"
+                          wordBreak="break-word"
+                        >
+                          {getPersonLabel(
+                            groupQ.data?.members.find(
+                              (m) =>
+                                m.id === session.contestants?.firstPair?.first
+                            )
+                          ) ?? "-"}
+                        </Text>
+                      </Stack>
+                      <Spacer />
+                      <Stack
+                        direction="column"
+                        spacing={3}
+                        alignItems="center"
+                        width="33%"
+                      >
+                        <Text>
+                          {t("summaryStep.leagueMeeting.secondPlayer")}
+                        </Text>
+                        <Text
+                          fontWeight="bold"
+                          textAlign="center"
+                          overflowWrap="anywhere"
+                          wordBreak="break-word"
+                        >
+                          {getPersonLabel(
+                            groupQ.data?.members.find(
+                              (m) =>
+                                m.id === session.contestants?.firstPair?.second
+                            )
+                          ) ?? "-"}
+                        </Text>
+                      </Stack>
+                    </Stack>
+                    <Divider variant="dashed" />
+                    <Center>
+                      <Text fontWeight="bold">
+                        {t("detailedInfoStep.sessionEditor.secondPairLabel")}
+                      </Text>
+                    </Center>
+                    <Stack direction="row" spacing={3} width="100%">
+                      <Stack
+                        direction="column"
+                        spacing={3}
+                        alignItems="center"
+                        width="33%"
+                      >
+                        <Text>
+                          {t("summaryStep.leagueMeeting.firstPlayer")}
+                        </Text>
+                        <Text
+                          fontWeight="bold"
+                          textAlign="center"
+                          overflowWrap="anywhere"
+                          wordBreak="break-word"
+                        >
+                          {getPersonLabel(
+                            groupQ.data?.members.find(
+                              (m) =>
+                                m.id === session.contestants?.secondPair?.first
+                            )
+                          ) ?? "-"}
+                        </Text>
+                      </Stack>
+                      <Spacer />
+                      <Stack
+                        direction="column"
+                        spacing={3}
+                        alignItems="center"
+                        width="33%"
+                      >
+                        <Text>
+                          {t("summaryStep.leagueMeeting.secondPlayer")}
+                        </Text>
+                        <Text
+                          fontWeight="bold"
+                          textAlign="center"
+                          overflowWrap="anywhere"
+                          wordBreak="break-word"
+                        >
+                          {getPersonLabel(
+                            groupQ.data?.members.find(
+                              (m) =>
+                                m.id === session.contestants?.secondPair?.second
+                            )
+                          ) ?? "-"}
+                        </Text>
+                      </Stack>
+                    </Stack>
+                  </Stack>
+
+                  {session.opponentTeamName && (
+                    <>
+                      <Divider variant="dashed" />
+                      <Center>
+                        <Stack direction="row" spacing={3}>
+                          <Text>
+                            {t("summaryStep.leagueMeeting.opponentTeamName")}
+                          </Text>
+                          <Text
+                            fontWeight="bold"
+                            overflowWrap="anywhere"
+                            wordBreak="break-word"
+                          >
+                            {session.opponentTeamName}
+                          </Text>
+                        </Stack>
+                      </Center>
+                    </>
+                  )}
+                </Stack>
+              );
+            })}
         </>
       )}
 
@@ -99,20 +260,25 @@ export function SummaryStep({ setPrevStep }: StepProps) {
         <>
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.training.coach")}</Text>
-            <Text fontWeight="bold">{data.coach ?? "-"}</Text>
+            <Text fontWeight="bold">
+              {getPersonLabel(
+                groupQ.data?.members.find((m) => m.id === data.coach)
+              ) ?? "-"}
+            </Text>
           </Stack>
+          <Divider />
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.training.topic")}</Text>
             <Text fontWeight="bold">{data.topic ?? "-"}</Text>
           </Stack>
         </>
       )}
-
+      <Divider />
       <Stack direction="row" spacing={3}>
         <Text>{t("summaryStep.additionalDescription")}</Text>
         <Text fontWeight="bold">{values.additionalDescription ?? "-"}</Text>
       </Stack>
-
+      <Divider />
       <SteeringButtons
         prevButton={{
           text: t("buttons.prev"),

@@ -141,7 +141,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
             >
               <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
               <Box position="relative">
-                <Stepper size="lg" index={activeStep}>
+                <Stepper size="lg" index={activeStep} colorScheme="accent">
                   {steps.map((_, index) => (
                     <Step key={index}>
                       <StepIndicator>

@@ -9,6 +9,7 @@ import {
   Box,
   Text,
   IconButton,
+  Spacer,
 } from "@chakra-ui/react";
 import { MdAdd, MdDelete } from "react-icons/md";
 import {
@@ -160,12 +161,15 @@ export function SessionEditor() {
                 <Text fontWeight="semibold">
                   {`${t("matchNumberPlaceholder")} ${idx + 1}`}
                 </Text>
+                <Spacer />
                 <IconButton
                   aria-label="Delete session"
                   colorScheme="red"
                   icon={<MdDelete />}
                   onClick={() => remove(idx)}
                   disabled={!(fields.length - 1 === idx)} //only can delete last item, TODO add some label on hover?
+                  alignSelf="end"
+                  justifySelf="end"
                 />
               </HStack>
               {sessionError && (
@@ -233,7 +237,12 @@ export function SessionEditor() {
       })}
 
       <HStack>
-        <Button leftIcon={<MdAdd />} onClick={appendDefault} size="sm">
+        <Button
+          leftIcon={<MdAdd />}
+          onClick={appendDefault}
+          size="sm"
+          alignSelf="end"
+        >
           {t("addSessionButton")}
         </Button>
       </HStack>
