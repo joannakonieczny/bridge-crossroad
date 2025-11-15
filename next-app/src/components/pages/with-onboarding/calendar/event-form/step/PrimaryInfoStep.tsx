@@ -29,7 +29,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const tEvents = useTranslations("common.eventType");
   const tValidation = useTranslationsWithFallback();
 
-  const selectedGroup = form.watch("group") as GroupIdType | "";
+  const selectedGroup = (form.watch("group") || null) as GroupIdType | null;
 
   const groupsQ = useJoinedGroupsAsAdminQuery();
   const peopleQ = useGroupQuery(selectedGroup);

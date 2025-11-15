@@ -47,10 +47,7 @@ function useOnErrorToast(template: string, toastId: string) {
 export function useJoinedGroupsQuery(
   props?: TActionQueryOptionsHelper<typeof getJoinedGroupsInfo>
 ) {
-  const e = useOnErrorToast(
-    "grup w których jesteś administratorem",
-    "getJoinedGroupsInfo"
-  );
+  const e = useOnErrorToast("grup do których należysz", "getJoinedGroupsInfo");
   return useActionQuery({
     queryKey: QUERY_KEYS.joinedGroups,
     action: getJoinedGroupsInfo,
@@ -62,9 +59,14 @@ export function useJoinedGroupsQuery(
 export function useJoinedGroupsAsAdminQuery(
   props?: TActionQueryOptionsHelper<typeof getJoinedGroupsInfoAsAdmin>
 ) {
+  const e = useOnErrorToast(
+    "grup do których należysz (admin)",
+    "getJoinedGroupsInfoAsAdmin"
+  );
   return useActionQuery({
-    queryKey: QUERY_KEYS.joinedGroups,
+    queryKey: QUERY_KEYS.joinedGroupsAsAdmin,
     action: getJoinedGroupsInfoAsAdmin,
+    onError: e,
     ...props,
   });
 }
@@ -72,22 +74,24 @@ export function useJoinedGroupsAsAdminQuery(
 export function useUserInfoQuery(
   props?: TActionQueryOptionsHelper<typeof getUser>
 ) {
+  const e = useOnErrorToast("informacji o użytkowniku", "getUser");
   return useActionQuery({
     queryKey: QUERY_KEYS.userInfo,
     action: getUser,
+    onError: e,
     ...props,
   });
 }
 
 export function useGroupQuery(
-  groupId: GroupIdType,
+  groupId: GroupIdType | null,
   props?: TActionQueryOptionsHelper<typeof getGroupData>
 ) {
   const e = useOnErrorToast("szczegółów grupy", "getGroupData");
   return useActionQuery({
-    queryKey: QUERY_KEYS.groupDetail(groupId),
-    action: () => getGroupData({ groupId }),
-    enabled: !!groupId || props?.enabled,
+    queryKey: QUERY_KEYS.groupDetail(groupId || ""),
+    action: () => getGroupData({ groupId: groupId || "" }),
+    enabled: groupId ? true : false,
     onError: e,
     ...props,
   });
