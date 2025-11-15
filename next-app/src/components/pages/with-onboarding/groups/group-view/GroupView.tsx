@@ -11,12 +11,10 @@ import {
 } from "@chakra-ui/react";
 import PeopleList from "./PeopleList";
 import GroupBanner from "./GroupBanner";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
-import { getGroupData } from "@/services/groups/api";
 import { useRouter } from "next/navigation";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useTranslations } from "@/lib/typed-translations";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { useGroupQuery } from "@/lib/queries";
 
 type IGroupViewProps = {
   groupId: GroupIdType;
@@ -26,10 +24,7 @@ export default function GroupView(props: IGroupViewProps) {
   const router = useRouter();
   const t = useTranslations("pages.GroupsPage.GroupView");
 
-  const groupQ = useActionQuery({
-    queryKey: QUERY_KEYS.group(props.groupId),
-    action: () => getGroupData({ groupId: props.groupId }),
-  });
+  const groupQ = useGroupQuery(props.groupId);
 
   const group = groupQ.data;
 

@@ -6,7 +6,10 @@ import { useQuery as useTanstackQuerry } from "@tanstack/react-query";
 import { executeAction, useErrorHandler } from "./common";
 import type { ActionResult, ActionError } from "./types";
 
-type UseActionQueryOptions<TData = unknown, TValidationErrors = unknown> = Omit<
+export type UseActionQueryOptions<
+  TData = unknown,
+  TValidationErrors = unknown
+> = Omit<
   TanstackQueryOptions<TData, ActionError<TValidationErrors>, TData>,
   "queryFn"
 > & {

@@ -1,7 +1,7 @@
 import type { TKeyOrMessage, TKey } from "../typed-translations";
 import type { ActionError } from "./types";
 
-function getNestedError(obj: unknown): string | undefined {
+export function getNestedError(obj: unknown): string | undefined {
   const seen = new WeakSet<object>();
 
   function visit(value: unknown): string | undefined {
@@ -40,18 +40,15 @@ export function getMessageKeyFromError(
   err: ActionError,
   opt?: Options
 ): TKeyOrMessage {
-  const generalErrorMess = err.generalError;
-  const serverErrorMess = err.serverError;
-  const validationErrorKey = getNestedError(err.validationErrors);
-
-  if (generalErrorMess) {
+  if (err.generalError) {
     return opt?.generalErrorKey ?? ("common.error.networkError" satisfies TKey);
   }
 
-  if (serverErrorMess) {
+  if (err.serverError) {
     return opt?.serverErrorKey ?? ("common.error.serverError" satisfies TKey);
   }
 
+  const validationErrorKey = getNestedError(err.validationErrors);
   if (validationErrorKey) {
     return opt?.validationErrorKey ?? validationErrorKey;
   }

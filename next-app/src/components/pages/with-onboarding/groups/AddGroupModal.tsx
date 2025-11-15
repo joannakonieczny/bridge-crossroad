@@ -25,7 +25,7 @@ import {
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/query-keys";
+import { QUERY_KEYS } from "@/lib/queries";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import type { CreateGroupFormType } from "@/schemas/pages/with-onboarding/groups/groups-types";
 
@@ -53,7 +53,7 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   const createGroupAction = useActionMutation({
     action: createNewGroup,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.groups });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.joinedGroups });
       reset();
     },
     onError: (err) => {
