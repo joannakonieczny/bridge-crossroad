@@ -7,7 +7,7 @@ import {
   useTranslationsWithFallback,
   useTranslations,
 } from "@/lib/typed-translations";
-import { getPersonLabel } from "@/components/pages/with-onboarding/calendar/event-form/util/helpers";
+import { getPersonLabel } from "@/util/formatters";
 import { useGroupQuery } from "@/lib/queries";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 
