@@ -1,5 +1,10 @@
 import type { FormControlProps } from "@chakra-ui/react";
-import { FormControl, FormErrorMessage, Input, Textarea } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormErrorMessage,
+  Input,
+  Textarea,
+} from "@chakra-ui/react";
 import type { ChangeEventHandler } from "react";
 import PasswordInput from "./PasswordInput";
 
@@ -9,9 +14,9 @@ export type IFormInputProps = {
   isInvalid?: boolean;
   id?: string;
   isRequired?: boolean;
-  type?: "password" | "text" | "email" | "number" | "textarea"; 
+  type?: "password" | "text" | "email" | "number" | "textarea" | "datetime";
   onElementProps?: FormControlProps;
-  value?: string;
+  value?: string; //YYYY-MM-DDTHH:mm for datetime-local input
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 };
 
@@ -30,15 +35,24 @@ export default function FormInput(props: IFormInputProps) {
       {props.type === "password" ? (
         <PasswordInput
           placeholder={props.placeholder}
-          value={props.value}
+          value={props.value ?? ""}
           onChange={props.onChange}
         />
       ) : props.type === "textarea" ? (
         <Textarea
           placeholder={props.placeholder}
-          value={props.value}
+          value={props.value ?? ""}
           onChange={props.onChange}
           focusBorderColor="accent.500"
+          _focus={{ borderColor: "accent.500" }}
+        />
+      ) : props.type === "datetime" ? (
+        <Input
+          placeholder={props.placeholder}
+          type="datetime-local"
+          focusBorderColor="accent.500"
+          value={props.value ?? ""}
+          onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
         />
       ) : (
@@ -46,7 +60,7 @@ export default function FormInput(props: IFormInputProps) {
           placeholder={props.placeholder}
           type={props.type}
           focusBorderColor="accent.500"
-          value={props.value}
+          value={props.value ?? ""}
           onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
         />
