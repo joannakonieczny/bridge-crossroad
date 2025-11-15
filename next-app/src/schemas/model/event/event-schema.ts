@@ -2,7 +2,7 @@ import { z } from "zod";
 import { EventValidationConstants } from "./event-const";
 import type { TKey } from "@/lib/typed-translations";
 import { idPropSchema } from "@/schemas/common";
-import { EventType, Half, TournamentType } from "@/club-preset/event-type";
+import { EventType, TournamentType } from "@/club-preset/event-type";
 
 const { title, description, location, imageUrl } = EventValidationConstants;
 
@@ -36,6 +36,7 @@ export const durationSchema = z
   })
   .refine((d) => d.startsAt < d.endsAt, {
     message: "validation.model.event.duration.invalidRange" satisfies TKey,
+    path: ["endsAt"],
   });
 
 export const playingPairSchema = z.object({
@@ -54,21 +55,37 @@ export const tournamentDataSchema = z.object({
     .optional(),
 });
 
+const sessionItemSchema = z
+  .object({
+    contestants: z.object({
+      firstPair: playingPairSchema,
+      secondPair: playingPairSchema,
+    }),
+    opponentTeamName: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      const people = [
+        data.contestants.firstPair.first,
+        data.contestants.firstPair.second,
+        data.contestants.secondPair.first,
+        data.contestants.secondPair.second,
+      ].filter((id) => id && id.trim() !== "");
+
+      // Check if all selected people are unique
+      const uniquePeople = new Set(people);
+      return people.length === uniquePeople.size;
+    },
+    {
+      message: "validation.model.event.session.duplicatePlayers" satisfies TKey,
+      path: ["contestants"],
+    }
+  );
+
 export const leagueMeetingDataSchema = z.object({
   type: z.literal(EventType.LEAGUE_MEETING),
   tournamentType: z.nativeEnum(TournamentType).optional(),
-  session: z.array(
-    z.object({
-      id: idPropSchema.optional(),
-      matchNumber: z.number().int(),
-      half: z.nativeEnum(Half),
-      contestants: z.object({
-        firstPair: playingPairSchema,
-        secondPair: playingPairSchema,
-      }),
-      opponentTeamName: z.string().optional(),
-    })
-  ),
+  session: z.array(sessionItemSchema),
 });
 
 export const trainingDataSchema = z.object({

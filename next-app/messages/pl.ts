@@ -1,5 +1,6 @@
 import { TrainingGroup } from "@/club-preset/training-group";
 import { Academy } from "@/club-preset/academy";
+import { EventType, TournamentType } from "@/club-preset/event-type";
 import { UserValidationConstants as USER } from "@/schemas/model/user/user-const";
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
@@ -454,6 +455,9 @@ const eventModelValidation = {
   duration: {
     invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
   },
+  session: {
+    duplicatePlayers: "Każdy zawodnik w sesji musi być unikalny",
+  },
   data: {
     invalid: "Nieprawidłowe dane specyficzne dla typu wydarzenia",
   },
@@ -518,6 +522,72 @@ const onboardingPageValidation = {
   },
 };
 
+const eventForm = {
+  buttons: {
+    prev: "Cofnij",
+    next: "Dalej",
+    submit: "Dodaj wydarzenie",
+  },
+  toast: {
+    loading: "Trwa dodawanie wydarzenia...",
+    success: "Wydarzenie zostało dodane!",
+    errorDefault: "Wystąpił błąd podczas dodawania wydarzenia",
+  },
+  primaryInfoStep: {
+    titlePlaceholder: "Tytuł wydarzenia",
+    descriptionPlaceholder: "Opis wydarzenia",
+    groupPlaceholder: "Wybierz grupę",
+    organizerPlaceholder: "Wybierz organizatora",
+    eventStartPlaceholder: "Początek wydarzenia",
+    eventEndPlaceholder: "Koniec wydarzenia",
+    eventTypePlaceholder: "Typ wydarzenia",
+  },
+  detailedInfoStep: {
+    trainingPanel: {
+      coachPlaceholder: "Wybierz trenera",
+      topicPlaceholder: "Temat treningu",
+    },
+    tournamentPanel: {
+      tournamentTypePlaceholder: "Wybierz typ turnieju",
+      arbiterPlaceholder: "Wybierz sędziego",
+    },
+    sessionEditor: {
+      addSessionButton: "Dodaj sesję",
+      firstPairLabel: "Pierwsza para",
+      secondPairLabel: "Druga para",
+      firstPlayerPlaceholder: "Pierwszy zawodnik",
+      secondPlayerPlaceholder: "Drugi zawodnik",
+      opponentTeamNamePlaceholder: "Nazwa zespołu przeciwnika (opcjonalne)",
+      matchNumberPlaceholder: "Numer meczu: ",
+    },
+  },
+  summaryStep: {
+    title: "Tytuł wydarzenia:",
+    description: "Opis wydarzenia:",
+    group: "Grupa:",
+    organizer: "Organizator:",
+    eventStart: "Początek wydarzenia:",
+    eventEnd: "Koniec wydarzenia:",
+    eventType: "Typ wydarzenia:",
+    tournament: {
+      type: "Typ turnieju:",
+      arbiter: "Sędzia:",
+    },
+    leagueMeeting: {
+      totalRounds: "Ilość sesji:",
+      sessionName: "Sesja ",
+      firstPlayer: "Pierwszy zawodnik:",
+      secondPlayer: "Drugi zawodnik:",
+      opponentTeamName: "Nazwa zespołu przeciwnika:",
+    },
+    training: {
+      coach: "Trener:",
+      topic: "Temat treningu:",
+    },
+    additionalDescription: "Dodatkowy opis:",
+  },
+};
+
 const usefulTools = {
   title: "Przydatne narzędzia",
   buttonText: "Zobacz więcej",
@@ -569,6 +639,20 @@ const messages = {
       [TrainingGroup.ADVANCED]: "Zaawansowana",
       [TrainingGroup.COACH]: "Jestem trenerem!",
       [TrainingGroup.NONE]: "Nie chodzę na zajęcia z brydża na AGH",
+    },
+    eventType: {
+      [EventType.LEAGUE_MEETING]: "Zjazd ligowy",
+      [EventType.TOURNAMENT]: "Turniej",
+      [EventType.TRAINING]: "Trening",
+      [EventType.OTHER]: "Inne",
+    },
+    tournamentType: {
+      [TournamentType.MAX]: "MAXy",
+      [TournamentType.IMPS]: "IMPy",
+      [TournamentType.CRAZY]: "Crazy",
+      [TournamentType.TEAM]: "Drużynowy",
+      [TournamentType.INDIVIDUAL]: "Indywidualny",
+      [TournamentType.BAMY]: "BAMY",
     },
     error: {
       messageKeyNotExisting: "Wystąpił błąd",
@@ -652,6 +736,7 @@ const messages = {
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,
     CalendarPage: calendarPage,
+    EventFormPage: eventForm,
   },
   components: {
     Navbar: navbar,

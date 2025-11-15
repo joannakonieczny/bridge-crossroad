@@ -13,7 +13,7 @@ import type { IGroupDTO } from "@/models/group/group-types";
 import type { WithSession } from "./common";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { IEventDTO } from "@/models/event/event-types";
-import type { AddModifyEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import type { ModifyEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IEventPopulated } from "@/models/mixed-types";
@@ -21,7 +21,7 @@ import { EventType } from "@/club-preset/event-type";
 
 type AddEventInput = {
   groupId: GroupIdType;
-  event: AddModifyEventSchemaType;
+  event: ModifyEventSchemaType;
 };
 
 export async function addEvent({
@@ -114,7 +114,7 @@ export async function removeEvent({
 type UpdateEventInput = {
   groupId: GroupIdType;
   eventId: EventIdType;
-  changes: Partial<AddModifyEventSchemaType>;
+  changes: Partial<ModifyEventSchemaType>;
 };
 
 export async function updateEvent({

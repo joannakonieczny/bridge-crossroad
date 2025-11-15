@@ -6,7 +6,7 @@ import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
-import SelectInput from "../inputs/SelectInput";
+import SelectInput from "../../../common/form/SelectInput";
 import { Stack, Checkbox, FormControl } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
 import { useOnboardingFormData } from "../FormDataContext";
