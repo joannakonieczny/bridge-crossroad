@@ -1,6 +1,7 @@
 "use client";
 
 import type { UserTypeBasic } from "@/schemas/model/user/user-types";
+import { getPersonLabel } from "@/util/formatters";
 import { Box, Text, Flex } from "@chakra-ui/react";
 
 type IMessageBoxProps = {
@@ -36,11 +37,7 @@ export default function MessageBox(props: IMessageBoxProps) {
           marginBottom="0.25rem"
           textAlign={props.isSelf ? "right" : "left"}
         >
-          {!props.isSelf // TODO use getPersonLabel
-            ? props.sender.nickname
-              ? props.sender.nickname
-              : `${props.sender.name.firstName} ${props.sender.name.lastName}`
-            : ""}
+          {!props.isSelf ? getPersonLabel(props.sender) : ""}
         </Text>
         <Flex
           alignItems="flex-end"
