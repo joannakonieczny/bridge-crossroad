@@ -58,9 +58,8 @@ export default function AnnoucmentsList() {
           <Tr>
             <Th>Nazwa</Th>
             <Th>Zawodnik</Th>
-            <Th>Charakterystyka zawodnika</Th>
-            <Th>Częstotliwość</Th>
-            <Th>Preferowany system</Th>
+            <Th display={{ base: "none", md: "table-cell" }}>Częstotliwość</Th>
+            <Th display={{ base: "none", md: "table-cell" }}>Preferowany system</Th>
           </Tr>
         </Thead>
         <Tbody>

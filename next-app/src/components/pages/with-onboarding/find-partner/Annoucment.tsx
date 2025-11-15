@@ -1,5 +1,5 @@
 import React from "react";
-import { Tr, Td, Box, Avatar, Text, Link, HStack } from "@chakra-ui/react";
+import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex } from "@chakra-ui/react";
 import { FaLightbulb, FaRegAddressCard, FaRegClock } from "react-icons/fa";
 
 type Announcement = {
@@ -15,41 +15,45 @@ type Announcement = {
 
 export default function Annoucment({ a }: { a: Announcement }) {
   return (
-    <Tr>
-      <Td>
-        <HStack spacing={3} align="flex-start">
-          {/* optional avatar / decorative */}
-          <Avatar size="sm" name={a.playerName} />
-          <Box>
-            <Link color="accent.500" fontWeight="semibold" href="#" _hover={{ textDecoration: "underline" }}>
-              {a.title}
-            </Link>
-            <Text fontSize="sm" color="border.500">{a.date}</Text>
-          </Box>
-        </HStack>
+    // on hover change child .vertical-bar background
+    <Tr _hover={{ ".vertical-bar": { bg: "accent.500" } }}>
+      <Td py={2}>
+        <Flex align="center">
+          <Box
+            className="vertical-bar"
+            bg="accent.200"
+            w="6px"
+            mr={3}
+            transition="background-color 150ms ease"
+            alignSelf="stretch"
+            display={{ base: "none", md: "block" }} // hidden on phone
+          />
+          <HStack spacing={3} align={{ base: "center", md: "flex-start" }}>
+            <Avatar size="sm" name={a.playerName} display={{ base: "none", md: "flex" }} /> {/* hidden on phone */}
+            <Box>
+              <Link color="accent.500" fontWeight="semibold" href="#" _hover={{ textDecoration: "underline" }}>
+                {a.title}
+              </Link>
+              <Text fontSize="sm" color="border.500">{a.date}</Text>
+            </Box>
+          </HStack>
+        </Flex>
       </Td>
 
-      <Td>
+      <Td py={2}>
         <Box>
           <Text fontWeight="medium">{a.playerName}</Text>
           {a.playerNick && <Text fontSize="sm" color="border.500" fontStyle="italic">{a.playerNick}</Text>}
         </Box>
       </Td>
 
-      <Td>
-        <HStack spacing={3}>
-          {/* simple icon placeholders for characteristics */}
-          <FaRegAddressCard />
-          <FaLightbulb />
-          <FaRegClock />
-        </HStack>
-      </Td>
-
-      <Td>
+      {/* hidden on phone */}
+      <Td py={2} display={{ base: "none", md: "table-cell" }}>
         <Text>{a.frequency}</Text>
       </Td>
 
-      <Td>
+      {/* hidden on phone */}
+      <Td py={2} display={{ base: "none", md: "table-cell" }}>
         <Text>{a.preferredSystem}</Text>
       </Td>
     </Tr>
