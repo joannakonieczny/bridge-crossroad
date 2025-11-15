@@ -660,6 +660,15 @@ const messages = {
       networkError: "Wystąpił błąd sieci. Sprawdź połączenie internetowe.",
       unknownError: "Wystąpił błąd. Spróbuj ponownie później.",
     },
+    errorTemplate: {
+      serverError: "Wystąpił błąd przy pobieraniu {template}.",
+      validationError:
+        "Wystąpił błąd walidacji danych przy pobieraniu {template}.",
+      networkError:
+        "Wystąpił błąd sieci przy pobieraniu {template}. Sprawdź połączenie internetowe.",
+      unknownError:
+        "Wystąpił błąd przy pobieraniu {template}. Spróbuj ponownie później.",
+    },
   },
   validation: {
     model: {
