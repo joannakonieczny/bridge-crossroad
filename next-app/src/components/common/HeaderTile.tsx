@@ -49,7 +49,6 @@ export function HeaderTile({
         <Menu placement="top-end">
           <MenuButton
             as={IconButton}
-            aria-label="Opcje"
             icon={<FiMoreVertical />}
             variant="ghost"
             size="sm"
@@ -107,7 +106,6 @@ export function HeaderTile({
           <Menu placement="top-end">
             <MenuButton
               as={IconButton}
-              aria-label="Opcje"
               icon={<FiMoreVertical />}
               variant="ghost"
               size="sm"

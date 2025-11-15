@@ -11,6 +11,8 @@ import type { GroupIdType } from "@/schemas/model/group/group-types";
 import MessageBox from "./MessageBox";
 import { TextInput } from "./TextInput";
 import { HeaderTile } from "@/components/common/HeaderTile";
+import { useTranslations } from "@/lib/typed-translations";
+import { useGroupQuery } from "@/lib/queries";
 import { BsChatLeftDots } from "react-icons/bs";
 import { mockMessages } from "./mock";
 
@@ -19,12 +21,20 @@ type IChatViewProps = {
 };
 
 export default function ChatView(props: IChatViewProps) {
+  const tSidebar = useTranslations("pages.GroupsPage.Sidebar");
+  const t = useTranslations("pages.ChatPage");
   const gap = useBreakpointValue({ base: "1.25rem", md: "3rem" });
   const py = useBreakpointValue({ base: "1rem", md: "2rem" });
   const px = useBreakpointValue({ base: "1rem", md: "3rem" });
   const minH = useBreakpointValue({
     base: "calc(100vh - 7rem)",
     md: "calc(100vh - 5rem)",
+  });
+  const groupQ = useGroupQuery(props.groupId);
+  const group = groupQ.data;
+
+  const groupName = t("groupName", {
+    groupName: group?.name ?? "",
   });
 
   return (
@@ -51,8 +61,8 @@ export default function ChatView(props: IChatViewProps) {
       >
         <Box flexShrink={0}>
           <HeaderTile
-            title={`Grupa ${props.groupId}`}
-            subtitle="chat"
+            title={groupName}
+            subtitle={tSidebar("nav.chat")}
             icon={BsChatLeftDots}
             mainColor="accent.300"
             accentColor="accent.100"
@@ -72,9 +82,9 @@ export default function ChatView(props: IChatViewProps) {
             flex="1"
             pt="0.5rem"
           >
-            {mockMessages.map((msg, index) => (
+            {mockMessages.map((msg) => (
               <MessageBox
-                key={index}
+                key={`${msg.from.id}-${msg.timestamp.getTime()}`} // TODO add proper unique id
                 timestamp={msg.timestamp}
                 content={msg.content}
                 sender={msg.from}

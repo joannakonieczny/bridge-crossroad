@@ -52,15 +52,19 @@ export default function Sidebar({ groupId }: ISidebarProps) {
     },
     {
       icon: FiMessageCircle,
-      pagePath: ROUTES.groups.chat,
+      pagePath: ROUTES.groups.chat(groupId),
       text: t("nav.chat"),
     },
     {
       icon: FiFolder,
-      pagePath: ROUTES.groups.materials,
+      pagePath: ROUTES.groups.materials(groupId),
       text: t("nav.materials"),
     },
-    { icon: FiGrid, pagePath: ROUTES.groups.hands, text: t("nav.hands") },
+    {
+      icon: FiGrid,
+      pagePath: ROUTES.groups.hands(groupId),
+      text: t("nav.hands"),
+    },
   ];
 
   return (
@@ -102,9 +106,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
 
           <HStack mt={2} spacing={2} justify="center">
             {navItems.map(({ icon: Icon, pagePath: path }, idx) => {
-              const isActive =
-                !!pathname &&
-                (pathname === path || (idx !== 0 && pathname.startsWith(path)));
+              const isActive = !!pathname && pathname === path;
               return (
                 <IconButton
                   key={idx}
@@ -167,9 +169,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
 
         <VStack align="stretch" spacing={1} w="100%">
           {navItems.map(({ icon: Icon, pagePath: path, text }, idx) => {
-            const isActive =
-              !!pathname &&
-              (pathname === path || (idx !== 0 && pathname.startsWith(path)));
+            const isActive = !!pathname && pathname === path;
             return (
               <Link
                 key={idx}

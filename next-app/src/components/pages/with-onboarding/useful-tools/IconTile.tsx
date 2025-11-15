@@ -19,7 +19,6 @@ export type TileProps = {
 export function Tile({
   icon,
   link,
-  toolName,
   title,
   description,
   buttonText,
@@ -32,7 +31,6 @@ export function Tile({
       maxW={{ base: "full", md: "70rem" }}
       mx="auto"
       bg="bg"
-      key={toolName}
     >
       <Flex
         direction={{ base: "column", md: "row" }}

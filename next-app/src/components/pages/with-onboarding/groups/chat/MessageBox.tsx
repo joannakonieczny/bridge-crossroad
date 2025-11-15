@@ -36,7 +36,7 @@ export default function MessageBox(props: IMessageBoxProps) {
           marginBottom="0.25rem"
           textAlign={props.isSelf ? "right" : "left"}
         >
-          {!props.isSelf
+          {!props.isSelf // TODO use getPersonLabel
             ? props.sender.nickname
               ? props.sender.nickname
               : `${props.sender.name.firstName} ${props.sender.name.lastName}`

@@ -545,6 +545,7 @@ const usefulTools = {
 
 const chatPage = {
   sendMessagePlaceholder: "Napisz wiadomość...",
+  groupName: "Czat grupy: {groupName}",
 };
 
 const messages = {
