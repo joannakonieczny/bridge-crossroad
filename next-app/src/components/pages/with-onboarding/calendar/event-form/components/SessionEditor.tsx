@@ -18,7 +18,7 @@ import {
 } from "@/lib/typed-translations";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import SelectInput from "@/components/common/form/SelectInput";
-import { getPersonLabel } from "../util/helpers";
+import { getPersonLabel } from "@/util/formatters";
 import FormInput from "@/components/common/form/FormInput";
 import { useGroupQuery } from "@/lib/queries";
 

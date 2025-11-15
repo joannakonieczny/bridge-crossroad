@@ -16,11 +16,12 @@ import { ROUTES } from "@/routes";
 
 export default function Sidebar() {
   const router = useRouter();
-  const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
-
   const t = useTranslations("pages.CalendarPage.Sidebar");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
+
   if (!isVisible) return null;
+
   return (
     <Box
       w="16.5rem"
@@ -35,7 +36,7 @@ export default function Sidebar() {
         <Button
           w="100%"
           size="sm"
-          color="white"
+          color="bg"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
           rightIcon={<FiPlus size={30} />}
@@ -54,7 +55,7 @@ export default function Sidebar() {
         <Button
           w="100%"
           size="sm"
-          color="white"
+          color="bg"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
           onClick={() => router.push(ROUTES.calendar.upcoming_events)}

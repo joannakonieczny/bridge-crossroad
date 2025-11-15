@@ -9,7 +9,7 @@ import {
 } from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
-import { getPersonLabel } from "@/components/pages/with-onboarding/calendar/event-form/util/helpers";
+import { getPersonLabel } from "@/util/formatters";
 
 export default function TrainingPanel() {
   const form = useFormContext<AddEventSchemaType>();

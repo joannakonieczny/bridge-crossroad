@@ -10,7 +10,6 @@ import {
 } from "@/lib/typed-translations";
 import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
-import { getPersonLabel } from "../util/helpers";
 import { SteeringButtons } from "../components/SteeringButtons";
 import {
   useGroupQuery,
@@ -19,8 +18,13 @@ import {
 } from "@/lib/queries";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
-import type { StepProps } from "../util/helpers";
+import { getPersonLabel } from "@/util/formatters";
 import { useEffect } from "react";
+
+export type StepProps = {
+  setNextStep?: () => void;
+  setPrevStep?: () => void;
+};
 
 export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();

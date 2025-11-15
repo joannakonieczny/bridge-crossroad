@@ -109,7 +109,7 @@ export default function Calendar() {
   const eventsWithColor = rawEvents.map((e) => ({
     ...e,
     color: getEventDayColor(e.start),
-    textColor: "white",
+    textColor: "bg",
   }));
 
   const fcLocales = locale === "pl" ? [plLocale] : [enLocale];
@@ -120,7 +120,7 @@ export default function Calendar() {
       className={styles.root}
       padding="1.5rem 1.5rem 0 1.5rem"
       overflowY="auto"
-      height="calc(100vh - 6rem)"
+      p={4}
     >
       <FullCalendar
         key={initialView} // force reinit when breakpoint/view changes
