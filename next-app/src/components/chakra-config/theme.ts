@@ -53,8 +53,8 @@ export const theme = extendTheme({
         default: "white",
       },
       landingBg: {
-        default: "#D5D5FF"
-      }
+        default: "#D5D5FF",
+      },
     },
   },
   components: {},

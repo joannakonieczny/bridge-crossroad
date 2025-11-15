@@ -18,10 +18,7 @@ import { FiMoreVertical } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
-import type {
-  GroupBasicType,
-  GroupIdType,
-} from "@/schemas/model/group/group-types";
+import type { GroupBasicType } from "@/schemas/model/group/group-types";
 import { STATIC } from "@/club-preset/static";
 
 type GroupsGridProps = {
@@ -35,10 +32,6 @@ export default function GroupsGrid({
 }: GroupsGridProps) {
   const router = useRouter();
   const t = useTranslations("pages.GroupsPage.GroupsGrid");
-
-  const goToGroup = (id: GroupIdType) => {
-    router.push(`${ROUTES.groups}/${id}`);
-  };
 
   return (
     <Grid
@@ -67,7 +60,7 @@ export default function GroupsGrid({
             onClick={(e) => {
               const target = e.target as HTMLElement;
               if (!target.closest(".menu-button")) {
-                goToGroup(group.id);
+                router.push(ROUTES.groups.groupDetails(group.id));
               }
             }}
             position="relative"

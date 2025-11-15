@@ -21,9 +21,8 @@ import {
   FiFolder,
   FiGrid,
 } from "react-icons/fi";
-import type { IconType } from "react-icons";
-import { useRouter } from "next/navigation";
-import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
 import { ROUTES } from "@/routes";
 
@@ -33,18 +32,40 @@ type ISidebarProps = {
 
 export default function Sidebar({ groupId }: ISidebarProps) {
   const router = useRouter();
-  const t = useTranslationsWithFallback("pages.GroupsPage.Sidebar");
+  const pathname = usePathname();
+  const t = useTranslations("pages.GroupsPage.Sidebar");
 
   const groupQ = useGroupQuery(groupId);
 
   const group = groupQ.data;
   const isLoading = groupQ.isLoading;
-  const groupName = group?.name ?? "Grupa";
+  const groupName = group?.name ?? "";
   const membersCount = group?.members?.length ?? 0;
 
-  const navItems: IconType[] = [FiUser, FiMessageCircle, FiFolder, FiGrid];
-
   const avatarSize = useBreakpointValue({ base: "md", md: "lg" });
+
+  const navItems = [
+    {
+      icon: FiUser,
+      pagePath: ROUTES.groups.groupDetails(groupId),
+      text: t("nav.about"),
+    },
+    {
+      icon: FiMessageCircle,
+      pagePath: ROUTES.groups.chat(groupId),
+      text: t("nav.chat"),
+    },
+    {
+      icon: FiFolder,
+      pagePath: ROUTES.groups.materials(groupId),
+      text: t("nav.materials"),
+    },
+    {
+      icon: FiGrid,
+      pagePath: ROUTES.groups.hands(groupId),
+      text: t("nav.hands"),
+    },
+  ];
 
   return (
     <Box
@@ -70,7 +91,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
             alignSelf="flex-start"
           />
         )}
-
+        {/* TODO add proper fallbacks when data is loading */}
         <Flex direction="column" flex="1" minW={0}>
           <Box>
             <Text fontWeight="bold" isTruncated>
@@ -84,17 +105,17 @@ export default function Sidebar({ groupId }: ISidebarProps) {
           </Box>
 
           <HStack mt={2} spacing={2} justify="center">
-            {navItems.map((Icon, idx) => {
+            {navItems.map(({ icon: Icon, pagePath: path }, idx) => {
+              const isActive = !!pathname && pathname === path;
               return (
                 <IconButton
                   key={idx}
-                  aria-label={t(`nav.${idx}`)}
+                  aria-label={"Navigate to " + path}
                   icon={<Icon size={20} />}
                   size="lg"
                   variant="ghost"
-                  onClick={() => {
-                    /* na mobile nie ma na razie podstron, więc nie robi nic */
-                  }}
+                  color={isActive ? "accent.500" : undefined}
+                  onClick={() => router.push(path)}
                 />
               );
             })}
@@ -106,7 +127,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
         <Link
           fontSize="sm"
           color="accent.500"
-          onClick={() => router.push(ROUTES.groups)}
+          onClick={() => router.push(ROUTES.groups.index)}
           _hover={{ textDecoration: "none" }}
         >
           <Flex align="center" gap={2}>
@@ -121,7 +142,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
           <Avatar
             size="lg"
             name={groupName}
-            src={group?.imageUrl ?? undefined} //TODO: add proper fallback image
+            src={group?.imageUrl} //TODO: add proper fallback image
             borderRadius="md"
           />
         )}
@@ -147,20 +168,27 @@ export default function Sidebar({ groupId }: ISidebarProps) {
         <Divider my={4} />
 
         <VStack align="stretch" spacing={1} w="100%">
-          {navItems.map((Icon, idx) => (
-            <Link key={idx} _hover={{ textDecoration: "none" }}>
-              <Flex
-                align="center"
-                gap={3}
-                p={2}
-                borderRadius="md"
-                _hover={{ bg: "border.100", color: "accent.500" }}
+          {navItems.map(({ icon: Icon, pagePath: path, text }, idx) => {
+            const isActive = !!pathname && pathname === path;
+            return (
+              <Link
+                key={idx}
+                _hover={{ textDecoration: "none" }}
+                onClick={() => router.push(path)}
               >
-                <Icon size={18} />
-                <Text>{t(`nav.${idx}`)}</Text>
-              </Flex>
-            </Link>
-          ))}
+                <Flex
+                  align="center"
+                  gap={3}
+                  p={2}
+                  borderRadius="md"
+                  color={isActive ? "accent.500" : undefined} // keep color highlighting only
+                >
+                  <Icon size={18} />
+                  <Text>{text}</Text>
+                </Flex>
+              </Link>
+            );
+          })}
         </VStack>
       </VStack>
     </Box>

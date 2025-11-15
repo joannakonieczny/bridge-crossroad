@@ -1,3 +1,5 @@
+import type { GroupIdType } from "./schemas/model/group/group-types";
+
 export const ROUTES = {
   landing_page: "/",
   auth: {
@@ -17,7 +19,13 @@ export const ROUTES = {
     index: "/calendar",
     upcoming_events: "/calendar/upcoming-events",
   },
-  groups: "/groups",
+  groups: {
+    index: "/groups",
+    groupDetails: (id: GroupIdType) => `/groups/${id}`,
+    chat: (id: GroupIdType) => `/groups/${id}/chat`,
+    materials: (id: GroupIdType) => `/groups/${id}/materials`,
+    hands: (id: GroupIdType) => `/groups/${id}/hands`,
+  },
   find_partner: "/find-partner",
   tools: "/tools",
 } as const;

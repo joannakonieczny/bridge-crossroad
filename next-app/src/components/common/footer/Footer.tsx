@@ -55,7 +55,7 @@ export default function Footer() {
           >
             {t("quickAccess.content.calendar")}
           </ResponsiveText>
-          <ResponsiveText as={ChakraLink} href={ROUTES.groups} color="bg">
+          <ResponsiveText as={ChakraLink} href={ROUTES.groups.index} color="bg">
             {t("quickAccess.content.groups")}
           </ResponsiveText>
           <ResponsiveText as={ChakraLink} href={ROUTES.find_partner} color="bg">

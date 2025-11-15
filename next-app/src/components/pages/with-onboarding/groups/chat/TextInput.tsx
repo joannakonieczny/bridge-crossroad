@@ -1,0 +1,37 @@
+import { Input, Stack, IconButton, ButtonGroup } from "@chakra-ui/react";
+import { GrFormAttachment } from "react-icons/gr";
+import { BsFillCursorFill } from "react-icons/bs";
+import { TbCards } from "react-icons/tb";
+import { useTranslations } from "@/lib/typed-translations";
+
+export function TextInput() {
+  const t = useTranslations("pages.ChatPage");
+  return (
+    <Stack width="100%" direction="row" spacing="0" padding="0.5rem">
+      <Input
+        ringColor="border.200"
+        placeholder={t("sendMessagePlaceholder")}
+        borderRightRadius={0}
+      />
+      <ButtonGroup isAttached variant="outline">
+        <IconButton
+          aria-label="Insert Card"
+          backgroundColor="border.200"
+          borderLeftRadius={0}
+          icon={<TbCards />}
+        />
+        <IconButton
+          aria-label="Attach File"
+          backgroundColor="border.200"
+          icon={<GrFormAttachment />}
+        />
+        <IconButton
+          aria-label="Send Message"
+          backgroundColor="accent.500"
+          color="bg"
+          icon={<BsFillCursorFill />}
+        />
+      </ButtonGroup>
+    </Stack>
+  );
+}
