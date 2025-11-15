@@ -5,7 +5,7 @@ import { EventType } from "@/club-preset/event-type";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { displayName } from "@/util/user";
-import { UserTypeBasic } from "@/schemas/model/user/user-types";
+import type { UserTypeBasic } from "@/schemas/model/user/user-types";
 
 export default function EventDetails({
   description,

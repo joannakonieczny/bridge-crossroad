@@ -5,8 +5,8 @@ import { EventType, TournamentType, Half } from "@/club-preset/event-type";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { useTranslations } from "@/lib/typed-translations";
-import { EventDataTypePopulated, LeagueMeetingDataTypePopulated, OtherDataType, TournamentDataTypePopulated, TrainingDataTypePopulated } from "@/schemas/model/event/event-types";
-import { UserTypeBasic } from "@/schemas/model/user/user-types";
+import type { EventDataTypePopulated, LeagueMeetingDataTypePopulated, TournamentDataTypePopulated, TrainingDataTypePopulated } from "@/schemas/model/event/event-types";
+import type { UserTypeBasic } from "@/schemas/model/user/user-types";
 
 export default function EventSpecificData({
   eventType,

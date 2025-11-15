@@ -95,9 +95,11 @@ export function useEventQuery(
 }
 
 export function useEventPageQuery(eventId?: string) {
+  const onError = useOnErrorToast("szczegółów wydarzenia", "getEventPage");
   return useActionQuery({
     queryKey: ["event", eventId ?? "none"],
     action: () => getEvent({ eventId: eventId as EventIdType }),
     enabled: !!eventId,
+    onError,
   });
 }

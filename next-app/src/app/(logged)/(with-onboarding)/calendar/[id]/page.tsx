@@ -1,8 +1,7 @@
 "use client";
 
-import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { Box, Flex, VStack } from "@chakra-ui/react";
+import { useParams } from "next/navigation";
 import { EventType } from "@/club-preset/event-type";
 import EventBanner from "@/components/pages/with-onboarding/calendar/event-page/EventBanner";
 import EventDetails from "@/components/pages/with-onboarding/calendar/event-page/EventDetails";
@@ -18,26 +17,6 @@ export default function EventPage() {
   const eventId = params?.id;
 
   const eventQ = useEventPageQuery(eventId);
-
-  const toast = useToast();
-  const router = useRouter();
-  const errorShownRef = useRef(false);
-
-  useEffect(() => {
-    if (eventQ.error && !errorShownRef.current) {
-      errorShownRef.current = true;
-      toast({
-        title: t("toast.loadError.title"),
-        description: t("toast.loadError.description"),
-        status: "error",
-        duration: 6000,
-        isClosable: true,
-        position: "bottom",
-      });
-      router.push("/calendar");
-      console.error("Failed to load event:", eventQ.error);
-    }
-  }, [eventQ.data, eventQ.error, toast, router, t]);
 
   const isLoading = eventQ.isLoading;
 
