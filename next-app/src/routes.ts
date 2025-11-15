@@ -19,9 +19,10 @@ export const ROUTES = {
   },
   groups: {
     index: "/groups",
-    chat: "/chat",
-    materials: "/materials",
-    hands: "/hands",
+    groupDetails: (id: string) => `/groups/${id}`,
+    chat: "/groups/chat",
+    materials: "/groups/materials",
+    hands: "/groups/hands",
   },
   find_partner: "/find-partner",
   tools: "/tools",

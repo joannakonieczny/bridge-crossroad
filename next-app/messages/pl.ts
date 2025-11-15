@@ -297,10 +297,10 @@ const groupsPage = {
   Sidebar: {
     back: "Wróć",
     nav: {
-      0: "O grupie",
-      1: "Czat",
-      2: "Materiały",
-      3: "Rozdania",
+      about: "O grupie",
+      chat: "Czat",
+      materials: "Materiały",
+      hands: "Rozdania",
     },
     members: {
       single: "1 członek",

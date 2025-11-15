@@ -23,9 +23,8 @@ import {
   FiFolder,
   FiGrid,
 } from "react-icons/fi";
-import type { IconType } from "react-icons";
 import { useRouter, usePathname } from "next/navigation";
-import { useTranslationsWithFallback } from "@/lib/typed-translations";
+import { useTranslations } from "@/lib/typed-translations";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { ROUTES } from "@/routes";
 
@@ -36,7 +35,7 @@ type ISidebarProps = {
 export default function Sidebar({ groupId }: ISidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const t = useTranslationsWithFallback("pages.GroupsPage.Sidebar");
+  const t = useTranslations("pages.GroupsPage.Sidebar");
 
   const groupQ = useActionQuery({
     queryKey: QUERY_KEYS.group(groupId),
@@ -45,18 +44,28 @@ export default function Sidebar({ groupId }: ISidebarProps) {
 
   const group = groupQ.data;
   const isLoading = groupQ.isLoading;
-  const groupName = group?.name ?? "Grupa";
+  const groupName = group?.name ?? "";
   const membersCount = group?.members?.length ?? 0;
 
-  const navItems: IconType[] = [FiUser, FiMessageCircle, FiFolder, FiGrid];
-
   const avatarSize = useBreakpointValue({ base: "md", md: "lg" });
-  const basePath = `/groups/${groupId}`;
-  const pagePaths = [
-    basePath,
-    `${basePath}${ROUTES.groups.chat}`,
-    `${basePath}${ROUTES.groups.materials}`,
-    `${basePath}${ROUTES.groups.hands}`,
+
+  const navItems = [
+    {
+      icon: FiUser,
+      pagePath: ROUTES.groups.groupDetails(groupId),
+      text: t("nav.about"),
+    },
+    {
+      icon: FiMessageCircle,
+      pagePath: ROUTES.groups.chat,
+      text: t("nav.chat"),
+    },
+    {
+      icon: FiFolder,
+      pagePath: ROUTES.groups.materials,
+      text: t("nav.materials"),
+    },
+    { icon: FiGrid, pagePath: ROUTES.groups.hands, text: t("nav.hands") },
   ];
 
   return (
@@ -83,7 +92,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
             alignSelf="flex-start"
           />
         )}
-
+        {/* TODO add proper fallbacks when data is loading */}
         <Flex direction="column" flex="1" minW={0}>
           <Box>
             <Text fontWeight="bold" isTruncated>
@@ -97,15 +106,14 @@ export default function Sidebar({ groupId }: ISidebarProps) {
           </Box>
 
           <HStack mt={2} spacing={2} justify="center">
-            {navItems.map((Icon, idx) => {
-              const path = pagePaths[idx];
+            {navItems.map(({ icon: Icon, pagePath: path }, idx) => {
               const isActive =
                 !!pathname &&
                 (pathname === path || (idx !== 0 && pathname.startsWith(path)));
               return (
                 <IconButton
                   key={idx}
-                  aria-label={t(`nav.${idx}`)}
+                  aria-label={"Navigate to " + path}
                   icon={<Icon size={20} />}
                   size="lg"
                   variant="ghost"
@@ -137,7 +145,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
           <Avatar
             size="lg"
             name={groupName}
-            src={group?.imageUrl ?? undefined} //TODO: add proper fallback image
+            src={group?.imageUrl} //TODO: add proper fallback image
             borderRadius="md"
           />
         )}
@@ -163,8 +171,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
         <Divider my={4} />
 
         <VStack align="stretch" spacing={1} w="100%">
-          {navItems.map((Icon, idx) => {
-            const path = pagePaths[idx];
+          {navItems.map(({ icon: Icon, pagePath: path, text }, idx) => {
             const isActive =
               !!pathname &&
               (pathname === path || (idx !== 0 && pathname.startsWith(path)));
@@ -182,7 +189,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
                   color={isActive ? "accent.500" : undefined} // keep color highlighting only
                 >
                   <Icon size={18} />
-                  <Text>{t(`nav.${idx}`)}</Text>
+                  <Text>{text}</Text>
                 </Flex>
               </Link>
             );
