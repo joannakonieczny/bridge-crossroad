@@ -165,7 +165,7 @@ export default function EventSpecificData({
                                 ? "accent.300"
                                 : "secondary.300"
                             }
-                            color="white"
+                            color="bg"
                             fontWeight="semibold"
                             textAlign="center"
                           >
@@ -213,7 +213,7 @@ export default function EventSpecificData({
                                 ? "accent.300"
                                 : "secondary.300"
                             }
-                            color="white"
+                            color="bg"
                             fontWeight="semibold"
                             textAlign="center"
                           >

@@ -2,6 +2,8 @@ import type { DurationType } from "@/schemas/model/event/event-types";
 import dayjs from "dayjs";
 import "dayjs/locale/pl";
 
+dayjs.locale("pl");
+
 type Person = {
   nickname?: string;
   name: { firstName: string; lastName: string };
