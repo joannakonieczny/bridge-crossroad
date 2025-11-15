@@ -1,19 +1,8 @@
 "use client";
 
-import {
-  Box,
-  Flex,
-  Text,
-  Icon,
-  VStack,
-  MenuList,
-  MenuButton,
-  Menu,
-  IconButton,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, Icon, VStack } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { IconType } from "react-icons";
-import { FiMoreVertical } from "react-icons/fi";
 
 export type HeaderTileProps = {
   icon: IconType;
@@ -31,13 +20,7 @@ export function HeaderTile({
   accentColor,
 }: HeaderTileProps) {
   return (
-    <Box
-      minH={{ base: "auto", md: "10rem" }}
-      w="full"
-      maxW={{ base: "full", md: "70rem" }}
-      mx="auto"
-      bg="bg"
-    >
+    <Box bg="bg">
       <Flex
         display={{ base: "flex", md: "none" }}
         align="center"
@@ -46,22 +29,11 @@ export function HeaderTile({
         py={{ base: 2, md: 3 }}
       >
         <ResponsiveHeading fontSize="lg" text={title} showBar={true} />
-        <Menu placement="top-end">
-          <MenuButton
-            as={IconButton}
-            icon={<FiMoreVertical />}
-            variant="ghost"
-            size="sm"
-          />
-          <MenuList></MenuList>
-        </Menu>
       </Flex>
 
       <Flex
         display={{ base: "none", md: "flex" }}
         direction={{ base: "column", md: "row" }}
-        h="100%"
-        w="100%"
         align="stretch"
       >
         <Flex
@@ -101,17 +73,6 @@ export function HeaderTile({
               {subtitle}
             </Text>
           </VStack>
-        </Flex>
-        <Flex padding="4">
-          <Menu placement="top-end">
-            <MenuButton
-              as={IconButton}
-              icon={<FiMoreVertical />}
-              variant="ghost"
-              size="sm"
-            />
-            <MenuList></MenuList>
-          </Menu>
         </Flex>
       </Flex>
     </Box>
