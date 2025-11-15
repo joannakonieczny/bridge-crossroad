@@ -27,6 +27,7 @@ export function useActionQuery<TData = unknown, TValidationErrors = unknown>(
     queryFn: async () => {
       return await executeAction(action);
     },
+    staleTime: queryOptions?.staleTime ?? 1000 * 3, // 3 seconds
   });
 
   useErrorHandler(result.isError, result.error, onError);

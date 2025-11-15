@@ -20,7 +20,7 @@ export default function CalendarPage() {
   const t = useTranslations("pages.CalendarPage");
 
   return (
-    <Flex align="stretch" minH="calc(100vh - 6rem)">
+    <Flex align="stretch" minH="calc(100vh - 5rem)">
       <Box flex="1" p={4}>
         {showButton && (
           <Box mb={4} px={4}>

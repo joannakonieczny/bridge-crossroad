@@ -1,6 +1,13 @@
 import dayjs from "dayjs";
+import { useToast } from "@chakra-ui/react";
+import { useGetMessageFromError } from "./tanstack-action/hooks-helpers";
 import { useActionQuery } from "./tanstack-action/actions-querry";
-import { getJoinedGroupsInfo, getGroupData } from "@/services/groups/api";
+import {
+  getJoinedGroupsInfo,
+  getGroupData,
+  getJoinedGroupsInfoAsAdmin,
+} from "@/services/groups/api";
+import { getUser } from "@/services/onboarding/api";
 import { listEventsForUser, getEvent } from "@/services/events/api";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
@@ -8,11 +15,11 @@ import type {
   ActionError,
   TActionQueryOptionsHelper,
 } from "./tanstack-action/types";
-import { useToast } from "@chakra-ui/react";
-import { useGetMessageFromError } from "./tanstack-action/hooks-helpers";
 
 export const QUERY_KEYS = {
+  userInfo: ["user", "info"],
   joinedGroups: ["groups"],
+  joinedGroupsAsAdmin: ["groups", "adminOnly"],
   groupDetail: (id: GroupIdType) => ["groups", id],
   calendarEvents: (start: Date, end: Date) => [
     "events",
@@ -40,10 +47,7 @@ function useOnErrorToast(template: string, toastId: string) {
 export function useJoinedGroupsQuery(
   props?: TActionQueryOptionsHelper<typeof getJoinedGroupsInfo>
 ) {
-  const e = useOnErrorToast(
-    "grup w których jesteś administratorem",
-    "getJoinedGroupsInfo"
-  );
+  const e = useOnErrorToast("grup do których należysz", "getJoinedGroupsInfo");
   return useActionQuery({
     queryKey: QUERY_KEYS.joinedGroups,
     action: getJoinedGroupsInfo,
@@ -52,14 +56,42 @@ export function useJoinedGroupsQuery(
   });
 }
 
+export function useJoinedGroupsAsAdminQuery(
+  props?: TActionQueryOptionsHelper<typeof getJoinedGroupsInfoAsAdmin>
+) {
+  const e = useOnErrorToast(
+    "grup do których należysz (admin)",
+    "getJoinedGroupsInfoAsAdmin"
+  );
+  return useActionQuery({
+    queryKey: QUERY_KEYS.joinedGroupsAsAdmin,
+    action: getJoinedGroupsInfoAsAdmin,
+    onError: e,
+    ...props,
+  });
+}
+
+export function useUserInfoQuery(
+  props?: TActionQueryOptionsHelper<typeof getUser>
+) {
+  const e = useOnErrorToast("informacji o użytkowniku", "getUser");
+  return useActionQuery({
+    queryKey: QUERY_KEYS.userInfo,
+    action: getUser,
+    onError: e,
+    ...props,
+  });
+}
+
 export function useGroupQuery(
-  groupId: GroupIdType,
+  groupId: GroupIdType | null,
   props?: TActionQueryOptionsHelper<typeof getGroupData>
 ) {
   const e = useOnErrorToast("szczegółów grupy", "getGroupData");
   return useActionQuery({
-    queryKey: QUERY_KEYS.groupDetail(groupId),
-    action: () => getGroupData({ groupId }),
+    queryKey: QUERY_KEYS.groupDetail(groupId || ""),
+    action: () => getGroupData({ groupId: groupId || "" }),
+    enabled: groupId ? true : false,
     onError: e,
     ...props,
   });
@@ -82,13 +114,14 @@ export function useEventsForUserQuery(
 }
 
 export function useEventQuery(
-  eventId: EventIdType,
+  eventId: EventIdType | null,
   props?: TActionQueryOptionsHelper<typeof getEvent>
 ) {
   const e = useOnErrorToast("szczegółów wydarzenia", "getEvent");
   return useActionQuery({
-    queryKey: QUERY_KEYS.eventDetail(eventId),
-    action: () => getEvent({ eventId }),
+    queryKey: QUERY_KEYS.eventDetail(eventId || ""),
+    action: () => getEvent({ eventId: eventId || "" }),
+    enabled: eventId ? true : false,
     onError: e,
     ...props,
   });

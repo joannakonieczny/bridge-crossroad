@@ -1,0 +1,68 @@
+"use client";
+
+import SelectInput from "@/components/common/form/SelectInput";
+import { Controller, useFormContext } from "react-hook-form";
+import { TournamentType } from "@/club-preset/event-type";
+import {
+  useTranslationsWithFallback,
+  useTranslations,
+} from "@/lib/typed-translations";
+import { getPersonLabel } from "@/util/formatters";
+import { useGroupQuery } from "@/lib/queries";
+import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+
+export default function TournamentPanel() {
+  const form = useFormContext<AddEventSchemaType>();
+
+  const t = useTranslations(
+    "pages.EventFormPage.detailedInfoStep.tournamentPanel"
+  );
+  const tTournaments = useTranslations("common.tournamentType");
+  const tValidation = useTranslationsWithFallback();
+
+  const selectedGroup = form.watch("group");
+  const peopleQ = useGroupQuery(selectedGroup);
+
+  const people = peopleQ.data?.members ?? [];
+
+  return (
+    <>
+      <Controller
+        control={form.control}
+        name="data.tournamentType"
+        render={({ field, fieldState: { error } }) => (
+          <SelectInput
+            placeholder={t("tournamentTypePlaceholder")}
+            isInvalid={!!error}
+            errorMessage={tValidation(error?.message)}
+            options={Object.values(TournamentType).map((type) => ({
+              value: type,
+              label: tTournaments(`${type}`),
+            }))}
+            value={field.value}
+            isLoading={peopleQ.isLoading}
+            onChange={field.onChange}
+          />
+        )}
+      />
+      <Controller
+        control={form.control}
+        name="data.arbiter"
+        render={({ field, fieldState: { error } }) => (
+          <SelectInput
+            placeholder={t("arbiterPlaceholder")}
+            isInvalid={!!error}
+            errorMessage={tValidation(error?.message)}
+            options={people.map((member) => ({
+              value: member.id,
+              label: getPersonLabel(member),
+            }))}
+            value={field.value}
+            isLoading={peopleQ.isLoading}
+            onChange={field.onChange}
+          />
+        )}
+      />
+    </>
+  );
+}

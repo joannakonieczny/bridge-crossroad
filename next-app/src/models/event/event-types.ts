@@ -4,7 +4,7 @@ import { Schema } from "mongoose";
 import type { Timestamps } from "../utils";
 import type { UserId } from "../user/user-types";
 import type { GroupId } from "../group/group-types";
-import type { EventType, TournamentType, Half } from "@/club-preset/event-type";
+import type { EventType, TournamentType } from "@/club-preset/event-type";
 
 export const EventTableName = "Event";
 
@@ -30,9 +30,6 @@ export type ILeagueMeetingData = {
   type: EventType.LEAGUE_MEETING;
   tournamentType?: TournamentType;
   session: Array<{
-    _id?: typeof EventId;
-    matchNumber: number;
-    half: Half;
     contestants: {
       firstPair: IPlayingPair;
       secondPair: IPlayingPair;

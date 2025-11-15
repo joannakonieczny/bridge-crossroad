@@ -1,17 +1,14 @@
-import type { CheckboxProps} from "@chakra-ui/react";
+import type { CheckboxProps } from "@chakra-ui/react";
 import { Checkbox, Text, HStack } from "@chakra-ui/react";
-import type {
-  FormControlWrapperProps} from "./FormControlWrapper";
-import {
-  WithFormControlWrapper,
-} from "./FormControlWrapper";
+import type { FormControlWrapperProps } from "../../../common/form/util/FormControlWrapper";
+import { WithFormControlWrapper } from "../../../common/form/util/FormControlWrapper";
 import type { ReactNode } from "react";
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 
 type LinkInfo = {
   text: string;
   href: string;
-}
+};
 
 type ICheckBoxInputProps = {
   label?: string | ReactNode;
@@ -19,7 +16,7 @@ type ICheckBoxInputProps = {
   onChange?: (checked: boolean) => void;
   linkInfo?: LinkInfo;
   onCheckBoxProps?: CheckboxProps;
-}
+};
 
 function CheckBoxInput(props: ICheckBoxInputProps) {
   return (

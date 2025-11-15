@@ -31,6 +31,16 @@ export const getJoinedGroupsInfo = fullAuthAction.action(
   }
 );
 
+export const getJoinedGroupsInfoAsAdmin = fullAuthAction.action(
+  async ({ ctx: { userId } }) => {
+    const userDataWithGroupsPopulated = await getUserWithGroupsData(userId);
+    const res = userDataWithGroupsPopulated.groups
+      .filter((g) => g.admins.some((adminId) => adminId.toString() === userId))
+      .map(sanitizeGroup);
+    return res;
+  }
+);
+
 export const createNewGroup = fullAuthAction
   .inputSchema(createGroupFormSchema)
   .action(async ({ parsedInput: createGroupData, ctx: { userId } }) => {

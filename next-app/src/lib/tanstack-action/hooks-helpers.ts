@@ -44,7 +44,7 @@ export function useGetMessageFromError(template: string) {
 
     const validationErrorKey = getNestedError(err.validationErrors);
     if (validationErrorKey) {
-      return tV(validationErrorKey);
+      return tV(validationErrorKey, { template });
     }
 
     return t("common.errorTemplate.unknownError", { template });

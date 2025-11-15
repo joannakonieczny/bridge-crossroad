@@ -6,7 +6,8 @@ import {
   getWithinOwnGroupAsAdminAction,
 } from "../action-lib";
 import {
-  addModifyEventSchema,
+  addEventSchema,
+  modifyEventSchema,
   timeWindowSchema,
 } from "@/schemas/pages/with-onboarding/events/events-schema";
 import {
@@ -30,7 +31,7 @@ import { getEvent as getEventRepository } from "@/repositories/event-group";
 import { requireGroupAccess } from "../groups/simple-action";
 
 export const createEvent = getWithinOwnGroupAsAdminAction(
-  addModifyEventSchema
+  addEventSchema
 ).action(async ({ parsedInput: eventData, ctx: { groupId } }) => {
   const res = await addEvent({ groupId, event: eventData });
   return sanitizeEvent(res.event);
@@ -44,7 +45,7 @@ export const deleteEvent = getWithinOwnGroupAsAdminAction(havingEventId).action(
 );
 
 export const updateEvent = getWithinOwnGroupAsAdminAction(
-  havingEventId.merge(z.object({ changes: addModifyEventSchema.partial() }))
+  havingEventId.merge(z.object({ changes: modifyEventSchema.partial() }))
 ).action(async ({ parsedInput: { eventId, changes }, ctx: { groupId } }) => {
   const res = await updateEventRepo({ groupId, eventId, changes });
   return sanitizeEvent(res.event);

@@ -11,15 +11,17 @@ import { useRouter } from "next/navigation";
 import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
+import EventForm from "./event-form/EventForm";
 import { ROUTES } from "@/routes";
 
 export default function Sidebar() {
   const router = useRouter();
-  const { onOpen } = useDisclosure();
+  const t = useTranslations("pages.CalendarPage.Sidebar");
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
 
-  const t = useTranslations("pages.CalendarPage.Sidebar");
   if (!isVisible) return null;
+
   return (
     <Box
       w="16.5rem"
@@ -34,11 +36,11 @@ export default function Sidebar() {
         <Button
           w="100%"
           size="sm"
-          color="white"
+          color="bg"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
-          onClick={onOpen}
           rightIcon={<FiPlus size={30} />}
+          onClick={onOpen}
         >
           {t("addEvent")}
         </Button>
@@ -53,7 +55,7 @@ export default function Sidebar() {
         <Button
           w="100%"
           size="sm"
-          color="white"
+          color="bg"
           bg="accent.500"
           _hover={{ bg: "accent.600" }}
           onClick={() => router.push(ROUTES.calendar.upcoming_events)}
@@ -61,6 +63,7 @@ export default function Sidebar() {
           {t("seeMore")}
         </Button>
       </Box>
+      <EventForm isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 }

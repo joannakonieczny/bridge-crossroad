@@ -57,9 +57,6 @@ function sanitizeLeagueMeetingData(
     type: data.type,
     tournamentType: data.tournamentType,
     session: data.session.map((s) => ({
-      id: s._id?.toString(),
-      matchNumber: s.matchNumber,
-      half: s.half,
       contestants: {
         firstPair: sanitizePlayingPair(s.contestants.firstPair),
         secondPair: sanitizePlayingPair(s.contestants.secondPair),
@@ -137,9 +134,6 @@ function sanitizeLeagueMeetingDataPopulated(
     type: data.type,
     tournamentType: data.tournamentType,
     session: data.session.map((s) => ({
-      id: s._id?.toString(),
-      matchNumber: s.matchNumber,
-      half: s.half,
       contestants: {
         firstPair: sanitizePlayingPairPopulated(s.contestants.firstPair),
         secondPair: sanitizePlayingPairPopulated(s.contestants.secondPair),
