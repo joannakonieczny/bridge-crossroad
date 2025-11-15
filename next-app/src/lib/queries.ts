@@ -114,24 +114,15 @@ export function useEventsForUserQuery(
 }
 
 export function useEventQuery(
-  eventId: EventIdType,
+  eventId: EventIdType | null,
   props?: TActionQueryOptionsHelper<typeof getEvent>
 ) {
   const e = useOnErrorToast("szczegółów wydarzenia", "getEvent");
   return useActionQuery({
-    queryKey: QUERY_KEYS.eventDetail(eventId),
-    action: () => getEvent({ eventId }),
+    queryKey: QUERY_KEYS.eventDetail(eventId || ""),
+    action: () => getEvent({ eventId: eventId || "" }),
+    enabled: eventId ? true : false,
     onError: e,
     ...props,
-  });
-}
-
-export function useEventPageQuery(eventId?: string) {
-  const onError = useOnErrorToast("szczegółów wydarzenia", "getEventPage");
-  return useActionQuery({
-    queryKey: ["event", eventId ?? "none"],
-    action: () => getEvent({ eventId: eventId as EventIdType }),
-    enabled: !!eventId,
-    onError,
   });
 }

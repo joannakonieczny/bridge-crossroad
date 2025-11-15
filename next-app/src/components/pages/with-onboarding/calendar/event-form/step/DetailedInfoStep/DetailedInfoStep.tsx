@@ -14,7 +14,11 @@ import TrainingPanel from "./components/TrainingPanel";
 import { SteeringButtons } from "../../components/SteeringButtons";
 import type { FieldPath } from "react-hook-form";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
-import type { StepProps } from "../../util/helpers";
+
+export type StepProps = {
+  setNextStep?: () => void;
+  setPrevStep?: () => void;
+};
 
 export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();

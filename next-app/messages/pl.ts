@@ -728,7 +728,8 @@ const messages = {
         toast: {
           loadError: {
             title: "Nie udało się wczytać wydarzenia",
-            description: "Spróbuj ponownie później i upewnij się, że wydarzenie istnieje.",
+            description:
+              "Spróbuj ponownie później i upewnij się, że wydarzenie istnieje.",
           },
         },
       },
@@ -748,13 +749,9 @@ const messages = {
       detailsButtonText: "Szczegóły",
     },
     EventPage: {
-      EventBanner: {
-        imageAltFallback: "Obraz wydarzenia",
-      },
       EventDetails: {
         organizer: "Organizator",
         participants: "Uczestnicy",
-        noOrganizer: "Brak organizatora",
         noParticipants: "Brak uczestników",
       },
       EventEnrollment: {
@@ -778,7 +775,6 @@ const messages = {
           coach: "Trener:",
           topic: "Temat:",
         },
-        noArbiter: "Brak sędziego",
         noCoach: "Brak trenera",
         noAdditionalData: "Brak dodatkowych danych",
         pairs: "Pary",
@@ -794,14 +790,6 @@ const messages = {
             pair2: "Para 2",
             opponent: "Przeciwnik",
           },
-        },
-        tournamentTypes: {
-          MAX: "MAXy",
-          IMPS: "IMPy",
-          CRAZY: "Crazy",
-          TEAM: "Drużynowy",
-          INDIVIDUAL: "Indywidualny",
-          BAMY: "BAMy",
         },
       },
     },

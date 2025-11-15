@@ -74,9 +74,3 @@ export type EventSchemaTypePopulated = Overwrite<
     group: GroupBasicType;
   }
 >;
-
-export type GroupInfo = {
-    id: string;
-    name: string;
-    isMain: boolean;
-};
