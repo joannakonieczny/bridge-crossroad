@@ -143,157 +143,324 @@ export default function EventSpecificData({
                 </Tr>
               </Thead>
               <Tbody>
-                {eventData.session.map((s, idx) => {
-                  const isMatchOdd = (s.matchNumber ?? 0) % 2 === 1;
-                  const isRowOdd = idx % 2 === 1;
-                  return (
-                    // the "1%" trick makes the column shrink to fit content
-                    <Tr key={s.id ?? idx}>
-                      <Td
-                        w="1%"
-                        whiteSpace="nowrap"
-                        bg={isMatchOdd ? "accent.300" : "secondary.300"}
-                        color="white"
-                        fontWeight="semibold"
-                        textAlign="center"
-                      >
-                        {s.matchNumber}
-                      </Td>
+                {(() => {
+                  const sessions = eventData.session ?? [];
+                  const matches = Math.ceil(sessions.length / 2);
+                  const rows: React.ReactNode[] = [];
 
-                      <Td
-                        w="1%"
-                        whiteSpace="nowrap"
-                        bg={isRowOdd ? "border.50" : "border.100"}
-                      >
-                        {s.half === Half.FIRST
-                          ? t("half.first")
-                          : s.half === Half.SECOND
-                          ? t("half.second")
-                          : s.half}
-                      </Td>
+                  for (let pairIdx = 0; pairIdx < matches; pairIdx++) {
+                    const baseIdx = pairIdx * 2;
+                    const sFirst = sessions[baseIdx];
+                    const sSecond = sessions[baseIdx + 1];
+                    const matchNumber = pairIdx + 1;
 
-                      <Td>
-                        <PairInline
-                          first={s.contestants.firstPair.first}
-                          second={s.contestants.firstPair.second}
-                        />
-                      </Td>
-                      <Td>
-                        <PairInline
-                          first={s.contestants.secondPair.first}
-                          second={s.contestants.secondPair.second}
-                        />
-                      </Td>
-                      <Td>
-                        <ResponsiveText as="span">
-                          {s.opponentTeamName ?? "-"}
-                        </ResponsiveText>
-                      </Td>
-                    </Tr>
-                  );
-                })}
+                    if (sFirst) {
+                      rows.push(
+                        <Tr key={`session-${pairIdx}-half-0`}>
+                          <Td
+                            w="1%"
+                            whiteSpace="nowrap"
+                            bg={
+                              matchNumber % 2 === 1
+                                ? "accent.300"
+                                : "secondary.300"
+                            }
+                            color="white"
+                            fontWeight="semibold"
+                            textAlign="center"
+                          >
+                            {matchNumber}
+                          </Td>
+                          <Td
+                            w="1%"
+                            whiteSpace="nowrap"
+                            bg={
+                              (pairIdx * 2) % 2 === 1
+                                ? "border.50"
+                                : "border.100"
+                            }
+                          >
+                            {t("half.first")}
+                          </Td>
+                          <Td>
+                            <PairInline
+                              first={sFirst.contestants.firstPair.first}
+                              second={sFirst.contestants.firstPair.second}
+                            />
+                          </Td>
+                          <Td>
+                            <PairInline
+                              first={sFirst.contestants.secondPair.first}
+                              second={sFirst.contestants.secondPair.second}
+                            />
+                          </Td>
+                          <Td>
+                            <ResponsiveText as="span">
+                              {sFirst.opponentTeamName ?? "-"}
+                            </ResponsiveText>
+                          </Td>
+                        </Tr>
+                      );
+                    }
+                    if (sSecond) {
+                      rows.push(
+                        <Tr key={`session-${pairIdx}-half-1`}>
+                          <Td
+                            w="1%"
+                            whiteSpace="nowrap"
+                            bg={
+                              matchNumber % 2 === 1
+                                ? "accent.300"
+                                : "secondary.300"
+                            }
+                            color="white"
+                            fontWeight="semibold"
+                            textAlign="center"
+                          >
+                            {matchNumber}
+                          </Td>
+                          <Td
+                            w="1%"
+                            whiteSpace="nowrap"
+                            bg={
+                              (pairIdx * 2 + 1) % 2 === 1
+                                ? "border.50"
+                                : "border.100"
+                            }
+                          >
+                            {t("half.second")}
+                          </Td>
+                          <Td>
+                            <PairInline
+                              first={sSecond.contestants.firstPair.first}
+                              second={sSecond.contestants.firstPair.second}
+                            />
+                          </Td>
+                          <Td>
+                            <PairInline
+                              first={sSecond.contestants.secondPair.first}
+                              second={sSecond.contestants.secondPair.second}
+                            />
+                          </Td>
+                          <Td>
+                            <ResponsiveText as="span">
+                              {sSecond.opponentTeamName ?? "-"}
+                            </ResponsiveText>
+                          </Td>
+                        </Tr>
+                      );
+                    }
+                  }
+
+                  return rows;
+                })()}
               </Tbody>
             </Table>
           </TableContainer>
 
           <Box display={{ base: "block", md: "block", lg: "none" }} mt={3}>
             <Stack spacing={3}>
-              {eventData.session.map((s, idx) => {
-                const isMatchOdd = (s.matchNumber ?? 0) % 2 === 1;
-                const isRowOdd = idx % 2 === 1;
-                return (
-                  <Box
-                    key={s.id ?? idx}
-                    p={3}
-                    borderWidth={1}
-                    borderColor="border.100"
-                    borderRadius="md"
-                    bg="bg"
-                  >
-                    <SimpleGrid
-                      columns={3}
-                      spacing={2}
-                      alignItems="center"
-                      mb={2}
+              {(() => {
+                const sessions = eventData.session ?? [];
+                const matches = Math.ceil(sessions.length / 2);
+                const cards: React.ReactNode[] = [];
+
+                for (let pairIdx = 0; pairIdx < matches; pairIdx++) {
+                  const baseIdx = pairIdx * 2;
+                  const sFirst = sessions[baseIdx];
+                  const sSecond = sessions[baseIdx + 1];
+                  const matchNumber = pairIdx + 1;
+                  const isMatchOdd = matchNumber % 2 === 1;
+
+                  cards.push(
+                    <Box
+                      key={`match-${pairIdx}`}
+                      p={3}
+                      borderWidth={1}
+                      borderColor="border.100"
+                      borderRadius="md"
+                      bg="bg"
                     >
-                      <Box
-                        bg={isMatchOdd ? "accent.300" : "secondary.300"}
-                        color="bg"
-                        w="48px"
-                        h="48px"
-                        minW="48px"
-                        display="flex"
+                      <SimpleGrid
+                        columns={3}
+                        spacing={2}
                         alignItems="center"
-                        justifyContent="center"
-                        flexDirection="column"
-                        borderRadius="md"
+                        mb={2}
                       >
-                        <ResponsiveText fontSize="xs" color="bg" lineHeight="1">
-                          {t("league.table.match")}
-                        </ResponsiveText>
-                        <ResponsiveText
-                          fontWeight="semibold"
-                          fontSize="lg"
-                          lineHeight="1"
+                        <Box
+                          bg={isMatchOdd ? "accent.300" : "secondary.300"}
+                          color="bg"
+                          w="48px"
+                          h="48px"
+                          minW="48px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          flexDirection="column"
+                          borderRadius="md"
                         >
-                          {s.matchNumber}
-                        </ResponsiveText>
-                      </Box>
-                      <Box
-                        bg={isRowOdd ? "border.50" : "border.100"}
-                        p={2}
-                        borderRadius="sm"
-                      >
-                        <ResponsiveText fontSize="xs" color="border.500">
-                          {t("league.table.half")}
-                        </ResponsiveText>
-                        <ResponsiveText>
-                          {s.half === Half.FIRST
-                            ? t("half.first")
-                            : s.half === Half.SECOND
-                            ? t("half.second")
-                            : s.half}
-                        </ResponsiveText>
-                      </Box>
-                      <Box>
-                        <ResponsiveText fontSize="xs" color="border.500">
-                          {t("league.table.opponent")}
-                        </ResponsiveText>
-                        <ResponsiveText>
-                          {s.opponentTeamName ?? "-"}
-                        </ResponsiveText>
-                      </Box>
-                    </SimpleGrid>
-                    <Box>
-                      <ResponsiveText fontSize="xs" color="border.500">
-                        {t("pairs")}
-                      </ResponsiveText>
-                      <Box
-                        mt={1}
-                        display="flex"
-                        alignItems="center"
-                        flexWrap="wrap"
-                      >
-                        <Box mr={2}>
-                          <PairInline
-                            first={s.contestants.firstPair.first}
-                            second={s.contestants.firstPair.second}
-                          />
+                          <ResponsiveText
+                            fontSize="xs"
+                            color="bg"
+                            lineHeight="1"
+                          >
+                            {t("league.table.match")}
+                          </ResponsiveText>
+                          <ResponsiveText
+                            fontWeight="semibold"
+                            fontSize="lg"
+                            lineHeight="1"
+                          >
+                            {matchNumber}
+                          </ResponsiveText>
                         </Box>
-                        <ResponsiveText as="span" mx={2} color="border.400">
-                          -
+                        <Box p={2} borderRadius="sm">
+                          <ResponsiveText fontSize="xs" color="border.500">
+                            {t("league.table.half")}
+                          </ResponsiveText>
+                          <ResponsiveText>
+                            {sFirst ? t("half.first") : "-"}
+                          </ResponsiveText>
+                        </Box>
+                        <Box>
+                          <ResponsiveText fontSize="xs" color="border.500">
+                            {t("league.table.opponent")}
+                          </ResponsiveText>
+                          <ResponsiveText>
+                            {sFirst?.opponentTeamName ?? "-"}
+                          </ResponsiveText>
+                        </Box>
+                      </SimpleGrid>
+
+                      <Box mb={2}>
+                        <ResponsiveText fontSize="xs" color="border.500">
+                          {t("pairs")}
                         </ResponsiveText>
-                        <Box ml={2}>
-                          <PairInline
-                            first={s.contestants.secondPair.first}
-                            second={s.contestants.secondPair.second}
-                          />
+                        <Box
+                          mt={1}
+                          display="flex"
+                          alignItems="center"
+                          flexWrap="wrap"
+                        >
+                          <Box mr={2}>
+                            <PairInline
+                              first={sFirst?.contestants.firstPair.first}
+                              second={sFirst?.contestants.firstPair.second}
+                            />
+                          </Box>
+                          <ResponsiveText as="span" mx={2} color="border.400">
+                            -
+                          </ResponsiveText>
+                          <Box ml={2}>
+                            <PairInline
+                              first={sFirst?.contestants.secondPair.first}
+                              second={sFirst?.contestants.secondPair.second}
+                            />
+                          </Box>
                         </Box>
                       </Box>
+
+                      {/* second half within same card */}
+                      {sSecond && (
+                        <>
+                          <SimpleGrid
+                            columns={3}
+                            spacing={2}
+                            alignItems="center"
+                            mb={2}
+                          >
+                            <Box
+                              bg={isMatchOdd ? "accent.300" : "secondary.300"}
+                              color="bg"
+                              w="48px"
+                              h="48px"
+                              minW="48px"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              flexDirection="column"
+                              borderRadius="md"
+                            >
+                              <ResponsiveText
+                                fontSize="xs"
+                                color="bg"
+                                lineHeight="1"
+                              >
+                                {t("league.table.match")}
+                              </ResponsiveText>
+                              <ResponsiveText
+                                fontWeight="semibold"
+                                fontSize="lg"
+                                lineHeight="1"
+                              >
+                                {matchNumber}
+                              </ResponsiveText>
+                            </Box>
+                            <Box
+                              p={2}
+                              borderRadius="sm"
+                              bg={
+                                (pairIdx * 2 + 1) % 2 === 1
+                                  ? "border.50"
+                                  : "border.100"
+                              }
+                            >
+                              <ResponsiveText fontSize="xs" color="border.500">
+                                {t("league.table.half")}
+                              </ResponsiveText>
+                              <ResponsiveText>
+                                {t("half.second")}
+                              </ResponsiveText>
+                            </Box>
+                            <Box>
+                              <ResponsiveText fontSize="xs" color="border.500">
+                                {t("league.table.opponent")}
+                              </ResponsiveText>
+                              <ResponsiveText>
+                                {sSecond.opponentTeamName ?? "-"}
+                              </ResponsiveText>
+                            </Box>
+                          </SimpleGrid>
+
+                          <Box>
+                            <ResponsiveText fontSize="xs" color="border.500">
+                              {t("pairs")}
+                            </ResponsiveText>
+                            <Box
+                              mt={1}
+                              display="flex"
+                              alignItems="center"
+                              flexWrap="wrap"
+                            >
+                              <Box mr={2}>
+                                <PairInline
+                                  first={sSecond.contestants.firstPair.first}
+                                  second={sSecond.contestants.firstPair.second}
+                                />
+                              </Box>
+                              <ResponsiveText
+                                as="span"
+                                mx={2}
+                                color="border.400"
+                              >
+                                -
+                              </ResponsiveText>
+                              <Box ml={2}>
+                                <PairInline
+                                  first={sSecond.contestants.secondPair.first}
+                                  second={sSecond.contestants.secondPair.second}
+                                />
+                              </Box>
+                            </Box>
+                          </Box>
+                        </>
+                      )}
                     </Box>
-                  </Box>
-                );
-              })}
+                  );
+                }
+
+                return cards;
+              })()}
             </Stack>
           </Box>
         </Box>
