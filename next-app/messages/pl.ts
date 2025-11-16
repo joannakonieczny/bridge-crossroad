@@ -663,7 +663,6 @@ const messages = {
       [TournamentType.IMPS]: "IMPy",
       [TournamentType.CRAZY]: "Crazy",
       [TournamentType.TEAM]: "Drużynowy",
-      [TournamentType.INDIVIDUAL]: "Indywidualny",
       [TournamentType.BAMY]: "BAMY",
     },
     error: {

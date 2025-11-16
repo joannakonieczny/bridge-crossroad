@@ -10,6 +10,5 @@ export enum TournamentType {
   IMPS = "IMPS",
   CRAZY = "CRAZY",
   TEAM = "TEAM",
-  INDIVIDUAL = "INDIVIDUAL",
   BAMY = "BAMY",
 }
