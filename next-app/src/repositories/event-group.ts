@@ -433,3 +433,38 @@ export async function listEventsForUserGroups(
     groupIds,
   };
 }
+
+type GetLatestEventsInput = {
+  userId: UserIdType;
+  limit: number;
+};
+
+export async function getLatestEventsForUser({
+  userId,
+  limit,
+}: GetLatestEventsInput) {
+  await dbConnect();
+
+  const user = check(
+    await User.findById(userId).lean<IUserDTO>(),
+    `User not found with id: ${userId}`
+  );
+
+  const groupIds = user.groups.map((g) => g?.toString());
+
+  // if user has no groups, return empty array early
+  if (groupIds.length === 0) {
+    return [];
+  }
+
+  // find the latest k events from user's groups, sorted by start date descending
+  const events = check(
+    await Event.find({ group: { $in: groupIds } })
+      .sort({ "duration.startsAt": -1 })
+      .limit(limit)
+      .lean<IEventDTO[]>(),
+    `Failed to fetch latest events for user: ${userId}`
+  );
+
+  return events;
+}

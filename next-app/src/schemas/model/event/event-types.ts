@@ -72,5 +72,6 @@ export type EventSchemaTypePopulated = Overwrite<
     organizer: UserTypeBasic;
     attendees: UserTypeBasic[];
     group: GroupBasicType;
+    isAttending?: boolean;
   }
 >;
