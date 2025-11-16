@@ -1,6 +1,10 @@
 import type { IChatMessageDTO } from "@/models/chat-message/chat-message-types";
-import type { ChatMessageSchemaType } from "@/schemas/model/chat-message/chat-message-types";
+import type {
+  ChatMessageSchemaType,
+  MessageWithPopulatedSenderType,
+} from "@/schemas/model/chat-message/chat-message-types";
 import type { IChatMessageDTOWithPopulatedSender } from "@/models/mixed-types";
+import type { UserIdType } from "@/schemas/model/user/user-types";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 
 export function sanitizeChatMessage(m: IChatMessageDTO): ChatMessageSchemaType {
@@ -14,13 +18,27 @@ export function sanitizeChatMessage(m: IChatMessageDTO): ChatMessageSchemaType {
   };
 }
 
+type MappersType = {
+  userId: UserIdType;
+  adminsIds: UserIdType[];
+};
+
 export function sanitizeChatMessageWithPopulatedSender(
-  m: IChatMessageDTOWithPopulatedSender
-) {
+  m: IChatMessageDTOWithPopulatedSender,
+  mappers?: MappersType
+): MessageWithPopulatedSenderType {
+  const enhancedSender = mappers
+    ? {
+        ...sanitizeMinUserInfo(m.senderId),
+        isCurrentUser: m.senderId._id.toString() === mappers.userId,
+        isGroupAdmin: mappers.adminsIds.includes(m.senderId._id.toString()),
+      }
+    : sanitizeMinUserInfo(m.senderId);
+
   return {
     id: m._id.toString(),
     groupId: m.groupId.toString(),
-    sender: sanitizeMinUserInfo(m.senderId),
+    sender: enhancedSender,
     message: m.message,
     createdAt: m.createdAt,
     updatedAt: m.updatedAt,
