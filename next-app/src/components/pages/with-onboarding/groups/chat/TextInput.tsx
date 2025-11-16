@@ -54,7 +54,7 @@ export function TextInput({ groupId }: TextInputProps) {
               ringColor="border.200"
               placeholder={t("sendMessagePlaceholder")}
               borderRightRadius={0}
-              isDisabled={sendMessageMutation.isPending}
+              type="textarea"
             />
           )}
         />
