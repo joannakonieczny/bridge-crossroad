@@ -15,6 +15,8 @@ import { havingGroupId } from "@/schemas/model/group/group-schema";
 import { havingChatMessageId } from "@/schemas/model/chat-message/chat-message-schema";
 import { requireChatMessageAccess } from "./chat/simple-action";
 import { RepositoryError } from "@/repositories/common";
+import { havingPartnershipPostId } from "@/schemas/model/partnership-post/partnership-post-schema";
+import { getPartnershipPost } from "@/repositories/partnership-posts";
 
 export const action = createSafeActionClient({
   async handleServerError(e, utils) {
@@ -108,6 +110,36 @@ export function getWithinOwnChatMessageAction<T extends ZodRawShape>(
         } else throw e;
       });
       return next({ ctx: { ...ctx, chatMessageId: chatMessageId } });
+    }
+  );
+}
+
+export function getWithinOwnParnershipPostAction<T extends ZodRawShape>(
+  schema: ZodObject<T>
+) {
+  return getWithinOwnGroupAction(havingPartnershipPostId.merge(schema)).use(
+    async ({ next, ctx, clientInput }) => {
+      const parseRes = havingPartnershipPostId.safeParse(clientInput);
+      if (!parseRes.success) {
+        return returnValidationErrors(havingPartnershipPostId, {
+          partnershipPostId: {
+            _errors: ["common.validation.invalidPartnershipPostId"],
+          },
+        });
+      }
+      const { partnershipPostId } = parseRes.data;
+      const post = await getPartnershipPost({ partnershipPostId });
+
+      if (post.groupId !== ctx.groupId || post.ownerId !== ctx.userId) {
+        // access denied
+        return returnValidationErrors(havingPartnershipPostId, {
+          partnershipPostId: {
+            _errors: ["common.validation.invalidPartnershipPostId"],
+          },
+        });
+      }
+
+      return next({ ctx: { ...ctx, partnershipPostId } });
     }
   );
 }

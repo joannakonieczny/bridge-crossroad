@@ -85,3 +85,13 @@ export async function removeInterestedUser({
   );
   return check(updated?.toObject(), "Failed to remove interested user");
 }
+
+export async function getPartnershipPost({
+  partnershipPostId,
+}: {
+  partnershipPostId: PartnershipPostIdType;
+}) {
+  await dbConnect();
+  const post = await PartnershipPost.findById(partnershipPostId);
+  return check(post?.toObject(), "Partnership post not found");
+}
