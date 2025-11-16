@@ -11,7 +11,12 @@ export type ImageUrlType = z.infer<typeof s.imageUrlSchema>;
 export type DurationType = z.infer<typeof s.durationSchema>;
 
 export type PlayingPairType = z.infer<typeof s.playingPairSchema>;
-export type TournamentDataType = z.infer<typeof s.tournamentDataSchema>;
+export type TournamentPairsDataType = z.infer<
+  typeof s.tournamentPairsDataSchema
+>;
+export type TournamentTeamsDataType = z.infer<
+  typeof s.tournamentTeamsDataSchema
+>;
 export type LeagueMeetingDataType = z.infer<typeof s.leagueMeetingDataSchema>;
 export type TrainingDataType = z.infer<typeof s.trainingDataSchema>;
 export type OtherDataType = z.infer<typeof s.otherDataSchema>;
@@ -26,12 +31,19 @@ export type PlayingPairTypePopulated = {
   second: UserTypeBasic;
 };
 
-export type TournamentDataTypePopulated = Overwrite<
-  TournamentDataType,
+export type TournamentPairsDataTypePopulated = Overwrite<
+  TournamentPairsDataType,
   {
     contestantsPairs: PlayingPairTypePopulated[];
     arbiter?: UserTypeBasic;
-    teams?: Array<{ name: string; members: UserTypeBasic[] }>;
+  }
+>;
+
+export type TournamentTeamsDataTypePopulated = Overwrite<
+  TournamentTeamsDataType,
+  {
+    teams: Array<{ name: string; members: UserTypeBasic[] }>;
+    arbiter?: UserTypeBasic;
   }
 >;
 
@@ -60,7 +72,8 @@ export type TrainingDataTypePopulated = Overwrite<
 >;
 
 export type EventDataTypePopulated =
-  | TournamentDataTypePopulated
+  | TournamentPairsDataTypePopulated
+  | TournamentTeamsDataTypePopulated
   | LeagueMeetingDataTypePopulated
   | TrainingDataTypePopulated
   | OtherDataType;
