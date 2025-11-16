@@ -33,25 +33,25 @@ export function ChatBox({ groupId }: ChatBoxProps) {
     staleTime: 1000,
   });
 
-  // Auto-refetch newest messages (first page) every 5 seconds
+  // Auto-refetch newest messages (first page) every 8 seconds
   useEffect(() => {
     const id = setInterval(() => {
       queryClient.invalidateQueries({
         queryKey: ["chat-messages", groupId],
         refetchType: "active",
       });
-    }, 5000);
+    }, 8000);
     return () => clearInterval(id);
   }, [groupId, queryClient]);
 
-  // Auto-refetch all pages every 30 seconds
+  // Auto-refetch all pages every 60 seconds
   useEffect(() => {
     const id = setInterval(() => {
       queryClient.invalidateQueries({
         queryKey: ["chat-messages", groupId],
         refetchType: "all",
       });
-    }, 30000);
+    }, 60000);
     return () => clearInterval(id);
   }, [groupId, queryClient]);
 
