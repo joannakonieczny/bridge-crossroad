@@ -4,7 +4,7 @@ import { Stack, Flex, Button, Spinner, Text } from "@chakra-ui/react";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import MessageBox from "./MessageBox";
 import { useTranslations } from "@/lib/typed-translations";
-import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-querry";
+import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-query";
 import { getMessagesForGroup } from "@/services/chat/api";
 import { useMemo, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,7 +30,7 @@ export function ChatBox({ groupId }: ChatBoxProps) {
     getNextPageParam: (lastPage) => {
       return lastPage.nextCursor ?? undefined;
     },
-    staleTime: 1000,
+    staleTime: 5000,
   });
 
   // Auto-refetch newest messages (first page) every 8 seconds
@@ -62,7 +62,6 @@ export function ChatBox({ groupId }: ChatBoxProps) {
 
   return (
     <Stack
-      spacing={{ base: 3, md: 4 }}
       width="100%"
       overflowY="auto"
       flex="1"

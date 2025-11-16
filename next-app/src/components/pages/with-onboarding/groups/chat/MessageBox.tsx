@@ -35,7 +35,8 @@ export default function MessageBox({ message }: IMessageBoxProps) {
       w="100%"
       display="flex"
       justifyContent={isSelf ? "flex-end" : "flex-start"}
-      p="0.5rem"
+      px="0.5rem"
+      py="0.25rem"
     >
       <Flex direction="column" alignItems={isSelf ? "flex-end" : "flex-start"}>
         <Text

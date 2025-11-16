@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Stack, IconButton, ButtonGroup } from "@chakra-ui/react";
+import { Stack, IconButton, ButtonGroup, Textarea } from "@chakra-ui/react";
 import { GrFormAttachment } from "react-icons/gr";
 import { BsFillCursorFill } from "react-icons/bs";
 import { TbCards } from "react-icons/tb";
@@ -12,6 +12,7 @@ import { postNewMessage } from "@/services/chat/api";
 import { addModifyChatMessageSchema } from "@/schemas/pages/with-onboarding/chat/chat-schema";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 
 type TextInputProps = {
   groupId: GroupIdType;
@@ -20,6 +21,15 @@ type TextInputProps = {
 export function TextInput({ groupId }: TextInputProps) {
   const t = useTranslations("pages.ChatPage");
   const queryClient = useQueryClient();
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const autoResize = () => {
+    const el = ref.current;
+    if (!el) return;
+
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  };
 
   const { handleSubmit, control, reset } = useForm({
     resolver: zodResolver(addModifyChatMessageSchema),
@@ -34,6 +44,11 @@ export function TextInput({ groupId }: TextInputProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chat-messages", groupId] });
       reset();
+      requestAnimationFrame(() => {
+        if (ref.current) {
+          ref.current.style.height = "auto"; // back to one line height
+        }
+      });
     },
   });
 
@@ -49,12 +64,22 @@ export function TextInput({ groupId }: TextInputProps) {
           control={control}
           name="message"
           render={({ field }) => (
-            <Input
+            <Textarea
               {...field}
               ringColor="border.200"
               placeholder={t("sendMessagePlaceholder")}
               borderRightRadius={0}
-              type="textarea"
+              style={{ overflow: "hidden" }}
+              resize="vertical"
+              ref={ref}
+              onInput={autoResize}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(onSubmit)();
+                }
+              }}
+              rows={1}
             />
           )}
         />
