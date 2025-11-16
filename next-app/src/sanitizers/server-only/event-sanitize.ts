@@ -29,6 +29,7 @@ import type {
 import { EventType } from "@/club-preset/event-type";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeGroup } from "./group-sanitize";
+import type { UserIdType } from "@/schemas/model/user/user-types";
 
 function sanitizePlayingPair(pair: IPlayingPair): PlayingPairType {
   return {
@@ -154,7 +155,8 @@ function sanitizeTrainingDataPopulated(
 }
 
 export function sanitizeEventPopulated(
-  event: IEventPopulated
+  event: IEventPopulated,
+  userId?: UserIdType
 ): EventSchemaTypePopulated {
   return {
     id: event._id.toString(),
@@ -166,6 +168,7 @@ export function sanitizeEventPopulated(
     group: sanitizeGroup(event.group),
     duration: event.duration,
     additionalDescription: event.additionalDescription,
+    imageUrl: event.imageUrl,
     data:
       event.data.type === EventType.TOURNAMENT
         ? sanitizeTournamentDataPopulated(event.data)
@@ -174,5 +177,8 @@ export function sanitizeEventPopulated(
         : event.data.type === EventType.TRAINING
         ? sanitizeTrainingDataPopulated(event.data)
         : sanitizeOtherEventData(event.data),
+    isAttending: userId
+      ? event.attendees.some((a) => a._id.toString() === userId)
+      : undefined,
   };
 }
