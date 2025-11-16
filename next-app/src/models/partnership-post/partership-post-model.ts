@@ -72,7 +72,7 @@ const PartnershipPost = new Schema<IPartnershipPostDTO>(
       default: PartnershipPostStatus.ACTIVE,
       index: true,
     },
-    interestedUsers: {
+    interestedUsersIds: {
       type: [{ type: UserId, ref: UserTableName }],
       default: [],
     },

@@ -38,6 +38,6 @@ export type IPartnershipPostDTO = {
   description?: string;
   biddingSystem: BiddingSystem;
   status: PartnershipPostStatus;
-  interestedUsers: (typeof UserId)[];
+  interestedUsersIds: (typeof UserId)[];
   data: IPartnershipPostData;
 } & Timestamps;
