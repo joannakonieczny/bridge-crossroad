@@ -10,6 +10,7 @@ import React from "react";
 import { Box, useBreakpointValue } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
 import { useEventsForUserQuery } from "@/lib/queries";
+import { useTranslations } from "@/lib/typed-translations";
 import "./calendar-overrides.module.css";
 
 function getEventDayColor(
@@ -65,6 +66,7 @@ function getEventDayColor(
 }
 
 export default function Calendar() {
+  const t = useTranslations("common.eventType");
   const locale = useLocale();
   const calendarRef = React.useRef<any>(null);
   const [visibleRange, setVisibleRange] = React.useState<{
@@ -94,6 +96,7 @@ export default function Calendar() {
     end: e.duration.endsAt,
     extendedProps: {
       description: e.description,
+      eventType: e.data?.type,
     },
   }));
 
@@ -116,14 +119,12 @@ export default function Calendar() {
       <FullCalendar
         ref={calendarRef}
         datesSet={(arg: any) => {
-          // arg.start / arg.end are the visible range as Date objects
           const newStart = arg.start ? arg.start.getTime() : null;
           const newEnd = arg.end ? arg.end.getTime() : null;
           const curStart = visibleRange.start
             ? visibleRange.start.getTime()
             : null;
           const curEnd = visibleRange.end ? visibleRange.end.getTime() : null;
-          // update state only when the timestamps actually change to avoid render loops
           if (newStart !== curStart || newEnd !== curEnd) {
             setVisibleRange({ start: arg.start ?? null, end: arg.end ?? null });
             console.debug(
@@ -135,7 +136,7 @@ export default function Calendar() {
             );
           }
         }}
-        key={initialView} // force reinit when breakpoint/view changes
+        key={initialView}
         plugins={[dayGridPlugin, timeGridPlugin]}
         locales={fcLocales}
         locale={fcLocale}
@@ -149,6 +150,64 @@ export default function Calendar() {
         scrollTime="06:00:00"
         allDaySlot={false}
         height="calc(100vh - 12rem)" //value adjusted for better fit
+        // render title, time and an italic subtitle showing event type (if present)
+        eventContent={(arg: any) => {
+          const ev = arg.event;
+          const type = ev.extendedProps?.eventType;
+
+          const startDate: Date | null = ev.start ?? null;
+          const endDate: Date | null = ev.end ?? ev.start ?? null;
+          const isMultiDay =
+            startDate &&
+            endDate &&
+            (startDate.getFullYear() !== endDate.getFullYear() ||
+              startDate.getMonth() !== endDate.getMonth() ||
+              startDate.getDate() !== endDate.getDate());
+
+          const formatDateTime = (d: Date) =>
+            d.toLocaleString(fcLocale, {
+              day: "2-digit",
+              month: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
+
+          return (
+            <div
+              className="fc-event-content-custom"
+              style={{ display: "flex", flexDirection: "column", gap: 2 }}
+            >
+              {/* show standard timeText only for events that do NOT span multiple days */}
+              {arg.timeText && !isMultiDay && (
+                <div style={{ fontSize: "0.85em", opacity: 0.9 }}>
+                  {arg.timeText}
+                </div>
+              )}
+              {isMultiDay && startDate && endDate && (
+                <div style={{ fontSize: "0.8em", opacity: 0.9 }}>
+                  {formatDateTime(startDate)} — {formatDateTime(endDate)}
+                </div>
+              )}
+              <div
+                style={{ fontWeight: 700, fontSize: "0.95em", lineHeight: 1 }}
+              >
+                {ev.title}
+              </div>
+              {type && (
+                <div
+                  style={{
+                    fontStyle: "italic",
+                    fontSize: "0.75em",
+                    opacity: 0.9,
+                  }}
+                >
+                  {t(type)}
+                </div>
+              )}
+            </div>
+          );
+        }}
       />
     </Box>
   );

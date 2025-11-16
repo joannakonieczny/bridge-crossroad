@@ -10,7 +10,17 @@
 .root :global(.fc .fc-daygrid-day-number),
 .root :global(.fc .fc-timegrid-slot-label),
 .root :global(.fc .fc-button) {
-  font-family: var(--font-montserrat, "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif) !important;
+  font-family: var(
+    --font-montserrat,
+    "Montserrat",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif
+  ) !important;
 }
 
 /* toolbar spacing */
@@ -34,7 +44,9 @@
 .root :global(.fc .fc-next-button),
 .root :global(.fc .fc-today-button) {
   background: var(--chakra-colors-border-400) !important;
-  color: var(--chakra-colors-bg) !important; /* contrast text (and icons if they use currentColor) */
+  color: var(
+    --chakra-colors-bg
+  ) !important; /* contrast text (and icons if they use currentColor) */
   border: none !important;
 }
 
@@ -73,4 +85,31 @@
 /* make calendar events show pointer cursor on hover (and normally) */
 .root :global(.fc .fc-event) {
   cursor: pointer !important;
+}
+
+/* Ensure event title/time text is clipped with ellipsis to prevent overflow */
+.root :global(.fc .fc-event .fc-event-title),
+.root :global(.fc .fc-event .fc-event-time),
+.root :global(.fc .fc-event .fc-event-main),
+.root :global(.fc .fc-event .fc-list-item-title) {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  /* allow wrapping when there's space, and break long words if needed */
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  /* removed white-space: nowrap to permit wrapping */
+}
+
+/* Clip and ellipsize text inside our custom event content (safe selectors) */
+.root :global(.fc .fc-event .fc-event-content-custom),
+.root :global(.fc .fc-event .fc-event-content-custom > *),
+.root :global(.fc .fc-event .fc-event-content-custom div) {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  /* allow wrapping and breaking long words */
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  /* removed white-space: nowrap to allow wrapping when space is available */
 }
