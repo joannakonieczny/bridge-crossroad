@@ -533,6 +533,11 @@ const eventForm = {
     success: "Wydarzenie zostało dodane!",
     errorDefault: "Wystąpił błąd podczas dodawania wydarzenia",
   },
+  steps: {
+    primary: "Podstawowe informacje",
+    detailed: "Szczegóły wydarzenia",
+    summary: "Podsumowanie",
+  },
   primaryInfoStep: {
     titlePlaceholder: "Tytuł wydarzenia",
     descriptionPlaceholder: "Opis wydarzenia",
