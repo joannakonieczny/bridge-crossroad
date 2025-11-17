@@ -11,12 +11,29 @@ export const withTimeStampsSchema = z.object({
   updatedAt: z.date(),
 });
 
-export function transformEmptyStringsToUndefined<T extends z.ZodTypeAny>(
-  schema: T
-) {
+export function allEmptyStringsToUndefined<T extends z.ZodTypeAny>(schema: T) {
   return z
     .any()
-    .transform((v) => (v === "" ? undefined : v))
-    .pipe(schema)
-    .optional();
+    .transform((value: unknown) => {
+      function transform(input: unknown): unknown {
+        if (input === "") return undefined;
+
+        if (Array.isArray(input)) {
+          return input.map(transform);
+        }
+
+        if (typeof input === "object" && input !== null) {
+          const obj: Record<string, unknown> = {};
+          for (const [k, v] of Object.entries(input)) {
+            obj[k] = transform(v);
+          }
+          return obj;
+        }
+
+        return input;
+      }
+
+      return transform(value);
+    })
+    .pipe(schema);
 }
