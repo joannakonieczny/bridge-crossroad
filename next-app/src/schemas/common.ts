@@ -5,6 +5,8 @@ export function isProbablyEmail(value: string) {
 }
 
 export const idPropSchema = z.string().nonempty();
+export const idPropSchemaM = (m: string) =>
+  z.string({ message: m }).nonempty({ message: m });
 
 export const withTimeStampsSchema = z.object({
   createdAt: z.date(),

@@ -4,11 +4,10 @@ import type { TKey } from "@/lib/typed-translations";
 import { idPropSchema } from "@/schemas/common";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 
-const { title, description, location, imageUrl } = EventValidationConstants;
+const { title, description, location, imageUrl, additionalDescription, trainingTopic, opponentTeamName, tournamentTeamName } = EventValidationConstants;
 
 export const titleSchema = z
-  .string()
-  .nonempty("validation.model.event.title.required" satisfies TKey)
+  .string({ message: "validation.model.event.title.required" satisfies TKey })
   .min(title.min, "validation.model.event.title.min" satisfies TKey)
   .max(title.max, "validation.model.event.title.max" satisfies TKey)
   .regex(title.regex, "validation.model.event.title.regex" satisfies TKey);
@@ -39,25 +38,43 @@ export const durationSchema = z
     path: ["endsAt"],
   });
 
+// helpers
+export const getOneOfTypeSchema = (t: EventType) =>
+  z.literal(t, {
+    message: "validation.model.event.data.type.required" satisfies TKey,
+  });
+
 export const playingPairSchema = z.object({
   first: idPropSchema,
   second: idPropSchema,
 });
 
-export const additionalDescriptionSchema = z.string().optional();
+export const additionalDescriptionSchema = z
+  .string()
+  .max(
+    additionalDescription.max,
+    "validation.model.event.additionalDescription.max" satisfies TKey
+  )
+  .optional();
 
 // Data discriminators
 export const tournamentPairsDataSchema = z.object({
-  type: z.literal(EventType.TOURNAMENT_PAIRS),
+  type: getOneOfTypeSchema(EventType.TOURNAMENT_PAIRS),
   contestantsPairs: z.array(playingPairSchema),
   arbiter: idPropSchema.optional(),
   tournamentType: z.nativeEnum(TournamentType).optional(),
 });
 
 export const tournamentTeamsDataSchema = z.object({
-  type: z.literal(EventType.TOURNAMENT_TEAMS),
+  type: getOneOfTypeSchema(EventType.TOURNAMENT_TEAMS),
   teams: z.array(
-    z.object({ name: z.string(), members: z.array(idPropSchema) })
+    z.object({
+      name: z
+        .string({ message: "validation.model.event.tournamentTeam.name.required" satisfies TKey })
+        .min(tournamentTeamName.min, "validation.model.event.tournamentTeam.name.min" satisfies TKey)
+        .max(tournamentTeamName.max, "validation.model.event.tournamentTeam.name.max" satisfies TKey),
+      members: z.array(idPropSchema),
+    })
   ),
   arbiter: idPropSchema.optional(),
   tournamentType: z.nativeEnum(TournamentType).optional(),
@@ -69,7 +86,13 @@ const sessionItemSchema = z
       firstPair: playingPairSchema,
       secondPair: playingPairSchema,
     }),
-    opponentTeamName: z.string().optional(),
+    opponentTeamName: z
+      .string()
+      .max(
+        opponentTeamName.max,
+        "validation.model.event.leagueMeeting.opponentTeamName.max" satisfies TKey
+      )
+      .optional(),
   })
   .refine(
     (data) => {
@@ -91,18 +114,23 @@ const sessionItemSchema = z
   );
 
 export const leagueMeetingDataSchema = z.object({
-  type: z.literal(EventType.LEAGUE_MEETING),
+  type: getOneOfTypeSchema(EventType.LEAGUE_MEETING),
   tournamentType: z.nativeEnum(TournamentType).optional(),
   session: z.array(sessionItemSchema),
 });
 
 export const trainingDataSchema = z.object({
-  type: z.literal(EventType.TRAINING),
+  type: getOneOfTypeSchema(EventType.TRAINING),
   coach: idPropSchema.optional(),
-  topic: z.string().nonempty(),
+  topic: z
+    .string({ message: "validation.model.event.training.topic.required" satisfies TKey })
+    .min(trainingTopic.min, "validation.model.event.training.topic.min" satisfies TKey)
+    .max(trainingTopic.max, "validation.model.event.training.topic.max" satisfies TKey),
 });
 
-export const otherDataSchema = z.object({ type: z.literal(EventType.OTHER) });
+export const otherDataSchema = z.object({
+  type: getOneOfTypeSchema(EventType.OTHER),
+});
 
 export const dataSchema = z.discriminatedUnion("type", [
   tournamentPairsDataSchema,

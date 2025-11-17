@@ -26,7 +26,7 @@ export default function LeagueMeetingPanel() {
         name="data.tournamentType"
         render={({ field, fieldState: { error } }) => (
           <SelectInput
-            placeholder={t("tournamentTypePlaceholder")}
+            emptyValueLabel={t("tournamentTypePlaceholder")}
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             options={Object.values(TournamentType).map((type) => ({

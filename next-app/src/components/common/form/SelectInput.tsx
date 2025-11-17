@@ -16,6 +16,7 @@ type ISelectInputProps = {
     label: string;
     disabled?: boolean;
   }>;
+  emptyValueLabel?: string;
   value?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
@@ -26,7 +27,6 @@ type ISelectInputProps = {
 function SelectInputSolo(props: ISelectInputProps) {
   return (
     <Select
-      placeholder={props.placeholder}
       focusBorderColor="accent.500"
       _focus={{ borderColor: "accent.500" }}
       value={props.value}
@@ -34,6 +34,14 @@ function SelectInputSolo(props: ISelectInputProps) {
       onChange={props.onChange}
       {...props.onSelectProps}
     >
+      {props.placeholder && (
+        <option value="" disabled>
+          {props.placeholder}
+        </option>
+      )}
+      {props.emptyValueLabel && (
+        <option value="">{props.emptyValueLabel}</option>
+      )}
       {props.options?.map((option) => (
         <option
           key={option.value}
