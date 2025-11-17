@@ -6,18 +6,39 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import plLocale from "@fullcalendar/core/locales/pl";
 import enLocale from "@fullcalendar/core/locales/en-gb";
+import React from "react";
 import { Box, useBreakpointValue } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
+import { useEventsForUserQuery } from "@/lib/queries";
 import "./calendar-overrides.module.css";
 
-function getEventDayColor(start: string | Date) {
-  const date = typeof start === "string" ? new Date(start) : start;
-  if (Number.isNaN(date.getTime())) return "var(--chakra-colors-accent-300)";
-  const eventDate = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate()
+function getEventDayColor(
+  eventStartDate: string | Date,
+  eventEndDate: string | Date
+) {
+  const startDate =
+    typeof eventStartDate === "string"
+      ? new Date(eventStartDate)
+      : eventStartDate;
+  if (Number.isNaN(startDate.getTime()))
+    return "var(--chakra-colors-accent-300)";
+
+  const endDate =
+    typeof eventEndDate === "string" ? new Date(eventEndDate) : eventEndDate;
+  if (Number.isNaN(endDate.getTime())) return "var(--chakra-colors-accent-300)";
+
+  const eventStart = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()
   );
+
+  const eventEnd = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate()
+  );
+
   const today = new Date();
   const todayDate = new Date(
     today.getFullYear(),
@@ -25,10 +46,16 @@ function getEventDayColor(start: string | Date) {
     today.getDate()
   );
 
-  if (eventDate.getTime() > todayDate.getTime()) {
+  if (
+    eventStart.getTime() > todayDate.getTime() &&
+    eventEnd.getTime() > todayDate.getTime()
+  ) {
     //future
     return "var(--chakra-colors-accent-300)";
-  } else if (eventDate.getTime() === todayDate.getTime()) {
+  } else if (
+    eventStart.getTime() <= todayDate.getTime() &&
+    eventEnd.getTime() >= todayDate.getTime()
+  ) {
     //today
     return "var(--chakra-colors-secondary-300)";
   } else {
@@ -39,76 +66,40 @@ function getEventDayColor(start: string | Date) {
 
 export default function Calendar() {
   const locale = useLocale();
+  const calendarRef = React.useRef<any>(null);
+  const [visibleRange, setVisibleRange] = React.useState<{
+    start: Date | null;
+    end: Date | null;
+  }>({
+    start: null,
+    end: null,
+  });
 
   const showSingleDay = useBreakpointValue({ base: true, md: false }) ?? false;
   const initialView = showSingleDay ? "timeGridDay" : "timeGridWeek";
 
-  const rawEvents = [
-    {
-      title: "Meeting",
-      start: "2025-10-18T09:00:00",
-      end: "2025-10-18T10:00:00",
-      extendedProps: {
-        description: "Turniej MAXy",
-        image: "https://picsum.photos/80/80?grayscale",
-      },
+  let maxDate = new Date(8640000000000000);
+  let minDate = new Date(-8640000000000000);
+
+  const eventsQ = useEventsForUserQuery({
+    start: minDate,
+    end: maxDate,
+  });
+
+  const events = eventsQ.data?.events ?? [];
+
+  const rawEvents = events.map((e) => ({
+    title: e.title,
+    start: e.duration.startsAt,
+    end: e.duration.endsAt,
+    extendedProps: {
+      description: e.description,
     },
-    {
-      title: "Meeting",
-      start: "2025-10-19T09:00:00",
-      end: "2025-10-19T10:00:00",
-      extendedProps: {
-        description: "Turniej MAXy",
-        image: "https://picsum.photos/80/80?grayscale",
-      },
-    },
-    {
-      title: "Gr. podstawowa",
-      start: "2025-10-20T18:00:00",
-      end: "2025-10-20T20:00:00",
-      extendedProps: { description: "Turniej MAXy" },
-    },
-    {
-      title: "Gr. zaawansowana",
-      start: "2025-10-21T17:00:00",
-      end: "2025-10-21T18:00:00",
-      extendedProps: { description: "Trening grupa zaawansowana" },
-    },
-    {
-      title: "Żaczek",
-      start: "2025-10-22T19:00:00",
-      end: "2025-10-22T22:00:00",
-      extendedProps: { description: "Żaczek" },
-    },
-    {
-      title: "Integracja",
-      start: "2025-10-23T12:00:00",
-      end: "2025-10-23T13:00:00",
-      extendedProps: { description: "Integracja" },
-    },
-    {
-      title: "Akademickie mistrzostwa Polski",
-      start: "2025-10-24T13:00:00",
-      end: "2025-10-24T16:00:00",
-      extendedProps: { description: "Akademickie mistrzostwa Polski" },
-    },
-    {
-      title: "Otwarty turniej teamów",
-      start: "2025-10-25T17:00:00",
-      end: "2025-10-25T19:00:00",
-      extendedProps: { description: "Otwarty turniej teamów" },
-    },
-    {
-      title: "Urodziny Just Bridge",
-      start: "2025-10-25T12:00:00",
-      end: "2025-10-25T13:00:00",
-      extendedProps: { description: "Urodziny Just Bridge" },
-    },
-  ];
+  }));
 
   const eventsWithColor = rawEvents.map((e) => ({
     ...e,
-    color: getEventDayColor(e.start),
+    color: getEventDayColor(e.start, e.end),
     textColor: "bg",
   }));
 
@@ -123,6 +114,27 @@ export default function Calendar() {
       p={4}
     >
       <FullCalendar
+        ref={calendarRef}
+        datesSet={(arg: any) => {
+          // arg.start / arg.end are the visible range as Date objects
+          const newStart = arg.start ? arg.start.getTime() : null;
+          const newEnd = arg.end ? arg.end.getTime() : null;
+          const curStart = visibleRange.start
+            ? visibleRange.start.getTime()
+            : null;
+          const curEnd = visibleRange.end ? visibleRange.end.getTime() : null;
+          // update state only when the timestamps actually change to avoid render loops
+          if (newStart !== curStart || newEnd !== curEnd) {
+            setVisibleRange({ start: arg.start ?? null, end: arg.end ?? null });
+            console.debug(
+              "visible range:",
+              arg.start,
+              arg.end,
+              "view:",
+              arg.view?.type
+            );
+          }
+        }}
         key={initialView} // force reinit when breakpoint/view changes
         plugins={[dayGridPlugin, timeGridPlugin]}
         locales={fcLocales}
