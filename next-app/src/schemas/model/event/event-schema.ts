@@ -44,6 +44,8 @@ export const playingPairSchema = z.object({
   second: idPropSchema,
 });
 
+export const additionalDescriptionSchema = z.string().optional();
+
 // Data discriminators
 export const tournamentPairsDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT_PAIRS),
@@ -119,7 +121,7 @@ export const eventSchema = z.object({
   attendees: z.array(idPropSchema),
   group: idPropSchema,
   duration: durationSchema,
-  additionalDescription: z.string().optional(),
+  additionalDescription: additionalDescriptionSchema.optional(),
   data: dataSchema,
   imageUrl: imageUrlSchema.optional(),
 });

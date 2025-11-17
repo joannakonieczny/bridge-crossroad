@@ -1,6 +1,10 @@
 import { z } from "zod";
-import { idPropSchema } from "@/schemas/common";
 import {
+  idPropSchema,
+  transformEmptyStringsToUndefined,
+} from "@/schemas/common";
+import {
+  additionalDescriptionSchema,
   descriptionSchema,
   durationSchema,
   imageUrlSchema,
@@ -14,12 +18,14 @@ import { EventType, TournamentType } from "@/club-preset/event-type";
 
 export const addEventSchema = z.object({
   title: titleSchema,
-  description: descriptionSchema.optional(),
-  location: locationSchema.optional(),
+  description: transformEmptyStringsToUndefined(descriptionSchema.optional()),
+  location: transformEmptyStringsToUndefined(locationSchema.optional()),
   group: idPropSchema,
   organizer: idPropSchema,
   duration: durationSchema,
-  additionalDescription: z.string().optional(),
+  additionalDescription: transformEmptyStringsToUndefined(
+    additionalDescriptionSchema.optional()
+  ),
   imageUrl: imageUrlSchema.optional(),
   data: z.discriminatedUnion("type", [
     z.object({
@@ -40,11 +46,13 @@ export const addEventSchema = z.object({
 
 export const modifyEventSchema = z.object({
   title: titleSchema,
-  description: descriptionSchema.optional(),
-  location: locationSchema.optional(),
+  description: transformEmptyStringsToUndefined(descriptionSchema.optional()),
+  location: transformEmptyStringsToUndefined(locationSchema.optional()),
   organizer: idPropSchema,
   duration: durationSchema,
-  additionalDescription: z.string().optional(),
+  additionalDescription: transformEmptyStringsToUndefined(
+    additionalDescriptionSchema.optional()
+  ),
   imageUrl: imageUrlSchema.optional(),
   data: z.discriminatedUnion("type", [
     z.object({
