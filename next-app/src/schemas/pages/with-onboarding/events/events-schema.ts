@@ -4,7 +4,6 @@ import {
   additionalDescriptionSchema,
   descriptionSchema,
   durationSchema,
-  getOneOfTypeSchema,
   imageUrlSchema,
   leagueMeetingDataSchema,
   locationSchema,
@@ -26,12 +25,12 @@ export const addEventSchema = allEmptyStringsToUndefined(
     imageUrl: imageUrlSchema.optional(),
     data: z.discriminatedUnion("type", [
       z.object({
-        type: getOneOfTypeSchema(EventType.TOURNAMENT_PAIRS),
+        type: z.literal(EventType.TOURNAMENT_PAIRS),
         arbiter: idPropSchema.optional(),
         tournamentType: z.nativeEnum(TournamentType).optional(),
       }),
       z.object({
-        type: getOneOfTypeSchema(EventType.TOURNAMENT_TEAMS),
+        type: z.literal(EventType.TOURNAMENT_TEAMS),
         arbiter: idPropSchema.optional(),
         tournamentType: z.nativeEnum(TournamentType).optional(),
       }),

@@ -463,9 +463,6 @@ const eventModelValidation = {
   },
   data: {
     invalid: "Nieprawidłowe dane specyficzne dla typu wydarzenia",
-    type: {
-      required: "Wybierz typ wydarzenia",
-    },
   },
   training: {
     topic: {
