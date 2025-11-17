@@ -114,7 +114,7 @@ export function getWithinOwnChatMessageAction<T extends ZodRawShape>(
   );
 }
 
-export function getWithinOwnParnershipPostAction<T extends ZodRawShape>(
+export function getWithinOwnPartnershipPostAction<T extends ZodRawShape>(
   schema: ZodObject<T>
 ) {
   return getWithinOwnGroupAction(havingPartnershipPostId.merge(schema)).use(
@@ -130,7 +130,10 @@ export function getWithinOwnParnershipPostAction<T extends ZodRawShape>(
       const { partnershipPostId } = parseRes.data;
       const post = await getPartnershipPost({ partnershipPostId });
 
-      if (post.groupId !== ctx.groupId || post.ownerId !== ctx.userId) {
+      if (
+        post.groupId.toString() !== ctx.groupId ||
+        post.ownerId.toString() !== ctx.userId
+      ) {
         // access denied
         return returnValidationErrors(havingPartnershipPostId, {
           partnershipPostId: {

@@ -10,7 +10,7 @@ import {
 } from "@/repositories/partnership-posts";
 import {
   getWithinOwnGroupAction,
-  getWithinOwnParnershipPostAction,
+  getWithinOwnPartnershipPostAction,
 } from "../action-lib";
 import { addPartnershipPostSchema } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
 import { z } from "zod";
@@ -66,7 +66,9 @@ export const createPartnershipPost = getWithinOwnGroupAction(
 
     const group = await getGroupById(groupId);
     if (!group.events.find((event) => event.toString() === eventId)) {
-      throw new Error("Provided eventId does not belong to this group");
+      throw new Error(
+        `Provided eventId '${eventId}' does not belong to group '${groupId}'`
+      );
     }
   }
 
@@ -98,7 +100,7 @@ export const removeInterested = getWithinOwnGroupAction(
   return sanitizePartnershipPost(res);
 });
 
-export const deletePartnershipPost = getWithinOwnParnershipPostAction(
+export const deletePartnershipPost = getWithinOwnPartnershipPostAction(
   z.object({})
 ).action(async ({ ctx: { partnershipPostId } }) => {
   // might throw error if not found because it was deleted already

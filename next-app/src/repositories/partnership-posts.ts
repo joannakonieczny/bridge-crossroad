@@ -1,7 +1,7 @@
 "server-only";
 
 import dbConnect from "@/util/connect-mongo";
-import PartnershipPost from "@/models/partnership-post/partership-post-model";
+import PartnershipPost from "@/models/partnership-post/partnership-post-model";
 import { UserTableName } from "@/models/user/user-types";
 import { GroupTableName } from "@/models/group/group-types";
 import { check } from "./common";
@@ -28,7 +28,7 @@ export async function listPartnershipPostsInGroup({
       { path: "ownerId", model: UserTableName },
       { path: "interestedUsersIds", model: UserTableName },
       { path: "groupId", model: GroupTableName },
-      { path: "post.data.eventId", model: EventTableName },
+      { path: "data.eventId", model: EventTableName },
     ])
     .lean<IPartnershipPostPopulated[]>();
 
@@ -134,9 +134,8 @@ export async function changeStatusOfManyPartnershipPosts({
     { _id: { $in: partnershipPostIds } },
     { status }
   );
-  check(
-    result.modifiedCount > 0 ? result : null,
+  return check(
+    result.modifiedCount > 0 ? result.modifiedCount : null,
     "Failed to change status of partnership posts"
   );
-  return result.modifiedCount;
 }
