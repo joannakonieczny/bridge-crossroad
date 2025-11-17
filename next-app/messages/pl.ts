@@ -534,6 +534,11 @@ const eventForm = {
     success: "Wydarzenie zostało dodane!",
     errorDefault: "Wystąpił błąd podczas dodawania wydarzenia",
   },
+  steps: {
+    primary: "Podstawowe informacje",
+    detailed: "Szczegóły wydarzenia",
+    summary: "Podsumowanie",
+  },
   primaryInfoStep: {
     titlePlaceholder: "Tytuł wydarzenia",
     descriptionPlaceholder: "Opis wydarzenia",
@@ -655,7 +660,8 @@ const messages = {
     },
     eventType: {
       [EventType.LEAGUE_MEETING]: "Zjazd ligowy",
-      [EventType.TOURNAMENT]: "Turniej",
+      [EventType.TOURNAMENT_TEAMS]: "Turniej drużynowy",
+      [EventType.TOURNAMENT_PAIRS]: "Turniej",
       [EventType.TRAINING]: "Trening",
       [EventType.OTHER]: "Inne",
     },
@@ -663,8 +669,6 @@ const messages = {
       [TournamentType.MAX]: "MAXy",
       [TournamentType.IMPS]: "IMPy",
       [TournamentType.CRAZY]: "Crazy",
-      [TournamentType.TEAM]: "Drużynowy",
-      [TournamentType.INDIVIDUAL]: "Indywidualny",
       [TournamentType.BAMY]: "BAMY",
     },
     error: {

@@ -23,7 +23,12 @@ export const addEventSchema = z.object({
   imageUrl: imageUrlSchema.optional(),
   data: z.discriminatedUnion("type", [
     z.object({
-      type: z.literal(EventType.TOURNAMENT),
+      type: z.literal(EventType.TOURNAMENT_PAIRS),
+      arbiter: idPropSchema.optional(),
+      tournamentType: z.nativeEnum(TournamentType).optional(),
+    }),
+    z.object({
+      type: z.literal(EventType.TOURNAMENT_TEAMS),
       arbiter: idPropSchema.optional(),
       tournamentType: z.nativeEnum(TournamentType).optional(),
     }),
@@ -43,7 +48,12 @@ export const modifyEventSchema = z.object({
   imageUrl: imageUrlSchema.optional(),
   data: z.discriminatedUnion("type", [
     z.object({
-      type: z.literal(EventType.TOURNAMENT),
+      type: z.literal(EventType.TOURNAMENT_PAIRS),
+      arbiter: idPropSchema.optional(),
+      tournamentType: z.nativeEnum(TournamentType).optional(),
+    }),
+    z.object({
+      type: z.literal(EventType.TOURNAMENT_TEAMS),
       arbiter: idPropSchema.optional(),
       tournamentType: z.nativeEnum(TournamentType).optional(),
     }),

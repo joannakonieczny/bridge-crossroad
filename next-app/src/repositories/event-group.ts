@@ -250,7 +250,7 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
         { path: "attendees", model: UserTableName },
         { path: "group", model: GroupTableName },
 
-        // Tournament
+        // Tournament pair & teams
         { path: "data.arbiter", model: UserTableName },
         {
           path: "data.contestantsPairs",
@@ -312,18 +312,20 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
   );
 
   switch (existingEvent.data.type) {
-    case EventType.TOURNAMENT: {
+    case EventType.TOURNAMENT_PAIRS: {
       const template = (pair: string) =>
-        `Tournament ${pair} player data is missing`;
-
+        `Pair tournament ${pair} player data is missing`;
       existingEvent.data.contestantsPairs.forEach((pair) => {
         check(pair.first, template("first"));
         check(pair.second, template("second"));
       });
-      existingEvent.data.teams?.forEach((team) => {
-        team.members.forEach((member) =>
-          check(member, "Tournament team member data is missing")
-        );
+      break;
+    }
+    case EventType.TOURNAMENT_TEAMS: {
+      const template = (teamName: string) =>
+        `Team tournament team ${teamName} member data is missing`;
+      existingEvent.data.teams.forEach((team) => {
+        team.members.forEach((member) => check(member, template(team.name)));
       });
       break;
     }

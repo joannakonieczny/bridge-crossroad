@@ -16,7 +16,7 @@ export default function EventEnrollment({
   const t = useTranslations("components.EventPage.EventEnrollment");
 
   const buttonLabel =
-    eventType === EventType.TOURNAMENT
+    eventType === EventType.TOURNAMENT_PAIRS
       ? t("button.tournament")
       : t("button.event");
 
@@ -28,7 +28,7 @@ export default function EventEnrollment({
           fontSize="sm"
           barOrientation="horizontal"
         />
-        {eventType === EventType.TOURNAMENT ? (
+        {eventType === EventType.TOURNAMENT_PAIRS ? (
           //TODO: zapisy narazie nie działają, więc to tymczasowe
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} w="100%">
             <Input

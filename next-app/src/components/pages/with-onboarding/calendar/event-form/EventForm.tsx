@@ -78,11 +78,11 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
 
   const steps = [
     {
-      title: "Podstawowe informacje",
+      title: t("steps.primary"),
       content: <PrimaryInfoStep setNextStep={() => setActiveStep(1)} />,
     },
     {
-      title: "Szczegóły wydarzenia",
+      title: t("steps.detailed"),
       content: (
         <DetailedInfoStep
           setNextStep={() => setActiveStep(2)}
@@ -91,7 +91,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       ),
     },
     {
-      title: "Podsumowanie",
+      title: t("steps.summary"),
       content: <SummaryStep setPrevStep={() => setActiveStep(1)} />,
     },
   ];

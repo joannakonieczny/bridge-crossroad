@@ -8,7 +8,8 @@ import type {
   IEventDTO,
   ILeagueMeetingData,
   IOtherEventData,
-  ITournamentData,
+  ITournamentPairsData,
+  ITournamentTeamsData,
   ITrainingData,
 } from "./event/event-types";
 import type {
@@ -46,12 +47,19 @@ export type IChatMessageDTOWithPopulatedSender = Overwrite<
   }
 >;
 
-export type ITournamentDataPopulated = Overwrite<
-  ITournamentData,
+export type ITournamentPairsDataPopulated = Overwrite<
+  ITournamentPairsData,
   {
     contestantsPairs: Array<IPlayingPairPopulated>;
     arbiter?: IUserDTO;
-    teams?: Array<{
+  }
+>;
+
+export type ITournamentTeamsDataPopulated = Overwrite<
+  ITournamentTeamsData,
+  {
+    arbiter?: IUserDTO;
+    teams: Array<{
       name: string;
       members: IUserDTO[];
     }>;
@@ -90,7 +98,8 @@ export type IEventPopulated = Overwrite<
     group: IGroupDTO;
     data:
       | IOtherEventData
-      | ITournamentDataPopulated
+      | ITournamentPairsDataPopulated
+      | ITournamentTeamsDataPopulated
       | ILeagueMeetingDataPopulated
       | ITrainingDataPopulated;
   }
