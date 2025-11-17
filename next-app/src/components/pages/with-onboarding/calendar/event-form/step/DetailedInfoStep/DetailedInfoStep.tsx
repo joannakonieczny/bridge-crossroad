@@ -33,7 +33,15 @@ export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
       "additionalDescription",
     ] satisfies FieldPath<AddEventSchemaType>[];
     switch (dataType) {
-      case EventType.TOURNAMENT: {
+      case EventType.TOURNAMENT_PAIRS: {
+        ok = await form.trigger([
+          ...commonFields,
+          "data.tournamentType",
+          "data.arbiter",
+        ]);
+        break;
+      }
+      case EventType.TOURNAMENT_TEAMS: {
         ok = await form.trigger([
           ...commonFields,
           "data.tournamentType",
@@ -63,7 +71,8 @@ export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
 
   return (
     <Stack spacing={4}>
-      {dataType === EventType.TOURNAMENT ? (
+      {dataType === EventType.TOURNAMENT_PAIRS ||
+      dataType === EventType.TOURNAMENT_TEAMS ? (
         <TournamentPanel />
       ) : dataType === EventType.LEAGUE_MEETING ? (
         <LeagueMeetingPanel />

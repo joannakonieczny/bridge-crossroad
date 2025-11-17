@@ -63,7 +63,7 @@ export default function EventSpecificData({
   }
 
   switch (eventData.type) {
-    case EventType.TOURNAMENT: {
+    case EventType.TOURNAMENT_PAIRS: {
       return (
         <Box bgColor="bg" p={4}>
           <ResponsiveHeading

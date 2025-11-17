@@ -76,7 +76,8 @@ export function SummaryStep({ setPrevStep }: StepProps) {
         <Text fontWeight="bold">{tEvent(values.data?.type)}</Text>
       </Stack>
       <Divider />
-      {data?.type === EventType.TOURNAMENT && (
+      {(data?.type === EventType.TOURNAMENT_PAIRS ||
+        data?.type === EventType.TOURNAMENT_TEAMS) && (
         <>
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.tournament.type")}</Text>

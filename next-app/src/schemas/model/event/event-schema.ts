@@ -45,14 +45,20 @@ export const playingPairSchema = z.object({
 });
 
 // Data discriminators
-export const tournamentDataSchema = z.object({
-  type: z.literal(EventType.TOURNAMENT),
+export const tournamentPairsDataSchema = z.object({
+  type: z.literal(EventType.TOURNAMENT_PAIRS),
   contestantsPairs: z.array(playingPairSchema),
   arbiter: idPropSchema.optional(),
   tournamentType: z.nativeEnum(TournamentType).optional(),
-  teams: z
-    .array(z.object({ name: z.string(), members: z.array(idPropSchema) }))
-    .optional(),
+});
+
+export const tournamentTeamsDataSchema = z.object({
+  type: z.literal(EventType.TOURNAMENT_TEAMS),
+  teams: z.array(
+    z.object({ name: z.string(), members: z.array(idPropSchema) })
+  ),
+  arbiter: idPropSchema.optional(),
+  tournamentType: z.nativeEnum(TournamentType).optional(),
 });
 
 const sessionItemSchema = z
@@ -97,7 +103,8 @@ export const trainingDataSchema = z.object({
 export const otherDataSchema = z.object({ type: z.literal(EventType.OTHER) });
 
 export const dataSchema = z.discriminatedUnion("type", [
-  tournamentDataSchema,
+  tournamentPairsDataSchema,
+  tournamentTeamsDataSchema,
   leagueMeetingDataSchema,
   trainingDataSchema,
   otherDataSchema,

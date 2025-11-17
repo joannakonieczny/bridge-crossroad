@@ -15,15 +15,21 @@ export type IPlayingPair = {
   second: typeof UserId;
 };
 
-export type ITournamentData = {
-  type: EventType.TOURNAMENT;
+export type ITournamentPairsData = {
+  type: EventType.TOURNAMENT_PAIRS;
   contestantsPairs: Array<IPlayingPair>;
   arbiter?: typeof UserId;
   tournamentType?: TournamentType;
-  teams?: Array<{
+};
+
+export type ITournamentTeamsData = {
+  type: EventType.TOURNAMENT_TEAMS;
+  teams: Array<{
     name: string;
     members: (typeof UserId)[];
   }>;
+  arbiter?: typeof UserId;
+  tournamentType?: TournamentType;
 };
 
 export type ILeagueMeetingData = {
@@ -62,5 +68,10 @@ export type IEventDTO = {
   attendees: (typeof UserId)[];
   group: typeof GroupId;
   imageUrl?: string;
-  data: ITournamentData | ILeagueMeetingData | ITrainingData | IOtherEventData;
+  data:
+    | ITournamentPairsData
+    | ITournamentTeamsData
+    | ILeagueMeetingData
+    | ITrainingData
+    | IOtherEventData;
 } & Timestamps;
