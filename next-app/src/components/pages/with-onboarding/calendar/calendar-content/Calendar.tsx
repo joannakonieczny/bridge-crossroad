@@ -6,12 +6,13 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import plLocale from "@fullcalendar/core/locales/pl";
 import enLocale from "@fullcalendar/core/locales/en-gb";
-import React from "react";
 import { Box, useBreakpointValue } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
 import { useEventsForUserQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
+import { useRef, useState } from "react";
 import "./calendar-overrides.module.css";
+import type { DatesSetArg, EventContentArg } from "@fullcalendar/core/index.js";
 
 function getEventDayColor(
   eventStartDate: string | Date,
@@ -68,24 +69,50 @@ function getEventDayColor(
 export default function Calendar() {
   const t = useTranslations("common.eventType");
   const locale = useLocale();
-  const calendarRef = React.useRef<any>(null);
-  const [visibleRange, setVisibleRange] = React.useState<{
-    start: Date | null;
-    end: Date | null;
-  }>({
-    start: null,
-    end: null,
-  });
+  const calendarRef = useRef<FullCalendar>(null);
 
+  // determine initial view (mobile = single day)
   const showSingleDay = useBreakpointValue({ base: true, md: false }) ?? false;
   const initialView = showSingleDay ? "timeGridDay" : "timeGridWeek";
 
-  let maxDate = new Date(8640000000000000);
-  let minDate = new Date(-8640000000000000);
+  // compute initial visible range for the initialView (mirrors FullCalendar's activeStart/activeEnd)
+  const today = new Date();
+  let initialStart: Date;
+  let initialEnd: Date;
+  if (initialView === "timeGridDay") {
+    initialStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    initialEnd = new Date(initialStart);
+    initialEnd.setDate(initialEnd.getDate() + 1); // exclusive end (one day)
+  } else {
+    // week view, firstDay = 1 (Monday)
+    const day = today.getDay(); // 0..6 (Sun..Sat)
+    const diffToMonday = (day + 6) % 7; // 0 if Monday, 6 if Sunday
+    initialStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - diffToMonday
+    );
+    initialEnd = new Date(initialStart);
+    initialEnd.setDate(initialEnd.getDate() + 7); // exclusive end (one week)
+  }
 
+  const [visibleRange, setVisibleRange] = useState<{
+    start: Date | null;
+    end: Date | null;
+  }>({
+    start: initialStart,
+    end: initialEnd,
+  });
+
+  // visibleRange is initialized to the calendar's initial visible start/end,
+  // so we can call the query directly without fallback sentinels.
   const eventsQ = useEventsForUserQuery({
-    start: minDate,
-    end: maxDate,
+    start: visibleRange.start!,
+    end: visibleRange.end!,
   });
 
   const events = eventsQ.data?.events ?? [];
@@ -118,7 +145,7 @@ export default function Calendar() {
     >
       <FullCalendar
         ref={calendarRef}
-        datesSet={(arg: any) => {
+        datesSet={(arg: DatesSetArg) => {
           const newStart = arg.start ? arg.start.getTime() : null;
           const newEnd = arg.end ? arg.end.getTime() : null;
           const curStart = visibleRange.start
@@ -149,9 +176,8 @@ export default function Calendar() {
         slotMaxTime="24:00:00"
         scrollTime="06:00:00"
         allDaySlot={false}
-        height="calc(100vh - 12rem)" //value adjusted for better fit
-        // render title, time and an italic subtitle showing event type (if present)
-        eventContent={(arg: any) => {
+        height="calc(100vh - 12rem)"
+        eventContent={(arg: EventContentArg) => {
           const ev = arg.event;
           const type = ev.extendedProps?.eventType;
 
