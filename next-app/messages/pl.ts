@@ -5,6 +5,7 @@ import { UserValidationConstants as USER } from "@/schemas/model/user/user-const
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
+import { PartnershipPostValidationConstants as PARTNERSHIP_POST } from "@/schemas/model/partnership-post/partnership-post-const";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -533,6 +534,11 @@ const eventForm = {
     success: "Wydarzenie zostało dodane!",
     errorDefault: "Wystąpił błąd podczas dodawania wydarzenia",
   },
+  steps: {
+    primary: "Podstawowe informacje",
+    detailed: "Szczegóły wydarzenia",
+    summary: "Podsumowanie",
+  },
   primaryInfoStep: {
     titlePlaceholder: "Tytuł wydarzenia",
     descriptionPlaceholder: "Opis wydarzenia",
@@ -616,7 +622,14 @@ const usefulTools = {
 
 const chatPage = {
   sendMessagePlaceholder: "Napisz wiadomość...",
-  groupName: "Czat grupy: {groupName}",
+  header: {
+    title: "Czat grupowy",
+  },
+  loadMore: "Załaduj więcej",
+  noMessages: "Brak wiadomości",
+  error: {
+    loadFailed: "Nie udało się załadować wiadomości",
+  },
 };
 
 const messages = {
@@ -647,7 +660,8 @@ const messages = {
     },
     eventType: {
       [EventType.LEAGUE_MEETING]: "Zjazd ligowy",
-      [EventType.TOURNAMENT]: "Turniej",
+      [EventType.TOURNAMENT_TEAMS]: "Turniej drużynowy",
+      [EventType.TOURNAMENT_PAIRS]: "Turniej",
       [EventType.TRAINING]: "Trening",
       [EventType.OTHER]: "Inne",
     },
@@ -655,8 +669,6 @@ const messages = {
       [TournamentType.MAX]: "MAXy",
       [TournamentType.IMPS]: "IMPy",
       [TournamentType.CRAZY]: "Crazy",
-      [TournamentType.TEAM]: "Drużynowy",
-      [TournamentType.INDIVIDUAL]: "Indywidualny",
       [TournamentType.BAMY]: "BAMY",
     },
     error: {
@@ -682,6 +694,15 @@ const messages = {
       group: groupModelValidation,
       event: eventModelValidation,
       chatMessage: chatMessageModelValidation,
+      partnershipPost: {
+        name: {
+          min: `Min. ${PARTNERSHIP_POST.name.min} znaki`,
+          max: `Max. ${PARTNERSHIP_POST.name.max} znaków`,
+        },
+        description: {
+          max: `Opis nie może być dłuższy niż ${PARTNERSHIP_POST.description.max} znaków`,
+        },
+      },
     },
     pages: {
       auth: {

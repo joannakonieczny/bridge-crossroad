@@ -8,9 +8,15 @@ import type {
   IEventDTO,
   ILeagueMeetingData,
   IOtherEventData,
-  ITournamentData,
+  ITournamentPairsData,
+  ITournamentTeamsData,
   ITrainingData,
 } from "./event/event-types";
+import type {
+  IPartnershipPostDTO,
+  IPeriodPartnershipPostData,
+  ISinglePartnershipPostData,
+} from "./partnership-post/partnership-post-types";
 
 export type IUserDTOWithPopulatedGroups = Overwrite<
   IUserDTO,
@@ -41,12 +47,19 @@ export type IChatMessageDTOWithPopulatedSender = Overwrite<
   }
 >;
 
-export type ITournamentDataPopulated = Overwrite<
-  ITournamentData,
+export type ITournamentPairsDataPopulated = Overwrite<
+  ITournamentPairsData,
   {
     contestantsPairs: Array<IPlayingPairPopulated>;
     arbiter?: IUserDTO;
-    teams?: Array<{
+  }
+>;
+
+export type ITournamentTeamsDataPopulated = Overwrite<
+  ITournamentTeamsData,
+  {
+    arbiter?: IUserDTO;
+    teams: Array<{
       name: string;
       members: IUserDTO[];
     }>;
@@ -85,8 +98,26 @@ export type IEventPopulated = Overwrite<
     group: IGroupDTO;
     data:
       | IOtherEventData
-      | ITournamentDataPopulated
+      | ITournamentPairsDataPopulated
+      | ITournamentTeamsDataPopulated
       | ILeagueMeetingDataPopulated
       | ITrainingDataPopulated;
+  }
+>;
+
+export type IPartnershipPostPopulated = Overwrite<
+  IPartnershipPostDTO,
+  {
+    ownerId: IUserDTO;
+    groupId: IGroupDTO;
+    interestedUsersIds: IUserDTO[];
+    data:
+      | IPeriodPartnershipPostData
+      | Overwrite<
+          ISinglePartnershipPostData,
+          {
+            eventId: IEventDTO;
+          }
+        >;
   }
 >;

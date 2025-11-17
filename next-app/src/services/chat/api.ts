@@ -1,5 +1,6 @@
 "use server";
 
+import { getById as getGroupById } from "@/repositories/groups";
 import {
   getWithinOwnChatMessageAction,
   getWithinOwnGroupAction,
@@ -49,14 +50,22 @@ export const deleteExistingMessage = getWithinOwnChatMessageAction(
 export const getMessagesForGroup = getWithinOwnGroupAction(
   getMessagesForGroupSchema
 ).action(async ({ parsedInput, ctx }) => {
-  const res = await getMessagesForGroupWithPopulatedSender({
-    groupId: ctx.groupId,
-    limit: parsedInput.limit,
-    cursor: parsedInput.cursor,
-  });
+  const [res, group] = await Promise.all([
+    getMessagesForGroupWithPopulatedSender({
+      groupId: ctx.groupId,
+      limit: parsedInput.limit,
+      cursor: parsedInput.cursor,
+    }),
+    getGroupById(ctx.groupId),
+  ]);
 
   return {
-    messages: res.messages.map(sanitizeChatMessageWithPopulatedSender),
+    messages: res.messages.map((message) =>
+      sanitizeChatMessageWithPopulatedSender(message, {
+        userId: ctx.userId,
+        adminsIds: group.admins.map(toString),
+      })
+    ),
     nextCursor: res.nextCursor,
     prevCursor: parsedInput.cursor ?? null,
     limit: res.limit,

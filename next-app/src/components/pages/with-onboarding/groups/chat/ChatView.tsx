@@ -1,57 +1,39 @@
 "use client";
 
-import {
-  Box,
-  Flex,
-  useBreakpointValue,
-  Stack,
-  Divider,
-} from "@chakra-ui/react";
-import type { GroupIdType } from "@/schemas/model/group/group-types";
-import MessageBox from "./MessageBox";
+import { Box, Flex, Divider } from "@chakra-ui/react";
 import { TextInput } from "./TextInput";
 import { HeaderTile } from "@/components/common/HeaderTile";
 import { useTranslations } from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
 import { BsChatLeftDots } from "react-icons/bs";
-import { mockMessages } from "./mock";
+import { ChatBox } from "./ChatBox";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
 
 type IChatViewProps = {
   groupId: GroupIdType;
 };
 
 export default function ChatView(props: IChatViewProps) {
-  const tSidebar = useTranslations("pages.GroupsPage.Sidebar");
   const t = useTranslations("pages.ChatPage");
-  const gap = useBreakpointValue({ base: "1.25rem", md: "3rem" });
-  const py = useBreakpointValue({ base: "1rem", md: "2rem" });
-  const px = useBreakpointValue({ base: "1rem", md: "3rem" });
-  const minH = useBreakpointValue({
-    base: "calc(100vh - 7rem)",
-    md: "calc(100vh - 5rem)",
-  });
+
   const groupQ = useGroupQuery(props.groupId);
   const group = groupQ.data;
-
-  const groupName = t("groupName", {
-    groupName: group?.name ?? "",
-  });
 
   return (
     <Flex
       backgroundColor="border.50"
       width="100%"
-      h={minH}
-      paddingY={py}
-      paddingX={px}
-      gap={gap}
+      h={{ base: "calc(100vh - 7rem)", md: "calc(100vh - 5rem)" }}
+      paddingY={{ base: "1rem", md: "2rem" }}
+      paddingX={{ base: "1rem", md: "3rem" }}
+      gap={{ base: "1.25rem", md: "3rem" }}
       overflow="hidden"
       direction="column"
       alignContent="center"
     >
       <Box
         flex="1"
-        gap={gap}
+        gap={{ base: "1.25rem", md: "3rem" }}
         w="full"
         maxW={{ base: "full", md: "70rem" }}
         alignSelf="center"
@@ -61,8 +43,8 @@ export default function ChatView(props: IChatViewProps) {
       >
         <Box flexShrink={0}>
           <HeaderTile
-            title={groupName}
-            subtitle={tSidebar("nav.chat")}
+            title={group?.name ?? ""}
+            subtitle={t("header.title")}
             icon={BsChatLeftDots}
             mainColor="accent.300"
             accentColor="accent.100"
@@ -75,27 +57,10 @@ export default function ChatView(props: IChatViewProps) {
           overflow="hidden"
           bg="bg"
         >
-          <Stack
-            spacing={{ base: 3, md: 4 }}
-            width="100%"
-            overflowY="auto"
-            flex="1"
-            pt="0.5rem"
-          >
-            {mockMessages.map((msg) => (
-              <MessageBox
-                key={`${msg.from.id}-${msg.timestamp.getTime()}`} // TODO add proper unique id
-                timestamp={msg.timestamp}
-                content={msg.content}
-                sender={msg.from}
-                isAdmin={msg.isAdmin}
-                isSelf={msg.isSelf}
-              />
-            ))}
-          </Stack>
+          <ChatBox groupId={props.groupId} />
           <Divider flexShrink={0} />
           <Box width="100%" pt="0.5rem" flexShrink={0}>
-            <TextInput />
+            <TextInput groupId={props.groupId} />
           </Box>
         </Box>
       </Box>

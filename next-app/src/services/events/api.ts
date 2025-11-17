@@ -28,6 +28,7 @@ import { z } from "zod";
 import { fullAuthAction } from "../action-lib";
 import { listEventsForUserGroups } from "@/repositories/event-group";
 import { getEvent as getEventRepository } from "@/repositories/event-group";
+import { getLatestEventsForUser as getLatestEventsForUserRepo } from "@/repositories/event-group";
 import { requireGroupAccess } from "../groups/simple-action";
 
 export const createEvent = getWithinOwnGroupAsAdminAction(
@@ -90,5 +91,12 @@ export const getEvent = fullAuthAction
       groupId: res.group._id.toString(),
       userId: ctx.userId,
     });
-    return sanitizeEventPopulated(res);
+    return sanitizeEventPopulated(res, ctx.userId);
+  });
+
+export const getLatestEventsForUser = fullAuthAction
+  .inputSchema(z.object({ limit: z.number().int().positive().default(10) }))
+  .action(async ({ parsedInput: { limit }, ctx: { userId } }) => {
+    const events = await getLatestEventsForUserRepo({ userId, limit });
+    return events.map(sanitizeEvent);
   });

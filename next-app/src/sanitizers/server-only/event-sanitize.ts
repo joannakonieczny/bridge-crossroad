@@ -1,34 +1,39 @@
 import type {
   IEventDTO,
   IPlayingPair,
-  ITournamentData,
   ILeagueMeetingData,
   ITrainingData,
   IOtherEventData,
+  ITournamentPairsData,
+  ITournamentTeamsData,
 } from "@/models/event/event-types";
 import type {
   EventSchemaType,
   PlayingPairType,
-  TournamentDataType,
   LeagueMeetingDataType,
   TrainingDataType,
   OtherDataType,
   PlayingPairTypePopulated,
-  TournamentDataTypePopulated,
   LeagueMeetingDataTypePopulated,
   TrainingDataTypePopulated,
   EventSchemaTypePopulated,
+  TournamentPairsDataType,
+  TournamentTeamsDataType,
+  TournamentPairsDataTypePopulated,
+  TournamentTeamsDataTypePopulated,
 } from "@/schemas/model/event/event-types";
 import type {
   IEventPopulated,
   ILeagueMeetingDataPopulated,
   IPlayingPairPopulated,
-  ITournamentDataPopulated,
+  ITournamentPairsDataPopulated,
+  ITournamentTeamsDataPopulated,
   ITrainingDataPopulated,
 } from "@/models/mixed-types";
 import { EventType } from "@/club-preset/event-type";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeGroup } from "./group-sanitize";
+import type { UserIdType } from "@/schemas/model/user/user-types";
 
 function sanitizePlayingPair(pair: IPlayingPair): PlayingPairType {
   return {
@@ -37,13 +42,25 @@ function sanitizePlayingPair(pair: IPlayingPair): PlayingPairType {
   };
 }
 
-function sanitizeTournamentData(data: ITournamentData): TournamentDataType {
+function sanitizeTournamentPairsData(
+  data: ITournamentPairsData
+): TournamentPairsDataType {
   return {
     type: data.type,
     contestantsPairs: data.contestantsPairs.map(sanitizePlayingPair),
     arbiter: data.arbiter?.toString(),
     tournamentType: data.tournamentType,
-    teams: (data.teams || []).map((t) => ({
+  };
+}
+
+function sanitizeTournamentTeamsData(
+  data: ITournamentTeamsData
+): TournamentTeamsDataType {
+  return {
+    type: data.type,
+    arbiter: data.arbiter?.toString(),
+    tournamentType: data.tournamentType,
+    teams: data.teams.map((t) => ({
       name: t.name,
       members: t.members.map(toString),
     })),
@@ -90,8 +107,10 @@ export function sanitizeEvent(event: IEventDTO): EventSchemaType {
     duration: event.duration,
     additionalDescription: event.additionalDescription,
     data:
-      event.data?.type === EventType.TOURNAMENT
-        ? sanitizeTournamentData(event.data)
+      event.data?.type === EventType.TOURNAMENT_PAIRS
+        ? sanitizeTournamentPairsData(event.data)
+        : event.data?.type === EventType.TOURNAMENT_TEAMS
+        ? sanitizeTournamentTeamsData(event.data)
         : event.data?.type === EventType.LEAGUE_MEETING
         ? sanitizeLeagueMeetingData(event.data)
         : event.data?.type === EventType.TRAINING
@@ -112,15 +131,25 @@ function sanitizePlayingPairPopulated(
   };
 }
 
-function sanitizeTournamentDataPopulated(
-  d: ITournamentDataPopulated
-): TournamentDataTypePopulated {
+function sanitizeTournamentPairsDataPopulated(
+  d: ITournamentPairsDataPopulated
+): TournamentPairsDataTypePopulated {
   return {
     type: d.type,
     contestantsPairs: d.contestantsPairs.map(sanitizePlayingPairPopulated),
     arbiter: d.arbiter ? sanitizeMinUserInfo(d.arbiter) : undefined,
     tournamentType: d.tournamentType,
-    teams: (d.teams || []).map((t) => ({
+  };
+}
+
+function sanitizeTournamentTeamsDataPopulated(
+  d: ITournamentTeamsDataPopulated
+): TournamentTeamsDataTypePopulated {
+  return {
+    type: d.type,
+    arbiter: d.arbiter ? sanitizeMinUserInfo(d.arbiter) : undefined,
+    tournamentType: d.tournamentType,
+    teams: d.teams.map((t) => ({
       name: t.name,
       members: t.members.map(sanitizeMinUserInfo),
     })),
@@ -154,7 +183,8 @@ function sanitizeTrainingDataPopulated(
 }
 
 export function sanitizeEventPopulated(
-  event: IEventPopulated
+  event: IEventPopulated,
+  userId?: UserIdType
 ): EventSchemaTypePopulated {
   return {
     id: event._id.toString(),
@@ -166,13 +196,19 @@ export function sanitizeEventPopulated(
     group: sanitizeGroup(event.group),
     duration: event.duration,
     additionalDescription: event.additionalDescription,
+    imageUrl: event.imageUrl,
     data:
-      event.data.type === EventType.TOURNAMENT
-        ? sanitizeTournamentDataPopulated(event.data)
+      event.data.type === EventType.TOURNAMENT_TEAMS
+        ? sanitizeTournamentTeamsDataPopulated(event.data)
+        : event.data.type === EventType.TOURNAMENT_PAIRS
+        ? sanitizeTournamentPairsDataPopulated(event.data)
         : event.data.type === EventType.LEAGUE_MEETING
         ? sanitizeLeagueMeetingDataPopulated(event.data)
         : event.data.type === EventType.TRAINING
         ? sanitizeTrainingDataPopulated(event.data)
         : sanitizeOtherEventData(event.data),
+    isAttending: userId
+      ? event.attendees.some((a) => a._id.toString() === userId)
+      : undefined,
   };
 }

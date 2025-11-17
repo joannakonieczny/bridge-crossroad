@@ -33,7 +33,8 @@ export default function EventPage() {
         </Box>
         <VStack spacing="2rem" align="stretch" pb={8}>
           <EventBanner event={eventQ.data} loading={isLoading} />
-          {(eventQ.data?.data?.type === EventType.TOURNAMENT ||
+          {(eventQ.data?.data?.type === EventType.TOURNAMENT_PAIRS ||
+            eventQ.data?.data?.type === EventType.TOURNAMENT_TEAMS ||
             eventQ.data?.data?.type === EventType.OTHER) && (
             <EventEnrollment eventType={eventQ.data?.data?.type} />
           )}

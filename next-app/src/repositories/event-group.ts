@@ -250,7 +250,7 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
         { path: "attendees", model: UserTableName },
         { path: "group", model: GroupTableName },
 
-        // Tournament
+        // Tournament pair & teams
         { path: "data.arbiter", model: UserTableName },
         {
           path: "data.contestantsPairs",
@@ -312,18 +312,20 @@ export async function getEvent({ eventId }: { eventId: EventIdType }) {
   );
 
   switch (existingEvent.data.type) {
-    case EventType.TOURNAMENT: {
+    case EventType.TOURNAMENT_PAIRS: {
       const template = (pair: string) =>
-        `Tournament ${pair} player data is missing`;
-
+        `Pair tournament ${pair} player data is missing`;
       existingEvent.data.contestantsPairs.forEach((pair) => {
         check(pair.first, template("first"));
         check(pair.second, template("second"));
       });
-      existingEvent.data.teams?.forEach((team) => {
-        team.members.forEach((member) =>
-          check(member, "Tournament team member data is missing")
-        );
+      break;
+    }
+    case EventType.TOURNAMENT_TEAMS: {
+      const template = (teamName: string) =>
+        `Team tournament team ${teamName} member data is missing`;
+      existingEvent.data.teams.forEach((team) => {
+        team.members.forEach((member) => check(member, template(team.name)));
       });
       break;
     }
@@ -432,4 +434,39 @@ export async function listEventsForUserGroups(
     events,
     groupIds,
   };
+}
+
+type GetLatestEventsInput = {
+  userId: UserIdType;
+  limit: number;
+};
+
+export async function getLatestEventsForUser({
+  userId,
+  limit,
+}: GetLatestEventsInput) {
+  await dbConnect();
+
+  const user = check(
+    await User.findById(userId).lean<IUserDTO>(),
+    `User not found with id: ${userId}`
+  );
+
+  const groupIds = user.groups.map((g) => g?.toString());
+
+  // if user has no groups, return empty array early
+  if (groupIds.length === 0) {
+    return [];
+  }
+
+  // find the latest k events from user's groups, sorted by start date descending
+  const events = check(
+    await Event.find({ group: { $in: groupIds } })
+      .sort({ "duration.startsAt": -1 })
+      .limit(limit)
+      .lean<IEventDTO[]>(),
+    `Failed to fetch latest events for user: ${userId}`
+  );
+
+  return events;
 }
