@@ -13,6 +13,7 @@ export enum BiddingSystem {
 export enum PartnershipPostStatus {
   ACTIVE = "ACTIVE",
   PARTNER_FOUND = "PARTNER_FOUND",
+  EXPIRED = "EXPIRED",
 }
 
 export enum PartnershipPostType {

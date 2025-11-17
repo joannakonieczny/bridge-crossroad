@@ -5,24 +5,30 @@ import PartnershipPost from "@/models/partnership-post/partership-post-model";
 import { UserTableName } from "@/models/user/user-types";
 import { GroupTableName } from "@/models/group/group-types";
 import { check } from "./common";
+import { EventTableName } from "@/models/event/event-types";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddPartnershipPostSchemaType } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-types";
 import type { IPartnershipPostPopulated } from "@/models/mixed-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { PartnershipPostIdType } from "@/schemas/model/partnership-post/partnership-post-types";
+import type { IPartnershipPostDTO } from "@/models/partnership-post/partnership-post-types";
+import type { PartnershipPostStatus } from "@/club-preset/partnership-post";
 
 export async function listPartnershipPostsInGroup({
   groupId,
+  status,
 }: {
   groupId: GroupIdType;
+  status: PartnershipPostStatus;
 }) {
   await dbConnect();
 
-  const res = await PartnershipPost.find({ groupId })
+  const res = await PartnershipPost.find({ groupId, status })
     .populate([
       { path: "ownerId", model: UserTableName },
       { path: "interestedUsersIds", model: UserTableName },
       { path: "groupId", model: GroupTableName },
+      { path: "post.data.eventId", model: EventTableName },
     ])
     .lean<IPartnershipPostPopulated[]>();
 
@@ -50,8 +56,10 @@ export async function removePartnershipPost({
   partnershipPostId: PartnershipPostIdType;
 }) {
   await dbConnect();
-  const deleted = await PartnershipPost.findByIdAndDelete(partnershipPostId);
-  return check(deleted?.toObject(), "Failed to delete partnership post");
+  const deleted = await PartnershipPost.findByIdAndDelete(
+    partnershipPostId
+  ).lean<IPartnershipPostDTO>();
+  return check(deleted, "Failed to delete partnership post");
 }
 
 export async function addInterestedUser({
@@ -66,8 +74,8 @@ export async function addInterestedUser({
     partnershipPostId,
     { $addToSet: { interestedUsersIds: interestedUserId } },
     { new: true }
-  );
-  return check(updated?.toObject(), "Failed to add interested user");
+  ).lean<IPartnershipPostDTO>();
+  return check(updated, "Failed to add interested user");
 }
 
 export async function removeInterestedUser({
@@ -82,8 +90,8 @@ export async function removeInterestedUser({
     partnershipPostId,
     { $pull: { interestedUsersIds: interestedUserId } },
     { new: true }
-  );
-  return check(updated?.toObject(), "Failed to remove interested user");
+  ).lean<IPartnershipPostDTO>();
+  return check(updated, "Failed to remove interested user");
 }
 
 export async function getPartnershipPost({
@@ -92,6 +100,43 @@ export async function getPartnershipPost({
   partnershipPostId: PartnershipPostIdType;
 }) {
   await dbConnect();
-  const post = await PartnershipPost.findById(partnershipPostId);
-  return check(post?.toObject(), "Partnership post not found");
+  const post = await PartnershipPost.findById(
+    partnershipPostId
+  ).lean<IPartnershipPostDTO>();
+  return check(post, "Partnership post not found");
+}
+
+export async function changeStatusOfPartnershipPost({
+  partnershipPostId,
+  status,
+}: {
+  partnershipPostId: PartnershipPostIdType;
+  status: PartnershipPostStatus;
+}) {
+  await dbConnect();
+  const updated = await PartnershipPost.findByIdAndUpdate(
+    partnershipPostId,
+    { status },
+    { new: true }
+  ).lean<IPartnershipPostDTO>();
+  return check(updated, "Failed to change status of partnership post");
+}
+
+export async function changeStatusOfManyPartnershipPosts({
+  partnershipPostIds,
+  status,
+}: {
+  partnershipPostIds: PartnershipPostIdType[];
+  status: PartnershipPostStatus;
+}) {
+  await dbConnect();
+  const result = await PartnershipPost.updateMany(
+    { _id: { $in: partnershipPostIds } },
+    { status }
+  );
+  check(
+    result.modifiedCount > 0 ? result : null,
+    "Failed to change status of partnership posts"
+  );
+  return result.modifiedCount;
 }

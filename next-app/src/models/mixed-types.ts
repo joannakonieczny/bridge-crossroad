@@ -11,7 +11,11 @@ import type {
   ITournamentData,
   ITrainingData,
 } from "./event/event-types";
-import type { IPartnershipPostDTO } from "./partnership-post/partnership-post-types";
+import type {
+  IPartnershipPostDTO,
+  IPeriodPartnershipPostData,
+  ISinglePartnershipPostData,
+} from "./partnership-post/partnership-post-types";
 
 export type IUserDTOWithPopulatedGroups = Overwrite<
   IUserDTO,
@@ -98,5 +102,13 @@ export type IPartnershipPostPopulated = Overwrite<
     ownerId: IUserDTO;
     groupId: IGroupDTO;
     interestedUsersIds: IUserDTO[];
+    data:
+      | IPeriodPartnershipPostData
+      | Overwrite<
+          ISinglePartnershipPostData,
+          {
+            eventId: IEventDTO;
+          }
+        >;
   }
 >;

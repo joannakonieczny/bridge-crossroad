@@ -2,6 +2,8 @@ import type { z } from "zod";
 import type * as s from "./partnership-post-schema";
 import type { UserTypeBasic } from "../user/user-types";
 import type { GroupBasicType } from "../group/group-types";
+import type { PartnershipPostType } from "@/club-preset/partnership-post";
+import type { EventSchemaType } from "../event/event-types";
 
 export type NameType = z.infer<typeof s.nameSchema>;
 export type DescriptionType = z.infer<typeof s.descriptionSchema>;
@@ -22,10 +24,16 @@ export type PartnershipPostIdType = string;
 
 export type PartnershipPostSchemaTypePopulated = Omit<
   PartnershipPostSchemaType,
-  "ownerId" | "groupId" | "interestedUsersIds"
+  "ownerId" | "groupId" | "interestedUsersIds" | "data"
 > & {
   owner: UserTypeBasic;
   group: GroupBasicType;
   interestedUsers?: UserTypeBasic[];
   isOwnByUser?: boolean;
+  data:
+    | PeriodDataType
+    | {
+        type: PartnershipPostType.SINGLE;
+        event: EventSchemaType;
+      };
 };

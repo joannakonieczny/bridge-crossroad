@@ -6,6 +6,7 @@ import {
   removePartnershipPost,
   addInterestedUser,
   removeInterestedUser,
+  changeStatusOfManyPartnershipPosts,
 } from "@/repositories/partnership-posts";
 import {
   getWithinOwnGroupAction,
@@ -15,17 +16,45 @@ import { addPartnershipPostSchema } from "@/schemas/pages/with-onboarding/partne
 import { z } from "zod";
 import { havingPartnershipPostId } from "@/schemas/model/partnership-post/partnership-post-schema";
 import { getById as getGroupById } from "@/repositories/groups";
-import { PartnershipPostType } from "@/club-preset/partnership-post";
+import {
+  PartnershipPostStatus,
+  PartnershipPostType,
+} from "@/club-preset/partnership-post";
 import {
   sanitizePartnershipPost,
   sanitizePartnershipPostPopulated,
 } from "@/sanitizers/server-only/partnership-post-sanitize";
+import { partition } from "@/util/helpers";
+import { RepositoryError } from "@/repositories/common";
 
 export const listPartnershipPosts = getWithinOwnGroupAction(
-  z.object({})
-).action(async ({ ctx: { groupId, userId } }) => {
-  const res = await listPartnershipPostsInGroup({ groupId });
-  return res.map((p) => sanitizePartnershipPostPopulated(p, { userId }));
+  z.object({
+    status: z
+      .nativeEnum(PartnershipPostStatus)
+      .default(PartnershipPostStatus.ACTIVE),
+  })
+).action(async ({ ctx: { groupId, userId }, parsedInput: { status } }) => {
+  const res = await listPartnershipPostsInGroup({ groupId, status });
+  //filter out posts to be marked as EXPIRED
+  const [posts, postToBeExpired] = partition(res, (post) => {
+    if (post.status !== PartnershipPostStatus.ACTIVE) return true; //only look at active posts (not PARTNER_FOUND)
+    if (post.data.type === PartnershipPostType.PERIOD) {
+      if (post.data.endsAt >= new Date()) return true; //keep in posts
+    } else {
+      const event = post.data.eventId;
+      if (event.duration.endsAt >= new Date()) return true; //keep in posts
+    }
+    return false;
+  });
+
+  //async changing status of outdated posts
+  Promise.allSettled([
+    changeStatusOfManyPartnershipPosts({
+      partnershipPostIds: postToBeExpired.map((p) => p._id.toString()),
+      status: PartnershipPostStatus.EXPIRED,
+    }),
+  ]);
+  return posts.map((p) => sanitizePartnershipPostPopulated(p, { userId }));
 });
 
 export const createPartnershipPost = getWithinOwnGroupAction(
@@ -72,6 +101,15 @@ export const removeInterested = getWithinOwnGroupAction(
 export const deletePartnershipPost = getWithinOwnParnershipPostAction(
   z.object({})
 ).action(async ({ ctx: { partnershipPostId } }) => {
-  const res = await removePartnershipPost({ partnershipPostId });
-  return sanitizePartnershipPost(res);
+  // might throw error if not found because it was deleted already
+  try {
+    const res = await removePartnershipPost({ partnershipPostId });
+    return sanitizePartnershipPost(res);
+  } catch (e) {
+    if (!(e instanceof RepositoryError)) throw e;
+    //swallow not found error
+    return {
+      id: partnershipPostId,
+    };
+  }
 });

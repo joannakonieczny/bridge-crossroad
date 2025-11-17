@@ -14,6 +14,7 @@ import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeGroup } from "./group-sanitize";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IPartnershipPostPopulated } from "@/models/mixed-types";
+import { sanitizeEvent } from "./event-sanitize";
 
 function sanitizeSingleData(data: ISinglePartnershipPostData): SingleDataType {
   return {
@@ -70,7 +71,10 @@ export function sanitizePartnershipPostPopulated(
     interestedUsers: post.interestedUsersIds.map(sanitizeMinUserInfo),
     data:
       post.data.type === PartnershipPostType.SINGLE
-        ? sanitizeSingleData(post.data)
+        ? {
+            type: post.data.type,
+            event: sanitizeEvent(post.data.eventId),
+          }
         : sanitizePeriodData(post.data),
     createdAt: post.createdAt,
     updatedAt: post.updatedAt,
