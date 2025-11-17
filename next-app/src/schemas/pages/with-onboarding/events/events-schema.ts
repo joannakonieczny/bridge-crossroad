@@ -42,30 +42,32 @@ export const addEventSchema = allEmptyStringsToUndefined(
 );
 
 export const modifyEventSchema = allEmptyStringsToUndefined(
-  z.object({
-    title: titleSchema,
-    description: descriptionSchema.optional(),
-    location: locationSchema.optional(),
-    organizer: idPropSchema,
-    duration: durationSchema,
-    additionalDescription: additionalDescriptionSchema.optional(),
-    imageUrl: imageUrlSchema.optional(),
-    data: z.discriminatedUnion("type", [
-      z.object({
-        type: z.literal(EventType.TOURNAMENT_PAIRS),
-        arbiter: idPropSchema.optional(),
-        tournamentType: z.nativeEnum(TournamentType).optional(),
-      }),
-      z.object({
-        type: z.literal(EventType.TOURNAMENT_TEAMS),
-        arbiter: idPropSchema.optional(),
-        tournamentType: z.nativeEnum(TournamentType).optional(),
-      }),
-      leagueMeetingDataSchema,
-      trainingDataSchema,
-      otherDataSchema,
-    ]),
-  })
+  z
+    .object({
+      title: titleSchema,
+      description: descriptionSchema.optional(),
+      location: locationSchema.optional(),
+      organizer: idPropSchema,
+      duration: durationSchema,
+      additionalDescription: additionalDescriptionSchema.optional(),
+      imageUrl: imageUrlSchema.optional(),
+      data: z.discriminatedUnion("type", [
+        z.object({
+          type: z.literal(EventType.TOURNAMENT_PAIRS),
+          arbiter: idPropSchema.optional(),
+          tournamentType: z.nativeEnum(TournamentType).optional(),
+        }),
+        z.object({
+          type: z.literal(EventType.TOURNAMENT_TEAMS),
+          arbiter: idPropSchema.optional(),
+          tournamentType: z.nativeEnum(TournamentType).optional(),
+        }),
+        leagueMeetingDataSchema,
+        trainingDataSchema,
+        otherDataSchema,
+      ]),
+    })
+    .partial()
 );
 
 export const timeWindowSchema = z

@@ -11,12 +11,13 @@ export const withTimeStampsSchema = z.object({
   updatedAt: z.date(),
 });
 
-export function allEmptyStringsToUndefined<T extends z.ZodTypeAny>(schema: T) {
+export function allEmptyStringsToUndefined<S extends z.ZodTypeAny>(schema: S) {
   return z
     .any()
     .transform((value: unknown) => {
       function transform(input: unknown): unknown {
         if (input === "") return undefined;
+        if (input instanceof Date) return input;
 
         if (Array.isArray(input)) {
           return input.map(transform);
