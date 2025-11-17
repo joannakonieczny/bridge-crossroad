@@ -17,13 +17,19 @@ import type { TKey } from "@/lib/typed-translations";
 // First Page Schema
 export const onboardingFirstPageSchema = z.object({
   academy: z
-    .string()
+    .string({
+      message:
+        "validation.pages.onboarding.firstPage.academy.required" satisfies TKey,
+    })
     .nonempty(
       "validation.pages.onboarding.firstPage.academy.required" satisfies TKey
     )
     .pipe(academySchema),
   yearOfBirth: z
-    .string()
+    .string({
+      message:
+        "validation.pages.onboarding.firstPage.yearOfBirth.required" satisfies TKey,
+    })
     .nonempty(
       "validation.pages.onboarding.firstPage.yearOfBirth.required" satisfies TKey
     )
@@ -50,7 +56,10 @@ export const onboardingSecondPageSchema = z.object({
       .pipe(startPlayingDateSchema),
 
     z
-      .string()
+      .string({
+        message:
+          "validation.pages.onboarding.secondPage.startPlayingDate.required" satisfies TKey,
+      })
       .nonempty(
         "validation.pages.onboarding.secondPage.startPlayingDate.required" satisfies TKey
       )
@@ -73,7 +82,10 @@ export const onboardingSecondPageSchema = z.object({
   ]),
 
   trainingGroup: z
-    .string()
+    .string({
+      message:
+        "validation.pages.onboarding.secondPage.trainingGroup.required" satisfies TKey,
+    })
     .nonempty(
       "validation.pages.onboarding.secondPage.trainingGroup.required" satisfies TKey
     )
