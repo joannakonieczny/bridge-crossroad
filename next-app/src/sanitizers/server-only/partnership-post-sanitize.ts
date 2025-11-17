@@ -9,10 +9,11 @@ import type {
   PeriodDataType,
   PartnershipPostSchemaTypePopulated,
 } from "@/schemas/model/partnership-post/partnership-post-types";
-import type { IPartnershipPostPopulated } from "@/models/mixed-types";
 import { PartnershipPostType } from "@/club-preset/partnership-post";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeGroup } from "./group-sanitize";
+import type { UserIdType } from "@/schemas/model/user/user-types";
+import type { IPartnershipPostPopulated } from "@/models/mixed-types";
 
 function sanitizeSingleData(data: ISinglePartnershipPostData): SingleDataType {
   return {
@@ -50,8 +51,13 @@ export function sanitizePartnershipPost(
   };
 }
 
+type MappersType = {
+  userId: UserIdType;
+};
+
 export function sanitizePartnershipPostPopulated(
-  post: IPartnershipPostPopulated
+  post: IPartnershipPostPopulated,
+  mappers?: MappersType
 ): PartnershipPostSchemaTypePopulated {
   return {
     id: post._id.toString(),
@@ -68,5 +74,8 @@ export function sanitizePartnershipPostPopulated(
         : sanitizePeriodData(post.data),
     createdAt: post.createdAt,
     updatedAt: post.updatedAt,
+    isOwnByUser: mappers
+      ? post.ownerId._id.toString() === mappers.userId
+      : undefined,
   };
 }

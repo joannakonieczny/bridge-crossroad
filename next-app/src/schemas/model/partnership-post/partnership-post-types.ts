@@ -27,4 +27,5 @@ export type PartnershipPostSchemaTypePopulated = Omit<
   owner: UserTypeBasic;
   group: GroupBasicType;
   interestedUsers?: UserTypeBasic[];
+  isOwnByUser?: boolean;
 };

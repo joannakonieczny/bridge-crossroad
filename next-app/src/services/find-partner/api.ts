@@ -23,9 +23,9 @@ import {
 
 export const listPartnershipPosts = getWithinOwnGroupAction(
   z.object({})
-).action(async ({ ctx: { groupId } }) => {
+).action(async ({ ctx: { groupId, userId } }) => {
   const res = await listPartnershipPostsInGroup({ groupId });
-  return res.map(sanitizePartnershipPostPopulated);
+  return res.map((p) => sanitizePartnershipPostPopulated(p, { userId }));
 });
 
 export const createPartnershipPost = getWithinOwnGroupAction(
