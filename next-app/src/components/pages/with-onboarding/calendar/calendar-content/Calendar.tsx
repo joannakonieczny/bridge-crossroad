@@ -11,6 +11,8 @@ import { useLocale } from "next-intl";
 import { useEventsForUserQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
 import { useRef, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { ROUTES } from "@/routes";
 import "./calendar-overrides.module.css";
 import type { DatesSetArg, EventContentArg } from "@fullcalendar/core/index.js";
 
@@ -70,6 +72,8 @@ export default function Calendar() {
   const t = useTranslations("common.eventType");
   const locale = useLocale();
   const calendarRef = useRef<FullCalendar>(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   // determine initial view (mobile = single day)
   const showSingleDay = useBreakpointValue({ base: true, md: false }) ?? false;
@@ -124,6 +128,7 @@ export default function Calendar() {
     extendedProps: {
       description: e.description,
       eventType: e.data?.type,
+      id: e.id,
     },
   }));
 
@@ -172,6 +177,66 @@ export default function Calendar() {
         initialView={initialView}
         weekends={true}
         events={eventsWithColor}
+        /* swap certain chakra color tokens to their darker variants on hover */
+        eventMouseEnter={(info) => {
+          try {
+            const el = info?.el as HTMLElement | undefined;
+            if (!el) return;
+            // store original inline background so we can restore it
+            if (el.dataset.fcOrigBg === undefined)
+              el.dataset.fcOrigBg = el.style.backgroundColor || "";
+
+            // mapping of token substrings -> hover replacement
+            const mappings = [
+              {
+                match: "--chakra-colors-secondary-300",
+                to: "var(--chakra-colors-secondary-500)",
+              },
+              {
+                match: "secondary-300",
+                to: "var(--chakra-colors-secondary-500)",
+              },
+              {
+                match: "--chakra-colors-accent-300",
+                to: "var(--chakra-colors-accent-500)",
+              },
+              { match: "accent-300", to: "var(--chakra-colors-accent-500)" },
+              {
+                match: "--chakra-colors-border-300",
+                to: "var(--chakra-colors-border-500)",
+              },
+              { match: "border-300", to: "var(--chakra-colors-border-500)" },
+            ];
+
+            // prefer inline style value if present, otherwise computed style
+            const inlineBg = el.style.backgroundColor || "";
+            const compBg = getComputedStyle(el).backgroundColor || "";
+            const bgToCheck = inlineBg || compBg || "";
+
+            for (const m of mappings) {
+              if (bgToCheck.includes(m.match)) {
+                el.style.transition = "background-color 140ms ease-in-out";
+                el.style.backgroundColor = m.to;
+                break;
+              }
+            }
+          } catch {
+            /* ignore */
+          }
+        }}
+        eventMouseLeave={(info) => {
+          try {
+            const el = info?.el as HTMLElement | undefined;
+            if (!el) return;
+            // restore original inline background (empty string is valid)
+            if (el.dataset.fcOrigBg !== undefined) {
+              el.style.backgroundColor = el.dataset.fcOrigBg;
+            }
+            el.style.transition = "background-color 140ms ease-in-out";
+          } catch {
+            /* ignore */
+          }
+        }}
         slotMinTime="06:00:00"
         slotMaxTime="24:00:00"
         scrollTime="06:00:00"
@@ -233,6 +298,10 @@ export default function Calendar() {
               )}
             </div>
           );
+        }}
+        /* navigate to event id appended to current path */
+        eventClick={(info) => {
+          router.push(`${pathname}/${info.event.extendedProps.id}`);
         }}
       />
     </Box>
