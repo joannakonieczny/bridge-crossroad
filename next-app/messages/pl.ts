@@ -461,6 +461,33 @@ const eventModelValidation = {
   data: {
     invalid: "Nieprawidłowe dane specyficzne dla typu wydarzenia",
   },
+  additionalDescription: {
+    max: `Dodatkowy opis nie może być dłuższy niż ${EVENT.additionalDescription.max} znaków`,
+  },
+  team: {
+    members: {
+      min: `Min. ${EVENT.team.members.min} członków`,
+    },
+  },
+  leagueMeeting: {
+    opponentTeamName: {
+      max: `Nazwa zespołu przeciwnika nie może być dłuższa niż ${EVENT.opponentTeamName.max} znaków`,
+    },
+  },
+  training: {
+    topic: {
+      required: "Podaj temat treningu",
+      min: `Min. ${EVENT.trainingTopic.min} znaki`,
+      max: `Max. ${EVENT.trainingTopic.max} znaków`,
+    },
+  },
+  tournamentTeam: {
+    name: {
+      required: "Podaj nazwę zespołu",
+      min: `Min. ${EVENT.tournamentTeamName.min} znaki`,
+      max: `Max. ${EVENT.tournamentTeamName.max} znaków`,
+    },
+  },
 };
 
 const chatMessageModelValidation = {

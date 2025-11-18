@@ -1,12 +1,17 @@
 "use server";
 
-import { addEvent } from "@/repositories/event-group";
+import {
+  addEvent,
+  addPairToTournamentEvent,
+  addTeamToTournamentEvent,
+} from "@/repositories/event-group";
 import {
   getWithinOwnGroupAction,
   getWithinOwnGroupAsAdminAction,
 } from "../action-lib";
 import {
   addEventSchema,
+  enrollToEventTournamentSchema,
   modifyEventSchema,
   timeWindowSchema,
 } from "@/schemas/pages/with-onboarding/events/events-schema";
@@ -30,6 +35,8 @@ import { listEventsForUserGroups } from "@/repositories/event-group";
 import { getEvent as getEventRepository } from "@/repositories/event-group";
 import { getLatestEventsForUser as getLatestEventsForUserRepo } from "@/repositories/event-group";
 import { requireGroupAccess } from "../groups/simple-action";
+import { EventType } from "@/club-preset/event-type";
+import { returnValidationErrors } from "next-safe-action";
 
 export const createEvent = getWithinOwnGroupAsAdminAction(
   addEventSchema
@@ -100,3 +107,71 @@ export const getLatestEventsForUser = fullAuthAction
     const events = await getLatestEventsForUserRepo({ userId, limit });
     return events.map(sanitizeEvent);
   });
+
+export const enrollToEventTournament = getWithinOwnGroupAction(
+  enrollToEventTournamentSchema
+).action(async ({ parsedInput: { eventId, pair, team }, ctx: { userId } }) => {
+  const event = await getEventRepository({ eventId });
+  const eventType = event.data.type;
+  switch (eventType) {
+    case EventType.TOURNAMENT_PAIRS: {
+      if (!pair)
+        returnValidationErrors(enrollToEventTournamentSchema, {
+          pair: {
+            _errors: ["validation.model.event.data.type.pair.required"],
+          },
+        });
+      if (pair.first !== userId && pair.second !== userId) {
+        returnValidationErrors(enrollToEventTournamentSchema, {
+          pair: {
+            _errors: ["validation.model.event.data.type.pair.userNotInPair"],
+          },
+        });
+      }
+      const res = await addPairToTournamentEvent({
+        eventId,
+        pair,
+      });
+      return sanitizeEvent(res.event);
+    }
+    case EventType.TOURNAMENT_TEAMS: {
+      const teamValidationError = (messageKey: string) =>
+        returnValidationErrors(enrollToEventTournamentSchema, {
+          team: {
+            _errors: [messageKey],
+          },
+        });
+
+      if (!team) {
+        return teamValidationError(
+          "validation.model.event.data.type.team.required"
+        );
+      }
+      if (event.data.teams.find((t) => t.name === team.name)) {
+        return teamValidationError(
+          "validation.model.event.data.type.team.teamNameTaken"
+        );
+      }
+      if (!team.members.includes(userId)) {
+        return teamValidationError(
+          "validation.model.event.data.type.team.userNotInTeam"
+        );
+      }
+      const res = await addTeamToTournamentEvent({
+        eventId,
+        team,
+      });
+
+      return sanitizeEvent(res.event);
+    }
+    default: {
+      returnValidationErrors(enrollToEventTournamentSchema, {
+        eventId: {
+          _errors: [
+            "validation.model.event.data.type.unsupportedTournamentType",
+          ],
+        },
+      });
+    }
+  }
+});

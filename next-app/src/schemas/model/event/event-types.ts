@@ -11,6 +11,8 @@ export type ImageUrlType = z.infer<typeof s.imageUrlSchema>;
 export type DurationType = z.infer<typeof s.durationSchema>;
 
 export type PlayingPairType = z.infer<typeof s.playingPairSchema>;
+export type PlayingTeamType = z.infer<typeof s.playingTeamSchema>;
+
 export type TournamentPairsDataType = z.infer<
   typeof s.tournamentPairsDataSchema
 >;

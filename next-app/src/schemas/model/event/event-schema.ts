@@ -4,7 +4,7 @@ import type { TKey } from "@/lib/typed-translations";
 import { idPropSchema } from "@/schemas/common";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 
-const { title, description, location, imageUrl } = EventValidationConstants;
+const { title, description, location, imageUrl, team } = EventValidationConstants;
 
 export const titleSchema = z
   .string()
@@ -44,6 +44,13 @@ export const playingPairSchema = z.object({
   second: idPropSchema,
 });
 
+export const playingTeamSchema = z.object({
+  name: z.string(),
+  members: z
+    .array(idPropSchema)
+    .min(team.members.min, "validation.model.event.team.members.min" satisfies TKey),
+});
+
 // Data discriminators
 export const tournamentPairsDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT_PAIRS),
@@ -54,9 +61,7 @@ export const tournamentPairsDataSchema = z.object({
 
 export const tournamentTeamsDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT_TEAMS),
-  teams: z.array(
-    z.object({ name: z.string(), members: z.array(idPropSchema) })
-  ),
+  teams: z.array(playingTeamSchema),
   arbiter: idPropSchema.optional(),
   tournamentType: z.nativeEnum(TournamentType).optional(),
 });

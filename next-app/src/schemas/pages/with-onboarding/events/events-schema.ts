@@ -3,10 +3,13 @@ import { idPropSchema } from "@/schemas/common";
 import {
   descriptionSchema,
   durationSchema,
+  havingEventId,
   imageUrlSchema,
   leagueMeetingDataSchema,
   locationSchema,
   otherDataSchema,
+  playingPairSchema,
+  playingTeamSchema,
   titleSchema,
   trainingDataSchema,
 } from "@/schemas/model/event/event-schema";
@@ -75,3 +78,10 @@ export const timeWindowSchema = z
     ),
   })
   .optional();
+
+export const enrollToEventTournamentSchema = havingEventId.merge(
+  z.object({
+    pair: playingPairSchema.optional(),
+    team: playingTeamSchema.optional(),
+  })
+);
