@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { TKey } from "@/lib/typed-translations";
-import { ZodObject, ZodRawShape } from "zod";
+import { ZodObject } from "zod";
 import {
   createSafeActionClient,
   DEFAULT_SERVER_ERROR_MESSAGE,
@@ -89,8 +89,8 @@ export function getWithinOwnChatMessageAction<S extends z.ZodTypeAny>(
 ) {
   const s =
     schema instanceof ZodObject
-      ? havingGroupId.merge(schema)
-      : schema.and(havingGroupId);
+      ? havingChatMessageId.merge(schema)
+      : schema.and(havingChatMessageId);
   return getWithinOwnGroupAction(s).use(async ({ next, ctx, clientInput }) => {
     const parseResult = havingChatMessageId.safeParse(clientInput);
     if (!parseResult.success) {

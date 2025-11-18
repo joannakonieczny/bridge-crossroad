@@ -248,7 +248,7 @@ export function SessionEditor() {
           {t("addSessionButton")}
         </Button>
         {!peopleQ.isLoading && people.length < 4 && (
-          <Text color="gray.500" fontSize="sm">
+          <Text color="border.500" fontSize="sm">
             {t("tooFewPeopleInGroupWarning")}
           </Text>
         )}

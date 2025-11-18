@@ -60,8 +60,7 @@ export const additionalDescriptionSchema = z
   .max(
     additionalDescription.max,
     "validation.model.event.additionalDescription.max" satisfies TKey
-  )
-  .optional();
+  );
 
 // Data discriminators
 export const tournamentPairsDataSchema = z.object({
