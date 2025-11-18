@@ -12,7 +12,6 @@ import { useEventsForUserQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
 import { useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { ROUTES } from "@/routes";
 import "./calendar-overrides.module.css";
 import type { DatesSetArg, EventContentArg } from "@fullcalendar/core/index.js";
 
