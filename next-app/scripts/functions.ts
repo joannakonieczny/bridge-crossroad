@@ -14,27 +14,26 @@ export async function addAdminUser() {
     rememberMe: false,
   });
 
-  const existingUser = await findExisting({
-    email: parsedPayload.email,
-    password: parsedPayload.password,
-  });
-
-  if (existingUser) {
+  try {
+    const existingUser = await findExisting({
+      email: parsedPayload.email,
+      password: parsedPayload.password,
+    });
     console.warn("Admin user already exists:", existingUser);
     console.warn("Skipping admin account creation...");
     return existingUser;
+  } catch {
+    const user = await createNewUser({
+      email: parsedPayload.email,
+      password: parsedPayload.password,
+      firstName: parsedPayload.firstName,
+      lastName: parsedPayload.lastName,
+      nickname: parsedPayload.nickname,
+    });
+
+    console.info("User created:", user);
+    return user;
   }
-
-  const user = await createNewUser({
-    email: parsedPayload.email,
-    password: parsedPayload.password,
-    firstName: parsedPayload.firstName,
-    lastName: parsedPayload.lastName,
-    nickname: parsedPayload.nickname,
-  });
-
-  console.info("User created:", user);
-  return user;
 }
 
 export async function addMainGroup() {
@@ -42,24 +41,24 @@ export async function addMainGroup() {
   const jsonInput = JSON.parse(rawJsonInput);
   // TODO add schema
 
-  const existingGroup = await getMainGroup();
-  if (existingGroup) {
+  try {
+    const existingGroup = await getMainGroup();
     console.warn("Main group already exists:", existingGroup);
     console.warn("Skipping main group creation...");
     return existingGroup;
+  } catch {
+    const group = await createGroup(
+      {
+        name: jsonInput.name,
+        description: jsonInput.description,
+        imageUrl: jsonInput.imageUrl,
+      },
+      true
+    );
+
+    console.info("Group created:", group);
+    return group;
   }
-
-  const group = await createGroup(
-    {
-      name: jsonInput.name,
-      description: jsonInput.description,
-      imageUrl: jsonInput.imageUrl,
-    },
-    true
-  );
-
-  console.info("Group created:", group);
-  return group;
 }
 
 export async function setupMasterData() {
