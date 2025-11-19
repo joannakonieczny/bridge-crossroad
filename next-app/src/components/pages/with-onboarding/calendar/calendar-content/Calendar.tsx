@@ -10,7 +10,7 @@ import { Box, useBreakpointValue } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
 import { useEventsForUserQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
-import { use, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import dayjs from "dayjs";
 import "./calendar-overrides.module.css";
