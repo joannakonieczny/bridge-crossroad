@@ -37,6 +37,7 @@ import { getLatestEventsForUser as getLatestEventsForUserRepo } from "@/reposito
 import { requireGroupAccess } from "../groups/simple-action";
 import { EventType } from "@/club-preset/event-type";
 import { returnValidationErrors } from "next-safe-action";
+import { TKey } from "@/lib/typed-translations";
 
 export const createEvent = getWithinOwnGroupAsAdminAction(
   addEventSchema
@@ -118,13 +119,17 @@ export const enrollToEventTournament = getWithinOwnGroupAction(
       if (!pair)
         returnValidationErrors(enrollToEventTournamentSchema, {
           pair: {
-            _errors: ["validation.model.event.data.type.pair.required"],
+            _errors: [
+              "validation.model.event.data.type.pair.required" satisfies TKey,
+            ],
           },
         });
       if (pair.first !== userId && pair.second !== userId) {
         returnValidationErrors(enrollToEventTournamentSchema, {
           pair: {
-            _errors: ["validation.model.event.data.type.pair.userNotInPair"],
+            _errors: [
+              "validation.model.event.data.type.pair.userNotInPair" satisfies TKey,
+            ],
           },
         });
       }
@@ -144,17 +149,17 @@ export const enrollToEventTournament = getWithinOwnGroupAction(
 
       if (!team) {
         return teamValidationError(
-          "validation.model.event.data.type.team.required"
+          "validation.model.event.data.type.team.required" satisfies TKey
         );
       }
       if (event.data.teams.find((t) => t.name === team.name)) {
         return teamValidationError(
-          "validation.model.event.data.type.team.teamNameTaken"
+          "validation.model.event.data.type.team.teamNameTaken" satisfies TKey
         );
       }
       if (!team.members.includes(userId)) {
         return teamValidationError(
-          "validation.model.event.data.type.team.userNotInTeam"
+          "validation.model.event.data.type.team.userNotInTeam" satisfies TKey
         );
       }
       const res = await addTeamToTournamentEvent({
@@ -168,7 +173,7 @@ export const enrollToEventTournament = getWithinOwnGroupAction(
       returnValidationErrors(enrollToEventTournamentSchema, {
         eventId: {
           _errors: [
-            "validation.model.event.data.type.unsupportedTournamentType",
+            "validation.model.event.data.type.unsupportedTournamentType" satisfies TKey,
           ],
         },
       });

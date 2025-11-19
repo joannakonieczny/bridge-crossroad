@@ -4,7 +4,8 @@ import type { TKey } from "@/lib/typed-translations";
 import { idPropSchema } from "@/schemas/common";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 
-const { title, description, location, imageUrl, team } = EventValidationConstants;
+const { title, description, location, imageUrl, team } =
+  EventValidationConstants;
 
 export const titleSchema = z
   .string()
@@ -39,16 +40,31 @@ export const durationSchema = z
     path: ["endsAt"],
   });
 
-export const playingPairSchema = z.object({
-  first: idPropSchema,
-  second: idPropSchema,
-});
+export const playingPairSchema = z
+  .object({
+    first: idPropSchema,
+    second: idPropSchema,
+  })
+  .refine((s) => s.first !== s.second, {
+    message:
+      "validation.model.event.playingPair.firstSecondDistinct" satisfies TKey,
+  });
 
 export const playingTeamSchema = z.object({
-  name: z.string(),
+  name: z
+    .string()
+    .min(team.name.min, "validation.model.event.team.name.min" satisfies TKey)
+    .max(team.name.max, "validation.model.event.team.name.max" satisfies TKey),
   members: z
     .array(idPropSchema)
-    .min(team.members.min, "validation.model.event.team.members.min" satisfies TKey),
+    .min(
+      team.members.min,
+      "validation.model.event.team.members.min" satisfies TKey
+    )
+    .refine((members) => new Set(members).size === members.length, {
+      message: "validation.model.event.team.members.unique" satisfies TKey,
+      path: ["members"],
+    }),
 });
 
 // Data discriminators
