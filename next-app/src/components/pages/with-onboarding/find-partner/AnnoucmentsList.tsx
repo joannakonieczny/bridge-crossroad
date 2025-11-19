@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table, Thead, Tbody, Tr, Th, Box } from "@chakra-ui/react";
 import Annoucment from "./Annoucment";
+import { usePartnershipPostsQuery } from "@/lib/queries";
 
 const MOCK: any[] = [
   {
@@ -51,6 +52,12 @@ const MOCK: any[] = [
 ];
 
 export default function AnnoucmentsList() {
+  const postsQuery = usePartnershipPostsQuery();
+
+  useEffect(() => {
+    console.log("partnership posts:", postsQuery.data);
+  }, [postsQuery.data]);
+
   return (
     <Box bg="bg" p={4} borderRadius="md">
       <Table variant="simple" size="md">
