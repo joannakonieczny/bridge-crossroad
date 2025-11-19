@@ -1,6 +1,5 @@
 import React from "react";
 import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex } from "@chakra-ui/react";
-import { FaLightbulb, FaRegAddressCard, FaRegClock } from "react-icons/fa";
 
 type Announcement = {
   id: number;
@@ -26,7 +25,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
             mr={3}
             transition="background-color 150ms ease"
             alignSelf="stretch"
-            display={{ base: "none", md: "block" }}
+            display={{ base: "none", md: "block" }} // hidden on phone
           />
           <HStack spacing={3} align={{ base: "center", md: "flex-start" }}>
             <Avatar size="sm" name={a.playerName} display={{ base: "none", md: "flex" }} /> {/* hidden on phone */}
@@ -34,7 +33,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
               <Link color="accent.500" fontWeight="semibold" href="#" _hover={{ textDecoration: "underline" }}>
                 {a.title}
               </Link>
-              <Text fontSize="sm" color="border.500">{a.date !== "" ? a.date : "\u00A0"}</Text> {/* trick to keep table row height consistent */} 
+              <Text fontSize="sm" color="border.500">{a.date}</Text>
             </Box>
           </HStack>
         </Flex>
