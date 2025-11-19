@@ -1,4 +1,3 @@
-/* Apply Montserrat only to textual parts of FullCalendar — do NOT target all children (.fc *) to avoid breaking icon fonts/SVGs */
 .root :global(.fc),
 .root :global(.fc .fc-theme-standard),
 .root :global(.fc .fc-col-header),
@@ -23,13 +22,11 @@
   ) !important;
 }
 
-/* toolbar spacing */
 .root :global(.fc .fc-toolbar) {
   margin-bottom: 0.5rem;
   background: transparent;
 }
 
-/* Base buttons: no borders, transparent by default, no shadows/outlines */
 .root :global(.fc .fc-button) {
   background: transparent !important;
   border: none !important;
@@ -39,18 +36,14 @@
   outline: none !important;
 }
 
-/* Prev/Next/Today: use border tokens as background (no border) */
 .root :global(.fc .fc-prev-button),
 .root :global(.fc .fc-next-button),
 .root :global(.fc .fc-today-button) {
   background: var(--chakra-colors-border-400) !important;
-  color: var(
-    --chakra-colors-bg
-  ) !important; /* contrast text (and icons if they use currentColor) */
+  color: var(--chakra-colors-bg) !important;
   border: none !important;
 }
 
-/* Hover: stronger background (border-500) */
 .root :global(.fc .fc-button:hover),
 .root :global(.fc .fc-prev-button:hover),
 .root :global(.fc .fc-next-button:hover),
@@ -60,7 +53,6 @@
   box-shadow: none !important;
 }
 
-/* Podświetlenie kolumny z dniem dzisiejszym */
 .root :global(.fc .fc-day-today),
 .root :global(.fc .fc-col-header-cell.fc-day-today),
 .root :global(.fc .fc-timegrid-col.fc-day-today),
@@ -68,13 +60,11 @@
   background: var(--chakra-colors-secondary-100) !important;
 }
 
-/* Dodatkowo upewnij się, że komórki nagłówka dziedziczą tło */
 .root :global(.fc .fc-col-header-cell.fc-day-today),
 .root :global(.fc .fc-timegrid-col-header-cell.fc-day-today) {
   background: var(--chakra-colors-secondary-100) !important;
 }
 
-/* small-screen tweak: make FullCalendar title smaller on < md screens */
 @media (max-width: 767px) {
   .root :global(.fc .fc-toolbar-title) {
     font-size: 1rem !important;
@@ -82,22 +72,17 @@
   }
 }
 
-/* make calendar events show pointer cursor on hover (and normally) */
 .root :global(.fc .fc-event) {
   cursor: pointer !important;
 }
 
-/* Ensure event title/time text is clipped with ellipsis to prevent overflow */
 .root :global(.fc .fc-event .fc-event-title),
 .root :global(.fc .fc-event .fc-event-time),
 .root :global(.fc .fc-event .fc-event-main),
 .root :global(.fc .fc-event .fc-list-item-title) {
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  /* allow wrapping when there's space, and break long words if needed */
   overflow-wrap: anywhere !important;
   word-break: break-word !important;
-  /* removed white-space: nowrap to permit wrapping */
 }
 
 /* Clip and ellipsize text inside our custom event content (safe selectors) */
@@ -107,9 +92,6 @@
   display: block !important;
   max-width: 100% !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  /* allow wrapping and breaking long words */
   overflow-wrap: anywhere !important;
   word-break: break-word !important;
-  /* removed white-space: nowrap to allow wrapping when space is available */
 }
