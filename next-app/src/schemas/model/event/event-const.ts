@@ -23,6 +23,10 @@ export const EventValidationConstants = {
     members: {
       min: 4,
     },
+    name: {
+      min: 4,
+      max: 100,
+    },
   },
   // league/training related
   opponentTeamName: {

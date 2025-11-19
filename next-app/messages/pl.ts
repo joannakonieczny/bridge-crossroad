@@ -455,18 +455,41 @@ const eventModelValidation = {
   duration: {
     invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
   },
+  playingPair: {
+    firstSecondDistinct: "Obaj zawodnicy pary muszą być różni",
+  },
   session: {
     duplicatePlayers: "Każdy zawodnik w sesji musi być unikalny",
   },
   data: {
     invalid: "Nieprawidłowe dane specyficzne dla typu wydarzenia",
+    type: {
+      unsupportedTournamentType: "Nieobsługiwany typ turnieju",
+      pair: {
+        required: "Podaj parę turniejową",
+        userNotInPair: "Musisz być jednym z zawodników w podanej parze",
+        duplicatePlayers: "Obaj zawodnicy pary muszą być różni",
+        alreadyInAnotherPair:
+          "Jeden lub więcej zawodników jest już zapisany w innej parze",
+      },
+      team: {
+        required: "Podaj drużynę",
+        teamNameTaken: "Nazwa drużyny jest już zajęta",
+        userNotInTeam: "Musisz być członkiem tej drużyny",
+      },
+    },
   },
   additionalDescription: {
     max: `Dodatkowy opis nie może być dłuższy niż ${EVENT.additionalDescription.max} znaków`,
   },
   team: {
+    name: {
+      min: `Min. ${EVENT.tournamentTeamName.min} znaki`,
+      max: `Max. ${EVENT.tournamentTeamName.max} znaków`,
+    },
     members: {
       min: `Min. ${EVENT.team.members.min} członków`,
+      unique: "Członkowie drużyny muszą być unikalni",
     },
   },
   leagueMeeting: {

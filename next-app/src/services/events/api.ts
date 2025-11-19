@@ -37,7 +37,7 @@ import { getLatestEventsForUser as getLatestEventsForUserRepo } from "@/reposito
 import { requireGroupAccess } from "../groups/simple-action";
 import { EventType } from "@/club-preset/event-type";
 import { returnValidationErrors } from "next-safe-action";
-import { TKey } from "@/lib/typed-translations";
+import type { TKey } from "@/lib/typed-translations";
 
 export const createEvent = getWithinOwnGroupAsAdminAction(
   addEventSchema
