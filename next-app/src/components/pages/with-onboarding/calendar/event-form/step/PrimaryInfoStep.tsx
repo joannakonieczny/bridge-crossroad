@@ -85,7 +85,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
 
   function RenderSelectInput(p: {
     name: "group" | "organizer" | "data.type";
-    placeholder: string;
+    placeholder?: string;
     options: { value: string; label: string }[];
     isLoading?: boolean;
     isDisabled?: boolean;
@@ -202,7 +202,6 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
       </Text>
       <RenderSelectInput
         name="data.type"
-        placeholder={t("primaryInfoStep.eventTypePlaceholder")}
         options={Object.values(EventType).map((type) => ({
           value: type,
           label: tEvents(type),

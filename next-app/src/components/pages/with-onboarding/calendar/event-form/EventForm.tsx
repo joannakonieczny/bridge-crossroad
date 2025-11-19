@@ -40,6 +40,7 @@ import {
 } from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
+import { EventType } from "@/club-preset/event-type";
 
 type EventFormProps = {
   isOpen: boolean;
@@ -63,7 +64,9 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       },
       additionalDescription: "",
       imageUrl: undefined, //TODO add image upload in future
-      data: {},
+      data: {
+        type: EventType.OTHER,
+      },
     },
   });
   const toast = useToast();
