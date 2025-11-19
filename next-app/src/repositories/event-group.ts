@@ -494,8 +494,7 @@ export async function addTeamToTournamentEvent({
     `Event not found with id: ${eventId}`
   );
   checkTrue(
-    existingEvent.data.type === EventType.TOURNAMENT_TEAMS ||
-      !("teams" in existingEvent.data),
+    existingEvent.data.type === EventType.TOURNAMENT_TEAMS,
     "Event must be of type TOURNAMENT_TEAMS to add a team"
   );
 

@@ -15,10 +15,6 @@ export const EventValidationConstants = {
     max: 1024,
   },
   // team related
-  tournamentTeamName: {
-    min: 2,
-    max: 200,
-  },
   team: {
     members: {
       min: 4,

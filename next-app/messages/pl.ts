@@ -484,8 +484,8 @@ const eventModelValidation = {
   },
   team: {
     name: {
-      min: `Min. ${EVENT.tournamentTeamName.min} znaki`,
-      max: `Max. ${EVENT.tournamentTeamName.max} znaków`,
+      min: `Min. ${EVENT.team.name.min} znaki`,
+      max: `Max. ${EVENT.team.name.max} znaków`,
     },
     members: {
       min: `Min. ${EVENT.team.members.min} członków`,
@@ -507,8 +507,8 @@ const eventModelValidation = {
   tournamentTeam: {
     name: {
       required: "Podaj nazwę zespołu",
-      min: `Min. ${EVENT.tournamentTeamName.min} znaki`,
-      max: `Max. ${EVENT.tournamentTeamName.max} znaków`,
+      min: `Min. ${EVENT.team.name.min} znaki`,
+      max: `Max. ${EVENT.team.name.max} znaków`,
     },
   },
 };
