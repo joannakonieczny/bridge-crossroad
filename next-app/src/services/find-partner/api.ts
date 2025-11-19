@@ -26,6 +26,7 @@ import {
 } from "@/sanitizers/server-only/partnership-post-sanitize";
 import { partition } from "@/util/helpers";
 import { RepositoryError } from "@/repositories/common";
+import type { AddPartnershipPostSchemaType } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-types";
 
 export const listPartnershipPosts = getWithinOwnGroupAction(
   z.object({
@@ -75,7 +76,7 @@ export const createPartnershipPost = getWithinOwnGroupAction(
   const res = await addPartnershipPost({
     groupId,
     ownerId: userId,
-    post: postData,
+    post: postData as AddPartnershipPostSchemaType,
   });
   return sanitizePartnershipPost(res);
 });
