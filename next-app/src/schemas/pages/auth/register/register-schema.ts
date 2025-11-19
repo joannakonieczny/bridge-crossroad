@@ -6,7 +6,7 @@ import {
   lastNameSchema,
 } from "../../../model/user/user-schema";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
-import { transformEmptyStringsToUndefined } from "@/schemas/common";
+import { allEmptyStringsToUndefined } from "@/schemas/common";
 import type { TKey } from "@/lib/typed-translations";
 
 const { password } = UserValidationConstants;
@@ -45,16 +45,17 @@ const repeatPasswordSchema = z
     "validation.pages.auth.register.repeatPassword.required" satisfies TKey
   );
 
-export const registerFormSchema = z
-  .object({
+export const registerFormSchema = allEmptyStringsToUndefined(
+  z.object({
     firstName: firstNameSchema,
     lastName: lastNameSchema,
-    nickname: transformEmptyStringsToUndefined(nicknameSchema.optional()),
+    nickname: nicknameSchema.optional(),
     email: emailSchema,
     password: passwordSchema,
     repeatPassword: repeatPasswordSchema,
     rememberMe: z.boolean(),
   })
+)
   .transform((data) => {
     const result = { ...data };
     if (result.nickname === undefined) {

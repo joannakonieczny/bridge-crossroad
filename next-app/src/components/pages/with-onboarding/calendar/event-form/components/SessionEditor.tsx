@@ -10,6 +10,7 @@ import {
   Text,
   IconButton,
   Spacer,
+  Stack,
 } from "@chakra-ui/react";
 import { MdAdd, MdDelete } from "react-icons/md";
 import {
@@ -98,7 +99,7 @@ export function SessionEditor() {
 
           return (
             <SelectInput
-              placeholder={p.placeholder}
+              emptyValueLabel={p.placeholder}
               isInvalid={p.isInvalid || !!error}
               errorMessage={tValidation(error?.message)}
               options={availableOptions}
@@ -236,16 +237,22 @@ export function SessionEditor() {
         );
       })}
 
-      <HStack>
+      <Stack>
         <Button
           leftIcon={<MdAdd />}
           onClick={appendDefault}
           size="sm"
-          alignSelf="end"
+          isLoading={peopleQ.isLoading}
+          disabled={peopleQ.isLoading || people.length < 4}
         >
           {t("addSessionButton")}
         </Button>
-      </HStack>
+        {!peopleQ.isLoading && people.length < 4 && (
+          <Text color="border.500" fontSize="sm">
+            {t("tooFewPeopleInGroupWarning")}
+          </Text>
+        )}
+      </Stack>
     </VStack>
   );
 }
