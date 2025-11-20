@@ -12,12 +12,20 @@ import type { FilterQuery } from "mongoose";
 import type { IGroupDTO } from "@/models/group/group-types";
 import type { WithSession } from "./common";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
+import type {
+  ITournamentPairsData,
+  ITournamentTeamsData,
+} from "@/models/event/event-types";
+import type {
+  EventIdType,
+  PlayingPairType,
+  PlayingTeamType,
+} from "@/schemas/model/event/event-types";
 import type { IEventDTO } from "@/models/event/event-types";
 import type {
   AddEventSchemaType,
   ModifyEventSchemaType,
 } from "@/schemas/pages/with-onboarding/events/events-types";
-import type { EventIdType } from "@/schemas/model/event/event-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IEventPopulated } from "@/models/mixed-types";
 import { EventType } from "@/club-preset/event-type";
@@ -472,4 +480,134 @@ export async function getLatestEventsForUser({
   );
 
   return events;
+}
+
+type AddTeamToTournamentEventInput = {
+  eventId: EventIdType;
+  team: PlayingTeamType;
+};
+
+export async function addTeamToTournamentEvent({
+  eventId,
+  team,
+}: AddTeamToTournamentEventInput) {
+  await dbConnect();
+  const existingEvent = check(
+    await Event.findById(eventId).lean<IEventDTO>(),
+    `Event not found with id: ${eventId}`
+  );
+  checkTrue(
+    existingEvent.data.type === EventType.TOURNAMENT_TEAMS,
+    "Event must be of type TOURNAMENT_TEAMS to add a team"
+  );
+
+  const { teams: existingTeams } = existingEvent.data as ITournamentTeamsData;
+
+  checkTrue(
+    !existingTeams.some((t) => t.name === team.name),
+    `Team name ${team.name} already exists`
+  );
+  checkTrue(
+    !existingTeams.some((t) =>
+      t.members.some((member) => team.members.includes(member.toString()))
+    ),
+    `One or more team members are already in another team`
+  );
+
+  checkTrue(
+    team.members.length === new Set(team.members).size,
+    "All team members must be unique"
+  );
+
+  const existingGroup = check(
+    await Group.findById(existingEvent.group.toString()).lean<IGroupDTO>(),
+    `Group not found for event with id: ${eventId}`
+  );
+  const groupMemberIds = new Set(
+    existingGroup.members.map((m) => m.toString())
+  );
+  team.members.forEach((memberId) => {
+    checkTrue(
+      groupMemberIds.has(memberId.toString()),
+      `Team member ${memberId} must be a member of the group`
+    );
+  });
+
+  // use $push instead of $addToSet since we're checking duplicates manually
+  const updatedEvent = check(
+    await Event.findByIdAndUpdate(
+      eventId,
+      { $push: { "data.teams": team } },
+      { new: true, runValidators: true }
+    ).lean<IEventDTO>(),
+    `Failed to add team to event ${eventId}`
+  );
+
+  return { event: updatedEvent };
+}
+
+type AddPairToTournamentEventInput = {
+  eventId: EventIdType;
+  pair: PlayingPairType;
+};
+
+export async function addPairToTournamentEvent({
+  eventId,
+  pair,
+}: AddPairToTournamentEventInput) {
+  await dbConnect();
+  const existingEvent = check(
+    await Event.findById(eventId).lean<IEventDTO>(),
+    `Event not found with id: ${eventId}`
+  );
+  checkTrue(
+    existingEvent.data.type === EventType.TOURNAMENT_PAIRS,
+    "Event must be of type TOURNAMENT_PAIRS to add a pair"
+  );
+  // ensure pair members are distinct
+  checkTrue(
+    pair.first.toString() !== pair.second.toString(),
+    "Pair members must be two different users"
+  );
+
+  // ensure no member of the new pair is already enrolled in another pair
+  const { contestantsPairs: existingPairs } =
+    existingEvent.data as ITournamentPairsData;
+
+  checkTrue(
+    !existingPairs.some((p) =>
+      [p?.first, p?.second].some(
+        (m) =>
+          m?.toString() === pair.first.toString() ||
+          m?.toString() === pair.second.toString()
+      )
+    ),
+    "One or more pair members are already enrolled in another pair"
+  );
+  const existingGroup = check(
+    await Group.findById(existingEvent.group.toString()).lean<IGroupDTO>(),
+    `Group not found for event with id: ${eventId}`
+  );
+  const groupMemberIds = new Set(
+    existingGroup.members.map((m) => m.toString())
+  );
+  checkTrue(
+    groupMemberIds.has(pair.first.toString()),
+    `First player ${pair.first} must be a member of the group`
+  );
+  checkTrue(
+    groupMemberIds.has(pair.second.toString()),
+    `Second player ${pair.second} must be a member of the group`
+  );
+
+  const updatedEvent = check(
+    await Event.findByIdAndUpdate(
+      eventId,
+      { $addToSet: { "data.contestantsPairs": pair } },
+      { new: true, runValidators: true }
+    ).lean<IEventDTO>(),
+    `Failed to add pair to event ${eventId}`
+  );
+
+  return { event: updatedEvent };
 }

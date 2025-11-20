@@ -14,18 +14,25 @@ export const EventValidationConstants = {
   imageUrl: {
     max: 1024,
   },
+  // team related
+  team: {
+    members: {
+      min: 4,
+    },
+    name: {
+      min: 4,
+      max: 100,
+    },
+  },
+  // league/training related
+  opponentTeamName: {
+    max: 200,
+  },
   additionalDescription: {
     max: 4000,
   },
   trainingTopic: {
     min: 3,
     max: 500,
-  },
-  opponentTeamName: {
-    max: 200,
-  },
-  tournamentTeamName: {
-    min: 2,
-    max: 200,
   },
 };

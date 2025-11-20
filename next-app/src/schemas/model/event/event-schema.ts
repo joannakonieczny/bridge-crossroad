@@ -9,10 +9,10 @@ const {
   description,
   location,
   imageUrl,
+  team,
   additionalDescription,
-  trainingTopic,
   opponentTeamName,
-  tournamentTeamName,
+  trainingTopic,
 } = EventValidationConstants;
 
 export const titleSchema = z
@@ -47,12 +47,31 @@ export const durationSchema = z
     path: ["endsAt"],
   });
 
-// helpers
-// replaced helper: use `z.literal(EventType.X)` directly without validation message
+export const playingPairSchema = z
+  .object({
+    first: idPropSchema,
+    second: idPropSchema,
+  })
+  .refine((s) => s.first !== s.second, {
+    message:
+      "validation.model.event.playingPair.firstSecondDistinct" satisfies TKey,
+  });
 
-export const playingPairSchema = z.object({
-  first: idPropSchema,
-  second: idPropSchema,
+export const playingTeamSchema = z.object({
+  name: z
+    .string()
+    .min(team.name.min, "validation.model.event.team.name.min" satisfies TKey)
+    .max(team.name.max, "validation.model.event.team.name.max" satisfies TKey),
+  members: z
+    .array(idPropSchema)
+    .min(
+      team.members.min,
+      "validation.model.event.team.members.min" satisfies TKey
+    )
+    .refine((members) => new Set(members).size === members.length, {
+      message: "validation.model.event.team.members.unique" satisfies TKey,
+      path: ["members"],
+    }),
 });
 
 export const additionalDescriptionSchema = z
@@ -72,24 +91,7 @@ export const tournamentPairsDataSchema = z.object({
 
 export const tournamentTeamsDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT_TEAMS),
-  teams: z.array(
-    z.object({
-      name: z
-        .string({
-          message:
-            "validation.model.event.tournamentTeam.name.required" satisfies TKey,
-        })
-        .min(
-          tournamentTeamName.min,
-          "validation.model.event.tournamentTeam.name.min" satisfies TKey
-        )
-        .max(
-          tournamentTeamName.max,
-          "validation.model.event.tournamentTeam.name.max" satisfies TKey
-        ),
-      members: z.array(idPropSchema),
-    })
-  ),
+  teams: z.array(playingTeamSchema),
   arbiter: idPropSchema.optional(),
   tournamentType: z.nativeEnum(TournamentType).optional(),
 });
