@@ -54,7 +54,7 @@ export const deleteEvent = getWithinOwnGroupAsAdminAction(havingEventId).action(
 );
 
 export const updateEvent = getWithinOwnGroupAsAdminAction(
-  havingEventId.merge(z.object({ changes: modifyEventSchema.partial() }))
+  havingEventId.merge(z.object({ changes: modifyEventSchema }))
 ).action(async ({ parsedInput: { eventId, changes }, ctx: { groupId } }) => {
   const res = await updateEventRepo({ groupId, eventId, changes });
   return sanitizeEvent(res.event);

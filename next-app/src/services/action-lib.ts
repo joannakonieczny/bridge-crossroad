@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { TKey } from "@/lib/typed-translations";
-import type { ZodObject, ZodRawShape } from "zod";
+import { ZodObject } from "zod";
 import {
   createSafeActionClient,
   DEFAULT_SERVER_ERROR_MESSAGE,
@@ -15,6 +15,9 @@ import { havingGroupId } from "@/schemas/model/group/group-schema";
 import { havingChatMessageId } from "@/schemas/model/chat-message/chat-message-schema";
 import { requireChatMessageAccess } from "./chat/simple-action";
 import { RepositoryError } from "@/repositories/common";
+import { havingPartnershipPostId } from "@/schemas/model/partnership-post/partnership-post-schema";
+import { getPartnershipPost } from "@/repositories/partnership-posts";
+import type { z, ZodRawShape } from "zod";
 
 export const action = createSafeActionClient({
   async handleServerError(e, utils) {
@@ -49,11 +52,13 @@ export const fullAuthAction = authAction.use(async ({ next, ctx }) => {
   return next({ ctx: { ...(ctx ?? {}) } });
 });
 
-export function getWithinOwnGroupAction<T extends ZodRawShape>(
-  schema: ZodObject<T>
-) {
+export function getWithinOwnGroupAction<S extends z.ZodTypeAny>(schema: S) {
+  const s =
+    schema instanceof ZodObject
+      ? havingGroupId.merge(schema)
+      : schema.and(havingGroupId);
   return fullAuthAction
-    .inputSchema(havingGroupId.merge(schema))
+    .inputSchema(s)
     .use(async ({ next, ctx, clientInput }) => {
       const parseResult = havingGroupId.safeParse(clientInput);
 
@@ -72,8 +77,8 @@ export function getWithinOwnGroupAction<T extends ZodRawShape>(
     });
 }
 
-export function getWithinOwnGroupAsAdminAction<T extends ZodRawShape>(
-  schema: ZodObject<T>
+export function getWithinOwnGroupAsAdminAction<S extends z.ZodTypeAny>(
+  schema: S
 ) {
   return getWithinOwnGroupAction(schema).use(async ({ next, ctx }) => {
     await requireGroupAdmin({ groupId: ctx.groupId, userId: ctx.userId });
@@ -81,33 +86,67 @@ export function getWithinOwnGroupAsAdminAction<T extends ZodRawShape>(
   });
 }
 
-export function getWithinOwnChatMessageAction<T extends ZodRawShape>(
-  schema: ZodObject<T>
+export function getWithinOwnChatMessageAction<S extends z.ZodTypeAny>(
+  schema: S
 ) {
-  return getWithinOwnGroupAction(havingChatMessageId.merge(schema)).use(
-    async ({ next, ctx, clientInput }) => {
-      const parseResult = havingChatMessageId.safeParse(clientInput);
-      if (!parseResult.success) {
+  const s =
+    schema instanceof ZodObject
+      ? havingChatMessageId.merge(schema)
+      : schema.and(havingChatMessageId);
+  return getWithinOwnGroupAction(s).use(async ({ next, ctx, clientInput }) => {
+    const parseResult = havingChatMessageId.safeParse(clientInput);
+    if (!parseResult.success) {
+      return returnValidationErrors(havingChatMessageId, {
+        chatMessageId: {
+          _errors: ["common.validation.invalidChatMessageId"],
+        },
+      });
+    }
+    const { chatMessageId } = parseResult.data;
+    await requireChatMessageAccess({
+      chatMessageId,
+      userId: ctx.userId,
+    }).catch((e) => {
+      if (e instanceof RepositoryError) {
         return returnValidationErrors(havingChatMessageId, {
           chatMessageId: {
             _errors: ["common.validation.invalidChatMessageId"],
           },
         });
-      }
-      const { chatMessageId } = parseResult.data;
-      await requireChatMessageAccess({
-        chatMessageId,
-        userId: ctx.userId,
-      }).catch((e) => {
-        if (e instanceof RepositoryError) {
-          return returnValidationErrors(havingChatMessageId, {
-            chatMessageId: {
-              _errors: ["common.validation.invalidChatMessageId"],
-            },
-          });
-        } else throw e;
+      } else throw e;
+    });
+    return next({ ctx: { ...ctx, chatMessageId: chatMessageId } });
+  });
+}
+
+export function getWithinOwnPartnershipPostAction<T extends ZodRawShape>(
+  schema: ZodObject<T>
+) {
+  const s = havingPartnershipPostId.merge(schema);
+  return getWithinOwnGroupAction(s).use(async ({ next, ctx, clientInput }) => {
+    const parseRes = havingPartnershipPostId.safeParse(clientInput);
+    if (!parseRes.success) {
+      return returnValidationErrors(havingPartnershipPostId, {
+        partnershipPostId: {
+          _errors: ["common.validation.invalidPartnershipPostId"],
+        },
       });
-      return next({ ctx: { ...ctx, chatMessageId: chatMessageId } });
     }
-  );
+    const { partnershipPostId } = parseRes.data;
+    const post = await getPartnershipPost({ partnershipPostId });
+
+    if (
+      post.groupId.toString() !== ctx.groupId ||
+      post.ownerId.toString() !== ctx.userId
+    ) {
+      // access denied
+      return returnValidationErrors(havingPartnershipPostId, {
+        partnershipPostId: {
+          _errors: ["common.validation.invalidPartnershipPostId"],
+        },
+      });
+    }
+
+    return next({ ctx: { ...ctx, partnershipPostId } });
+  });
 }

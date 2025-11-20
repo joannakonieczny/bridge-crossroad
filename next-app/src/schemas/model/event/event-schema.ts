@@ -4,12 +4,19 @@ import type { TKey } from "@/lib/typed-translations";
 import { idPropSchema } from "@/schemas/common";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 
-const { title, description, location, imageUrl, team } =
-  EventValidationConstants;
+const {
+  title,
+  description,
+  location,
+  imageUrl,
+  team,
+  additionalDescription,
+  opponentTeamName,
+  trainingTopic,
+} = EventValidationConstants;
 
 export const titleSchema = z
-  .string()
-  .nonempty("validation.model.event.title.required" satisfies TKey)
+  .string({ message: "validation.model.event.title.required" satisfies TKey })
   .min(title.min, "validation.model.event.title.min" satisfies TKey)
   .max(title.max, "validation.model.event.title.max" satisfies TKey)
   .regex(title.regex, "validation.model.event.title.regex" satisfies TKey);
@@ -67,6 +74,13 @@ export const playingTeamSchema = z.object({
     }),
 });
 
+export const additionalDescriptionSchema = z
+  .string()
+  .max(
+    additionalDescription.max,
+    "validation.model.event.additionalDescription.max" satisfies TKey
+  );
+
 // Data discriminators
 export const tournamentPairsDataSchema = z.object({
   type: z.literal(EventType.TOURNAMENT_PAIRS),
@@ -88,7 +102,13 @@ const sessionItemSchema = z
       firstPair: playingPairSchema,
       secondPair: playingPairSchema,
     }),
-    opponentTeamName: z.string().optional(),
+    opponentTeamName: z
+      .string()
+      .max(
+        opponentTeamName.max,
+        "validation.model.event.leagueMeeting.opponentTeamName.max" satisfies TKey
+      )
+      .optional(),
   })
   .refine(
     (data) => {
@@ -118,10 +138,23 @@ export const leagueMeetingDataSchema = z.object({
 export const trainingDataSchema = z.object({
   type: z.literal(EventType.TRAINING),
   coach: idPropSchema.optional(),
-  topic: z.string().nonempty(),
+  topic: z
+    .string({
+      message: "validation.model.event.training.topic.required" satisfies TKey,
+    })
+    .min(
+      trainingTopic.min,
+      "validation.model.event.training.topic.min" satisfies TKey
+    )
+    .max(
+      trainingTopic.max,
+      "validation.model.event.training.topic.max" satisfies TKey
+    ),
 });
 
-export const otherDataSchema = z.object({ type: z.literal(EventType.OTHER) });
+export const otherDataSchema = z.object({
+  type: z.literal(EventType.OTHER),
+});
 
 export const dataSchema = z.discriminatedUnion("type", [
   tournamentPairsDataSchema,
@@ -140,7 +173,7 @@ export const eventSchema = z.object({
   attendees: z.array(idPropSchema),
   group: idPropSchema,
   duration: durationSchema,
-  additionalDescription: z.string().optional(),
+  additionalDescription: additionalDescriptionSchema.optional(),
   data: dataSchema,
   imageUrl: imageUrlSchema.optional(),
 });

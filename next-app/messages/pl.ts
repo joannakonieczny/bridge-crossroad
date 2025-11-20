@@ -5,6 +5,7 @@ import { UserValidationConstants as USER } from "@/schemas/model/user/user-const
 import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-const";
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
+import { PartnershipPostValidationConstants as PARTNERSHIP_POST } from "@/schemas/model/partnership-post/partnership-post-const";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -452,6 +453,9 @@ const eventModelValidation = {
     max: `URL obrazka nie może być dłuższy niż ${EVENT.imageUrl.max} znaków`,
     url: "Podaj poprawny adres URL",
   },
+  additionalDescription: {
+    max: `Dodatkowy opis nie może być dłuższy niż ${EVENT.additionalDescription.max} znaków`,
+  },
   duration: {
     invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
   },
@@ -510,6 +514,31 @@ const eventModelValidation = {
       min: `Min. ${EVENT.team.name.min} znaki`,
       max: `Max. ${EVENT.team.name.max} znaków`,
     },
+  },
+  training: {
+    topic: {
+      required: "Podaj temat treningu",
+      min: `Min. ${EVENT.trainingTopic.min} znaki`,
+      max: `Max. ${EVENT.trainingTopic.max} znaków`,
+    },
+  },
+  leagueMeeting: {
+    opponentTeamName: {
+      max: `Nazwa zespołu przeciwnika nie może być dłuższa niż ${EVENT.opponentTeamName.max} znaków`,
+    },
+  },
+  tournamentTeam: {
+    name: {
+      required: "Podaj nazwę zespołu",
+      min: `Min. ${EVENT.tournamentTeamName.min} znaki`,
+      max: `Max. ${EVENT.tournamentTeamName.max} znaków`,
+    },
+  },
+  group: {
+    required: "Wybierz grupę",
+  },
+  organizer: {
+    required: "Wybierz organizatora",
   },
 };
 
@@ -613,6 +642,8 @@ const eventForm = {
       firstPlayerPlaceholder: "Pierwszy zawodnik",
       secondPlayerPlaceholder: "Drugi zawodnik",
       opponentTeamNamePlaceholder: "Nazwa zespołu przeciwnika (opcjonalne)",
+      tooFewPeopleInGroupWarning:
+        "W grupie jest mniej niż 4 zawodników — nie można dodać sesji",
       matchNumberPlaceholder: "Numer meczu: ",
     },
   },
@@ -743,6 +774,15 @@ const messages = {
       group: groupModelValidation,
       event: eventModelValidation,
       chatMessage: chatMessageModelValidation,
+      partnershipPost: {
+        name: {
+          min: `Min. ${PARTNERSHIP_POST.name.min} znaki`,
+          max: `Max. ${PARTNERSHIP_POST.name.max} znaków`,
+        },
+        description: {
+          max: `Opis nie może być dłuższy niż ${PARTNERSHIP_POST.description.max} znaków`,
+        },
+      },
     },
     pages: {
       auth: {

@@ -13,23 +13,26 @@ import type { IGroupDTO } from "@/models/group/group-types";
 import type { WithSession } from "./common";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type {
-  IEventDTO,
   ITournamentPairsData,
   ITournamentTeamsData,
 } from "@/models/event/event-types";
-import type { ModifyEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import type {
   EventIdType,
   PlayingPairType,
   PlayingTeamType,
 } from "@/schemas/model/event/event-types";
+import type { IEventDTO } from "@/models/event/event-types";
+import type {
+  AddEventSchemaType,
+  ModifyEventSchemaType,
+} from "@/schemas/pages/with-onboarding/events/events-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IEventPopulated } from "@/models/mixed-types";
 import { EventType } from "@/club-preset/event-type";
 
 type AddEventInput = {
   groupId: GroupIdType;
-  event: ModifyEventSchemaType;
+  event: AddEventSchemaType;
 };
 
 export async function addEvent({

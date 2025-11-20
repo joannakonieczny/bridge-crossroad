@@ -12,6 +12,11 @@ import type {
   ITournamentTeamsData,
   ITrainingData,
 } from "./event/event-types";
+import type {
+  IPartnershipPostDTO,
+  IPeriodPartnershipPostData,
+  ISinglePartnershipPostData,
+} from "./partnership-post/partnership-post-types";
 
 export type IUserDTOWithPopulatedGroups = Overwrite<
   IUserDTO,
@@ -97,5 +102,22 @@ export type IEventPopulated = Overwrite<
       | ITournamentTeamsDataPopulated
       | ILeagueMeetingDataPopulated
       | ITrainingDataPopulated;
+  }
+>;
+
+export type IPartnershipPostPopulated = Overwrite<
+  IPartnershipPostDTO,
+  {
+    ownerId: IUserDTO;
+    groupId: IGroupDTO;
+    interestedUsersIds: IUserDTO[];
+    data:
+      | IPeriodPartnershipPostData
+      | Overwrite<
+          ISinglePartnershipPostData,
+          {
+            eventId: IEventDTO;
+          }
+        >;
   }
 >;

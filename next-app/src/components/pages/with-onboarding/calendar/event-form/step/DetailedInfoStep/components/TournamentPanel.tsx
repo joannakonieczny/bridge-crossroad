@@ -32,13 +32,13 @@ export default function TournamentPanel() {
         name="data.tournamentType"
         render={({ field, fieldState: { error } }) => (
           <SelectInput
-            placeholder={t("tournamentTypePlaceholder")}
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             options={Object.values(TournamentType).map((type) => ({
               value: type,
               label: tTournaments(`${type}`),
             }))}
+            emptyValueLabel={t("tournamentTypePlaceholder")}
             value={field.value}
             isLoading={peopleQ.isLoading}
             onChange={field.onChange}
@@ -50,7 +50,7 @@ export default function TournamentPanel() {
         name="data.arbiter"
         render={({ field, fieldState: { error } }) => (
           <SelectInput
-            placeholder={t("arbiterPlaceholder")}
+            emptyValueLabel={t("arbiterPlaceholder")}
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             options={people.map((member) => ({
