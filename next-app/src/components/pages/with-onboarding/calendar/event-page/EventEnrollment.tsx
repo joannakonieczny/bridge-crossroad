@@ -1,67 +1,85 @@
 "use client";
 
-import React, { useState } from "react";
-import { Box, VStack, Input, Button, SimpleGrid } from "@chakra-ui/react";
-import { EventType } from "@/club-preset/event-type";
+import {
+  Box,
+  VStack,
+  Button,
+  HStack,
+  Text,
+  Avatar,
+  AvatarGroup,
+  Icon,
+} from "@chakra-ui/react";
+import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
-import { useTranslations } from "@/lib/typed-translations";
+import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
+import { getPersonLabel } from "@/util/formatters";
 
-export default function EventEnrollment({
-  eventType,
-}: {
-  eventType?: EventType;
-}) {
-  const [playerA, setPlayerA] = useState("");
-  const [playerB, setPlayerB] = useState("");
-  const t = useTranslations("components.EventPage.EventEnrollment");
+type EventEnrollmentProps = {
+  event: EventSchemaTypePopulated;
+};
 
-  const buttonLabel =
-    eventType === EventType.TOURNAMENT_PAIRS
-      ? t("button.tournament")
-      : t("button.event");
+export default function EventEnrollment({ event }: EventEnrollmentProps) {
+  const participants = event.attendees;
+  const eventId = event.id;
+  const isEnrolled = event.isAttending ?? false;
+  const participantsCount = participants.length;
+
+  const handleEnroll = () => console.log("Zapis na wydarzenie", { eventId });
+  const handleUnenroll = () =>
+    console.log("Wypisanie z wydarzenia", { eventId });
 
   return (
     <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
       <VStack align="start" spacing={4}>
         <ResponsiveHeading
-          text={t("heading")}
+          text={"Zapis na wydarzenie"}
           fontSize="sm"
           barOrientation="horizontal"
         />
-        {eventType === EventType.TOURNAMENT_PAIRS ? (
-          //TODO: zapisy narazie nie działają, więc to tymczasowe
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} w="100%">
-            <Input
-              placeholder={t("placeholder.playerA")}
-              value={playerA}
-              onChange={(e) => setPlayerA(e.target.value)}
-              size={{ base: "sm", md: "md" }}
-              fontSize={{ base: "sm", md: "md" }}
-              _placeholder={{ fontSize: { base: "sm", md: "md" } }}
-            />
-            <Input
-              placeholder={t("placeholder.playerB")}
-              value={playerB}
-              onChange={(e) => setPlayerB(e.target.value)}
-              size={{ base: "sm", md: "md" }}
-              fontSize={{ base: "sm", md: "md" }}
-              _placeholder={{ fontSize: { base: "sm", md: "md" } }}
-            />
-          </SimpleGrid>
-        ) : null}
 
-        <Button
-          w="100%"
-          colorScheme="accent"
-          variant="solid"
-          onClick={() => {
-            //TODO: implement enrollment action
-          }}
-          fontSize={{ base: "sm", md: "md" }}
-          py={{ base: 2, md: 3 }}
-        >
-          {buttonLabel}
-        </Button>
+        <HStack spacing={4} w="100%" align="center" justify="space-between">
+          <HStack spacing={3} align="center">
+            {participantsCount && (
+              <AvatarGroup size="sm" max={4}>
+                {participants.slice(0, 4).map((p, i) => {
+                  return <Avatar key={i} name={getPersonLabel(p)} />;
+                })}
+              </AvatarGroup>
+            )}
+            <VStack spacing={0} align="start">
+              <Text fontWeight="semibold">
+                {participantsCount
+                  ? `${participantsCount} uczestników`
+                  : "Brak uczestników"}
+              </Text>
+            </VStack>
+          </HStack>
+        </HStack>
+
+        {isEnrolled ? (
+          <Button
+            leftIcon={<Icon as={FaUserMinus} />}
+            colorScheme="red"
+            variant="outline"
+            w="100%"
+            onClick={handleUnenroll}
+            fontSize={{ base: "sm", md: "md" }}
+          >
+            Wypisz się
+          </Button>
+        ) : (
+          <Button
+            leftIcon={<Icon as={FaUserPlus} />}
+            colorScheme="accent"
+            variant="solid"
+            w="100%"
+            onClick={handleEnroll}
+            fontSize={{ base: "sm", md: "md" }}
+          >
+            Zapisz się
+          </Button>
+        )}
       </VStack>
     </Box>
   );
