@@ -9,21 +9,11 @@ import {
   Avatar,
   AvatarGroup,
   Icon,
-  useToast,
 } from "@chakra-ui/react";
 import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getPersonLabel } from "@/util/formatters";
-import { addAttendee, removeAttendee } from "@/services/events/api";
-import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
-import { useQueryClient } from "@tanstack/react-query";
-import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
-import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
-import {
-  useTranslations,
-  useTranslationsWithFallback,
-} from "@/lib/typed-translations";
 
 type EventEnrollmentProps = {
   event: EventSchemaTypePopulated;
@@ -35,63 +25,15 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
   const isEnrolled = event.isAttending ?? false;
   const participantsCount = participants.length;
 
-  const t = useTranslations("pages.EventPage.EventEnrollment");
-  const tValidation = useTranslationsWithFallback();
-
-  const querryClient = useQueryClient();
-  const toast = useToast();
-
-  const enrollMutation = useActionMutation({
-    action: () => {
-      const promise = addAttendee({ eventId, groupId: event.group.id });
-      toast.promise(promise, {
-        loading: { title: t("enroll.toast.loading") },
-        success: { title: t("enroll.toast.success") },
-        error: (err: MutationOrQuerryError<typeof addAttendee>) => {
-          const errKey = getMessageKeyFromError(err, {
-            generalErrorKey:
-              "pages.EventPage.EventEnrollment.enroll.toast.errorDefault",
-          });
-          return { title: tValidation(errKey) };
-        },
-      });
-      return promise;
-    },
-    onSuccess: () => {
-      querryClient.invalidateQueries({
-        queryKey: ["event"],
-      });
-    },
-  });
-
-  const unenrollMutation = useActionMutation({
-    action: () => {
-      const promise = removeAttendee({ eventId, groupId: event.group.id });
-      toast.promise(promise, {
-        loading: { title: t("unenroll.toast.loading") },
-        success: { title: t("unenroll.toast.success") },
-        error: (err: MutationOrQuerryError<typeof removeAttendee>) => {
-          const errKey = getMessageKeyFromError(err, {
-            generalErrorKey:
-              "pages.EventPage.EventEnrollment.unenroll.toast.errorDefault",
-          });
-          return { title: tValidation(errKey) };
-        },
-      });
-      return promise;
-    },
-    onSuccess: () => {
-      querryClient.invalidateQueries({
-        queryKey: ["event"],
-      });
-    },
-  });
+  const handleEnroll = () => console.log("Zapis na wydarzenie", { eventId });
+  const handleUnenroll = () =>
+    console.log("Wypisanie z wydarzenia", { eventId });
 
   return (
     <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
       <VStack align="start" spacing={4}>
         <ResponsiveHeading
-          text={t("heading")}
+          text={"Zapis na wydarzenie"}
           fontSize="sm"
           barOrientation="horizontal"
         />
@@ -108,8 +50,8 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             <VStack spacing={0} align="start">
               <Text fontWeight="semibold">
                 {participantsCount
-                  ? t("participantsCount.many", { count: participantsCount })
-                  : t("participantsCount.none")}
+                  ? `${participantsCount} uczestników`
+                  : "Brak uczestników"}
               </Text>
             </VStack>
           </HStack>
@@ -121,12 +63,10 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             colorScheme="red"
             variant="outline"
             w="100%"
-            onClick={() => {
-              unenrollMutation.mutateAsync({});
-            }}
+            onClick={handleUnenroll}
             fontSize={{ base: "sm", md: "md" }}
           >
-            {t("unenroll.button")}
+            Wypisz się
           </Button>
         ) : (
           <Button
@@ -134,12 +74,10 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             colorScheme="accent"
             variant="solid"
             w="100%"
-            onClick={() => {
-              enrollMutation.mutateAsync({});
-            }}
+            onClick={handleEnroll}
             fontSize={{ base: "sm", md: "md" }}
           >
-            {t("enroll.button")}
+            Zapisz się
           </Button>
         )}
       </VStack>
