@@ -705,6 +705,34 @@ const chatPage = {
 };
 
 const findPartner = {
+  PartnershipForm: {
+    addButton: "Dodaj ogłoszenie",
+    modalHeader: "Ogłoszenie poszukiwania partnera",
+    nameLabel: "Nazwa",
+    descriptionLabel: "Opis",
+    biddingSystemLabel: "System licytacji",
+    typeLabel: "Typ ogłoszenia",
+    single: "Jednorazowe",
+    period: "Okresowe",
+    eventIdLabel: "Wybierz powiązane wydarzenie",
+    eventPlaceholder: "-- Wybierz wydarzenie --",
+    exampleEvents: {
+      "691b834873fb688327d065b6": "Odległa przyszłość",
+      "some-other-event-id": "Przykładowe wydarzenie",
+    },
+    startsAtLabel: "Data rozpoczęcia",
+    endsAtLabel: "Data zakończenia",
+    cancelButton: "Anuluj",
+    createButton: "Utwórz ogłoszenie",
+    toast: {
+      success: "Ogłoszenie utworzone",
+      error: "Błąd podczas tworzenia",
+      frequency: {
+        SINGLE: "Pojedyncza",
+        PERIOD: "Okresowa",
+      },
+    },
+  },
   Announcement: {
     toast: {
       add: {
