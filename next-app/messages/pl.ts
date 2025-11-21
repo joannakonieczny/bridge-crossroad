@@ -6,6 +6,7 @@ import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-c
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
 import { PartnershipPostValidationConstants as PARTNERSHIP_POST } from "@/schemas/model/partnership-post/partnership-post-const";
+import { BiddingSystem } from "@/club-preset/partnership-post";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -632,6 +633,33 @@ const chatPage = {
   },
 };
 
+const findPartnerPage = {
+  PartnershipForm: {
+    addButton: "Dodaj ogłoszenie",
+    modalHeader: "Ogłoszenie poszukiwania partnera",
+    nameLabel: "Nazwa",
+    descriptionLabel: "Opis",
+    biddingSystemLabel: "System licytacji",
+    typeLabel: "Typ ogłoszenia",
+    single: "Jednorazowe",
+    period: "Okresowe",
+    eventIdLabel: "Wybierz powiązane wydarzenie",
+    eventPlaceholder: "-- Wybierz wydarzenie --",
+    exampleEvents: {
+      "691b834873fb688327d065b6": "Odległa przyszłość",
+      "some-other-event-id": "Przykładowe wydarzenie",
+    },
+    startsAtLabel: "Data rozpoczęcia",
+    endsAtLabel: "Data zakończenia",
+    cancelButton: "Anuluj",
+    createButton: "Utwórz (placeholder)",
+    toast: {
+      success: "Ogłoszenie utworzone (placeholder)",
+      error: "Błąd podczas tworzenia (placeholder)",
+    },
+  },
+};
+
 const messages = {
   common: {
     date: {
@@ -670,6 +698,17 @@ const messages = {
       [TournamentType.IMPS]: "IMPy",
       [TournamentType.CRAZY]: "Crazy",
       [TournamentType.BAMY]: "BAMY",
+    },
+    biddingSystem: {
+      [BiddingSystem.ZONE]: "Strefa",
+      [BiddingSystem.COMMON_LANGUAGE]: "Wspólny język",
+      [BiddingSystem.DOUBLETON]: "Dubeltówka",
+      [BiddingSystem.SAYC]: "SAYC",
+      [BiddingSystem.BETTER_MINOR]: "Lepszy Młodszy",
+      [BiddingSystem.WEAK_OPENINGS_SSO]: "SSO",
+      [BiddingSystem.TOTOLOTEK]: "Totolotek",
+      [BiddingSystem.NATURAL]: "Naturalny",
+      [BiddingSystem.OTHER]: "Inny",
     },
     error: {
       messageKeyNotExisting: "Wystąpił błąd",
@@ -765,6 +804,7 @@ const messages = {
     ChatPage: chatPage,
     CalendarPage: calendarPage,
     EventFormPage: eventForm,
+    FindPartnerPage: findPartnerPage,
   },
   components: {
     Navbar: navbar,

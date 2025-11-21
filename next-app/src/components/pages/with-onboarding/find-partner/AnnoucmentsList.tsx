@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Table, Thead, Tbody, Tr, Th, Box, Skeleton, SkeletonText, Td } from "@chakra-ui/react";
 import Annoucment from "./Annoucment";
 import { usePartnershipPostsQuery } from "@/lib/queries";
-import dayjs from "dayjs";
+import { getDateLabel, getDurationLabel } from "@/util/formatters";
 import { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
 
 export default function AnnoucmentsList() {
@@ -55,10 +55,10 @@ export default function AnnoucmentsList() {
   const raw = postsQuery.data as any;
   const posts: PartnershipPostSchemaTypePopulated[] = Array.isArray(raw) ? raw : raw.data;
 
-  const parseDate = (s: string) => {
-    const cleaned = String(s).replace(/^\$D/, "");
-    const d = dayjs(cleaned);
-    return d.isValid() ? d.format("DD.MM.YYYY, HH:mm") : "";
+  const normalizeDate = (v: any) => {
+    if (v instanceof Date) return v;
+    const s = String(v).replace(/^\$D/, "");
+    return new Date(s);
   };
 
   return (
@@ -76,12 +76,15 @@ export default function AnnoucmentsList() {
           {posts.map((p: PartnershipPostSchemaTypePopulated) => {
             const id = p.id;
             const title = p.name;
-            const frequency = p.data.type; // "SINGLE" lub "PERIOD"
-            const preferredSystem = p.biddingSystem; // w przykładzie
+            const frequency =
+              p.data.type === "SINGLE"
+                ? "Jednorazowa"
+                : "Okresowa";
+            const preferredSystem = p.biddingSystem;
             const date =
               p.data.type === "PERIOD"
-                ? parseDate(p.data.endsAt as unknown as string)
-                : parseDate(p.data.event.duration.startsAt as unknown as string);
+                ? getDateLabel(normalizeDate(p.data.endsAt as unknown as string))
+                : getDurationLabel(p.data.event.duration);
             const owner = p.owner;
             const playerName = `${owner.name.firstName} ${owner.name.lastName}`;
             const playerNick = owner.nickname;

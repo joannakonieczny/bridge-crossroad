@@ -10,13 +10,16 @@ import PaginationControls from "@/components/pages/with-onboarding/find-partner/
 export default function FindParterPage() {
 
   return (
-    <Flex direction="column" py="2rem" px="1.25rem" bgColor="border.50" width="100%" minHeight="calc(100vh - 5rem)">
+    <Flex direction="column" py="2rem" px="1.25rem" bgColor="border.50" width="100%" minHeight="calc(100vh - 5rem)" position="relative">
       <VStack spacing={6} align="stretch">
         <MainBar />
         <FiltersBar />
         <AnnoucmentsList />
-        <PaginationControls />
       </VStack>
+      {/* absolute pagination: 2rem from bottom, centered horizontally */}
+      <Box position="absolute" bottom="2rem" left="50%" transform="translateX(-50%)" zIndex="overlay">
+        <PaginationControls />
+      </Box>
     </Flex>
   );
 }

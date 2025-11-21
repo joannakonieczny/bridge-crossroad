@@ -1,7 +1,7 @@
 import React, { type ChangeEvent, useState } from "react";
 import { Box, HStack } from "@chakra-ui/react";
 import SearchInput from "@/components/common/SearchInput";
-
+import PartnershipForm from "@/components/pages/with-onboarding/find-partner/PartnershipForm";
 
 export default function MainBar() {
   const [query, setQuery] = useState("");
@@ -16,6 +16,7 @@ export default function MainBar() {
             placeholder="Szukaj oferty, turnieju, partnera..."
           />
         </Box>
+        <PartnershipForm />
       </HStack>
     </Box>
   );
