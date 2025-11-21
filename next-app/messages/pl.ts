@@ -652,10 +652,10 @@ const findPartnerPage = {
     startsAtLabel: "Data rozpoczęcia",
     endsAtLabel: "Data zakończenia",
     cancelButton: "Anuluj",
-    createButton: "Utwórz (placeholder)",
+    createButton: "Utwórz)",
     toast: {
-      success: "Ogłoszenie utworzone (placeholder)",
-      error: "Błąd podczas tworzenia (placeholder)",
+      success: "Ogłoszenie utworzone",
+      error: "Błąd podczas tworzenia",
     },
   },
 };
