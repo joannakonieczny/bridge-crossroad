@@ -18,6 +18,7 @@ import { UserValidationConstants } from "@/schemas/model/user/user-const";
 import { ROUTES } from "@/routes";
 import { onboardingFirstPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import type { OnboardingFirstPageType } from "@/schemas/pages/onboarding/onboarding-types";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 function generateYearOptions() {
   const years = [];
@@ -57,7 +58,7 @@ export default function FirstPage() {
   );
 
   const { control, handleSubmit } = useForm({
-    resolver: zodResolver(onboardingFirstPageSchema),
+    resolver: zodResolver(withEmptyToUndefined(onboardingFirstPageSchema)),
     defaultValues: defaultValues,
   });
 
