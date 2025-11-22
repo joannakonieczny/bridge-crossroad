@@ -85,6 +85,7 @@ export default function AnnoucmentsList() {
             const owner = p.owner;
             const playerName = `${owner.name.firstName} ${owner.name.lastName}`;
             const playerNick = owner.nickname;
+            const description = p.description;
 
             const ann: any = {
               id,
@@ -94,6 +95,7 @@ export default function AnnoucmentsList() {
               playerNick,
               frequency,
               preferredSystem,
+              description
             };
 
             return <Annoucment key={id} a={ann} />;
