@@ -84,5 +84,10 @@ export function sanitizePartnershipPostPopulated(
     isOwnByUser: mappers
       ? post.ownerId._id.toString() === mappers.userId
       : undefined,
+    isUserInterested: mappers
+      ? post.interestedUsersIds.some(
+          (user) => user._id.toString() === mappers.userId
+        )
+      : undefined,
   };
 }

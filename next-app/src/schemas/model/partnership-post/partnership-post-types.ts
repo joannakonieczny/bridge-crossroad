@@ -33,6 +33,7 @@ export type PartnershipPostSchemaTypePopulated = Omit<
   group: GroupBasicType;
   interestedUsers?: UserTypeBasic[];
   isOwnByUser?: boolean;
+  isUserInterested?: boolean;
   data:
     | PeriodDataType
     | {
