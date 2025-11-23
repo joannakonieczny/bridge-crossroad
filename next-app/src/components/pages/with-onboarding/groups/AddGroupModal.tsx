@@ -28,6 +28,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import type { CreateGroupFormType } from "@/schemas/pages/with-onboarding/groups/groups-types";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 type AddGroupModalProps = {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   const queryClient = useQueryClient();
 
   const { handleSubmit, control, setError, reset } = useForm({
-    resolver: zodResolver(createGroupFormSchema),
+    resolver: zodResolver(withEmptyToUndefined(createGroupFormSchema)),
     defaultValues: {
       name: "",
       description: "",

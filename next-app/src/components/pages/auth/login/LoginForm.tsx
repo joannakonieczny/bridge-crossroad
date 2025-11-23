@@ -24,6 +24,7 @@ import type {
 } from "@/lib/tanstack-action/types";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useRouter } from "next/navigation";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 export default function LoginForm() {
   const t = useTranslations("pages.Auth.LoginPage");
@@ -33,7 +34,7 @@ export default function LoginForm() {
     control: formControl,
     setError: setFormError,
   } = useForm({
-    resolver: zodResolver(loginFormSchema),
+    resolver: zodResolver(withEmptyToUndefined(loginFormSchema)),
     defaultValues: {
       nicknameOrEmail: "",
       password: "",

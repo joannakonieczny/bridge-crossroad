@@ -13,7 +13,7 @@ import {
 } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
-import { fullAuthAction, getWithinOwnGroupAction } from "../action-lib";
+import { fullAuthAction, withinOwnGroupAction } from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createGroup, getGroupByInviteCode } from "@/repositories/groups";
 import {
@@ -68,12 +68,12 @@ export const createNewGroup = fullAuthAction
     });
   });
 
-export const getGroupData = getWithinOwnGroupAction(z.object({})).action(
-  async ({ ctx: { groupId } }) => {
+export const getGroupData = withinOwnGroupAction
+  .inputSchema(async (s) => s.merge(z.object({})))
+  .action(async ({ ctx: { groupId } }) => {
     const res = await getGroupOverview(groupId);
     return sanitizeGroupsFullInfoPopulated(res);
-  }
-);
+  });
 
 export const addUserToGroupByInvitationCode = fullAuthAction
   .inputSchema(havingInvitationCode)

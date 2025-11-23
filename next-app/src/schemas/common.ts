@@ -13,30 +13,39 @@ export const withTimeStampsSchema = z.object({
   updatedAt: z.date(),
 });
 
-export function allEmptyStringsToUndefined<S extends z.ZodTypeAny>(schema: S) {
-  return z
-    .any()
-    .transform((value: unknown) => {
-      function transform(input: unknown): unknown {
-        if (input === "") return undefined;
-        if (input instanceof Date) return input;
+export const emptyStringToUndefinedOnObject = (value: unknown) => {
+  function transform(input: unknown): unknown {
+    if (input === "") return undefined;
+    if (input instanceof Date) return input;
 
-        if (Array.isArray(input)) {
-          return input.map(transform);
-        }
+    if (Array.isArray(input)) {
+      return input.map(transform);
+    }
 
-        if (typeof input === "object" && input !== null) {
-          const obj: Record<string, unknown> = {};
-          for (const [k, v] of Object.entries(input)) {
-            obj[k] = transform(v);
-          }
-          return obj;
-        }
-
-        return input;
+    if (typeof input === "object" && input !== null) {
+      const obj: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(input)) {
+        obj[k] = transform(v);
       }
+      return obj;
+    }
 
-      return transform(value);
-    })
-    .pipe(schema);
+    return input;
+  }
+
+  return transform(value);
+};
+
+export function emptyToUndefined<T extends z.ZodTypeAny>(schema: T) {
+  return z.preprocess(
+    (v: unknown) => (v === "" ? undefined : v),
+    schema.optional()
+  ) as z.ZodEffects<z.ZodType<z.input<T> | undefined>, z.output<T> | undefined>;
+}
+
+export function withEmptyToUndefined<T extends z.ZodTypeAny>(schema: T) {
+  return z.preprocess(emptyStringToUndefinedOnObject, schema) as z.ZodEffects<
+    z.ZodType<z.input<T>>,
+    z.output<T>
+  >;
 }

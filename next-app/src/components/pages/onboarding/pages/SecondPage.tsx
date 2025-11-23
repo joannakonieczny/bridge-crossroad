@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { OnboardingSecondPageType } from "@/schemas/pages/onboarding/onboarding-types";
 import { onboardingSecondPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import { ROUTES } from "@/routes";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 export default function SecondPage() {
   useFormSkippingValidation({ currentPage: "2" });
@@ -41,7 +42,7 @@ export default function SecondPage() {
   );
 
   const { control, handleSubmit } = useForm({
-    resolver: zodResolver(onboardingSecondPageSchema),
+    resolver: zodResolver(withEmptyToUndefined(onboardingSecondPageSchema)),
     defaultValues: defaultValues,
   });
 

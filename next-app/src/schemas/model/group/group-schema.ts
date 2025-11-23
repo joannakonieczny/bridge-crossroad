@@ -8,7 +8,9 @@ const { name, description, invitationCode, imageUrl } =
   GroupValidationConstants;
 
 export const nameSchema = z
-  .string()
+  .string({
+    message: "validation.model.group.name.required" satisfies TKey,
+  })
   .nonempty("validation.model.group.name.required" satisfies TKey)
   .min(name.min, "validation.model.group.name.min" satisfies TKey)
   .max(name.max, "validation.model.group.name.max" satisfies TKey)

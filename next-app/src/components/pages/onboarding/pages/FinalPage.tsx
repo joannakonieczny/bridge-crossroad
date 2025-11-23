@@ -27,6 +27,7 @@ import type {
 } from "@/schemas/pages/onboarding/onboarding-types";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 export default function FinalPage() {
   useFormSkippingValidation({ currentPage: "final" });
@@ -53,7 +54,7 @@ export default function FinalPage() {
     setError: setFormError,
     watch,
   } = useForm<OnboardingFinalPageType>({
-    resolver: zodResolver(onboardingFinalPageSchema),
+    resolver: zodResolver(withEmptyToUndefined(onboardingFinalPageSchema)),
     defaultValues: defaultValues,
   });
 
