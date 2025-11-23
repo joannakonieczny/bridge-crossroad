@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { OnboardingThirdPageType } from "@/schemas/pages/onboarding/onboarding-types";
 import { onboardingThirdPageSchema } from "@/schemas/pages/onboarding/onboarding-schema";
 import { ROUTES } from "@/routes";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 export default function ThirdPage() {
   useFormSkippingValidation({ currentPage: "3" });
@@ -38,7 +39,7 @@ export default function ThirdPage() {
   );
 
   const { control, handleSubmit } = useForm({
-    resolver: zodResolver(onboardingThirdPageSchema),
+    resolver: zodResolver(withEmptyToUndefined(onboardingThirdPageSchema)),
     defaultValues: defaultValues,
   });
 

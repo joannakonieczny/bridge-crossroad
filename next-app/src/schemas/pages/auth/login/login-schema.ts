@@ -4,7 +4,10 @@ import { isProbablyEmail } from "@/schemas/common";
 import type { TKey } from "@/lib/typed-translations";
 
 const nicknameOrEmailSchema = z
-  .string()
+  .string({
+    message:
+      "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey,
+  })
   .nonempty(
     "validation.pages.auth.login.nicknameOrEmail.required" satisfies TKey
   )
@@ -35,7 +38,9 @@ const nicknameOrEmailSchema = z
   });
 
 const passwordSchema = z
-  .string()
+  .string({
+    message: "validation.pages.auth.login.password.required" satisfies TKey,
+  })
   .nonempty("validation.pages.auth.login.password.required" satisfies TKey);
 
 export const loginFormSchema = z.object({

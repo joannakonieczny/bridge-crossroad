@@ -10,7 +10,6 @@ import {
   cuebidsIdSchema,
   onboardingDataSchema,
 } from "@/schemas/model/user/user-schema";
-import { allEmptyStringsToUndefined } from "@/schemas/common";
 import { invitationCodeSchema } from "@/schemas/model/group/group-schema";
 import type { TKey } from "@/lib/typed-translations";
 
@@ -95,13 +94,11 @@ export const onboardingSecondPageSchema = z.object({
 });
 
 // Third Page Schema
-export const onboardingThirdPageSchema = allEmptyStringsToUndefined(
-  z.object({
-    cezarId: cezarIdSchema.optional(),
-    bboId: bboIdSchema.optional(),
-    cuebidsId: cuebidsIdSchema.optional(),
-  })
-);
+export const onboardingThirdPageSchema = z.object({
+  cezarId: cezarIdSchema.optional(),
+  bboId: bboIdSchema.optional(),
+  cuebidsId: cuebidsIdSchema.optional(),
+});
 
 // Final Page Schema
 

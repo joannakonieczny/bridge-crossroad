@@ -11,7 +11,9 @@ import { idPropSchema, withTimeStampsSchema } from "@/schemas/common";
 const { name } = UserValidationConstants;
 
 export const firstNameSchema = z
-  .string()
+  .string({
+    message: "validation.model.user.name.firstName.required" satisfies TKey,
+  })
   .nonempty("validation.model.user.name.firstName.required" satisfies TKey)
   .min(name.min, "validation.model.user.name.firstName.min" satisfies TKey)
   .max(name.max, "validation.model.user.name.firstName.max" satisfies TKey)
@@ -21,7 +23,9 @@ export const firstNameSchema = z
   );
 
 export const lastNameSchema = z
-  .string()
+  .string({
+    message: "validation.model.user.name.lastName.required" satisfies TKey,
+  })
   .nonempty("validation.model.user.name.lastName.required" satisfies TKey)
   .min(name.min, "validation.model.user.name.lastName.min" satisfies TKey)
   .max(name.max, "validation.model.user.name.lastName.max" satisfies TKey)
@@ -109,7 +113,9 @@ export const onboardingDataSchema = z.object({
 const { email, nickname } = UserValidationConstants;
 
 export const emailSchema = z
-  .string()
+  .string({
+    message: "validation.model.user.email.required" satisfies TKey,
+  })
   .nonempty("validation.model.user.email.required" satisfies TKey)
   .max(email.max, "validation.model.user.email.max" satisfies TKey)
   .email("validation.model.user.email.regex" satisfies TKey)
