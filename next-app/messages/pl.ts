@@ -817,6 +817,29 @@ const messages = {
           },
         },
       },
+      EventEnrollment: {
+        heading: "Zapis na wydarzenie",
+        participantsCount: {
+          many: "Liczba uczestników: {count}",
+          none: "Brak uczestników",
+        },
+        enroll: {
+          toast: {
+            loading: "Zapisywanie...",
+            success: "Zapisano na wydarzenie!",
+            errorDefault: "Wystąpił błąd podczas zapisywania na wydarzenie",
+          },
+          button: "Zapisz się",
+        },
+        unenroll: {
+          toast: {
+            loading: "Wypisywanie...",
+            success: "Wypisano z wydarzenia!",
+            errorDefault: "Wystąpił błąd podczas wypisywania z wydarzenia",
+          },
+          button: "Wypisz się",
+        },
+      },
     },
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,
@@ -838,17 +861,6 @@ const messages = {
         organizer: "Organizator",
         participants: "Uczestnicy",
         noParticipants: "Brak uczestników",
-      },
-      EventEnrollment: {
-        heading: "Zapisy",
-        placeholder: {
-          playerA: "Gracz A (id lub nick)",
-          playerB: "Gracz B (id lub nick)",
-        },
-        button: {
-          tournament: "Zapisz się na turniej",
-          event: "Zapisz się na wydarzenie",
-        },
       },
       EventSpecificData: {
         tournamentHeading: "Dane turnieju",

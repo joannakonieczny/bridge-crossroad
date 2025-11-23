@@ -9,11 +9,21 @@ import {
   Avatar,
   AvatarGroup,
   Icon,
+  useToast,
 } from "@chakra-ui/react";
 import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getPersonLabel } from "@/util/formatters";
+import { addAttendee } from "@/services/events/api";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import { useQueryClient } from "@tanstack/react-query";
+import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 
 type EventEnrollmentProps = {
   event: EventSchemaTypePopulated;
@@ -25,15 +35,40 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
   const isEnrolled = event.isAttending ?? false;
   const participantsCount = participants.length;
 
-  const handleEnroll = () => console.log("Zapis na wydarzenie", { eventId });
-  const handleUnenroll = () =>
-    console.log("Wypisanie z wydarzenia", { eventId });
+  const t = useTranslations("pages.EventPage.EventEnrollment");
+  const tValidation = useTranslationsWithFallback();
+
+  const querryClient = useQueryClient();
+  const toast = useToast();
+
+  const enrollMutation = useActionMutation({
+    action: () => {
+      const promise = addAttendee({ eventId, groupId: event.group.id });
+      toast.promise(promise, {
+        loading: { title: t("enroll.toast.loading") },
+        success: { title: t("enroll.toast.success") },
+        error: (err: MutationOrQuerryError<typeof addAttendee>) => {
+          const errKey = getMessageKeyFromError(err, {
+            generalErrorKey:
+              "pages.EventPage.EventEnrollment.enroll.toast.errorDefault",
+          });
+          return { title: tValidation(errKey) };
+        },
+      });
+      return promise;
+    },
+    onSuccess: () => {
+      querryClient.invalidateQueries({
+        queryKey: ["event"],
+      });
+    },
+  });
 
   return (
     <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
       <VStack align="start" spacing={4}>
         <ResponsiveHeading
-          text={"Zapis na wydarzenie"}
+          text={t("heading")}
           fontSize="sm"
           barOrientation="horizontal"
         />
@@ -50,8 +85,8 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             <VStack spacing={0} align="start">
               <Text fontWeight="semibold">
                 {participantsCount
-                  ? `${participantsCount} uczestników`
-                  : "Brak uczestników"}
+                  ? t("participantsCount.many", { count: participantsCount })
+                  : t("participantsCount.none")}
               </Text>
             </VStack>
           </HStack>
@@ -63,10 +98,9 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             colorScheme="red"
             variant="outline"
             w="100%"
-            onClick={handleUnenroll}
             fontSize={{ base: "sm", md: "md" }}
           >
-            Wypisz się
+            {t("unenroll.button")}
           </Button>
         ) : (
           <Button
@@ -74,10 +108,12 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             colorScheme="accent"
             variant="solid"
             w="100%"
-            onClick={handleEnroll}
+            onClick={() => {
+              enrollMutation.mutateAsync({});
+            }}
             fontSize={{ base: "sm", md: "md" }}
           >
-            Zapisz się
+            {t("enroll.button")}
           </Button>
         )}
       </VStack>

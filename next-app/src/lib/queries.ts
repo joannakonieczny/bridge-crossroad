@@ -22,7 +22,7 @@ export const QUERY_KEYS = {
   joinedGroupsAsAdmin: ["groups", "adminOnly"],
   groupDetail: (id: GroupIdType) => ["groups", id],
   calendarEvents: (start: Date, end: Date) => [
-    "events",
+    "event",
     `${dayjs(start).format("DD/MM/YYYY")}|${dayjs(end).format("DD/MM/YYYY")}`,
   ],
   eventDetail: (id: EventIdType) => ["event", id],
