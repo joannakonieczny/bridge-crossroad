@@ -11,6 +11,8 @@ import {
   nameSchema,
   partnershipPostDataSchema,
 } from "@/schemas/model/partnership-post/partnership-post-schema";
+import { TrainingGroup } from "@/club-preset/training-group";
+import { Academy } from "@/club-preset/academy";
 
 export const addPartnershipPostSchema = z.object({
   name: nameSchema,
@@ -34,4 +36,23 @@ export const listPartnershipPostsSchema = z.object({
   page: z.number().int().positive().default(1),
   limit: z.number().int().positive().default(10),
   type: z.nativeEnum(PartnershipPostType).optional(),
+  onboardingData: z
+    .object({
+      academy: z.nativeEnum(Academy).optional(),
+      yearOfBirth: z
+        .object({
+          min: z.number().int().optional(),
+          max: z.number().int().optional(),
+        })
+        .optional(),
+      startPlayingDate: z
+        .object({
+          min: z.date().optional(),
+          max: z.date().optional(),
+        })
+        .optional(),
+      trainingGroup: z.nativeEnum(TrainingGroup).optional(),
+      hasRefereeLicense: z.boolean().optional(),
+    })
+    .optional(),
 });

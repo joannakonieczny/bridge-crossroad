@@ -16,6 +16,8 @@ import type {
   PartnershipPostStatus,
   PartnershipPostType,
 } from "@/club-preset/partnership-post";
+import type { TrainingGroup } from "@/club-preset/training-group";
+import type { Academy } from "@/club-preset/academy";
 
 export async function listPartnershipPostsInGroup({
   groupId,
@@ -23,12 +25,26 @@ export async function listPartnershipPostsInGroup({
   page = 1,
   limit = 10,
   type,
+  onboardingData,
 }: {
   groupId: GroupIdType;
   status: PartnershipPostStatus;
   page?: number;
   limit?: number;
   type?: PartnershipPostType;
+  onboardingData?: {
+    academy?: Academy;
+    yearOfBirth?: {
+      min?: number;
+      max?: number;
+    };
+    startPlayingDate?: {
+      min?: Date;
+      max?: Date;
+    };
+    trainingGroup?: TrainingGroup;
+    hasRefereeLicense?: boolean;
+  };
 }) {
   await dbConnect();
 
@@ -39,19 +55,56 @@ export async function listPartnershipPostsInGroup({
     query["data.type"] = type;
   }
 
-  const [res, total] = await Promise.all([
-    PartnershipPost.find(query)
-      .populate([
-        { path: "ownerId", model: UserTableName },
-        { path: "interestedUsersIds", model: UserTableName },
-        { path: "groupId", model: GroupTableName },
-        { path: "data.eventId", model: EventTableName },
-      ])
-      .skip(skip)
-      .limit(limit)
-      .lean<IPartnershipPostPopulated[]>(),
-    PartnershipPost.countDocuments(query),
-  ]);
+  const allRes = await PartnershipPost.find(query)
+    .populate([
+      { path: "ownerId", model: UserTableName },
+      { path: "interestedUsersIds", model: UserTableName },
+      { path: "groupId", model: GroupTableName },
+      { path: "data.eventId", model: EventTableName },
+    ])
+    .lean<IPartnershipPostPopulated[]>();
+
+  // Apply onboardingData filters after population
+  let filteredRes = allRes;
+
+  if (onboardingData) {
+    const od = onboardingData;
+
+    const filters: Array<
+      (p: IPartnershipPostPopulated["ownerId"]["onboardingData"]) => boolean
+    > = [];
+
+    if (od.academy !== undefined)
+      filters.push((o) => o?.academy === od.academy);
+    if (od.trainingGroup !== undefined)
+      filters.push((o) => o?.trainingGroup === od.trainingGroup);
+    if (od.hasRefereeLicense !== undefined)
+      filters.push((o) => o?.hasRefereeLicense === od.hasRefereeLicense);
+    if (od.yearOfBirth?.min !== undefined) {
+      const minYear = od.yearOfBirth.min;
+      filters.push((o) => (o?.yearOfBirth ?? 0) >= minYear);
+    }
+    if (od.yearOfBirth?.max !== undefined) {
+      const maxYear = od.yearOfBirth.max;
+      filters.push((o) => (o?.yearOfBirth ?? 0) <= maxYear);
+    }
+    if (od.startPlayingDate?.min !== undefined) {
+      const minDate = od.startPlayingDate.min;
+      filters.push((o) => new Date(o?.startPlayingDate ?? 0) >= minDate);
+    }
+    if (od.startPlayingDate?.max !== undefined) {
+      const maxDate = od.startPlayingDate.max;
+      filters.push((o) => new Date(o?.startPlayingDate ?? 0) <= maxDate);
+    }
+
+    filteredRes = filteredRes.filter((p) =>
+      filters.every((fn) => fn(p.ownerId.onboardingData))
+    );
+  }
+
+  // Apply pagination after filtering
+  const res = filteredRes.slice(skip, skip + limit);
+  const total = filteredRes.length;
 
   return {
     data: check(res, `Failed to list partnership posts for group ${groupId}`),
