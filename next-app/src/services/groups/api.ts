@@ -21,7 +21,6 @@ import {
   sanitizeGroupsFullInfoPopulated,
 } from "@/sanitizers/server-only/group-sanitize";
 import { havingInvitationCode } from "@/schemas/model/group/group-schema";
-import z from "zod";
 
 export const getJoinedGroupsInfo = fullAuthAction.action(
   async ({ ctx: { userId } }) => {
@@ -68,12 +67,12 @@ export const createNewGroup = fullAuthAction
     });
   });
 
-export const getGroupData = withinOwnGroupAction
-  .inputSchema(async (s) => s.merge(z.object({})))
-  .action(async ({ ctx: { groupId } }) => {
+export const getGroupData = withinOwnGroupAction.action(
+  async ({ ctx: { groupId } }) => {
     const res = await getGroupOverview(groupId);
     return sanitizeGroupsFullInfoPopulated(res);
-  });
+  }
+);
 
 export const addUserToGroupByInvitationCode = fullAuthAction
   .inputSchema(havingInvitationCode)
