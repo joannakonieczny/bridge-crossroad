@@ -15,7 +15,7 @@ import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getPersonLabel } from "@/util/formatters";
-import { addAttendee } from "@/services/events/api";
+import { addAttendee, removeAttendee } from "@/services/events/api";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { useQueryClient } from "@tanstack/react-query";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
@@ -64,6 +64,29 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
     },
   });
 
+  const unenrollMutation = useActionMutation({
+    action: () => {
+      const promise = removeAttendee({ eventId, groupId: event.group.id });
+      toast.promise(promise, {
+        loading: { title: t("unenroll.toast.loading") },
+        success: { title: t("unenroll.toast.success") },
+        error: (err: MutationOrQuerryError<typeof removeAttendee>) => {
+          const errKey = getMessageKeyFromError(err, {
+            generalErrorKey:
+              "pages.EventPage.EventEnrollment.unenroll.toast.errorDefault",
+          });
+          return { title: tValidation(errKey) };
+        },
+      });
+      return promise;
+    },
+    onSuccess: () => {
+      querryClient.invalidateQueries({
+        queryKey: ["event"],
+      });
+    },
+  });
+
   return (
     <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
       <VStack align="start" spacing={4}>
@@ -98,6 +121,9 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             colorScheme="red"
             variant="outline"
             w="100%"
+            onClick={() => {
+              unenrollMutation.mutateAsync({});
+            }}
             fontSize={{ base: "sm", md: "md" }}
           >
             {t("unenroll.button")}
