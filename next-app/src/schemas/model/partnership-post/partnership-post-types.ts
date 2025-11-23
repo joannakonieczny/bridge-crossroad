@@ -1,6 +1,9 @@
 import type { z } from "zod";
 import type * as s from "./partnership-post-schema";
-import type { UserTypeBasic } from "../user/user-types";
+import type {
+  UserTypeBasic,
+  UserTypeBasicWithOnboarding,
+} from "../user/user-types";
 import type { GroupBasicType } from "../group/group-types";
 import type { PartnershipPostType } from "@/club-preset/partnership-post";
 import type { EventSchemaType } from "../event/event-types";
@@ -26,7 +29,7 @@ export type PartnershipPostSchemaTypePopulated = Omit<
   PartnershipPostSchemaType,
   "ownerId" | "groupId" | "interestedUsersIds" | "data"
 > & {
-  owner: UserTypeBasic;
+  owner: UserTypeBasicWithOnboarding;
   group: GroupBasicType;
   interestedUsers?: UserTypeBasic[];
   isOwnByUser?: boolean;

@@ -10,7 +10,10 @@ import type {
   PartnershipPostSchemaTypePopulated,
 } from "@/schemas/model/partnership-post/partnership-post-types";
 import { PartnershipPostType } from "@/club-preset/partnership-post";
-import { sanitizeMinUserInfo } from "./user-sanitize";
+import {
+  sanitizeMinUserInfo,
+  sanitizeMinUserInfoWithOnboarding,
+} from "./user-sanitize";
 import { sanitizeGroup } from "./group-sanitize";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IPartnershipPostPopulated } from "@/models/mixed-types";
@@ -62,7 +65,7 @@ export function sanitizePartnershipPostPopulated(
 ): PartnershipPostSchemaTypePopulated {
   return {
     id: post._id.toString(),
-    owner: sanitizeMinUserInfo(post.ownerId),
+    owner: sanitizeMinUserInfoWithOnboarding(post.ownerId),
     group: sanitizeGroup(post.groupId),
     name: post.name,
     description: post.description,

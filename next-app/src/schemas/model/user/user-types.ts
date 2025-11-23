@@ -25,3 +25,6 @@ export type UserIdType = string;
 
 export type UserType = z.infer<typeof s.userSchema>;
 export type UserTypeBasic = z.infer<typeof s.userSchemaBasic>;
+export type UserTypeBasicWithOnboarding = UserTypeBasic & {
+  onboardingData: UserOnboardingType | undefined;
+};
