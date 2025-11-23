@@ -22,15 +22,11 @@ import type { Academy } from "@/club-preset/academy";
 export async function listPartnershipPostsInGroup({
   groupId,
   status,
-  page = 1,
-  limit = 10,
   type,
   onboardingData,
 }: {
   groupId: GroupIdType;
   status: PartnershipPostStatus;
-  page?: number;
-  limit?: number;
   type?: PartnershipPostType;
   onboardingData?: {
     academy?: Academy;
@@ -47,8 +43,6 @@ export async function listPartnershipPostsInGroup({
   };
 }) {
   await dbConnect();
-
-  const skip = (page - 1) * limit;
 
   const query: Record<string, unknown> = { groupId, status };
   if (type !== undefined) {
@@ -102,19 +96,11 @@ export async function listPartnershipPostsInGroup({
     );
   }
 
-  // Apply pagination after filtering
-  const res = filteredRes.slice(skip, skip + limit);
-  const total = filteredRes.length;
-
-  return {
-    data: check(res, `Failed to list partnership posts for group ${groupId}`),
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    },
-  };
+  // Return all filtered results without pagination
+  return check(
+    filteredRes,
+    `Failed to list partnership posts for group ${groupId}`
+  );
 }
 
 export async function addPartnershipPost({

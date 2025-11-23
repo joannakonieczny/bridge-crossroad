@@ -28,7 +28,6 @@ import {
 } from "@/sanitizers/server-only/partnership-post-sanitize";
 import { partition } from "@/util/helpers";
 import { RepositoryError } from "@/repositories/common";
-import type { IPartnershipPostPopulated } from "@/models/mixed-types";
 
 export const listPartnershipPosts = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(listPartnershipPostsSchema))
@@ -37,56 +36,25 @@ export const listPartnershipPosts = withinOwnGroupAction
       ctx: { groupId, userId },
       parsedInput: { status, page, limit, type, onboardingData },
     }) => {
-      const validPosts: IPartnershipPostPopulated[] = [];
-      const expiredPosts: IPartnershipPostPopulated[] = [];
-      let currentPage = page;
-      let totalPages = 0;
-      let total = 0;
+      // Fetch all posts with filters applied
+      const allPosts = await listPartnershipPostsInGroup({
+        groupId,
+        status,
+        type,
+        onboardingData,
+      });
 
-      // Keep fetching pages until we have enough valid posts or run out of data
-      while (validPosts.length < limit) {
-        const { data: res, pagination } = await listPartnershipPostsInGroup({
-          groupId,
-          status,
-          page: currentPage,
-          limit,
-          type,
-          onboardingData,
-        });
-
-        totalPages = pagination.totalPages;
-        total = pagination.total;
-
-        if (res.length === 0) {
-          // No more posts to fetch
-          break;
+      // Filter out posts to be marked as EXPIRED
+      const [validPosts, expiredPosts] = partition(allPosts, (post) => {
+        if (post.status !== PartnershipPostStatus.ACTIVE) return true; //only look at active posts (not PARTNER_FOUND)
+        if (post.data.type === PartnershipPostType.PERIOD) {
+          if (post.data.endsAt >= new Date()) return true; //keep in posts
+        } else {
+          const event = post.data.eventId;
+          if (event.duration.endsAt >= new Date()) return true; //keep in posts
         }
-
-        // Filter out posts to be marked as EXPIRED
-        const [valid, expired] = partition(res, (post) => {
-          if (post.status !== PartnershipPostStatus.ACTIVE) return true; //only look at active posts (not PARTNER_FOUND)
-          if (post.data.type === PartnershipPostType.PERIOD) {
-            if (post.data.endsAt >= new Date()) return true; //keep in posts
-          } else {
-            const event = post.data.eventId;
-            if (event.duration.endsAt >= new Date()) return true; //keep in posts
-          }
-          return false;
-        });
-
-        validPosts.push(...valid);
-        expiredPosts.push(...expired);
-
-        // If we have enough valid posts or reached the last page, stop
-        if (validPosts.length >= limit || currentPage >= totalPages) {
-          break;
-        }
-
-        currentPage++;
-      }
-
-      // Trim to exact limit
-      const postsToReturn = validPosts.slice(0, limit);
+        return false;
+      });
 
       // Async changing status of outdated posts
       if (expiredPosts.length > 0) {
@@ -97,6 +65,12 @@ export const listPartnershipPosts = withinOwnGroupAction
           }),
         ]);
       }
+
+      // Calculate pagination
+      const total = validPosts.length;
+      const totalPages = Math.ceil(total / limit);
+      const skip = (page - 1) * limit;
+      const postsToReturn = validPosts.slice(skip, skip + limit);
 
       return {
         data: postsToReturn.map((p) =>
