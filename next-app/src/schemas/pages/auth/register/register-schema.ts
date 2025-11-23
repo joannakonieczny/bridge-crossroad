@@ -11,7 +11,9 @@ import type { TKey } from "@/lib/typed-translations";
 const { password } = UserValidationConstants;
 
 const passwordSchema = z
-  .string()
+  .string({
+    message: "validation.pages.auth.register.password.required" satisfies TKey,
+  })
   .nonempty("validation.pages.auth.register.password.required" satisfies TKey)
   .min(
     password.min,
@@ -39,7 +41,10 @@ const passwordSchema = z
   );
 
 const repeatPasswordSchema = z
-  .string()
+  .string({
+    message:
+      "validation.pages.auth.register.repeatPassword.required" satisfies TKey,
+  })
   .nonempty(
     "validation.pages.auth.register.repeatPassword.required" satisfies TKey
   );
