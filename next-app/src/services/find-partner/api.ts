@@ -35,7 +35,7 @@ export const listPartnershipPosts = withinOwnGroupAction
   .action(
     async ({
       ctx: { groupId, userId },
-      parsedInput: { status, page, limit },
+      parsedInput: { status, page, limit, type },
     }) => {
       const validPosts: IPartnershipPostPopulated[] = [];
       const expiredPosts: IPartnershipPostPopulated[] = [];
@@ -50,6 +50,7 @@ export const listPartnershipPosts = withinOwnGroupAction
           status,
           page: currentPage,
           limit,
+          type,
         });
 
         totalPages = pagination.totalPages;

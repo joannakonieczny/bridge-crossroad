@@ -4,6 +4,7 @@ import { idPropSchema } from "@/schemas/common";
 import {
   BiddingSystem,
   PartnershipPostStatus,
+  PartnershipPostType,
 } from "@/club-preset/partnership-post";
 import {
   descriptionSchema,
@@ -32,4 +33,5 @@ export const listPartnershipPostsSchema = z.object({
     .default(PartnershipPostStatus.ACTIVE),
   page: z.number().int().positive().default(1),
   limit: z.number().int().positive().default(10),
+  type: z.nativeEnum(PartnershipPostType).optional(),
 });

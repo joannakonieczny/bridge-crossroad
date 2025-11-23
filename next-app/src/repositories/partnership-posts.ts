@@ -12,25 +12,35 @@ import type { IPartnershipPostPopulated } from "@/models/mixed-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { PartnershipPostIdType } from "@/schemas/model/partnership-post/partnership-post-types";
 import type { IPartnershipPostDTO } from "@/models/partnership-post/partnership-post-types";
-import type { PartnershipPostStatus } from "@/club-preset/partnership-post";
+import type {
+  PartnershipPostStatus,
+  PartnershipPostType,
+} from "@/club-preset/partnership-post";
 
 export async function listPartnershipPostsInGroup({
   groupId,
   status,
   page = 1,
   limit = 10,
+  type,
 }: {
   groupId: GroupIdType;
   status: PartnershipPostStatus;
   page?: number;
   limit?: number;
+  type?: PartnershipPostType;
 }) {
   await dbConnect();
 
   const skip = (page - 1) * limit;
 
+  const query: Record<string, unknown> = { groupId, status };
+  if (type !== undefined) {
+    query["data.type"] = type;
+  }
+
   const [res, total] = await Promise.all([
-    PartnershipPost.find({ groupId, status })
+    PartnershipPost.find(query)
       .populate([
         { path: "ownerId", model: UserTableName },
         { path: "interestedUsersIds", model: UserTableName },
@@ -40,7 +50,7 @@ export async function listPartnershipPostsInGroup({
       .skip(skip)
       .limit(limit)
       .lean<IPartnershipPostPopulated[]>(),
-    PartnershipPost.countDocuments({ groupId, status }),
+    PartnershipPost.countDocuments(query),
   ]);
 
   return {
