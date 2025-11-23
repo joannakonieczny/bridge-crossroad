@@ -34,11 +34,13 @@ export const listPartnershipPosts = withinOwnGroupAction
         status: z
           .nativeEnum(PartnershipPostStatus)
           .default(PartnershipPostStatus.ACTIVE),
+        page: z.number().int().positive().default(1),
+        limit: z.number().int().positive().max(100).default(10),
       })
     )
   )
-  .action(async ({ ctx: { groupId, userId }, parsedInput: { status } }) => {
-    const res = await listPartnershipPostsInGroup({ groupId, status });
+  .action(async ({ ctx: { groupId, userId }, parsedInput: { status, page, limit } }) => {
+    const { data: res, pagination } = await listPartnershipPostsInGroup({ groupId, status, page, limit });
     //filter out posts to be marked as EXPIRED
     const [posts, postToBeExpired] = partition(res, (post) => {
       if (post.status !== PartnershipPostStatus.ACTIVE) return true; //only look at active posts (not PARTNER_FOUND)
@@ -58,7 +60,10 @@ export const listPartnershipPosts = withinOwnGroupAction
         status: PartnershipPostStatus.EXPIRED,
       }),
     ]);
-    return posts.map((p) => sanitizePartnershipPostPopulated(p, { userId }));
+    return {
+      data: posts.map((p) => sanitizePartnershipPostPopulated(p, { userId })),
+      pagination,
+    };
   });
 
 export const createPartnershipPost = withinOwnGroupAction

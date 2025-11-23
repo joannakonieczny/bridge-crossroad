@@ -17,22 +17,41 @@ import type { PartnershipPostStatus } from "@/club-preset/partnership-post";
 export async function listPartnershipPostsInGroup({
   groupId,
   status,
+  page = 1,
+  limit = 10,
 }: {
   groupId: GroupIdType;
   status: PartnershipPostStatus;
+  page?: number;
+  limit?: number;
 }) {
   await dbConnect();
 
-  const res = await PartnershipPost.find({ groupId, status })
-    .populate([
-      { path: "ownerId", model: UserTableName },
-      { path: "interestedUsersIds", model: UserTableName },
-      { path: "groupId", model: GroupTableName },
-      { path: "data.eventId", model: EventTableName },
-    ])
-    .lean<IPartnershipPostPopulated[]>();
+  const skip = (page - 1) * limit;
 
-  return check(res, `Failed to list partnership posts for group ${groupId}`);
+  const [res, total] = await Promise.all([
+    PartnershipPost.find({ groupId, status })
+      .populate([
+        { path: "ownerId", model: UserTableName },
+        { path: "interestedUsersIds", model: UserTableName },
+        { path: "groupId", model: GroupTableName },
+        { path: "data.eventId", model: EventTableName },
+      ])
+      .skip(skip)
+      .limit(limit)
+      .lean<IPartnershipPostPopulated[]>(),
+    PartnershipPost.countDocuments({ groupId, status }),
+  ]);
+
+  return {
+    data: check(res, `Failed to list partnership posts for group ${groupId}`),
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 }
 
 export async function addPartnershipPost({
