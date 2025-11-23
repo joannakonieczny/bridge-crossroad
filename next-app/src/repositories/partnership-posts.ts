@@ -76,19 +76,31 @@ export async function listPartnershipPostsInGroup({
       filters.push((o) => o?.hasRefereeLicense === od.hasRefereeLicense);
     if (od.yearOfBirth?.min !== undefined) {
       const minYear = od.yearOfBirth.min;
-      filters.push((o) => (o?.yearOfBirth ?? 0) >= minYear);
+      filters.push(
+        (o) => o?.yearOfBirth !== undefined && o.yearOfBirth >= minYear
+      );
     }
     if (od.yearOfBirth?.max !== undefined) {
       const maxYear = od.yearOfBirth.max;
-      filters.push((o) => (o?.yearOfBirth ?? 0) <= maxYear);
+      filters.push(
+        (o) => o?.yearOfBirth !== undefined && o.yearOfBirth <= maxYear
+      );
     }
     if (od.startPlayingDate?.min !== undefined) {
       const minDate = od.startPlayingDate.min;
-      filters.push((o) => new Date(o?.startPlayingDate ?? 0) >= minDate);
+      filters.push(
+        (o) =>
+          o?.startPlayingDate !== undefined &&
+          new Date(o.startPlayingDate) >= minDate
+      );
     }
     if (od.startPlayingDate?.max !== undefined) {
       const maxDate = od.startPlayingDate.max;
-      filters.push((o) => new Date(o?.startPlayingDate ?? 0) <= maxDate);
+      filters.push(
+        (o) =>
+          o?.startPlayingDate !== undefined &&
+          new Date(o.startPlayingDate) <= maxDate
+      );
     }
 
     filteredRes = filteredRes.filter((p) =>

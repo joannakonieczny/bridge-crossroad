@@ -34,7 +34,7 @@ export const listPartnershipPostsSchema = z.object({
     .nativeEnum(PartnershipPostStatus)
     .default(PartnershipPostStatus.ACTIVE),
   page: z.number().int().positive().default(1),
-  limit: z.number().int().positive().default(10),
+  limit: z.number().int().positive().max(100).default(10),
   type: z.nativeEnum(PartnershipPostType).optional(),
   onboardingData: z
     .object({
