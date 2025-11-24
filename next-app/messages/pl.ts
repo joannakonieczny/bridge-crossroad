@@ -456,11 +456,67 @@ const eventModelValidation = {
   duration: {
     invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
   },
+  playingPair: {
+    firstSecondDistinct: "Obaj zawodnicy pary muszą być różni",
+  },
   session: {
     duplicatePlayers: "Każdy zawodnik w sesji musi być unikalny",
   },
   data: {
     invalid: "Nieprawidłowe dane specyficzne dla typu wydarzenia",
+    type: {
+      unsupportedTournamentType: "Nieobsługiwany typ turnieju",
+      pair: {
+        required: "Podaj parę turniejową",
+        userNotInPair: "Musisz być jednym z zawodników w podanej parze",
+        duplicatePlayers: "Obaj zawodnicy pary muszą być różni",
+        alreadyInAnotherPair:
+          "Jeden lub więcej zawodników jest już zapisany w innej parze",
+      },
+      team: {
+        required: "Podaj drużynę",
+        teamNameTaken: "Nazwa drużyny jest już zajęta",
+        userNotInTeam: "Musisz być członkiem tej drużyny",
+      },
+    },
+  },
+  additionalDescription: {
+    max: `Dodatkowy opis nie może być dłuższy niż ${EVENT.additionalDescription.max} znaków`,
+  },
+  team: {
+    name: {
+      min: `Min. ${EVENT.team.name.min} znaki`,
+      max: `Max. ${EVENT.team.name.max} znaków`,
+    },
+    members: {
+      min: `Min. ${EVENT.team.members.min} członków`,
+      unique: "Członkowie drużyny muszą być unikalni",
+    },
+  },
+  leagueMeeting: {
+    opponentTeamName: {
+      max: `Nazwa zespołu przeciwnika nie może być dłuższa niż ${EVENT.opponentTeamName.max} znaków`,
+    },
+  },
+  training: {
+    topic: {
+      required: "Podaj temat treningu",
+      min: `Min. ${EVENT.trainingTopic.min} znaki`,
+      max: `Max. ${EVENT.trainingTopic.max} znaków`,
+    },
+  },
+  tournamentTeam: {
+    name: {
+      required: "Podaj nazwę zespołu",
+      min: `Min. ${EVENT.team.name.min} znaki`,
+      max: `Max. ${EVENT.team.name.max} znaków`,
+    },
+  },
+  group: {
+    required: "Wybierz grupę",
+  },
+  organizer: {
+    required: "Wybierz organizatora",
   },
 };
 
@@ -564,6 +620,8 @@ const eventForm = {
       firstPlayerPlaceholder: "Pierwszy zawodnik",
       secondPlayerPlaceholder: "Drugi zawodnik",
       opponentTeamNamePlaceholder: "Nazwa zespołu przeciwnika (opcjonalne)",
+      tooFewPeopleInGroupWarning:
+        "W grupie jest mniej niż 4 zawodników — nie można dodać sesji",
       matchNumberPlaceholder: "Numer meczu: ",
     },
   },

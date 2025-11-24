@@ -23,6 +23,7 @@ import type {
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { ROUTES } from "@/routes";
 import { useRouter } from "next/navigation";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 export default function RegisterForm() {
   const t = useTranslations("pages.Auth.RegisterPage");
@@ -32,7 +33,7 @@ export default function RegisterForm() {
     control: formControl,
     setError: setFormError,
   } = useForm({
-    resolver: zodResolver(registerFormSchema),
+    resolver: zodResolver(withEmptyToUndefined(registerFormSchema)),
     defaultValues: {
       firstName: "",
       lastName: "",

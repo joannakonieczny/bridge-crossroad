@@ -40,6 +40,8 @@ import {
 } from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
+import { EventType } from "@/club-preset/event-type";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 type EventFormProps = {
   isOpen: boolean;
@@ -50,7 +52,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const form = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
-    resolver: zodResolver(addEventSchema),
+    resolver: zodResolver(withEmptyToUndefined(addEventSchema)),
     defaultValues: {
       title: "",
       description: "",
@@ -63,7 +65,9 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       },
       additionalDescription: "",
       imageUrl: undefined, //TODO add image upload in future
-      data: {},
+      data: {
+        type: EventType.OTHER,
+      },
     },
   });
   const toast = useToast();

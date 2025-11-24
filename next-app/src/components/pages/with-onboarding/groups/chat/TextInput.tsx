@@ -13,6 +13,7 @@ import { addModifyChatMessageSchema } from "@/schemas/pages/with-onboarding/chat
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 type TextInputProps = {
   groupId: GroupIdType;
@@ -32,7 +33,7 @@ export function TextInput({ groupId }: TextInputProps) {
   };
 
   const { handleSubmit, control, reset } = useForm({
-    resolver: zodResolver(addModifyChatMessageSchema),
+    resolver: zodResolver(withEmptyToUndefined(addModifyChatMessageSchema)),
     defaultValues: {
       message: "",
     },

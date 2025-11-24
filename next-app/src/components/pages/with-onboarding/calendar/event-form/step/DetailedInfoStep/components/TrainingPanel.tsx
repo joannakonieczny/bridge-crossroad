@@ -31,7 +31,7 @@ export default function TrainingPanel() {
         name="data.coach"
         render={({ field, fieldState: { error } }) => (
           <SelectInput
-            placeholder={t("coachPlaceholder")}
+            emptyValueLabel={t("coachPlaceholder")}
             isInvalid={!!error}
             errorMessage={tValidation(error?.message)}
             options={people.map((member) => ({

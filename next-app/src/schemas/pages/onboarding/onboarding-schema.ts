@@ -10,20 +10,25 @@ import {
   cuebidsIdSchema,
   onboardingDataSchema,
 } from "@/schemas/model/user/user-schema";
-import { transformEmptyStringsToUndefined } from "@/schemas/common";
 import { invitationCodeSchema } from "@/schemas/model/group/group-schema";
 import type { TKey } from "@/lib/typed-translations";
 
 // First Page Schema
 export const onboardingFirstPageSchema = z.object({
   academy: z
-    .string()
+    .string({
+      message:
+        "validation.pages.onboarding.firstPage.academy.required" satisfies TKey,
+    })
     .nonempty(
       "validation.pages.onboarding.firstPage.academy.required" satisfies TKey
     )
     .pipe(academySchema),
   yearOfBirth: z
-    .string()
+    .string({
+      message:
+        "validation.pages.onboarding.firstPage.yearOfBirth.required" satisfies TKey,
+    })
     .nonempty(
       "validation.pages.onboarding.firstPage.yearOfBirth.required" satisfies TKey
     )
@@ -50,7 +55,10 @@ export const onboardingSecondPageSchema = z.object({
       .pipe(startPlayingDateSchema),
 
     z
-      .string()
+      .string({
+        message:
+          "validation.pages.onboarding.secondPage.startPlayingDate.required" satisfies TKey,
+      })
       .nonempty(
         "validation.pages.onboarding.secondPage.startPlayingDate.required" satisfies TKey
       )
@@ -73,7 +81,10 @@ export const onboardingSecondPageSchema = z.object({
   ]),
 
   trainingGroup: z
-    .string()
+    .string({
+      message:
+        "validation.pages.onboarding.secondPage.trainingGroup.required" satisfies TKey,
+    })
     .nonempty(
       "validation.pages.onboarding.secondPage.trainingGroup.required" satisfies TKey
     )
@@ -84,9 +95,9 @@ export const onboardingSecondPageSchema = z.object({
 
 // Third Page Schema
 export const onboardingThirdPageSchema = z.object({
-  cezarId: transformEmptyStringsToUndefined(cezarIdSchema.optional()),
-  bboId: transformEmptyStringsToUndefined(bboIdSchema.optional()),
-  cuebidsId: transformEmptyStringsToUndefined(cuebidsIdSchema.optional()),
+  cezarId: cezarIdSchema.optional(),
+  bboId: bboIdSchema.optional(),
+  cuebidsId: cuebidsIdSchema.optional(),
 });
 
 // Final Page Schema
