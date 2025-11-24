@@ -8,11 +8,13 @@ import { useTranslations } from "@/lib/typed-translations";
 type SidebarCardProps = {
   title?: string;
   imageUrl?: string;
+  href?: string;
 };
 
 export default function SidebarCard({
   title,
   imageUrl = STATIC.eventSidebarImagePlaceholder,
+  href,
 }: SidebarCardProps) {
   const t = useTranslations("components.SidebarCard");
   return (
@@ -38,6 +40,8 @@ export default function SidebarCard({
           borderColor="accent.500"
           rightIcon={<FiArrowRight />}
           w="100%"
+          as="a"
+          href={href}
         >
           {t("detailsButtonText")}
         </Button>

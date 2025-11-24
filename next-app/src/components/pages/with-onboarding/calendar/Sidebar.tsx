@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import {
   Box,
@@ -12,13 +13,35 @@ import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
 import EventForm from "./event-form/EventForm";
+import { useEventsForUserQuery } from "@/lib/queries";
 import { ROUTES } from "@/routes";
+import dayjs from "dayjs";
 
 export default function Sidebar() {
   const router = useRouter();
+
   const t = useTranslations("pages.CalendarPage.Sidebar");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
+
+  const eventsQ = useEventsForUserQuery({
+    start: dayjs().toDate(),
+    end: dayjs().add(1, "month").toDate(),
+  });
+
+  const upcomingEvents = [...(eventsQ.data?.events ?? [])]
+    .sort(
+      (a, b) =>
+        new Date(a.duration.startsAt).getTime() -
+        new Date(b.duration.startsAt).getTime()
+    )
+    .slice(0, 4);
+
+  const sanitizedEvents = upcomingEvents.map((event) => ({
+    title: event.title,
+    imageUrl: event.imageUrl,
+    href: ROUTES.calendar.index + `/${event.id}`,
+  }));
 
   if (!isVisible) return null;
 
@@ -47,8 +70,14 @@ export default function Sidebar() {
       </Box>
 
       <VStack spacing={4} align="stretch" mb="6rem">
-        <SidebarCard title="Letnia Stasikówka" />
-        <SidebarCard title="Zimowy Zjazd" />
+        {sanitizedEvents.map((event) => (
+          <SidebarCard
+            key={event.title}
+            title={event.title}
+            imageUrl={event.imageUrl}
+            href={event.href}
+          />
+        ))}
       </VStack>
 
       <Box position="absolute" bottom="2rem" left={4} right={8}>
