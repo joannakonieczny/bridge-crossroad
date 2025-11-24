@@ -75,10 +75,10 @@ export function SummaryStep({ setPrevStep }: StepProps) {
         <Text>{t("summaryStep.eventType")}</Text>
         <Text fontWeight="bold">{tEvent(values.data?.type)}</Text>
       </Stack>
-      <Divider />
       {(data?.type === EventType.TOURNAMENT_PAIRS ||
         data?.type === EventType.TOURNAMENT_TEAMS) && (
         <>
+          <Divider />
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.tournament.type")}</Text>
             <Text fontWeight="bold">
@@ -99,6 +99,7 @@ export function SummaryStep({ setPrevStep }: StepProps) {
 
       {data?.type === EventType.LEAGUE_MEETING && (
         <>
+          <Divider />
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.tournament.type")}</Text>
             <Text fontWeight="bold">
@@ -263,6 +264,7 @@ export function SummaryStep({ setPrevStep }: StepProps) {
 
       {data?.type === EventType.TRAINING && (
         <>
+          <Divider />
           <Stack direction="row" spacing={3}>
             <Text>{t("summaryStep.training.coach")}</Text>
             <Text fontWeight="bold">
