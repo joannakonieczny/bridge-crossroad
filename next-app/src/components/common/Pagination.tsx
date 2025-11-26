@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react";
 import { Box, HStack, Button, Text } from "@chakra-ui/react";
 import { FaAngleLeft, FaAngleRight, FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";

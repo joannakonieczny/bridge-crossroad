@@ -1,25 +1,27 @@
 import React, { useState } from "react";
-import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex, IconButton, Button } from "@chakra-ui/react";
+import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex, IconButton, Button, Select } from "@chakra-ui/react";
 // replace Chakra icon with react-icons chevron
 import { FiChevronDown } from "react-icons/fi";
 
 type Announcement = {
-  id: number;
+  id: number | string;
   title: string;
-  date: string; // display string
+  date: string; 
   playerName: string;
   playerNick?: string;
-  characteristics?: string[]; // ignored for badge, we render icons
+  characteristics?: string[]; 
   frequency: string;
   preferredSystem: string;
-  // added description field (may be optional)
   description?: string;
-  // optional initial flag whether current user is already interested
+  interestedUsers?: Array<any>;
   isInterested?: boolean;
 };
 
 export default function Annoucment({ a }: { a: Announcement }) {
   const [open, setOpen] = useState(false);
+  const [selectedInterestedUser, setSelectedInterestedUser] = useState<string | undefined>(
+    undefined
+  );
 
   return (
     <>
@@ -104,10 +106,41 @@ export default function Annoucment({ a }: { a: Announcement }) {
                   onClick={() => {}}
                   size="sm"
                 >
-                  Jestem zainteresowany
+                  Zapisz się
                 </Button>
               </Box>
             </Flex>
+
+            {/* dropdown below description and button */}
+            <Box mt={4}>
+              <Flex direction={{ base: "column", md: "row" }} gap={2} align="center">
+                <Select
+                  flex={1}
+                  placeholder={a.interestedUsers && a.interestedUsers.length ? "Zagram z..." : "Brak zainteresowanych"}
+                  value={selectedInterestedUser}
+                  onChange={(e) => setSelectedInterestedUser(e.target.value || undefined)}
+                  isDisabled={!a.interestedUsers || a.interestedUsers.length === 0}
+                  size="sm"
+                >
+                  {(a.interestedUsers || []).map((u: any) => {
+                    // try to derive readable label from possible shapes
+                    const id = (u && (u._id ?? u.id ?? u)) as string;
+                    const label =
+                      u && (u.name ? `${u.name.firstName ?? ""} ${u.name.lastName ?? ""}`.trim() : u.nickname ?? u.displayName ?? `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim());
+                    return (
+                      <option key={String(id)} value={String(id)}>
+                        {label || String(id)}
+                      </option>
+                    );
+                  })}
+                </Select>
+
+                {/* przycisk po prawej stronie Select (na razie no-op) */}
+                <Button size="sm" onClick={() => {}}>
+                  Zapisz
+                </Button>
+              </Flex>
+            </Box>
           </Td>
         </Tr>
       )}

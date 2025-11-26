@@ -1,18 +1,89 @@
 import React, { useEffect } from "react";
 import { Table, Thead, Tbody, Tr, Th, Box, Skeleton, SkeletonText, Td } from "@chakra-ui/react";
 import Annoucment from "./Annoucment";
-import { usePartnershipPostsQuery } from "@/lib/queries";
+import { useGroupQuery, useJoinedGroupsQuery, usePartnershipPostsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
 import { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
+import { useQueryState } from "nuqs";
+import { PartnershipPostsLimitPerPage } from "@/club-preset/partnership-post";
+import { PartnershipPostStatus, PartnershipPostType } from "@/club-preset/partnership-post";
 
 export default function AnnoucmentsList() {
-  const postsQuery = usePartnershipPostsQuery();
+  const [page] = useQueryState("page", {
+    defaultValue: 1,
+    parse: (v: any) => {
+      const n = Number(v);
+      return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
+    },
+    serialize: (v: number) => String(v ?? 1),
+  });
+
+  const [groupIdParamRaw] = useQueryState("groupId");
+  const groupIdParam = groupIdParamRaw ? String(groupIdParamRaw) : undefined;
+
+  const [activityParamRaw] = useQueryState("activity");
+  const activityParam = activityParamRaw ? String(activityParamRaw) : "active";
+  const status = activityParam === "inactive" ? PartnershipPostStatus.EXPIRED : PartnershipPostStatus.ACTIVE;
+
+  // read frequency param from URL (values: "any" | "SINGLE" | "PERIOD")
+  const [frequencyParamRaw] = useQueryState("frequency");
+  const frequencyParam = frequencyParamRaw ? String(frequencyParamRaw) : "any";
+  const type =
+    frequencyParam === PartnershipPostType.SINGLE
+      ? PartnershipPostType.SINGLE
+      : frequencyParam === PartnershipPostType.PERIOD
+      ? PartnershipPostType.PERIOD
+      : undefined;
+
+  // read experience param from URL
+  const [experienceParamRaw] = useQueryState("experience");
+  const experienceParam = experienceParamRaw ? String(experienceParamRaw) : "any";
+
+  // read trainingGroup from URL (sync with FiltersBar)
+  const [trainingGroupParamRaw] = useQueryState("trainingGroup");
+  const trainingGroupParam = trainingGroupParamRaw ? String(trainingGroupParamRaw) : undefined;
+
+  // convert experience bucket into onboardingData.startPlayingDate { min?: Date, max?: Date }
+  const toDateYearsAgo = (years: number) => dayjs().subtract(years, "year").toDate();
+
+  let onboardingData: any = undefined;
+  if (experienceParam && experienceParam !== "any") {
+    if (experienceParam === "<1") {
+      // started less than 1 year ago -> startPlayingDate in [now - 1yr, now]
+      onboardingData = { startPlayingDate: { min: toDateYearsAgo(1), max: new Date() } };
+    } else if (experienceParam === "1") {
+      onboardingData = { startPlayingDate: { min: toDateYearsAgo(2), max: toDateYearsAgo(1) } };
+    } else if (experienceParam === "2") {
+      onboardingData = { startPlayingDate: { min: toDateYearsAgo(3), max: toDateYearsAgo(2) } };
+    } else if (experienceParam === "3") {
+      onboardingData = { startPlayingDate: { min: toDateYearsAgo(4), max: toDateYearsAgo(3) } };
+    } else if (experienceParam === "4") {
+      onboardingData = { startPlayingDate: { min: toDateYearsAgo(5), max: toDateYearsAgo(4) } };
+    } else if (experienceParam === "5+") {
+      // started 5 or more years ago -> startPlayingDate <= now -5yr
+      onboardingData = { startPlayingDate: { max: toDateYearsAgo(5) } };
+    } else if (experienceParam === "10+") {
+      onboardingData = { startPlayingDate: { max: toDateYearsAgo(10) } };
+    } else if (experienceParam === "15+") {
+      onboardingData = { startPlayingDate: { max: toDateYearsAgo(15) } };
+    }
+  }
+
+  // merge trainingGroup into onboardingData if provided
+  if (trainingGroupParam) {
+    onboardingData = { ...(onboardingData ?? {}), trainingGroup: trainingGroupParam };
+  }
+
+  // pass primitive onboardingBucket to avoid unstable queryKey changes
+  const onboardingBucket = `${experienceParam}|${trainingGroupParam ?? "none"}`;
+  const postsQuery = usePartnershipPostsQuery(
+    { page, limit: PartnershipPostsLimitPerPage, groupId: groupIdParam, status, type, onboardingData, onboardingBucket },
+  );
 
   useEffect(() => {
     console.log("partnership posts:", postsQuery.data);
   }, [postsQuery.data]);
 
-  // loading: show skeleton rows
   if (postsQuery.isLoading) {
     return (
       <Box bg="bg" p={4} borderRadius="md">
@@ -51,7 +122,6 @@ export default function AnnoucmentsList() {
     );
   }
 
-  // not loading: zakładamy, że postsQuery.data istnieje
   const raw = postsQuery.data as any;
   const posts: PartnershipPostSchemaTypePopulated[] = Array.isArray(raw) ? raw : raw.data;
 
@@ -77,7 +147,7 @@ export default function AnnoucmentsList() {
             const id = p.id;
             const title = p.name;
             const frequency = p.data.type; // "SINGLE" lub "PERIOD"
-            const preferredSystem = p.biddingSystem; // w przykładzie
+            const preferredSystem = p.biddingSystem;
             const date =
               p.data.type === "PERIOD"
                 ? parseDate(p.data.endsAt as unknown as string)
@@ -87,6 +157,8 @@ export default function AnnoucmentsList() {
             const playerNick = owner.nickname;
             const description = p.description;
 
+            const interestedUsers = (p as any).interestedUsers ?? (p as any).intrestedUSers ?? [];
+
             const ann: any = {
               id,
               title,
@@ -95,7 +167,8 @@ export default function AnnoucmentsList() {
               playerNick,
               frequency,
               preferredSystem,
-              description
+              description,
+              interestedUsers,
             };
 
             return <Annoucment key={id} a={ann} />;

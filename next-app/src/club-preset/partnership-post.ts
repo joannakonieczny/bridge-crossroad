@@ -20,3 +20,5 @@ export enum PartnershipPostType {
   SINGLE = "SINGLE",
   PERIOD = "PERIOD",
 }
+
+export const PartnershipPostsLimitPerPage = 6;

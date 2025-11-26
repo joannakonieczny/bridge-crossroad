@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   HStack,
@@ -11,65 +11,96 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from "@chakra-ui/react";
+import { useJoinedGroupsQuery } from "@/lib/queries";
+import { useQueryState } from "nuqs";
+import { GroupIdType } from "@/schemas/model/group/group-types";
+import { PartnershipPostType } from "@/club-preset/partnership-post";
 
 export default function FiltersBar() {
   const [scope, setScope] = useState("all"); // "all" = Wszystkie, "mine" = Moje
-  const [activity, setActivity] = useState("active"); // "active" | "inactive" | "all"
-  const [group, setGroup] = useState("");
-  const [frequency, setFrequency] = useState("");
-  const [experience, setExperience] = useState("");
-  const [trainingGroup, setTrainingGroup] = useState("");
+  // sync activity with URL param "activity" — possible values: "active" | "inactive"
+  const [activityParamRaw, setActivityParam] = useQueryState("activity");
+  const activity = activityParamRaw ? String(activityParamRaw) : "active";
+
+  // sync selected group with URL param `groupId`
+  const [groupId, setGroupId] = useQueryState("groupId");
+  // sync frequency with URL param `frequency` (values: "any" | "SINGLE" | "PERIOD")
+  const [frequencyParamRaw, setFrequencyParam] = useQueryState("frequency");
+  const frequency = frequencyParamRaw ? String(frequencyParamRaw) : "any";
+
+  // sync experience with URL param `experience` ("any" | "SINGLE" | "PERIOD" | "<1" | "1" | "2" | ...)
+  const [experienceParamRaw, setExperienceParam] = useQueryState("experience");
+  const experience = experienceParamRaw ? String(experienceParamRaw) : "any";
+
+  // sync trainingGroup with URL param `trainingGroup`
+  const [trainingGroup, setTrainingGroup] = useQueryState("trainingGroup");
   const [biddingSystem, setBiddingSystem] = useState("");
+
+  const groupsQuery = useJoinedGroupsQuery();
+  const groupsRaw = groupsQuery.data as any;
+  const groupsArr = Array.isArray(groupsRaw) ? groupsRaw : groupsRaw?.data ?? [];
+
+  const mainGroupId: GroupIdType | undefined = (() => {
+    const arr = Array.isArray(groupsRaw) ? groupsRaw : groupsRaw?.data ?? [];
+    const main = (arr || []).find((g: any) => g?.isMain === true);
+    if (!main) return undefined;
+    return (main.id ?? main._id ?? main._id?.toString?.() ?? undefined) as GroupIdType | undefined;
+  })();
+
+  useEffect(() => {
+    if ((groupId === null || groupId === undefined || groupId === "") && mainGroupId) {
+      setGroupId(String(mainGroupId));
+    }
+  }, [groupId, mainGroupId, setGroupId]);
 
   return (
     <Box bg="bg" p={4} borderRadius="md">
-      {/* large screens: horizontal filters */}
       <HStack
         spacing={3}
         flexWrap="wrap"
         display={{ base: "none", md: "none", lg: "flex" }}
       >
         <Select
-          value={scope}
-          onChange={(e) => setScope(e.target.value)}
-          width="150px"
-        >
-          <option value="all">Wszystkie</option>
-          <option value="mine">Moje</option>
-        </Select>
-        <Select
           value={activity}
-          onChange={(e) => setActivity(e.target.value)}
+          onChange={(e) => setActivityParam(e.target.value || null)}
           width="150px"
         >
           <option value="active">Aktywne</option>
           <option value="inactive">Nieaktywne</option>
-          <option value="all">Wszystkie</option>
         </Select>
+
         <Select
-          value={group}
-          onChange={(e) => setGroup(e.target.value)}
+          value={groupId ?? ""}
+          onChange={(e) => setGroupId(e.target.value || null)}
           placeholder="Grupa"
           width="160px"
         >
-          <option value="akademicka">Akademicka</option>
-          <option value="lokalna">Lokalna</option>
-          <option value="regionalna">Regionalna</option>
+          <option value="">Wszystkie grupy</option>
+          {groupsArr.map((g: any) => {
+            const id = g.id ?? g._id ?? String(g._id ?? "");
+            const label = g.name ?? g.title ?? g.displayName ?? id;
+            return (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            );
+          })}
         </Select>
+
         <Select
           value={frequency}
-          onChange={(e) => setFrequency(e.target.value)}
+          onChange={(e) => setFrequencyParam(e.target.value || null)}
           placeholder="Częstotliwość"
           width="160px"
         >
           <option value="any">Dowolna</option>
-          <option value="one-off">Jednorazowo</option>
-          <option value="recurring">Cyklicznie lub kilka razy</option>
-          <option value="seasonal">Sezon lub dłużej</option>
+          <option value={PartnershipPostType.SINGLE}>Pojedyńcza</option>
+          <option value={PartnershipPostType.PERIOD}>Okresowa</option>
         </Select>
+
         <Select
           value={experience}
-          onChange={(e) => setExperience(e.target.value)}
+          onChange={(e) => setExperienceParam(e.target.value || null)}
           placeholder="Doświadczenie"
           width="170px"
         >
@@ -83,9 +114,10 @@ export default function FiltersBar() {
           <option value="10+">10+ lat</option>
           <option value="15+">15+ lat</option>
         </Select>
+
         <Select
-          value={trainingGroup}
-          onChange={(e) => setTrainingGroup(e.target.value)}
+          value={trainingGroup ?? ""}
+          onChange={(e) => setTrainingGroup(e.target.value || null)}
           placeholder="Grupa treningowa"
           width="180px"
         >
@@ -94,33 +126,18 @@ export default function FiltersBar() {
           <option value="advanced">Zaawansowana</option>
           <option value="none">Nie biorę udziału w zajęciach</option>
         </Select>
-        <Select
-          value={biddingSystem}
-          onChange={(e) => setBiddingSystem(e.target.value)}
-          placeholder="System licytacyjny"
-          width="200px"
-        >
-          <option value="strefa">Strefa</option>
-          <option value="wspolny-jezyk">Wspólny Język</option>
-          <option value="dubeltowka">Dubeltówka</option>
-          <option value="sayc">SAYC (Standard American Yellow Card)</option>
-          <option value="lepszy-mlodszy">Lepszy Młodszy</option>
-          <option value="sso">SSO (System słabych otwarć)</option>
-          <option value="totolotek">Totolotek</option>
-          <option value="naturalny">Naturalny</option>
-          <option value="other">Własny / inny</option>
-        </Select>
+
         <Button
           ml="auto"
           colorScheme="gray"
           variant="outline"
           onClick={() => {
             setScope("all");
-            setActivity("active");
-            setGroup("");
-            setFrequency("");
-            setExperience("");
-            setTrainingGroup("");
+            setActivityParam(null);
+            setGroupId(null);
+            setFrequencyParam(null);
+            setExperienceParam(null);
+            setTrainingGroup(null);
             setBiddingSystem("");
           }}
         >
@@ -150,39 +167,48 @@ export default function FiltersBar() {
                 <option value="all">Wszystkie</option>
                 <option value="mine">Moje</option>
               </Select>
+
               <Select
                 value={activity}
-                onChange={(e) => setActivity(e.target.value)}
+                onChange={(e) => setActivityParam(e.target.value || null)}
                 width="100%"
               >
                 <option value="active">Aktywne</option>
                 <option value="inactive">Nieaktywne</option>
-                <option value="all">Wszystkie</option>
               </Select>
+
               <Select
-                value={group}
-                onChange={(e) => setGroup(e.target.value)}
+                value={groupId ?? ""}
+                onChange={(e) => setGroupId(e.target.value || null)}
                 placeholder="Grupa"
                 width="100%"
               >
-                <option value="akademicka">Akademicka</option>
-                <option value="lokalna">Lokalna</option>
-                <option value="regionalna">Regionalna</option>
+                <option value="">Wszystkie grupy</option>
+                {groupsArr.map((g: any) => {
+                  const id = g.id ?? g._id ?? String(g._id ?? "");
+                  const label = g.name ?? g.title ?? g.displayName ?? id;
+                  return (
+                    <option key={id} value={id}>
+                      {label}
+                    </option>
+                  );
+                })}
               </Select>
+
               <Select
                 value={frequency}
-                onChange={(e) => setFrequency(e.target.value)}
+                onChange={(e) => setFrequencyParam(e.target.value || null)}
                 placeholder="Częstotliwość"
                 width="100%"
               >
                 <option value="any">Dowolna</option>
-                <option value="one-off">Jednorazowo</option>
-                <option value="recurring">Cyklicznie lub kilka razy</option>
-                <option value="seasonal">Sezon lub dłużej</option>
+                <option value={PartnershipPostType.SINGLE}>Pojedyńcza</option>
+                <option value={PartnershipPostType.PERIOD}>Okresowa</option>
               </Select>
+
               <Select
                 value={experience}
-                onChange={(e) => setExperience(e.target.value)}
+                onChange={(e) => setExperienceParam(e.target.value || null)}
                 placeholder="Doświadczenie"
                 width="100%"
               >
@@ -196,9 +222,10 @@ export default function FiltersBar() {
                 <option value="10+">10+ lat</option>
                 <option value="15+">15+ lat</option>
               </Select>
+
               <Select
-                value={trainingGroup}
-                onChange={(e) => setTrainingGroup(e.target.value)}
+                value={trainingGroup ?? ""}
+                onChange={(e) => setTrainingGroup(e.target.value || null)}
                 placeholder="Grupa treningowa"
                 width="100%"
               >
@@ -207,6 +234,7 @@ export default function FiltersBar() {
                 <option value="advanced">Zaawansowana</option>
                 <option value="none">Nie biorę udziału w zajęciach</option>
               </Select>
+
               <Select
                 value={biddingSystem}
                 onChange={(e) => setBiddingSystem(e.target.value)}
@@ -223,17 +251,18 @@ export default function FiltersBar() {
                 <option value="naturalny">Naturalny</option>
                 <option value="other">Własny / inny</option>
               </Select>
+
               <Button
                 alignSelf="flex-end"
                 colorScheme="gray"
                 variant="outline"
                 onClick={() => {
                   setScope("all");
-                  setActivity("active");
-                  setGroup("");
-                  setFrequency("");
-                  setExperience("");
-                  setTrainingGroup("");
+                  setActivityParam(null);
+                  setGroupId(null);
+                  setFrequencyParam(null);
+                  setExperienceParam(null);
+                  setTrainingGroup(null);
                   setBiddingSystem("");
                 }}
               >

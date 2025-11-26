@@ -10,7 +10,7 @@ import {
 import { getUser } from "@/services/onboarding/api";
 import { listEventsForUser, getEvent } from "@/services/events/api";
 import { listPartnershipPosts } from "@/services/find-partner/api";
-import { PartnershipPostStatus } from "@/club-preset/partnership-post";
+import { PartnershipPostStatus, PartnershipPostType } from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type {
@@ -131,12 +131,42 @@ export function useEventQuery(
 }
 
 export function usePartnershipPostsQuery(
+  input?: {
+    groupId?: GroupIdType;
+    page?: number;
+    limit?: number;
+    status?: PartnershipPostStatus;
+    type?: PartnershipPostType;
+    onboardingData?: any;
+    // simple primitive key for onboarding filter (e.g. experience bucket string)
+    onboardingBucket?: string;
+  },
   props?: TActionQueryOptionsHelper<typeof listPartnershipPosts>
 ) {
   const e = useOnErrorToast("ogłoszeń szukania partnera", "listPartnershipPosts");
+
+  const page = input?.page ?? 1;
+  const limit = input?.limit ?? 10;
+  const status = input?.status ?? PartnershipPostStatus.ACTIVE;
+  const groupId = input?.groupId ?? ("" as GroupIdType);
+  console.log(groupId)
+  const type = input?.type;
+  const onboardingData = input?.onboardingData;
+  // use primitive onboardingBucket (e.g. experienceParam) to avoid ref-triggered fetches
+  const onboardingKey = input?.onboardingBucket ?? "none";
+
   return useActionQuery({
-    queryKey: ["partnershipPosts"],
-    action: () => listPartnershipPosts({ status: PartnershipPostStatus.ACTIVE, groupId: "68ebadfe4dee1802e0a46137" as GroupIdType}),
+    // use onboardingKey (primitive) instead of full object to prevent excessive ref-triggered fetches
+    queryKey: ["partnershipPosts", page, groupId, limit, status, type, onboardingKey],
+    action: () =>
+      listPartnershipPosts({
+        status,
+        page,
+        limit,
+        type: input?.type,
+        onboardingData: onboardingData,
+        groupId,
+      }),
     onError: e,
     ...props,
   });
