@@ -492,10 +492,9 @@ export async function addTeamToTournamentEvent({
   team,
 }: AddTeamToTournamentEventInput) {
   await dbConnect();
-  const existingEvent = check(
-    await Event.findById(eventId).lean<IEventDTO>(),
-    `Event not found with id: ${eventId}`
-  );
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
   checkTrue(
     existingEvent.data.type === EventType.TOURNAMENT_TEAMS,
     "Event must be of type TOURNAMENT_TEAMS to add a team"
@@ -533,17 +532,16 @@ export async function addTeamToTournamentEvent({
     );
   });
 
-  // use $push instead of $addToSet since we're checking duplicates manually
-  const updatedEvent = check(
-    await Event.findByIdAndUpdate(
-      eventId,
-      { $push: { "data.teams": team } },
-      { new: true, runValidators: true }
-    ).lean<IEventDTO>(),
-    `Failed to add team to event ${eventId}`
-  );
+  (existingEvent.data as ITournamentTeamsData).teams.push({
+    name: team.name,
+    members: team.members,
+  } as (typeof existingEvent.data.teams)[0]);
 
-  return { event: updatedEvent };
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
 }
 
 type AddPairToTournamentEventInput = {

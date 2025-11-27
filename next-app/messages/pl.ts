@@ -853,6 +853,22 @@ const messages = {
         },
         alreadyEnrolled: "Jesteś już zapisany na ten turniej",
       },
+      EventTeamsTournamentEnrollment: {
+        heading: "Zapisy drużynowe na turniej",
+        teamName: {
+          placeholder: "Nazwa drużyny",
+        },
+        selectMembers: {
+          placeholder: "Wybierz członków drużyny",
+        },
+        button: "Zapisz drużynę na turniej",
+        toast: {
+          loading: "Zapisywanie drużyny na turniej...",
+          success: "Zapisano drużynę na turniej!",
+          errorDefault: "Wystąpił błąd podczas zapisywania drużyny na turniej",
+        },
+        alreadyEnrolled: "Jesteś już zapisany w drużynie na ten turniej",
+      },
     },
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,

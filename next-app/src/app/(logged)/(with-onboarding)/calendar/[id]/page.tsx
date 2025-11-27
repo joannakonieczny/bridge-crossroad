@@ -11,6 +11,7 @@ import BackLink from "@/components/common/BackLink";
 import { useTranslations } from "@/lib/typed-translations";
 import { useEventQuery } from "@/lib/queries";
 import { EventType } from "@/club-preset/event-type";
+import EventTeamsTournamentEnrollment from "@/components/pages/with-onboarding/calendar/event-page/EventTeamsTournamentEnrollment";
 
 export default function EventPage() {
   const t = useTranslations("pages.EventPage.page");
@@ -39,6 +40,10 @@ export default function EventPage() {
           {eventQ.data &&
             eventQ.data.data.type === EventType.TOURNAMENT_PAIRS && (
               <EventPairsTournamentEnrollment event={eventQ.data} />
+            )}
+          {eventQ.data &&
+            eventQ.data.data.type === EventType.TOURNAMENT_TEAMS && (
+              <EventTeamsTournamentEnrollment event={eventQ.data} />
             )}
           <EventSpecificData
             eventData={eventQ.data?.data}
