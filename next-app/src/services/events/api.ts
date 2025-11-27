@@ -4,6 +4,8 @@ import {
   addEvent,
   addPairToTournamentEvent,
   addTeamToTournamentEvent,
+  removePairFromTournamentEvent,
+  removeTeamFromTournamentEvent,
 } from "@/repositories/event-group";
 import {
   withinOwnGroupAction,
@@ -173,6 +175,39 @@ export const enrollToEventTournament = withinOwnGroupAction
       }
       default: {
         returnValidationErrors(enrollToEventTournamentSchema, {
+          eventId: {
+            _errors: [
+              "validation.model.event.data.type.unsupportedTournamentType" satisfies TKey,
+            ],
+          },
+        });
+      }
+    }
+  });
+
+export const unenrollFromEventTournament = withinOwnGroupAction
+  .inputSchema(async (s) => s.merge(havingEventId))
+  .action(async ({ parsedInput: { eventId }, ctx: { userId } }) => {
+    const event = await getEventRepository({ eventId });
+    const eventType = event.data.type;
+
+    switch (eventType) {
+      case EventType.TOURNAMENT_PAIRS: {
+        const res = await removePairFromTournamentEvent({
+          eventId,
+          userId,
+        });
+        return sanitizeEvent(res.event);
+      }
+      case EventType.TOURNAMENT_TEAMS: {
+        const res = await removeTeamFromTournamentEvent({
+          eventId,
+          userId,
+        });
+        return sanitizeEvent(res.event);
+      }
+      default: {
+        returnValidationErrors(havingEventId, {
           eventId: {
             _errors: [
               "validation.model.event.data.type.unsupportedTournamentType" satisfies TKey,

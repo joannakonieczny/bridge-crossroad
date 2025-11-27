@@ -472,6 +472,9 @@ const eventModelValidation = {
         duplicatePlayers: "Obaj zawodnicy pary muszą być różni",
         alreadyInAnotherPair:
           "Jeden lub więcej zawodników jest już zapisany w innej parze",
+        partnerId: {
+          required: "Wybierz partnera do pary",
+        },
       },
       team: {
         required: "Podaj drużynę",
@@ -487,6 +490,7 @@ const eventModelValidation = {
     name: {
       min: `Min. ${EVENT.team.name.min} znaki`,
       max: `Max. ${EVENT.team.name.max} znaków`,
+      required: "Podaj nazwę drużyny",
     },
     members: {
       min: `Min. ${EVENT.team.members.min} członków`,
@@ -838,6 +842,70 @@ const messages = {
             errorDefault: "Wystąpił błąd podczas wypisywania z wydarzenia",
           },
           button: "Wypisz się",
+        },
+      },
+      EventPairsTournamentEnrollment: {
+        heading: "Zapisy na turniej",
+        selectPartner: {
+          placeholder: "Wybierz partnera",
+        },
+        button: "Zapisz na turniej",
+        toast: {
+          loading: "Zapisywanie na turniej...",
+          success: "Zapisano na turniej!",
+          errorDefault: "Wystąpił błąd podczas zapisywania na turniej",
+        },
+        alreadyEnrolled: "Jesteś już zapisany na ten turniej z:",
+        unenrollButton: "Wypisz się z turnieju",
+        confirmationModal: {
+          title: "Potwierdzenie wypisania z turnieju",
+          message: {
+            main: "Wypisując się z turnieju, rezygnujesz z udziału w grze wraz ze swoim partnerem.",
+            info: "Oboje nadal będziecie widoczni jako uczestnicy wydarzenia, ale nie będziecie brać udziału w grze.",
+            regret:
+              "Jeśli zmienisz zdanie, zawsze możesz ponownie się zapisać, o ile turniej na to pozwala.",
+          },
+          confirm: "Wypisz się",
+          cancel: "Anuluj",
+        },
+        unenrollToast: {
+          loading: "Wypisywanie z turnieju...",
+          success: "Wypisano z turnieju!",
+          errorDefault: "Wystąpił błąd podczas wypisywania z turnieju",
+        },
+      },
+      EventTeamsTournamentEnrollment: {
+        heading: "Zapisy drużynowe na turniej",
+        teamName: {
+          placeholder: "Nazwa drużyny",
+        },
+        selectMembers: {
+          placeholder: "Wybierz członków drużyny",
+        },
+        button: "Zapisz drużynę na turniej",
+        toast: {
+          loading: "Zapisywanie drużyny na turniej...",
+          success: "Zapisano drużynę na turniej!",
+          errorDefault: "Wystąpił błąd podczas zapisywania drużyny na turniej",
+        },
+        alreadyEnrolled: "Jesteś już zapisany w drużynie:",
+        teamMembers: "Członkowie drużyny:",
+        mustBeInTeam: "Musisz być członkiem swojej drużyny",
+        unenrollButton: "Wypisz drużynę z turnieju",
+        confirmationModal: {
+          title: "Potwierdzenie wypisania drużyny z turnieju",
+          message: {
+            main: "Wypisując drużynę z turnieju, rezygnujecie z udziału w grze wszyscy członkowie drużyny.",
+            info: "Nadal będziecie widoczni jako uczestnicy wydarzenia, ale nie będziecie brać udziału w grze.",
+            regret: "Czy na pewno chcesz wypisać drużynę?",
+          },
+          confirm: "Wypisz drużynę",
+          cancel: "Anuluj",
+        },
+        unenrollToast: {
+          loading: "Wypisywanie drużyny z turnieju...",
+          success: "Wypisano drużynę z turnieju!",
+          errorDefault: "Wystąpił błąd podczas wypisywania drużyny z turnieju",
         },
       },
     },
