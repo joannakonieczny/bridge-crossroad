@@ -7,6 +7,7 @@ import type {
   UserOnboardingType,
   UserType,
   UserTypeBasic,
+  UserTypeBasicWithOnboarding,
 } from "@/schemas/model/user/user-types";
 
 export function sanitizeOnboardingData(
@@ -44,5 +45,14 @@ export function sanitizeUser(user: IUserDTO): UserType {
     onboardingData: sanitizeOnboardingData(user.onboardingData),
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+  };
+}
+
+export function sanitizeMinUserInfoWithOnboarding(
+  user: IUserDTO
+): UserTypeBasicWithOnboarding {
+  return {
+    ...sanitizeMinUserInfo(user),
+    onboardingData: sanitizeOnboardingData(user.onboardingData),
   };
 }
