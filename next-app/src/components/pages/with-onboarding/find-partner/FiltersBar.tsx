@@ -14,6 +14,7 @@ import {
 import { useJoinedGroupsQuery } from "@/lib/queries";
 import { useQueryState } from "nuqs";
 import { GroupIdType } from "@/schemas/model/group/group-types";
+import { TrainingGroup } from "@/club-preset/training-group";
 import { PartnershipPostType } from "@/club-preset/partnership-post";
 
 export default function FiltersBar() {
@@ -121,10 +122,10 @@ export default function FiltersBar() {
           placeholder="Grupa treningowa"
           width="180px"
         >
-          <option value="basic">Podstawowa</option>
-          <option value="intermediate">Średniozaawansowana</option>
-          <option value="advanced">Zaawansowana</option>
-          <option value="none">Nie biorę udziału w zajęciach</option>
+          <option value={TrainingGroup.BASIC}>{/* "basic" */}Podstawowa</option>
+          <option value={TrainingGroup.INTERMEDIATE}>{/* "intermediate" */}Średniozaawansowana</option>
+          <option value={TrainingGroup.ADVANCED}>{/* "advanced" */}Zaawansowana</option>
+          <option value={TrainingGroup.NONE}>{/* "not_participating" */}Nie biorę udziału w zajęciach</option>
         </Select>
 
         <Button
@@ -137,6 +138,7 @@ export default function FiltersBar() {
             setGroupId(null);
             setFrequencyParam(null);
             setExperienceParam(null);
+            // clear trainingGroup URL param
             setTrainingGroup(null);
             setBiddingSystem("");
           }}
@@ -229,10 +231,10 @@ export default function FiltersBar() {
                 placeholder="Grupa treningowa"
                 width="100%"
               >
-                <option value="basic">Podstawowa</option>
-                <option value="intermediate">Średniozaawansowana</option>
-                <option value="advanced">Zaawansowana</option>
-                <option value="none">Nie biorę udziału w zajęciach</option>
+                <option value={TrainingGroup.BASIC}>Podstawowa</option>
+                <option value={TrainingGroup.INTERMEDIATE}>Średniozaawansowana</option>
+                <option value={TrainingGroup.ADVANCED}>Zaawansowana</option>
+                <option value={TrainingGroup.NONE}>Nie biorę udziału w zajęciach</option>
               </Select>
 
               <Select

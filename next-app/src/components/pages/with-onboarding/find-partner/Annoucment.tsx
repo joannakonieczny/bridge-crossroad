@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex, IconButton, Button, Select } from "@chakra-ui/react";
 // replace Chakra icon with react-icons chevron
 import { FiChevronDown } from "react-icons/fi";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
+import { addInterested, removeInterested } from "@/services/find-partner/api";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 
 type Announcement = {
   id: number | string;
@@ -62,12 +65,39 @@ export default function Annoucment({ a }: { a: Announcement }) {
 
         {/* hidden on phone */}
         <Td py={2} display={{ base: "none", md: "table-cell" }}>
-          <Text>{a.frequency}</Text>
+          {/* map frequency codes to user-friendly labels */}
+          <Text>
+            {a.frequency === "SINGLE"
+              ? "Pojedyńcza"
+              : a.frequency === "PERIOD"
+              ? "Okresowa"
+              : a.frequency}
+          </Text>
         </Td>
 
         {/* hidden on phone */}
         <Td py={2} display={{ base: "none", md: "table-cell" }}>
-          <Text>{a.preferredSystem}</Text>
+          <Text>
+            {a.preferredSystem === "ZONE"
+              ? "Strefa"
+              : a.preferredSystem === "COMMON_LANGUAGE"
+              ? "Wspólny Język"
+              : a.preferredSystem === "DOUBLETON"
+              ? "Dubeltówka"
+              : a.preferredSystem === "SAYC"
+              ? "SAYC"
+              : a.preferredSystem === "BETTER_MINOR"
+              ? "Lepszy Młodszy"
+              : a.preferredSystem === "WEAK_OPENINGS_SSO"
+              ? "SSO"
+              : a.preferredSystem === "TOTOLOTEK"
+              ? "Totolotek"
+              : a.preferredSystem === "NATURAL"
+              ? "Naturalny"
+              : a.preferredSystem === "OTHER"
+              ? "Inny"
+              : a.preferredSystem}
+          </Text>
         </Td>
 
         {/* toggle arrow column (zawsze widoczna) */}

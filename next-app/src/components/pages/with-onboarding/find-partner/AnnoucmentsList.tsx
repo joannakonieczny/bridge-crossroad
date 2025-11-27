@@ -7,6 +7,7 @@ import { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-
 import { useQueryState } from "nuqs";
 import { PartnershipPostsLimitPerPage } from "@/club-preset/partnership-post";
 import { PartnershipPostStatus, PartnershipPostType } from "@/club-preset/partnership-post";
+import { TrainingGroup } from "@/club-preset/training-group";
 
 export default function AnnoucmentsList() {
   const [page] = useQueryState("page", {
@@ -41,7 +42,10 @@ export default function AnnoucmentsList() {
 
   // read trainingGroup from URL (sync with FiltersBar)
   const [trainingGroupParamRaw] = useQueryState("trainingGroup");
-  const trainingGroupParam = trainingGroupParamRaw ? String(trainingGroupParamRaw) : undefined;
+  const rawTG = trainingGroupParamRaw ? String(trainingGroupParamRaw) : undefined;
+  // normalize legacy "none" or "not_participating" into enum TrainingGroup.NONE
+  const trainingGroupParam =
+    rawTG === "none" || rawTG === TrainingGroup.NONE ? TrainingGroup.NONE : rawTG ?? undefined;
 
   // convert experience bucket into onboardingData.startPlayingDate { min?: Date, max?: Date }
   const toDateYearsAgo = (years: number) => dayjs().subtract(years, "year").toDate();
@@ -69,13 +73,18 @@ export default function AnnoucmentsList() {
     }
   }
 
-  // merge trainingGroup into onboardingData if provided
-  if (trainingGroupParam) {
-    onboardingData = { ...(onboardingData ?? {}), trainingGroup: trainingGroupParam };
+  // include trainingGroup in onboardingData only when provided and NOT coach
+  const trainingGroupIncluded =
+    trainingGroupParam && trainingGroupParam !== TrainingGroup.COACH
+      ? trainingGroupParam
+      : undefined;
+
+  if (trainingGroupIncluded !== undefined) {
+    onboardingData = { ...(onboardingData ?? {}), trainingGroup: trainingGroupIncluded };
   }
 
-  // pass primitive onboardingBucket to avoid unstable queryKey changes
-  const onboardingBucket = `${experienceParam}|${trainingGroupParam ?? "none"}`;
+  // pass primitive onboardingBucket (experience + trainingGroupIncluded) to avoid unstable queryKey changes
+  const onboardingBucket = `${experienceParam}|${trainingGroupIncluded ?? "none"}`;
   const postsQuery = usePartnershipPostsQuery(
     { page, limit: PartnershipPostsLimitPerPage, groupId: groupIdParam, status, type, onboardingData, onboardingBucket },
   );

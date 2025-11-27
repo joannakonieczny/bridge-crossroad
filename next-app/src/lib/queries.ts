@@ -146,7 +146,6 @@ export function usePartnershipPostsQuery(
     status?: PartnershipPostStatus;
     type?: PartnershipPostType;
     onboardingData?: any;
-    // simple primitive key for onboarding filter (e.g. experience bucket string)
     onboardingBucket?: string;
   },
   props?: TActionQueryOptionsHelper<typeof listPartnershipPosts>
@@ -163,7 +162,6 @@ export function usePartnershipPostsQuery(
   console.log(groupId);
   const type = input?.type;
   const onboardingData = input?.onboardingData;
-  // use primitive onboardingBucket (e.g. experienceParam) to avoid ref-triggered fetches
   const onboardingKey = input?.onboardingBucket ?? "none";
 
   return useActionQuery({
