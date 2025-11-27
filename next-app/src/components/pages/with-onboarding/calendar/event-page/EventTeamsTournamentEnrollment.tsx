@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, VStack, Button, Icon, useToast } from "@chakra-ui/react";
+import { Box, VStack, Button, Icon, useToast, HStack, Text } from "@chakra-ui/react";
 import { FaUserPlus } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
@@ -60,15 +60,17 @@ export default function EventTeamsTournamentEnrollment({
   const currentUserId = userInfoQ.data?.id;
   const selectedMemberIds = watch("members") || [];
 
-  const isUserEnrolled = useMemo(() => {
+  const { isUserEnrolled, userTeam } = useMemo(() => {
     if (!currentUserId || event.data.type !== EventType.TOURNAMENT_TEAMS)
-      return false;
+      return { isUserEnrolled: false, userTeam: null };
 
     const teams = (event.data as TournamentTeamsDataTypePopulated).teams ?? [];
 
-    return teams.some((team) =>
+    const team = teams.find((team) =>
       team.members.some((member) => member.id === currentUserId)
     );
+
+    return { isUserEnrolled: !!team, userTeam: team || null };
   }, [currentUserId, event.data]);
 
   const availableMembers = useMemo(() => {
@@ -132,7 +134,7 @@ export default function EventTeamsTournamentEnrollment({
             barOrientation="horizontal"
           />
 
-          {isUserEnrolled && (
+          {isUserEnrolled && userTeam && (
             <Box
               bg="green.50"
               color="green.700"
@@ -141,11 +143,28 @@ export default function EventTeamsTournamentEnrollment({
               w="100%"
               fontSize="sm"
             >
-              {t("alreadyEnrolled")}
+              <VStack align="start" spacing={2}>
+                <HStack spacing={2}>
+                  <Text fontWeight="medium">{t("alreadyEnrolled")}</Text>
+                  <Text fontWeight="bold">{userTeam.name}</Text>
+                </HStack>
+                <Box>
+                  <Text fontWeight="medium" mb={1}>
+                    {t("teamMembers")}
+                  </Text>
+                  <VStack align="start" spacing={0.5} pl={2}>
+                    {userTeam.members.map((member) => (
+                      <Text key={member.id} fontSize="sm">
+                        • {getPersonLabel(member)}
+                      </Text>
+                    ))}
+                  </VStack>
+                </Box>
+              </VStack>
             </Box>
           )}
 
-          {!isCurrentUserSelected && (
+          {!isCurrentUserSelected && !isUserEnrolled && (
             <Box
               bg="orange.50"
               color="orange.700"
@@ -154,7 +173,7 @@ export default function EventTeamsTournamentEnrollment({
               w="100%"
               fontSize="sm"
             >
-              Musisz być członkiem swojej drużyny
+              {t("mustBeInTeam")}
             </Box>
           )}
 
