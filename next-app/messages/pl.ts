@@ -851,6 +851,7 @@ const messages = {
           success: "Zapisano na turniej!",
           errorDefault: "Wystąpił błąd podczas zapisywania na turniej",
         },
+        alreadyEnrolled: "Jesteś już zapisany na ten turniej",
       },
     },
     UsefulTools: usefulTools,
