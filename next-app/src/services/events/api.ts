@@ -182,3 +182,19 @@ export const enrollToEventTournament = withinOwnGroupAction
       }
     }
   });
+
+// TODO: Mock endpoint - zastąpić prawdziwym endpointem w przyszłości
+export const unenrollFromEventTournament = withinOwnGroupAction
+  .inputSchema(async (s) => s.merge(havingEventId))
+  .action(async ({ parsedInput: { eventId }, ctx: { userId } }) => {
+    // Mock implementation - w przyszłości połączyć z prawdziwym API
+    console.log(`Mock: Unenrolling user ${userId} from event ${eventId}`);
+
+    // Symulacja sukcesu - w prawdziwej implementacji należy:
+    // 1. Znaleźć parę/drużynę użytkownika w evencie
+    // 2. Usunąć tę parę/drużynę z listy uczestników
+    // 3. Zwrócić zaktualizowany event
+
+    const event = await getEventRepository({ eventId });
+    return sanitizeEventPopulated(event);
+  });

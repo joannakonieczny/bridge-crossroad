@@ -851,7 +851,24 @@ const messages = {
           success: "Zapisano na turniej!",
           errorDefault: "Wystąpił błąd podczas zapisywania na turniej",
         },
-        alreadyEnrolled: "Jesteś już zapisany na ten turniej",
+        alreadyEnrolled: "Jesteś już zapisany na ten turniej z:",
+        unenrollButton: "Wypisz się z turnieju",
+        confirmationModal: {
+          title: "Potwierdzenie wypisania z turnieju",
+          message: {
+            main: "Wypisując się z turnieju, rezygnujesz z udziału w grze wraz ze swoim partnerem.",
+            info: "Oboje nadal będziecie widoczni jako uczestnicy wydarzenia, ale nie będziecie brać udziału w grze.",
+            regret:
+              "Jeśli zmienisz zdanie, zawsze możesz ponownie się zapisać, o ile turniej na to pozwala.",
+          },
+          confirm: "Wypisz się",
+          cancel: "Anuluj",
+        },
+        unenrollToast: {
+          loading: "Wypisywanie z turnieju...",
+          success: "Wypisano z turnieju!",
+          errorDefault: "Wystąpił błąd podczas wypisywania z turnieju",
+        },
       },
       EventTeamsTournamentEnrollment: {
         heading: "Zapisy drużynowe na turniej",

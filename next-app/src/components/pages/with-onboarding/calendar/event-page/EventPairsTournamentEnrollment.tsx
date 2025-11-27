@@ -1,7 +1,17 @@
 "use client";
 
-import { Box, VStack, Button, Icon, useToast } from "@chakra-ui/react";
-import { FaUserPlus } from "react-icons/fa";
+import {
+  Box,
+  VStack,
+  Button,
+  Icon,
+  useToast,
+  HStack,
+  Text,
+  useDisclosure,
+  Divider,
+} from "@chakra-ui/react";
+import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type {
@@ -18,13 +28,18 @@ import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useGroupQuery, useUserInfoQuery } from "@/lib/queries";
 import { getPersonLabel } from "@/util/formatters";
-import { enrollToEventTournament } from "@/services/events/api";
+import {
+  enrollToEventTournament,
+  unenrollFromEventTournament,
+} from "@/services/events/api";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { withEmptyToUndefined } from "@/schemas/common";
 import SelectInput from "@/components/common/form/SelectInput";
 import { useMemo } from "react";
 import { EventType } from "@/club-preset/event-type";
+import ConfirmationModal from "@/components/common/ConfirmationModal";
+import { FiAlertCircle, FiHelpCircle, FiInfo } from "react-icons/fi";
 
 type EventPairsTournamentEnrollmentProps = {
   event: EventSchemaTypePopulated;
@@ -58,17 +73,24 @@ export default function EventPairsTournamentEnrollment({
 
   const currentUserId = userInfoQ.data?.id;
 
-  const isUserEnrolled = useMemo(() => {
+  const { isUserEnrolled, userPartner } = useMemo(() => {
     if (!currentUserId || event.data.type !== EventType.TOURNAMENT_PAIRS)
-      return false;
+      return { isUserEnrolled: false, userPartner: null };
 
     const pairs =
       (event.data as TournamentPairsDataTypePopulated).contestantsPairs ?? [];
 
-    return pairs.some(
+    const userPair = pairs.find(
       (pair) =>
         pair.first.id === currentUserId || pair.second.id === currentUserId
     );
+
+    if (!userPair) return { isUserEnrolled: false, userPartner: null };
+
+    const partner =
+      userPair.first.id === currentUserId ? userPair.second : userPair.first;
+
+    return { isUserEnrolled: true, userPartner: partner };
   }, [currentUserId, event.data]);
 
   const availablePartners = useMemo(() => {
@@ -95,6 +117,8 @@ export default function EventPairsTournamentEnrollment({
     !userInfoQ.data ||
     isUserEnrolled;
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const enrollMutation = useActionMutation({
     action: enrollToEventTournament,
     onSuccess: () => {
@@ -105,7 +129,16 @@ export default function EventPairsTournamentEnrollment({
     },
   });
 
-  function handleWithToast(data: FormSchemaType) {
+  const unenrollMutation = useActionMutation({
+    action: unenrollFromEventTournament,
+    onSuccess: () => {
+      querryClient.invalidateQueries({
+        queryKey: ["event"],
+      });
+    },
+  });
+
+  function handleEnroll(data: FormSchemaType) {
     const promise = enrollMutation.mutateAsync({
       eventId: event.id,
       groupId: event.group.id,
@@ -128,17 +161,68 @@ export default function EventPairsTournamentEnrollment({
     });
   }
 
-  return (
-    <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
-      <form onSubmit={handleFormSubmit(handleWithToast)}>
-        <VStack align="start" spacing={4}>
-          <ResponsiveHeading
-            text={t("heading")}
-            fontSize="sm"
-            barOrientation="horizontal"
-          />
+  function handleUnenroll() {
+    const promise = unenrollMutation.mutateAsync({
+      eventId: event.id,
+      groupId: event.group.id,
+    });
 
-          {isUserEnrolled && (
+    toast.promise(promise, {
+      loading: { title: t("unenrollToast.loading") },
+      success: { title: t("unenrollToast.success") },
+      error: (
+        err: MutationOrQuerryError<typeof unenrollFromEventTournament>
+      ) => {
+        const errKey = getMessageKeyFromError(err, {
+          generalErrorKey:
+            "pages.EventPage.EventPairsTournamentEnrollment.unenrollToast.errorDefault",
+        });
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
+
+  return (
+    <>
+      <ConfirmationModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onConfirm={handleUnenroll}
+        title={t("confirmationModal.title")}
+        body={
+          <VStack align="start" spacing={3} pr="2em">
+            <HStack spacing={4}>
+              <Icon as={FiAlertCircle} color="red.400" fontSize={"xl"} />
+              <Text fontSize={"sm"}>{t("confirmationModal.message.main")}</Text>
+            </HStack>
+            <Divider />
+            <HStack spacing={4}>
+              <Icon as={FiInfo} color="blue.400" fontSize={"xl"} />
+              <Text fontSize={"sm"}>{t("confirmationModal.message.info")}</Text>
+            </HStack>
+            <Divider />
+            <HStack spacing={4}>
+              <Icon as={FiHelpCircle} color="yellow.500" fontSize={"xl"} />
+              <Text fontSize={"sm"}>
+                {t("confirmationModal.message.regret")}
+              </Text>
+            </HStack>
+          </VStack>
+        }
+        confirmText={t("confirmationModal.confirm")}
+        cancelText={t("confirmationModal.cancel")}
+        isLoading={unenrollMutation.isPending}
+      />
+
+      <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
+        {isUserEnrolled ? (
+          <VStack align="start" spacing={4}>
+            <ResponsiveHeading
+              text={t("heading")}
+              fontSize="sm"
+              barOrientation="horizontal"
+            />
+
             <Box
               bg="green.50"
               color="green.700"
@@ -147,44 +231,71 @@ export default function EventPairsTournamentEnrollment({
               w="100%"
               fontSize="sm"
             >
-              {t("alreadyEnrolled")}
+              <HStack spacing={2}>
+                <Text fontWeight="medium">{t("alreadyEnrolled")}</Text>
+                <Text fontWeight="bold">
+                  {userPartner ? getPersonLabel(userPartner) : ""}
+                </Text>
+              </HStack>
             </Box>
-          )}
 
-          <Controller
-            control={formControl}
-            name="partnerId"
-            render={({ field, fieldState: { error } }) => (
-              <SelectInput
-                placeholder={t("selectPartner.placeholder")}
-                isInvalid={!!error}
-                errorMessage={tValidation(error?.message)}
-                options={availablePartners.map((m) => ({
-                  value: m.id,
-                  label: getPersonLabel(m),
-                }))}
-                onSelectProps={{
-                  ...field,
-                }}
-                isDisabled={isDisabled}
-                isLoading={groupQ.isLoading || userInfoQ.isLoading}
+            <Button
+              leftIcon={<Icon as={FaUserMinus} />}
+              colorScheme="red"
+              variant="solid"
+              w="100%"
+              fontSize={{ base: "sm", md: "md" }}
+              onClick={onOpen}
+              isLoading={unenrollMutation.isPending}
+            >
+              {t("unenrollButton")}
+            </Button>
+          </VStack>
+        ) : (
+          <form onSubmit={handleFormSubmit(handleEnroll)}>
+            <VStack align="start" spacing={4}>
+              <ResponsiveHeading
+                text={t("heading")}
+                fontSize="sm"
+                barOrientation="horizontal"
               />
-            )}
-          />
 
-          <Button
-            leftIcon={<Icon as={FaUserPlus} />}
-            colorScheme="accent"
-            variant="solid"
-            w="100%"
-            type="submit"
-            fontSize={{ base: "sm", md: "md" }}
-            isDisabled={isDisabled}
-          >
-            {t("button")}
-          </Button>
-        </VStack>
-      </form>
-    </Box>
+              <Controller
+                control={formControl}
+                name="partnerId"
+                render={({ field, fieldState: { error } }) => (
+                  <SelectInput
+                    placeholder={t("selectPartner.placeholder")}
+                    isInvalid={!!error}
+                    errorMessage={tValidation(error?.message)}
+                    options={availablePartners.map((m) => ({
+                      value: m.id,
+                      label: getPersonLabel(m),
+                    }))}
+                    onSelectProps={{
+                      ...field,
+                    }}
+                    isDisabled={isDisabled}
+                    isLoading={groupQ.isLoading || userInfoQ.isLoading}
+                  />
+                )}
+              />
+
+              <Button
+                leftIcon={<Icon as={FaUserPlus} />}
+                colorScheme="accent"
+                variant="solid"
+                w="100%"
+                type="submit"
+                fontSize={{ base: "sm", md: "md" }}
+                isDisabled={isDisabled}
+              >
+                {t("button")}
+              </Button>
+            </VStack>
+          </form>
+        )}
+      </Box>
+    </>
   );
 }
