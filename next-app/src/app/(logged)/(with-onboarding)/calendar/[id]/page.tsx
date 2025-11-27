@@ -6,9 +6,11 @@ import EventBanner from "@/components/pages/with-onboarding/calendar/event-page/
 import EventDetails from "@/components/pages/with-onboarding/calendar/event-page/EventDetails";
 import EventSpecificData from "@/components/pages/with-onboarding/calendar/event-page/EventSpecificData";
 import EventEnrollment from "@/components/pages/with-onboarding/calendar/event-page/EventEnrollment";
+import EventPairsTournamentEnrollment from "@/components/pages/with-onboarding/calendar/event-page/EventPairsTournamentEnrollment";
 import BackLink from "@/components/common/BackLink";
 import { useTranslations } from "@/lib/typed-translations";
 import { useEventQuery } from "@/lib/queries";
+import { EventType } from "@/club-preset/event-type";
 
 export default function EventPage() {
   const t = useTranslations("pages.EventPage.page");
@@ -32,8 +34,12 @@ export default function EventPage() {
         </Box>
         <VStack spacing="2rem" align="stretch" pb={8}>
           <EventBanner event={eventQ.data} loading={isLoading} />
-          {eventQ.data && <EventEnrollment event={eventQ.data} />}
           <EventDetails event={eventQ.data} loading={isLoading} />
+          {eventQ.data && <EventEnrollment event={eventQ.data} />}
+          {eventQ.data &&
+            eventQ.data.data.type === EventType.TOURNAMENT_PAIRS && (
+              <EventPairsTournamentEnrollment event={eventQ.data} />
+            )}
           <EventSpecificData
             eventData={eventQ.data?.data}
             loading={isLoading}

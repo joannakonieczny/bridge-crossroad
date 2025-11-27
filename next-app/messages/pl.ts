@@ -840,6 +840,18 @@ const messages = {
           button: "Wypisz się",
         },
       },
+      EventPairsTournamentEnrollment: {
+        heading: "Zapisy na turniej",
+        selectPartner: {
+          placeholder: "Wybierz partnera",
+        },
+        button: "Zapisz na turniej",
+        toast: {
+          loading: "Zapisywanie na turniej...",
+          success: "Zapisano na turniej!",
+          errorDefault: "Wystąpił błąd podczas zapisywania na turniej",
+        },
+      },
     },
     UsefulTools: usefulTools,
     GroupsPage: groupsPage,
