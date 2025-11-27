@@ -8,9 +8,16 @@ import {
   getJoinedGroupsInfoAsAdmin,
 } from "@/services/groups/api";
 import { getUser } from "@/services/onboarding/api";
-import { listEventsForUser, getEvent, getLatestEventsForUser } from "@/services/events/api";
+import {
+  listEventsForUser,
+  getEvent,
+  getLatestEventsForUser,
+} from "@/services/events/api";
 import { listPartnershipPosts } from "@/services/find-partner/api";
-import { PartnershipPostStatus, PartnershipPostType } from "@/club-preset/partnership-post";
+import {
+  PartnershipPostStatus,
+  PartnershipPostType,
+} from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type {
@@ -131,7 +138,6 @@ export function useEventQuery(
   });
 }
 
-<<<<<<< HEAD
 export function usePartnershipPostsQuery(
   input?: {
     groupId?: GroupIdType;
@@ -145,13 +151,16 @@ export function usePartnershipPostsQuery(
   },
   props?: TActionQueryOptionsHelper<typeof listPartnershipPosts>
 ) {
-  const e = useOnErrorToast("ogłoszeń szukania partnera", "listPartnershipPosts");
+  const e = useOnErrorToast(
+    "ogłoszeń szukania partnera",
+    "listPartnershipPosts"
+  );
 
   const page = input?.page ?? 1;
   const limit = input?.limit ?? 10;
   const status = input?.status ?? PartnershipPostStatus.ACTIVE;
   const groupId = input?.groupId ?? ("" as GroupIdType);
-  console.log(groupId)
+  console.log(groupId);
   const type = input?.type;
   const onboardingData = input?.onboardingData;
   // use primitive onboardingBucket (e.g. experienceParam) to avoid ref-triggered fetches
@@ -159,7 +168,15 @@ export function usePartnershipPostsQuery(
 
   return useActionQuery({
     // use onboardingKey (primitive) instead of full object to prevent excessive ref-triggered fetches
-    queryKey: ["partnershipPosts", page, groupId, limit, status, type, onboardingKey],
+    queryKey: [
+      "partnershipPosts",
+      page,
+      groupId,
+      limit,
+      status,
+      type,
+      onboardingKey,
+    ],
     action: () =>
       listPartnershipPosts({
         status,
@@ -169,7 +186,9 @@ export function usePartnershipPostsQuery(
         onboardingData: onboardingData,
         groupId,
       }),
-=======
+  });
+}
+
 export function useRecentEventsQuery(
   limit: number,
   props?: TActionQueryOptionsHelper<typeof getLatestEventsForUser>
@@ -178,7 +197,6 @@ export function useRecentEventsQuery(
   return useActionQuery({
     queryKey: QUERY_KEYS.latestEvents(limit),
     action: () => getLatestEventsForUser({ limit }),
->>>>>>> origin/main
     onError: e,
     ...props,
   });
