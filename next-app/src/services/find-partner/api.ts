@@ -12,8 +12,10 @@ import {
   withinOwnGroupAction,
   withinOwnPartnershipPostAction,
 } from "../action-lib";
-import { addPartnershipPostSchema } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
-import { z } from "zod";
+import {
+  addPartnershipPostSchema,
+  listPartnershipPostsSchema,
+} from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
 import { havingPartnershipPostId } from "@/schemas/model/partnership-post/partnership-post-schema";
 import { getById as getGroupById } from "@/repositories/groups";
 import {
@@ -28,38 +30,61 @@ import { partition } from "@/util/helpers";
 import { RepositoryError } from "@/repositories/common";
 
 export const listPartnershipPosts = withinOwnGroupAction
-  .inputSchema(async (s) =>
-    s.merge(
-      z.object({
-        status: z
-          .nativeEnum(PartnershipPostStatus)
-          .default(PartnershipPostStatus.ACTIVE),
-      })
-    )
-  )
-  .action(async ({ ctx: { groupId, userId }, parsedInput: { status } }) => {
-    const res = await listPartnershipPostsInGroup({ groupId, status });
-    //filter out posts to be marked as EXPIRED
-    const [posts, postToBeExpired] = partition(res, (post) => {
-      if (post.status !== PartnershipPostStatus.ACTIVE) return true; //only look at active posts (not PARTNER_FOUND)
-      if (post.data.type === PartnershipPostType.PERIOD) {
-        if (post.data.endsAt >= new Date()) return true; //keep in posts
-      } else {
-        const event = post.data.eventId;
-        if (event.duration.endsAt >= new Date()) return true; //keep in posts
-      }
-      return false;
-    });
+  .inputSchema(async (s) => s.merge(listPartnershipPostsSchema))
+  .action(
+    async ({
+      ctx: { groupId, userId },
+      parsedInput: { status, page, limit, type, onboardingData },
+    }) => {
+      // Fetch all posts with filters applied
+      const allPosts = await listPartnershipPostsInGroup({
+        groupId,
+        status,
+        type,
+        onboardingData,
+      });
 
-    //async changing status of outdated posts
-    Promise.allSettled([
-      changeStatusOfManyPartnershipPosts({
-        partnershipPostIds: postToBeExpired.map((p) => p._id.toString()),
-        status: PartnershipPostStatus.EXPIRED,
-      }),
-    ]);
-    return posts.map((p) => sanitizePartnershipPostPopulated(p, { userId }));
-  });
+      // Filter out posts to be marked as EXPIRED
+      const [validPosts, expiredPosts] = partition(allPosts, (post) => {
+        if (post.status !== PartnershipPostStatus.ACTIVE) return true; //only look at active posts (not PARTNER_FOUND)
+        if (post.data.type === PartnershipPostType.PERIOD) {
+          if (post.data.endsAt >= new Date()) return true; //keep in posts
+        } else {
+          const event = post.data.eventId;
+          if (event.duration.endsAt >= new Date()) return true; //keep in posts
+        }
+        return false;
+      });
+
+      // Async changing status of outdated posts
+      if (expiredPosts.length > 0) {
+        Promise.allSettled([
+          changeStatusOfManyPartnershipPosts({
+            partnershipPostIds: expiredPosts.map((p) => p._id.toString()),
+            status: PartnershipPostStatus.EXPIRED,
+          }),
+        ]);
+      }
+
+      // Calculate pagination
+      const total = validPosts.length;
+      const totalPages = Math.ceil(total / limit);
+      const skip = (page - 1) * limit;
+      const postsToReturn = validPosts.slice(skip, skip + limit);
+
+      return {
+        data: postsToReturn.map((p) =>
+          sanitizePartnershipPostPopulated(p, { userId })
+        ),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+        },
+      };
+    }
+  );
 
 export const createPartnershipPost = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(addPartnershipPostSchema))
