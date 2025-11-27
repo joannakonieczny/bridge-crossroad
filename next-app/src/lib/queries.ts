@@ -9,8 +9,6 @@ import {
 } from "@/services/groups/api";
 import { getUser } from "@/services/onboarding/api";
 import { listEventsForUser, getEvent } from "@/services/events/api";
-import { listPartnershipPosts } from "@/services/find-partner/api";
-import { PartnershipPostStatus } from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type {
@@ -28,7 +26,6 @@ export const QUERY_KEYS = {
     `${dayjs(start).format("DD/MM/YYYY")}|${dayjs(end).format("DD/MM/YYYY")}`,
   ],
   eventDetail: (id: EventIdType) => ["event", id],
-  partnershipPosts: ["partnershipPosts"],
 } as const;
 
 function useOnErrorToast(template: string, toastId: string) {
@@ -125,18 +122,6 @@ export function useEventQuery(
     queryKey: QUERY_KEYS.eventDetail(eventId || ""),
     action: () => getEvent({ eventId: eventId || "" }),
     enabled: eventId ? true : false,
-    onError: e,
-    ...props,
-  });
-}
-
-export function usePartnershipPostsQuery(
-  props?: TActionQueryOptionsHelper<typeof listPartnershipPosts>
-) {
-  const e = useOnErrorToast("ogłoszeń szukania partnera", "listPartnershipPosts");
-  return useActionQuery({
-    queryKey: ["partnershipPosts"],
-    action: () => listPartnershipPosts({ status: PartnershipPostStatus.ACTIVE, groupId: "68ebadfe4dee1802e0a46137" as GroupIdType}),
     onError: e,
     ...props,
   });
