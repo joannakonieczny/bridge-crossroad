@@ -59,7 +59,9 @@ export const playingPairSchema = z
 
 export const playingTeamSchema = z.object({
   name: z
-    .string()
+    .string({
+      message: "validation.model.event.team.name.required" satisfies TKey,
+    })
     .min(team.name.min, "validation.model.event.team.name.min" satisfies TKey)
     .max(team.name.max, "validation.model.event.team.name.max" satisfies TKey),
   members: z

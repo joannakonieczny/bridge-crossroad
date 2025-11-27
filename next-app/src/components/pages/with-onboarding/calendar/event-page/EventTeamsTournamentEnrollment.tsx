@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type {
   EventSchemaTypePopulated,
+  PlayingTeamType,
   TournamentTeamsDataTypePopulated,
 } from "@/schemas/model/event/event-types";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
@@ -19,24 +20,17 @@ import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useGroupQuery, useUserInfoQuery } from "@/lib/queries";
 import { getPersonLabel } from "@/util/formatters";
 import { enrollToEventTournament } from "@/services/events/api";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { withEmptyToUndefined } from "@/schemas/common";
 import MultiSelectInput from "@/components/common/form/MultiSelectInput";
 import FormInput from "@/components/common/form/FormInput";
 import { useMemo } from "react";
 import { EventType } from "@/club-preset/event-type";
+import { playingTeamSchema } from "@/schemas/model/event/event-schema";
 
 type EventTeamsTournamentEnrollmentProps = {
   event: EventSchemaTypePopulated;
 };
-
-const formSchema = z.object({
-  teamName: z.string().nonempty(),
-  memberIds: z.array(z.string()).min(1, "Wybierz przynajmniej jednego członka"),
-});
-
-type FormSchemaType = z.infer<typeof formSchema>;
 
 export default function EventTeamsTournamentEnrollment({
   event,
@@ -49,11 +43,11 @@ export default function EventTeamsTournamentEnrollment({
     control: formControl,
     watch,
     reset,
-  } = useForm<FormSchemaType>({
-    resolver: zodResolver(withEmptyToUndefined(formSchema)),
+  } = useForm({
+    resolver: zodResolver(withEmptyToUndefined(playingTeamSchema)),
     defaultValues: {
-      teamName: "",
-      memberIds: [],
+      name: "",
+      members: [],
     },
   });
 
@@ -64,7 +58,7 @@ export default function EventTeamsTournamentEnrollment({
   const groupQ = useGroupQuery(event.group.id);
 
   const currentUserId = userInfoQ.data?.id;
-  const selectedMemberIds = watch("memberIds") || [];
+  const selectedMemberIds = watch("members") || [];
 
   const isUserEnrolled = useMemo(() => {
     if (!currentUserId || event.data.type !== EventType.TOURNAMENT_TEAMS)
@@ -105,13 +99,13 @@ export default function EventTeamsTournamentEnrollment({
     },
   });
 
-  function handleWithToast(data: FormSchemaType) {
+  function handleWithToast(data: PlayingTeamType) {
     const promise = enrollMutation.mutateAsync({
       eventId: event.id,
       groupId: event.group.id,
       team: {
-        name: data.teamName,
-        members: data.memberIds,
+        name: data.name,
+        members: data.members,
       },
     });
 
@@ -151,7 +145,7 @@ export default function EventTeamsTournamentEnrollment({
             </Box>
           )}
 
-          {!isCurrentUserSelected && selectedMemberIds.length > 0 && (
+          {!isCurrentUserSelected && (
             <Box
               bg="orange.50"
               color="orange.700"
@@ -166,7 +160,7 @@ export default function EventTeamsTournamentEnrollment({
 
           <Controller
             control={formControl}
-            name="teamName"
+            name="name"
             render={({ field, fieldState: { error } }) => (
               <FormInput
                 placeholder={t("teamName.placeholder")}
@@ -185,7 +179,7 @@ export default function EventTeamsTournamentEnrollment({
 
           <Controller
             control={formControl}
-            name="memberIds"
+            name="members"
             render={({ field, fieldState: { error } }) => (
               <MultiSelectInput
                 placeholder={t("selectMembers.placeholder")}

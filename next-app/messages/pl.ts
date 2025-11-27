@@ -472,6 +472,9 @@ const eventModelValidation = {
         duplicatePlayers: "Obaj zawodnicy pary muszą być różni",
         alreadyInAnotherPair:
           "Jeden lub więcej zawodników jest już zapisany w innej parze",
+        partnerId: {
+          required: "Wybierz partnera do pary",
+        },
       },
       team: {
         required: "Podaj drużynę",
@@ -487,6 +490,7 @@ const eventModelValidation = {
     name: {
       min: `Min. ${EVENT.team.name.min} znaki`,
       max: `Max. ${EVENT.team.name.max} znaków`,
+      required: "Podaj nazwę drużyny",
     },
     members: {
       min: `Min. ${EVENT.team.members.min} członków`,

@@ -20,6 +20,7 @@ import type {
 } from "@/schemas/model/event/event-types";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { useQueryClient } from "@tanstack/react-query";
+import type { TKey } from "@/lib/typed-translations";
 import {
   useTranslations,
   useTranslationsWithFallback,
@@ -46,7 +47,14 @@ type EventPairsTournamentEnrollmentProps = {
 };
 
 const formSchema = z.object({
-  partnerId: z.string().nonempty(),
+  partnerId: z
+    .string({
+      message:
+        "validation.model.event.data.type.pair.partnerId.required" satisfies TKey,
+    })
+    .nonempty(
+      "validation.model.event.data.type.pair.partnerId.required" satisfies TKey
+    ),
 });
 
 type FormSchemaType = z.infer<typeof formSchema>;
@@ -265,13 +273,14 @@ export default function EventPairsTournamentEnrollment({
                 name="partnerId"
                 render={({ field, fieldState: { error } }) => (
                   <SelectInput
-                    placeholder={t("selectPartner.placeholder")}
+                    emptyValueLabel={t("selectPartner.placeholder")}
                     isInvalid={!!error}
                     errorMessage={tValidation(error?.message)}
                     options={availablePartners.map((m) => ({
                       value: m.id,
                       label: getPersonLabel(m),
                     }))}
+                    value={field.value}
                     onSelectProps={{
                       ...field,
                     }}
