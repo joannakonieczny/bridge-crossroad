@@ -8,7 +8,7 @@ import {
   getJoinedGroupsInfoAsAdmin,
 } from "@/services/groups/api";
 import { getUser } from "@/services/onboarding/api";
-import { listEventsForUser, getEvent } from "@/services/events/api";
+import { listEventsForUser, getEvent, getLatestEventsForUser } from "@/services/events/api";
 import { listPartnershipPosts } from "@/services/find-partner/api";
 import { PartnershipPostStatus, PartnershipPostType } from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
@@ -24,10 +24,11 @@ export const QUERY_KEYS = {
   joinedGroupsAsAdmin: ["groups", "adminOnly"],
   groupDetail: (id: GroupIdType) => ["groups", id],
   calendarEvents: (start: Date, end: Date) => [
-    "events",
+    "event",
     `${dayjs(start).format("DD/MM/YYYY")}|${dayjs(end).format("DD/MM/YYYY")}`,
   ],
   eventDetail: (id: EventIdType) => ["event", id],
+  latestEvents: (limit: number) => ["event", "latest", limit],
   partnershipPosts: ["partnershipPosts"],
 } as const;
 
@@ -130,6 +131,7 @@ export function useEventQuery(
   });
 }
 
+<<<<<<< HEAD
 export function usePartnershipPostsQuery(
   input?: {
     groupId?: GroupIdType;
@@ -167,6 +169,16 @@ export function usePartnershipPostsQuery(
         onboardingData: onboardingData,
         groupId,
       }),
+=======
+export function useRecentEventsQuery(
+  limit: number,
+  props?: TActionQueryOptionsHelper<typeof getLatestEventsForUser>
+) {
+  const e = useOnErrorToast("najnowszych wydarzeń", "getLatestEventsForUser");
+  return useActionQuery({
+    queryKey: QUERY_KEYS.latestEvents(limit),
+    action: () => getLatestEventsForUser({ limit }),
+>>>>>>> origin/main
     onError: e,
     ...props,
   });

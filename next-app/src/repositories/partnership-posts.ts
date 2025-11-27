@@ -12,44 +12,18 @@ import type { IPartnershipPostPopulated } from "@/models/mixed-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { PartnershipPostIdType } from "@/schemas/model/partnership-post/partnership-post-types";
 import type { IPartnershipPostDTO } from "@/models/partnership-post/partnership-post-types";
-import type {
-  PartnershipPostStatus,
-  PartnershipPostType,
-} from "@/club-preset/partnership-post";
-import type { TrainingGroup } from "@/club-preset/training-group";
-import type { Academy } from "@/club-preset/academy";
+import type { PartnershipPostStatus } from "@/club-preset/partnership-post";
 
 export async function listPartnershipPostsInGroup({
   groupId,
   status,
-  type,
-  onboardingData,
 }: {
   groupId: GroupIdType;
   status: PartnershipPostStatus;
-  type?: PartnershipPostType;
-  onboardingData?: {
-    academy?: Academy;
-    yearOfBirth?: {
-      min?: number;
-      max?: number;
-    };
-    startPlayingDate?: {
-      min?: Date;
-      max?: Date;
-    };
-    trainingGroup?: TrainingGroup;
-    hasRefereeLicense?: boolean;
-  };
 }) {
   await dbConnect();
 
-  const query: Record<string, unknown> = { groupId, status };
-  if (type !== undefined) {
-    query["data.type"] = type;
-  }
-
-  const allRes = await PartnershipPost.find(query)
+  const res = await PartnershipPost.find({ groupId, status })
     .populate([
       { path: "ownerId", model: UserTableName },
       { path: "interestedUsersIds", model: UserTableName },
@@ -58,61 +32,7 @@ export async function listPartnershipPostsInGroup({
     ])
     .lean<IPartnershipPostPopulated[]>();
 
-  // Apply onboardingData filters after population
-  let filteredRes = allRes;
-
-  if (onboardingData) {
-    const od = onboardingData;
-
-    const filters: Array<
-      (p: IPartnershipPostPopulated["ownerId"]["onboardingData"]) => boolean
-    > = [];
-
-    if (od.academy !== undefined)
-      filters.push((o) => o?.academy === od.academy);
-    if (od.trainingGroup !== undefined)
-      filters.push((o) => o?.trainingGroup === od.trainingGroup);
-    if (od.hasRefereeLicense !== undefined)
-      filters.push((o) => o?.hasRefereeLicense === od.hasRefereeLicense);
-    if (od.yearOfBirth?.min !== undefined) {
-      const minYear = od.yearOfBirth.min;
-      filters.push(
-        (o) => o?.yearOfBirth !== undefined && o.yearOfBirth >= minYear
-      );
-    }
-    if (od.yearOfBirth?.max !== undefined) {
-      const maxYear = od.yearOfBirth.max;
-      filters.push(
-        (o) => o?.yearOfBirth !== undefined && o.yearOfBirth <= maxYear
-      );
-    }
-    if (od.startPlayingDate?.min !== undefined) {
-      const minDate = od.startPlayingDate.min;
-      filters.push(
-        (o) =>
-          o?.startPlayingDate !== undefined &&
-          new Date(o.startPlayingDate) >= minDate
-      );
-    }
-    if (od.startPlayingDate?.max !== undefined) {
-      const maxDate = od.startPlayingDate.max;
-      filters.push(
-        (o) =>
-          o?.startPlayingDate !== undefined &&
-          new Date(o.startPlayingDate) <= maxDate
-      );
-    }
-
-    filteredRes = filteredRes.filter((p) =>
-      filters.every((fn) => fn(p.ownerId.onboardingData))
-    );
-  }
-
-  // Return all filtered results without pagination
-  return check(
-    filteredRes,
-    `Failed to list partnership posts for group ${groupId}`
-  );
+  return check(res, `Failed to list partnership posts for group ${groupId}`);
 }
 
 export async function addPartnershipPost({

@@ -10,10 +10,7 @@ import type {
   PartnershipPostSchemaTypePopulated,
 } from "@/schemas/model/partnership-post/partnership-post-types";
 import { PartnershipPostType } from "@/club-preset/partnership-post";
-import {
-  sanitizeMinUserInfo,
-  sanitizeMinUserInfoWithOnboarding,
-} from "./user-sanitize";
+import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeGroup } from "./group-sanitize";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { IPartnershipPostPopulated } from "@/models/mixed-types";
@@ -65,7 +62,7 @@ export function sanitizePartnershipPostPopulated(
 ): PartnershipPostSchemaTypePopulated {
   return {
     id: post._id.toString(),
-    owner: sanitizeMinUserInfoWithOnboarding(post.ownerId),
+    owner: sanitizeMinUserInfo(post.ownerId),
     group: sanitizeGroup(post.groupId),
     name: post.name,
     description: post.description,
@@ -83,11 +80,6 @@ export function sanitizePartnershipPostPopulated(
     updatedAt: post.updatedAt,
     isOwnByUser: mappers
       ? post.ownerId._id.toString() === mappers.userId
-      : undefined,
-    isUserInterested: mappers
-      ? post.interestedUsersIds.some(
-          (user) => user._id.toString() === mappers.userId
-        )
       : undefined,
   };
 }
