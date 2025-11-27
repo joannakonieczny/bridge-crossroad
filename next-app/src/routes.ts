@@ -1,3 +1,4 @@
+import type { EventIdType } from "./schemas/model/event/event-types";
 import type { GroupIdType } from "./schemas/model/group/group-types";
 
 export const ROUTES = {
@@ -18,6 +19,7 @@ export const ROUTES = {
   calendar: {
     index: "/calendar",
     upcoming_events: "/calendar/upcoming-events",
+    eventDetails: (id: EventIdType) => `/calendar/${id}`,
   },
   groups: {
     index: "/groups",
