@@ -891,6 +891,22 @@ const messages = {
         alreadyEnrolled: "Jesteś już zapisany w drużynie:",
         teamMembers: "Członkowie drużyny:",
         mustBeInTeam: "Musisz być członkiem swojej drużyny",
+        unenrollButton: "Wypisz drużynę z turnieju",
+        confirmationModal: {
+          title: "Potwierdzenie wypisania drużyny z turnieju",
+          message: {
+            main: "Wypisując drużynę z turnieju, rezygnujecie z udziału w grze wszyscy członkowie drużyny.",
+            info: "Nadal będziecie widoczni jako uczestnicy wydarzenia, ale nie będziecie brać udziału w grze.",
+            regret: "Czy na pewno chcesz wypisać drużynę?",
+          },
+          confirm: "Wypisz drużynę",
+          cancel: "Anuluj",
+        },
+        unenrollToast: {
+          loading: "Wypisywanie drużyny z turnieju...",
+          success: "Wypisano drużynę z turnieju!",
+          errorDefault: "Wystąpił błąd podczas wypisywania drużyny z turnieju",
+        },
       },
     },
     UsefulTools: usefulTools,

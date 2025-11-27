@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, VStack, Button, Icon, useToast, HStack, Text } from "@chakra-ui/react";
-import { FaUserPlus } from "react-icons/fa";
+import { Box, VStack, Button, Icon, useToast, HStack, Text, useDisclosure, Divider } from "@chakra-ui/react";
+import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type {
@@ -19,7 +19,7 @@ import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import { useGroupQuery, useUserInfoQuery } from "@/lib/queries";
 import { getPersonLabel } from "@/util/formatters";
-import { enrollToEventTournament } from "@/services/events/api";
+import { enrollToEventTournament, unenrollFromEventTournament } from "@/services/events/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { withEmptyToUndefined } from "@/schemas/common";
 import MultiSelectInput from "@/components/common/form/MultiSelectInput";
@@ -27,6 +27,8 @@ import FormInput from "@/components/common/form/FormInput";
 import { useMemo } from "react";
 import { EventType } from "@/club-preset/event-type";
 import { playingTeamSchema } from "@/schemas/model/event/event-schema";
+import ConfirmationModal from "@/components/common/ConfirmationModal";
+import { FiAlertCircle, FiHelpCircle, FiInfo } from "react-icons/fi";
 
 type EventTeamsTournamentEnrollmentProps = {
   event: EventSchemaTypePopulated;
@@ -91,6 +93,8 @@ export default function EventTeamsTournamentEnrollment({
   const isDisabled =
     !groupQ.data || !userInfoQ.data || isUserEnrolled || !isCurrentUserSelected;
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const enrollMutation = useActionMutation({
     action: enrollToEventTournament,
     onSuccess: () => {
@@ -98,6 +102,15 @@ export default function EventTeamsTournamentEnrollment({
         queryKey: ["event"],
       });
       reset();
+    },
+  });
+
+  const unenrollMutation = useActionMutation({
+    action: unenrollFromEventTournament,
+    onSuccess: () => {
+      querryClient.invalidateQueries({
+        queryKey: ["event"],
+      });
     },
   });
 
@@ -124,17 +137,69 @@ export default function EventTeamsTournamentEnrollment({
     });
   }
 
-  return (
-    <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
-      <form onSubmit={handleFormSubmit(handleWithToast)}>
-        <VStack align="start" spacing={4}>
-          <ResponsiveHeading
-            text={t("heading")}
-            fontSize="sm"
-            barOrientation="horizontal"
-          />
+  function handleUnenroll() {
+    const promise = unenrollMutation.mutateAsync({
+      eventId: event.id,
+      groupId: event.group.id,
+    });
 
-          {isUserEnrolled && userTeam && (
+    toast.promise(promise, {
+      loading: { title: t("unenrollToast.loading") },
+      success: { title: t("unenrollToast.success") },
+      error: (
+        err: MutationOrQuerryError<typeof unenrollFromEventTournament>
+      ) => {
+        const errKey = getMessageKeyFromError(err, {
+          generalErrorKey:
+            "pages.EventPage.EventTeamsTournamentEnrollment.unenrollToast.errorDefault",
+        });
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
+
+  return (
+    <>
+      <ConfirmationModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onConfirm={handleUnenroll}
+        title={t("confirmationModal.title")}
+        body={
+          <VStack align="start" spacing={3} pr="2em">
+            <HStack spacing={4}>
+              <Icon as={FiAlertCircle} color="red.400" fontSize={"xl"} />
+              <Text fontSize={"sm"}>{t("confirmationModal.message.main")}</Text>
+            </HStack>
+            <Divider />
+            <HStack spacing={4}>
+              <Icon as={FiInfo} color="blue.400" fontSize={"xl"} />
+              <Text fontSize={"sm"}>{t("confirmationModal.message.info")}</Text>
+            </HStack>
+            <Divider />
+            <HStack spacing={4}>
+              <Icon as={FiHelpCircle} color="yellow.500" fontSize={"xl"} />
+              <Text fontSize={"sm"}>
+                {t("confirmationModal.message.regret")}
+              </Text>
+            </HStack>
+          </VStack>
+        }
+        confirmText={t("confirmationModal.confirm")}
+        cancelText={t("confirmationModal.cancel")}
+        isLoading={unenrollMutation.isPending}
+      />
+
+      <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
+        {isUserEnrolled ? (
+          <VStack align="start" spacing={4}>
+            <ResponsiveHeading
+              text={t("heading")}
+              fontSize="sm"
+              barOrientation="horizontal"
+            />
+
+            {userTeam && (
             <Box
               bg="green.50"
               color="green.700"
@@ -162,73 +227,92 @@ export default function EventTeamsTournamentEnrollment({
                 </Box>
               </VStack>
             </Box>
-          )}
+            )}
 
-          {!isCurrentUserSelected && !isUserEnrolled && (
-            <Box
-              bg="orange.50"
-              color="orange.700"
-              p={3}
-              borderRadius="md"
+            <Button
+              leftIcon={<Icon as={FaUserMinus} />}
+              colorScheme="red"
+              variant="solid"
               w="100%"
-              fontSize="sm"
+              fontSize={{ base: "sm", md: "md" }}
+              onClick={onOpen}
+              isLoading={unenrollMutation.isPending}
             >
-              {t("mustBeInTeam")}
-            </Box>
-          )}
-
-          <Controller
-            control={formControl}
-            name="name"
-            render={({ field, fieldState: { error } }) => (
-              <FormInput
-                placeholder={t("teamName.placeholder")}
-                isInvalid={!!error}
-                errorMessage={tValidation(error?.message)}
-                id="teamName"
-                type="text"
-                value={field.value}
-                onChange={field.onChange}
-                onElementProps={{
-                  isDisabled: isUserEnrolled,
-                }}
+              {t("unenrollButton")}
+            </Button>
+          </VStack>
+        ) : (
+          <form onSubmit={handleFormSubmit(handleWithToast)}>
+            <VStack align="start" spacing={4}>
+              <ResponsiveHeading
+                text={t("heading")}
+                fontSize="sm"
+                barOrientation="horizontal"
               />
-            )}
-          />
 
-          <Controller
-            control={formControl}
-            name="members"
-            render={({ field, fieldState: { error } }) => (
-              <MultiSelectInput
-                placeholder={t("selectMembers.placeholder")}
-                isInvalid={!!error}
-                errorMessage={tValidation(error?.message)}
-                options={availableMembers.map((m) => ({
-                  value: m.id,
-                  label: getPersonLabel(m),
-                }))}
-                value={field.value}
-                onChange={field.onChange}
-                isDisabled={isUserEnrolled}
-                isLoading={groupQ.isLoading || userInfoQ.isLoading}
+              {!isCurrentUserSelected && (
+                <Box
+                  bg="orange.50"
+                  color="orange.700"
+                  p={3}
+                  borderRadius="md"
+                  w="100%"
+                  fontSize="sm"
+                >
+                  {t("mustBeInTeam")}
+                </Box>
+              )}
+
+              <Controller
+                control={formControl}
+                name="name"
+                render={({ field, fieldState: { error } }) => (
+                  <FormInput
+                    placeholder={t("teamName.placeholder")}
+                    isInvalid={!!error}
+                    errorMessage={tValidation(error?.message)}
+                    id="teamName"
+                    type="text"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
-            )}
-          />
 
-          <Button
-            leftIcon={<Icon as={FaUserPlus} />}
-            colorScheme="accent"
-            variant="solid"
-            w="100%"
-            type="submit"
-            fontSize={{ base: "sm", md: "md" }}
-            isDisabled={isDisabled}
-          >
-            {t("button")}
-          </Button>
-        </VStack>
-      </form>
-    </Box>
+              <Controller
+                control={formControl}
+                name="members"
+                render={({ field, fieldState: { error } }) => (
+                  <MultiSelectInput
+                    placeholder={t("selectMembers.placeholder")}
+                    isInvalid={!!error}
+                    errorMessage={tValidation(error?.message)}
+                    options={availableMembers.map((m) => ({
+                      value: m.id,
+                      label: getPersonLabel(m),
+                    }))}
+                    value={field.value}
+                    onChange={field.onChange}
+                    isLoading={groupQ.isLoading || userInfoQ.isLoading}
+                  />
+                )}
+              />
+
+              <Button
+                leftIcon={<Icon as={FaUserPlus} />}
+                colorScheme="accent"
+                variant="solid"
+                w="100%"
+                type="submit"
+                fontSize={{ base: "sm", md: "md" }}
+                isDisabled={isDisabled}
+              >
+                {t("button")}
+              </Button>
+            </VStack>
+          </form>
+        )}
+      </Box>
+    </>
   );
 }
