@@ -48,6 +48,7 @@ export default function EventTeamsTournamentEnrollment({
     handleSubmit: handleFormSubmit,
     control: formControl,
     watch,
+    reset,
   } = useForm<FormSchemaType>({
     resolver: zodResolver(withEmptyToUndefined(formSchema)),
     defaultValues: {
@@ -100,6 +101,7 @@ export default function EventTeamsTournamentEnrollment({
       querryClient.invalidateQueries({
         queryKey: ["event"],
       });
+      reset();
     },
   });
 

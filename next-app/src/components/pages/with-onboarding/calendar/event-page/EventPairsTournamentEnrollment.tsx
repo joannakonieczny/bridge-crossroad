@@ -42,7 +42,11 @@ export default function EventPairsTournamentEnrollment({
   const t = useTranslations("pages.EventPage.EventPairsTournamentEnrollment");
   const tValidation = useTranslationsWithFallback();
 
-  const { handleSubmit: handleFormSubmit, control: formControl } = useForm({
+  const {
+    handleSubmit: handleFormSubmit,
+    control: formControl,
+    reset,
+  } = useForm({
     resolver: zodResolver(withEmptyToUndefined(formSchema)),
   });
 
@@ -62,7 +66,8 @@ export default function EventPairsTournamentEnrollment({
       (event.data as TournamentPairsDataTypePopulated).contestantsPairs ?? [];
 
     return pairs.some(
-      (pair) => pair.first.id === currentUserId || pair.second.id === currentUserId
+      (pair) =>
+        pair.first.id === currentUserId || pair.second.id === currentUserId
     );
   }, [currentUserId, event.data]);
 
@@ -85,7 +90,10 @@ export default function EventPairsTournamentEnrollment({
   }, [groupQ.data, currentUserId, event.data]);
 
   const isDisabled =
-    !groupQ.data || !availablePartners.length || !userInfoQ.data || isUserEnrolled;
+    !groupQ.data ||
+    !availablePartners.length ||
+    !userInfoQ.data ||
+    isUserEnrolled;
 
   const enrollMutation = useActionMutation({
     action: enrollToEventTournament,
@@ -93,6 +101,7 @@ export default function EventPairsTournamentEnrollment({
       querryClient.invalidateQueries({
         queryKey: ["event"],
       });
+      reset();
     },
   });
 
