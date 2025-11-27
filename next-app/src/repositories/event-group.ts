@@ -556,10 +556,9 @@ export async function addPairToTournamentEvent({
   pair,
 }: AddPairToTournamentEventInput) {
   await dbConnect();
-  const existingEvent = check(
-    await Event.findById(eventId).lean<IEventDTO>(),
-    `Event not found with id: ${eventId}`
-  );
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
   checkTrue(
     existingEvent.data.type === EventType.TOURNAMENT_PAIRS,
     "Event must be of type TOURNAMENT_PAIRS to add a pair"
@@ -600,14 +599,14 @@ export async function addPairToTournamentEvent({
     `Second player ${pair.second} must be a member of the group`
   );
 
-  const updatedEvent = check(
-    await Event.findByIdAndUpdate(
-      eventId,
-      { $addToSet: { "data.contestantsPairs": pair } },
-      { new: true, runValidators: true }
-    ).lean<IEventDTO>(),
-    `Failed to add pair to event ${eventId}`
-  );
+  (existingEvent.data as ITournamentPairsData).contestantsPairs.push({
+    first: pair.first,
+    second: pair.second,
+  } as (typeof existingEvent.data.contestantsPairs)[0]);
 
-  return { event: updatedEvent };
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
 }
