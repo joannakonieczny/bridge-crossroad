@@ -1,24 +1,91 @@
 "use client";
 
-import React, { useState } from "react";
-import { Box, VStack, Input, Button, SimpleGrid } from "@chakra-ui/react";
-import { EventType } from "@/club-preset/event-type";
+import {
+  Box,
+  VStack,
+  Button,
+  HStack,
+  Text,
+  Avatar,
+  AvatarGroup,
+  Icon,
+  useToast,
+} from "@chakra-ui/react";
+import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
-import { useTranslations } from "@/lib/typed-translations";
+import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
+import { getPersonLabel } from "@/util/formatters";
+import { addAttendee, removeAttendee } from "@/services/events/api";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import { useQueryClient } from "@tanstack/react-query";
+import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
 
-export default function EventEnrollment({
-  eventType,
-}: {
-  eventType?: EventType;
-}) {
-  const [playerA, setPlayerA] = useState("");
-  const [playerB, setPlayerB] = useState("");
-  const t = useTranslations("components.EventPage.EventEnrollment");
+type EventEnrollmentProps = {
+  event: EventSchemaTypePopulated;
+};
 
-  const buttonLabel =
-    eventType === EventType.TOURNAMENT_PAIRS
-      ? t("button.tournament")
-      : t("button.event");
+export default function EventEnrollment({ event }: EventEnrollmentProps) {
+  const participants = event.attendees;
+  const eventId = event.id;
+  const isEnrolled = event.isAttending ?? false;
+  const participantsCount = participants.length;
+
+  const t = useTranslations("pages.EventPage.EventEnrollment");
+  const tValidation = useTranslationsWithFallback();
+
+  const querryClient = useQueryClient();
+  const toast = useToast();
+
+  const enrollMutation = useActionMutation({
+    action: () => {
+      const promise = addAttendee({ eventId, groupId: event.group.id });
+      toast.promise(promise, {
+        loading: { title: t("enroll.toast.loading") },
+        success: { title: t("enroll.toast.success") },
+        error: (err: MutationOrQuerryError<typeof addAttendee>) => {
+          const errKey = getMessageKeyFromError(err, {
+            generalErrorKey:
+              "pages.EventPage.EventEnrollment.enroll.toast.errorDefault",
+          });
+          return { title: tValidation(errKey) };
+        },
+      });
+      return promise;
+    },
+    onSuccess: () => {
+      querryClient.invalidateQueries({
+        queryKey: ["event"],
+      });
+    },
+  });
+
+  const unenrollMutation = useActionMutation({
+    action: () => {
+      const promise = removeAttendee({ eventId, groupId: event.group.id });
+      toast.promise(promise, {
+        loading: { title: t("unenroll.toast.loading") },
+        success: { title: t("unenroll.toast.success") },
+        error: (err: MutationOrQuerryError<typeof removeAttendee>) => {
+          const errKey = getMessageKeyFromError(err, {
+            generalErrorKey:
+              "pages.EventPage.EventEnrollment.unenroll.toast.errorDefault",
+          });
+          return { title: tValidation(errKey) };
+        },
+      });
+      return promise;
+    },
+    onSuccess: () => {
+      querryClient.invalidateQueries({
+        queryKey: ["event"],
+      });
+    },
+  });
 
   return (
     <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
@@ -28,40 +95,53 @@ export default function EventEnrollment({
           fontSize="sm"
           barOrientation="horizontal"
         />
-        {eventType === EventType.TOURNAMENT_PAIRS ? (
-          //TODO: zapisy narazie nie działają, więc to tymczasowe
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} w="100%">
-            <Input
-              placeholder={t("placeholder.playerA")}
-              value={playerA}
-              onChange={(e) => setPlayerA(e.target.value)}
-              size={{ base: "sm", md: "md" }}
-              fontSize={{ base: "sm", md: "md" }}
-              _placeholder={{ fontSize: { base: "sm", md: "md" } }}
-            />
-            <Input
-              placeholder={t("placeholder.playerB")}
-              value={playerB}
-              onChange={(e) => setPlayerB(e.target.value)}
-              size={{ base: "sm", md: "md" }}
-              fontSize={{ base: "sm", md: "md" }}
-              _placeholder={{ fontSize: { base: "sm", md: "md" } }}
-            />
-          </SimpleGrid>
-        ) : null}
 
-        <Button
-          w="100%"
-          colorScheme="accent"
-          variant="solid"
-          onClick={() => {
-            //TODO: implement enrollment action
-          }}
-          fontSize={{ base: "sm", md: "md" }}
-          py={{ base: 2, md: 3 }}
-        >
-          {buttonLabel}
-        </Button>
+        <HStack spacing={4} w="100%" align="center" justify="space-between">
+          <HStack spacing={3} align="center">
+            {participantsCount && (
+              <AvatarGroup size="sm" max={4}>
+                {participants.slice(0, 4).map((p, i) => {
+                  return <Avatar key={i} name={getPersonLabel(p)} />;
+                })}
+              </AvatarGroup>
+            )}
+            <VStack spacing={0} align="start">
+              <Text fontWeight="semibold">
+                {participantsCount
+                  ? t("participantsCount.many", { count: participantsCount })
+                  : t("participantsCount.none")}
+              </Text>
+            </VStack>
+          </HStack>
+        </HStack>
+
+        {isEnrolled ? (
+          <Button
+            leftIcon={<Icon as={FaUserMinus} />}
+            colorScheme="red"
+            variant="outline"
+            w="100%"
+            onClick={() => {
+              unenrollMutation.mutateAsync({});
+            }}
+            fontSize={{ base: "sm", md: "md" }}
+          >
+            {t("unenroll.button")}
+          </Button>
+        ) : (
+          <Button
+            leftIcon={<Icon as={FaUserPlus} />}
+            colorScheme="accent"
+            variant="solid"
+            w="100%"
+            onClick={() => {
+              enrollMutation.mutateAsync({});
+            }}
+            fontSize={{ base: "sm", md: "md" }}
+          >
+            {t("enroll.button")}
+          </Button>
+        )}
       </VStack>
     </Box>
   );

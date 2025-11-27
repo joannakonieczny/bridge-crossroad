@@ -2,7 +2,6 @@
 
 import { Box, Flex, VStack } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import { EventType } from "@/club-preset/event-type";
 import EventBanner from "@/components/pages/with-onboarding/calendar/event-page/EventBanner";
 import EventDetails from "@/components/pages/with-onboarding/calendar/event-page/EventDetails";
 import EventSpecificData from "@/components/pages/with-onboarding/calendar/event-page/EventSpecificData";
@@ -33,12 +32,7 @@ export default function EventPage() {
         </Box>
         <VStack spacing="2rem" align="stretch" pb={8}>
           <EventBanner event={eventQ.data} loading={isLoading} />
-          {(eventQ.data?.data?.type === EventType.TOURNAMENT_PAIRS ||
-            eventQ.data?.data?.type === EventType.TOURNAMENT_TEAMS ||
-            eventQ.data?.data?.type === EventType.OTHER) && (
-            <EventEnrollment eventType={eventQ.data?.data?.type} />
-          )}
-
+          {eventQ.data && <EventEnrollment event={eventQ.data} />}
           <EventDetails event={eventQ.data} loading={isLoading} />
           <EventSpecificData
             eventData={eventQ.data?.data}
