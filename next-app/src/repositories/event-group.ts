@@ -608,3 +608,88 @@ export async function addPairToTournamentEvent({
 
   return { event: savedEvent };
 }
+
+type RemovePairFromTournamentEventInput = {
+  eventId: EventIdType;
+  userId: UserIdType;
+};
+
+export async function removePairFromTournamentEvent({
+  eventId,
+  userId,
+}: RemovePairFromTournamentEventInput) {
+  await dbConnect();
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
+  checkTrue(
+    existingEvent.data.type === EventType.TOURNAMENT_PAIRS,
+    "Event must be of type TOURNAMENT_PAIRS to remove a pair"
+  );
+
+  const { contestantsPairs } = existingEvent.data as ITournamentPairsData;
+
+  // Find the pair that contains the user
+  const pairIndex = contestantsPairs.findIndex(
+    (p) =>
+      p?.first?.toString() === userId.toString() ||
+      p?.second?.toString() === userId.toString()
+  );
+
+  checkTrue(
+    pairIndex !== -1,
+    `User ${userId} is not enrolled in any pair for this tournament`
+  );
+
+  // Remove the entire pair
+  (existingEvent.data as ITournamentPairsData).contestantsPairs.splice(
+    pairIndex,
+    1
+  );
+
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
+}
+
+type RemoveTeamFromTournamentEventInput = {
+  eventId: EventIdType;
+  userId: UserIdType;
+};
+
+export async function removeTeamFromTournamentEvent({
+  eventId,
+  userId,
+}: RemoveTeamFromTournamentEventInput) {
+  await dbConnect();
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
+  checkTrue(
+    existingEvent.data.type === EventType.TOURNAMENT_TEAMS,
+    "Event must be of type TOURNAMENT_TEAMS to remove a team"
+  );
+
+  const { teams } = existingEvent.data as ITournamentTeamsData;
+
+  // Find the team that contains the user
+  const teamIndex = teams.findIndex((t) =>
+    t.members.some((member) => member.toString() === userId.toString())
+  );
+
+  checkTrue(
+    teamIndex !== -1,
+    `User ${userId} is not enrolled in any team for this tournament`
+  );
+
+  // Remove the entire team
+  (existingEvent.data as ITournamentTeamsData).teams.splice(teamIndex, 1);
+
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
+}

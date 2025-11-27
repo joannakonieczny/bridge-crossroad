@@ -4,6 +4,8 @@ import {
   addEvent,
   addPairToTournamentEvent,
   addTeamToTournamentEvent,
+  removePairFromTournamentEvent,
+  removeTeamFromTournamentEvent,
 } from "@/repositories/event-group";
 import {
   withinOwnGroupAction,
@@ -183,18 +185,35 @@ export const enrollToEventTournament = withinOwnGroupAction
     }
   });
 
-// TODO: Mock endpoint - zastąpić prawdziwym endpointem w przyszłości
 export const unenrollFromEventTournament = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(havingEventId))
   .action(async ({ parsedInput: { eventId }, ctx: { userId } }) => {
-    // Mock implementation - w przyszłości połączyć z prawdziwym API
-    console.log(`Mock: Unenrolling user ${userId} from event ${eventId}`);
-
-    // Symulacja sukcesu - w prawdziwej implementacji należy:
-    // 1. Znaleźć parę/drużynę użytkownika w evencie
-    // 2. Usunąć tę parę/drużynę z listy uczestników
-    // 3. Zwrócić zaktualizowany event
-
     const event = await getEventRepository({ eventId });
-    return sanitizeEventPopulated(event);
+    const eventType = event.data.type;
+
+    switch (eventType) {
+      case EventType.TOURNAMENT_PAIRS: {
+        const res = await removePairFromTournamentEvent({
+          eventId,
+          userId,
+        });
+        return sanitizeEvent(res.event);
+      }
+      case EventType.TOURNAMENT_TEAMS: {
+        const res = await removeTeamFromTournamentEvent({
+          eventId,
+          userId,
+        });
+        return sanitizeEvent(res.event);
+      }
+      default: {
+        returnValidationErrors(havingEventId, {
+          eventId: {
+            _errors: [
+              "validation.model.event.data.type.unsupportedTournamentType" satisfies TKey,
+            ],
+          },
+        });
+      }
+    }
   });
