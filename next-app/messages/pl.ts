@@ -875,6 +875,7 @@ const messages = {
         noCoach: "Brak trenera",
         noAdditionalData: "Brak dodatkowych danych",
         pairs: "Pary",
+        teams: "Drużyny",
         half: {
           first: "Pierwsza",
           second: "Druga",
