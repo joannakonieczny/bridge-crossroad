@@ -138,9 +138,9 @@ export default function EventSpecificData({
           <ResponsiveText fontWeight="bold">{t("teams")}</ResponsiveText>
           <Center>
             <OrderedList mt={1} spacing={2}>
-              {eventData.teams.map((p, i) => (
+              {eventData.teams.map((t, i) => (
                 <ListItem
-                  key={`${p.name}-${i}`}
+                  key={`${t.name}-${i}`}
                   sx={{
                     "::-webkit-list-marker": {
                       color: "var(--chakra-colors-accent-500)",
@@ -148,11 +148,9 @@ export default function EventSpecificData({
                     "::marker": { color: "var(--chakra-colors-accent-500)" },
                   }}
                 >
-                  {p.members.map((m, j) => (
-                    <ResponsiveText as="span" key={j}>
-                      {getPersonLabel(m)}
-                    </ResponsiveText>
-                  ))}
+                  <ResponsiveText as="span">
+                    {t.members.map(getPersonLabel).join(" / ")}
+                  </ResponsiveText>
                 </ListItem>
               ))}
             </OrderedList>
