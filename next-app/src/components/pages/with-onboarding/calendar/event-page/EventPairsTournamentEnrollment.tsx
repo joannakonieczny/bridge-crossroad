@@ -1,34 +1,64 @@
 "use client";
 
-import { Box, VStack, Button, Icon, useToast, Select } from "@chakra-ui/react";
+import { Box, VStack, Button, Icon, useToast } from "@chakra-ui/react";
 import { FaUserPlus } from "react-icons/fa";
-import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslations } from "@/lib/typed-translations";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
+import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import { useGroupQuery, useUserInfoQuery } from "@/lib/queries";
+import { getPersonLabel } from "@/util/formatters";
+import { enrollToEventTournament } from "@/services/events/api";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { withEmptyToUndefined } from "@/schemas/common";
+import SelectInput from "@/components/common/form/SelectInput";
+import { useMemo } from "react";
 
 type EventPairsTournamentEnrollmentProps = {
   event: EventSchemaTypePopulated;
 };
 
+const formSchema = z.object({
+  partnerId: z.string().nonempty(),
+});
+
+type FormSchemaType = z.infer<typeof formSchema>;
+
 export default function EventPairsTournamentEnrollment({
   event,
 }: EventPairsTournamentEnrollmentProps) {
-  const [selectedPartnerId, setSelectedPartnerId] = useState<string>("");
-
   const t = useTranslations("pages.EventPage.EventPairsTournamentEnrollment");
+  const tValidation = useTranslationsWithFallback();
+
+  const { handleSubmit: handleFormSubmit, control: formControl } = useForm({
+    resolver: zodResolver(withEmptyToUndefined(formSchema)),
+  });
 
   const querryClient = useQueryClient();
   const toast = useToast();
 
-  // TODO: Replace with actual tournament enrollment action
+  const userInfoQ = useUserInfoQuery();
+  const groupQ = useGroupQuery(event.group.id);
+
+  const currentUserId = userInfoQ.data?.id;
+  const availablePartners = useMemo(() => {
+    if (!groupQ.data || !currentUserId) return [];
+    return groupQ.data.members.filter((m) => m.id !== currentUserId);
+  }, [groupQ.data, currentUserId]);
+
+  const isDisabled =
+    !groupQ.data || !availablePartners.length || !userInfoQ.data;
+
   const enrollMutation = useActionMutation({
-    action: async () => {
-      // Placeholder for tournament enrollment logic
-      return Promise.resolve();
-    },
+    action: enrollToEventTournament,
     onSuccess: () => {
       querryClient.invalidateQueries({
         queryKey: ["event"],
@@ -36,59 +66,73 @@ export default function EventPairsTournamentEnrollment({
     },
   });
 
-  const handleEnroll = () => {
-    if (!selectedPartnerId) {
-      toast({
-        title: "Wybierz partnera",
-        status: "warning",
-      });
-      return;
-    }
+  function handleWithToast(data: FormSchemaType) {
+    const promise = enrollMutation.mutateAsync({
+      eventId: event.id,
+      groupId: event.group.id,
+      pair: {
+        first: currentUserId || "",
+        second: data.partnerId,
+      },
+    });
 
-    const promise = enrollMutation.mutateAsync({});
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
-      error: { title: t("toast.errorDefault") },
+      error: (err: MutationOrQuerryError<typeof enrollToEventTournament>) => {
+        const errKey = getMessageKeyFromError(err, {
+          generalErrorKey:
+            "pages.EventPage.EventPairsTournamentEnrollment.toast.errorDefault",
+        });
+        return { title: tValidation(errKey) };
+      },
     });
-  };
-
-  // TODO: Fetch available partners from group members
-  const availablePartners = event.group.members || [];
+  }
 
   return (
     <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
-      <VStack align="start" spacing={4}>
-        <ResponsiveHeading
-          text={t("heading")}
-          fontSize="sm"
-          barOrientation="horizontal"
-        />
+      <form onSubmit={handleFormSubmit(handleWithToast)}>
+        <VStack align="start" spacing={4}>
+          <ResponsiveHeading
+            text={t("heading")}
+            fontSize="sm"
+            barOrientation="horizontal"
+          />
 
-        <Select
-          placeholder={t("selectPartner.placeholder")}
-          value={selectedPartnerId}
-          onChange={(e) => setSelectedPartnerId(e.target.value)}
-          bg="white"
-        >
-          {availablePartners.map((member) => (
-            <option key={member.id} value={member.id}>
-              {member.name.firstName} {member.name.lastName}
-            </option>
-          ))}
-        </Select>
+          <Controller
+            control={formControl}
+            name="partnerId"
+            render={({ field, fieldState: { error } }) => (
+              <SelectInput
+                placeholder={t("selectPartner.placeholder")}
+                isInvalid={!!error}
+                errorMessage={tValidation(error?.message)}
+                options={availablePartners.map((m) => ({
+                  value: m.id,
+                  label: getPersonLabel(m),
+                }))}
+                onSelectProps={{
+                  ...field,
+                }}
+                isDisabled={isDisabled}
+                isLoading={groupQ.isLoading || userInfoQ.isLoading}
+              />
+            )}
+          />
 
-        <Button
-          leftIcon={<Icon as={FaUserPlus} />}
-          colorScheme="accent"
-          variant="solid"
-          w="100%"
-          onClick={handleEnroll}
-          fontSize={{ base: "sm", md: "md" }}
-        >
-          {t("button")}
-        </Button>
-      </VStack>
+          <Button
+            leftIcon={<Icon as={FaUserPlus} />}
+            colorScheme="accent"
+            variant="solid"
+            w="100%"
+            type="submit"
+            fontSize={{ base: "sm", md: "md" }}
+            isDisabled={isDisabled}
+          >
+            {t("button")}
+          </Button>
+        </VStack>
+      </form>
     </Box>
   );
 }
