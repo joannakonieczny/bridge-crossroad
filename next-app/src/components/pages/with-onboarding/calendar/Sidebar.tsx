@@ -13,9 +13,10 @@ import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
 import EventForm from "./event-form/EventForm";
-import { useEventsForUserQuery } from "@/lib/queries";
+import { useRecentEventsQuery } from "@/lib/queries";
 import { ROUTES } from "@/routes";
-import dayjs from "dayjs";
+
+const EventsToDisplay = 4;
 
 export default function Sidebar() {
   const router = useRouter();
@@ -24,24 +25,7 @@ export default function Sidebar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
 
-  const eventsQ = useEventsForUserQuery({
-    start: dayjs().toDate(),
-    end: dayjs().add(1, "month").toDate(),
-  });
-
-  const upcomingEvents = [...(eventsQ.data?.events ?? [])]
-    .sort(
-      (a, b) =>
-        new Date(a.duration.startsAt).getTime() -
-        new Date(b.duration.startsAt).getTime()
-    )
-    .slice(0, 4);
-
-  const sanitizedEvents = upcomingEvents.map((event) => ({
-    title: event.title,
-    imageUrl: event.imageUrl,
-    href: ROUTES.calendar.index + `/${event.id}`,
-  }));
+  const eventsQ = useRecentEventsQuery(EventsToDisplay);
 
   if (!isVisible) return null;
 
@@ -70,12 +54,12 @@ export default function Sidebar() {
       </Box>
 
       <VStack spacing={4} align="stretch" mb="6rem">
-        {sanitizedEvents.map((event) => (
+        {eventsQ.data?.map((event) => (
           <SidebarCard
             key={event.title}
             title={event.title}
             imageUrl={event.imageUrl}
-            href={event.href}
+            href={ROUTES.calendar.eventDetails(event.id)}
           />
         ))}
       </VStack>
