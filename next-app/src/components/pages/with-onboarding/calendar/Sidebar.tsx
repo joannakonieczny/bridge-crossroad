@@ -53,7 +53,7 @@ export default function Sidebar() {
         </Button>
       </Box>
 
-      <VStack spacing={4} align="stretch" mb="6rem">
+      <VStack spacing={4} align="stretch">
         {eventsQ.data?.map((event) => (
           <SidebarCard
             key={event.title}
@@ -62,9 +62,6 @@ export default function Sidebar() {
             href={ROUTES.calendar.eventDetails(event.id)}
           />
         ))}
-      </VStack>
-
-      <Box position="absolute" bottom="2rem" left={4} right={8}>
         <Button
           w="100%"
           size="sm"
@@ -75,7 +72,7 @@ export default function Sidebar() {
         >
           {t("seeMore")}
         </Button>
-      </Box>
+      </VStack>
       <EventForm isOpen={isOpen} onClose={onClose} />
     </Box>
   );
