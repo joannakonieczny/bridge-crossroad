@@ -51,7 +51,7 @@ export default function EventSpecificData({
   loading?: boolean;
 }) {
   const t = useTranslations("components.EventPage.EventSpecificData");
-  const tTurnamentTypes = useTranslations("common.tournamentType");
+  const tTournamentTypes = useTranslations("common.tournamentType");
   if (loading || !eventData) {
     return (
       <Box bgColor="bg" p={4}>
@@ -77,7 +77,7 @@ export default function EventSpecificData({
               <ResponsiveText>
                 <b>{t("labels.type")}</b>{" "}
                 {eventData?.tournamentType
-                  ? tTurnamentTypes(eventData.tournamentType)
+                  ? tTournamentTypes(eventData.tournamentType)
                   : "-"}
               </ResponsiveText>
             </Box>
@@ -109,6 +109,58 @@ export default function EventSpecificData({
       );
     }
 
+    case EventType.TOURNAMENT_TEAMS: {
+      return (
+        <Box bgColor="bg" p={4}>
+          <ResponsiveHeading
+            text={t("tournamentHeading")}
+            fontSize="sm"
+            barOrientation="horizontal"
+          />
+
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={2}>
+            <Box>
+              <ResponsiveText>
+                <b>{t("labels.type")}</b>{" "}
+                {eventData?.tournamentType
+                  ? tTournamentTypes(eventData.tournamentType)
+                  : "-"}
+              </ResponsiveText>
+            </Box>
+            <Box>
+              <ResponsiveText>
+                <b>{t("labels.arbiter")}</b>{" "}
+                {eventData?.arbiter ? getPersonLabel(eventData.arbiter) : "-"}
+              </ResponsiveText>
+            </Box>
+          </SimpleGrid>
+
+          <ResponsiveText fontWeight="bold">{t("teams")}</ResponsiveText>
+          <Center>
+            <OrderedList mt={1} spacing={2}>
+              {eventData.teams.map((p, i) => (
+                <ListItem
+                  key={`${p.name}-${i}`}
+                  sx={{
+                    "::-webkit-list-marker": {
+                      color: "var(--chakra-colors-accent-500)",
+                    },
+                    "::marker": { color: "var(--chakra-colors-accent-500)" },
+                  }}
+                >
+                  {p.members.map((m, j) => (
+                    <ResponsiveText as="span" key={j}>
+                      {getPersonLabel(m)}
+                    </ResponsiveText>
+                  ))}
+                </ListItem>
+              ))}
+            </OrderedList>
+          </Center>
+        </Box>
+      );
+    }
+
     case EventType.LEAGUE_MEETING: {
       return (
         <Box bgColor="bg" p={4}>
@@ -120,7 +172,7 @@ export default function EventSpecificData({
           <ResponsiveText mb={3}>
             <b>{t("labels.type")}</b>{" "}
             {eventData?.tournamentType
-              ? tTurnamentTypes(eventData.tournamentType)
+              ? tTournamentTypes(eventData.tournamentType)
               : "-"}
           </ResponsiveText>
 
