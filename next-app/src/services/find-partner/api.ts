@@ -7,7 +7,10 @@ import {
   addInterestedUser,
   removeInterestedUser,
   changeStatusOfManyPartnershipPosts,
+  getPartnershipPost,
+  changeStatusOfPartnershipPost,
 } from "@/repositories/partnership-posts";
+import { getEvent } from "@/repositories/event-group";
 import {
   withinOwnGroupAction,
   withinOwnPartnershipPostAction,
@@ -15,6 +18,7 @@ import {
 import {
   addPartnershipPostSchema,
   listPartnershipPostsSchema,
+  modifyPartnershipPostsStatusSchema,
 } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
 import { havingPartnershipPostId } from "@/schemas/model/partnership-post/partnership-post-schema";
 import { getById as getGroupById } from "@/repositories/groups";
@@ -28,6 +32,7 @@ import {
 } from "@/sanitizers/server-only/partnership-post-sanitize";
 import { partition } from "@/util/helpers";
 import { RepositoryError } from "@/repositories/common";
+import { returnValidationErrors } from "next-safe-action";
 
 export const listPartnershipPosts = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(listPartnershipPostsSchema))
@@ -144,3 +149,37 @@ export const deletePartnershipPost = withinOwnPartnershipPostAction.action(
     }
   }
 );
+
+export const modifyPartnershipPostsStatus = withinOwnPartnershipPostAction
+  .inputSchema(async (s) => s.merge(modifyPartnershipPostsStatusSchema))
+  .action(async ({ parsedInput: { newStatus, partnershipPostId } }) => {
+    const currentPost = await getPartnershipPost({ partnershipPostId });
+
+    let isExpired = false;
+    const now = new Date();
+
+    const postData = currentPost.data;
+    if (postData.type === PartnershipPostType.PERIOD) {
+      isExpired = postData.endsAt < now;
+    } else if (postData.type === PartnershipPostType.SINGLE) {
+      const event = await getEvent({ eventId: postData.eventId.toString() });
+      isExpired = event.duration.endsAt < now;
+    }
+
+    // If expired, only allow changing to EXPIRED status
+    if (isExpired && newStatus !== PartnershipPostStatus.EXPIRED) {
+      returnValidationErrors(modifyPartnershipPostsStatusSchema, {
+        newStatus: {
+          _errors: [
+            "validation.model.partnershipPost.status.cannotChangeExpired",
+          ],
+        },
+      });
+    }
+
+    const res = await changeStatusOfPartnershipPost({
+      partnershipPostId,
+      status: newStatus,
+    });
+    return sanitizePartnershipPost(res);
+  });

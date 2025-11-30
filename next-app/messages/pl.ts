@@ -764,6 +764,10 @@ const messages = {
         description: {
           max: `Opis nie może być dłuższy niż ${PARTNERSHIP_POST.description.max} znaków`,
         },
+        status: {
+          cannotChangeExpired:
+            "Nie można zmienić statusu wygasłego ogłoszenia na inny niż EXPIRED",
+        },
       },
     },
     pages: {

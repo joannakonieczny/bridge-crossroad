@@ -56,3 +56,7 @@ export const listPartnershipPostsSchema = z.object({
     })
     .optional(),
 });
+
+export const modifyPartnershipPostsStatusSchema = z.object({
+  newStatus: z.nativeEnum(PartnershipPostStatus),
+});
