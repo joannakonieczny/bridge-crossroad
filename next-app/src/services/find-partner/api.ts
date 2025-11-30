@@ -18,7 +18,7 @@ import {
 import {
   addPartnershipPostSchema,
   listPartnershipPostsSchema,
-  modifyPartnershipPostsStatusSchema,
+  modifyPartnershipPostStatusSchema,
 } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
 import { havingPartnershipPostId } from "@/schemas/model/partnership-post/partnership-post-schema";
 import { getById as getGroupById } from "@/repositories/groups";
@@ -150,8 +150,8 @@ export const deletePartnershipPost = withinOwnPartnershipPostAction.action(
   }
 );
 
-export const modifyPartnershipPostsStatus = withinOwnPartnershipPostAction
-  .inputSchema(async (s) => s.merge(modifyPartnershipPostsStatusSchema))
+export const modifyPartnershipPostStatus = withinOwnPartnershipPostAction
+  .inputSchema(async (s) => s.merge(modifyPartnershipPostStatusSchema))
   .action(async ({ parsedInput: { newStatus, partnershipPostId } }) => {
     const currentPost = await getPartnershipPost({ partnershipPostId });
 
@@ -168,7 +168,7 @@ export const modifyPartnershipPostsStatus = withinOwnPartnershipPostAction
 
     // If expired, only allow changing to EXPIRED status
     if (isExpired && newStatus !== PartnershipPostStatus.EXPIRED) {
-      returnValidationErrors(modifyPartnershipPostsStatusSchema, {
+      returnValidationErrors(modifyPartnershipPostStatusSchema, {
         newStatus: {
           _errors: [
             "validation.model.partnershipPost.status.cannotChangeExpired",
