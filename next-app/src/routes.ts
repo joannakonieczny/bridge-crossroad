@@ -42,7 +42,7 @@ export const ROUTES = {
   tools: "/tools",
   files: {
     upload: "/api/files/upload",
-    getShared: (path: string) => mergeUrls("/api/files/shared", `${path}`),
+    getShared: (path: string) => mergeUrls("/api/files/shared", path),
   },
 } as const;
 

@@ -35,9 +35,10 @@ export const invitationCodeSchema = z
   );
 
 export const imageUrlSchema = z
-  .string()
-  .max(imageUrl.max, "validation.model.group.imageUrl.max" satisfies TKey)
-  .url("validation.model.group.imageUrl.url" satisfies TKey);
+  .string({
+    message: "validation.model.group.imageUrl.required" satisfies TKey,
+  })
+  .max(imageUrl.max, "validation.model.group.imageUrl.max" satisfies TKey);
 
 // additional
 export const havingGroupId = z.object({

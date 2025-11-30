@@ -432,7 +432,7 @@ const groupModelValidation = {
   },
   imageUrl: {
     max: `URL obrazka nie może być dłuższy niż ${GROUP.imageUrl.max} znaków`,
-    url: "Podaj poprawny adres URL",
+    required: "Podaj poprawny adres URL",
   },
 };
 
@@ -451,7 +451,7 @@ const eventModelValidation = {
   },
   imageUrl: {
     max: `URL obrazka nie może być dłuższy niż ${EVENT.imageUrl.max} znaków`,
-    url: "Podaj poprawny adres URL",
+    required: "Podaj poprawny adres URL",
   },
   duration: {
     invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",

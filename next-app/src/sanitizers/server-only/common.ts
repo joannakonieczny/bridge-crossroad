@@ -1,3 +1,5 @@
+"server-only";
+
 import { ROUTES } from "@/routes";
 
 export function sanitizeFileUrl(fileUrl?: string) {
