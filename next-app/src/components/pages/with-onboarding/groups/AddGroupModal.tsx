@@ -19,6 +19,7 @@ import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import FormInput from "@/components/common/form/FormInput";
 import FileUploader from "@/components/common/form/FileUploader/FileUploader";
+import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createNewGroup } from "@/services/groups/api";
@@ -26,7 +27,7 @@ import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import type { CreateGroupFormType } from "@/schemas/pages/with-onboarding/groups/groups-types";
@@ -43,7 +44,23 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   const tValidation = useTranslationsWithFallback();
 
   const queryClient = useQueryClient();
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+
+  const {
+    selectedImage,
+    uploadImage,
+    resetImage,
+    handleImageChange,
+    isUploading,
+    isError: isUploadError,
+  } = useImageUpload({
+    text: {
+      toast: {
+        loading: { title: "toast.uploadingImageLoading" },
+        success: { title: "toast.uploadingImageSuccess" },
+        error: { title: "toast.uploadingImageError" },
+      },
+    },
+  });
 
   const { handleSubmit, control, setError, reset, setValue } = useForm({
     resolver: zodResolver(withEmptyToUndefined(createGroupFormSchema)),
@@ -54,31 +71,12 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
     },
   });
 
-  const uploadImageMutation = useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("/api/files/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-
-      const data = await response.json();
-      return data.filePath as string;
-    },
-  });
-
   const createGroupAction = useActionMutation({
     action: createNewGroup,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.joinedGroups });
       reset();
-      setSelectedImage(null);
+      resetImage();
       onClose();
     },
     onError: (err) => {
@@ -88,19 +86,12 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   });
 
   const onSubmit = async (data: CreateGroupFormType) => {
-    if (selectedImage) {
-      const promise = uploadImageMutation.mutateAsync(selectedImage);
-      toast.promise(promise, {
-        loading: { title: "upload zdjecia" },
-        success: { title: "udalo sie uploadowac" },
-        error: { title: "nie udalo sie uploadowac" },
-      });
-      const uploadedPath = await promise.catch(() => undefined);
+    const uploadedPath = await uploadImage();
 
-      setValue("imageUrl", uploadedPath);
-      data.imageUrl = uploadedPath;
-      if (!uploadedPath) return; // stop if upload failed
-    }
+    // check upload error
+    if (selectedImage && !uploadedPath) return;
+    setValue("imageUrl", uploadedPath);
+    data.imageUrl = uploadedPath;
 
     const promise = createGroupAction.mutateAsync(data);
     toast.promise(promise, {
@@ -159,20 +150,15 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
               <FileUploader
                 placeholder="Wybierz zdjęcie grupy"
                 genericFileType="image"
-                onChange={(file) => {
-                  setSelectedImage(file);
-                  if (!file) {
-                    uploadImageMutation.reset();
-                  }
-                }}
-                isUploadError={uploadImageMutation.isError}
+                onChange={handleImageChange}
+                isUploadError={isUploadError}
               />
 
               <FormMainButton
                 text={t("submitButton")}
                 type="submit"
                 onElementProps={{
-                  isLoading: uploadImageMutation.isPending,
+                  isLoading: isUploading,
                 }}
               />
             </Stack>
