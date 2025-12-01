@@ -122,7 +122,10 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
                 )}
               />
 
-              <ImageUploader placeholder="Wybierz zdjęcie grupy" />
+              <ImageUploader
+                placeholder="Wybierz zdjęcie grupy"
+                genericFileType="image"
+              />
 
               <FormMainButton text={t("submitButton")} type="submit" />
             </Stack>
