@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex, IconButton, Button, Select } from "@chakra-ui/react";
 // replace Chakra icon with react-icons chevron
 import { FiChevronDown } from "react-icons/fi";
-import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import { addInterested, removeInterested } from "@/services/find-partner/api";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/queries";
+import { useToast } from "@chakra-ui/react";
 
 type Announcement = {
   id: number | string;
@@ -15,9 +17,13 @@ type Announcement = {
   characteristics?: string[]; 
   frequency: string;
   preferredSystem: string;
+  isOwnByUser: boolean;
   description?: string;
   interestedUsers?: Array<any>;
+  isUserInterested?: boolean;
   isInterested?: boolean;
+  groupId?: string;
+  
 };
 
 export default function Annoucment({ a }: { a: Announcement }) {
@@ -25,7 +31,58 @@ export default function Annoucment({ a }: { a: Announcement }) {
   const [selectedInterestedUser, setSelectedInterestedUser] = useState<string | undefined>(
     undefined
   );
+  // prefer server-provided isUserInterested; fallback to legacy isInterested then false
+  const [interested, setInterested] = useState<boolean>(
+    a.isUserInterested ?? a.isInterested ?? false
+  );
+  const [pending, setPending] = useState(false); // local pending flag while mutation is in-flight (useActionMutation implementation may not expose isLoading)
+  
+  const toast = useToast();
+  const queryClient = useQueryClient();
 
+  // mutations: show toasts in callbacks
+  const addAction = useActionMutation({
+    action: addInterested,
+    onSuccess: () => {
+      setInterested(true);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts });
+      toast({ status: "success", title: "Zapisano na zgłoszenie - zostaniesz powiadomiony, jeśli zgłoszeniodawca zatwierdzi chęć wspólnej gry." });
+    },
+    onError: () => {
+      toast({ status: "error", title: "Błąd podczas zapisywania" });
+    },
+  });
+
+  const removeAction = useActionMutation({
+    action: removeInterested,
+    onSuccess: () => {
+      setInterested(false);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts });
+      toast({ status: "success", title: "Wypisano z zgłoszenia" });
+    },
+    onError: () => {
+      toast({ status: "error", title: "Błąd podczas wypisywania" });
+    },
+  });
+
+  const handleToggleInterest = async () => {
+    if (pending) return;
+    setPending(true);
+    const payload = { partnershipPostId: String(a.id), groupId: String(a.groupId ?? "") };
+    try {
+      if (!interested) {
+        await addAction.mutateAsync(payload);
+      } else {
+        await removeAction.mutateAsync(payload);
+      }
+      // success handled in onSuccess
+    } catch {
+      // error handled in onError
+    } finally {
+      setPending(false);
+    }
+  };
+  
   return (
     <>
       <Tr
@@ -130,19 +187,21 @@ export default function Annoucment({ a }: { a: Announcement }) {
               </Box>
 
               <Box>
-                {/* teraz przycisk nie wykonuje żadnej akcji */}
-                <Button
-                  colorScheme="accent"
-                  onClick={() => {}}
+                {/* główny przycisk zapisania/wyrejestrowania */}
+                {a.isOwnByUser && <Button
+                  colorScheme={interested ? "red" : "accent"}
+                  onClick={handleToggleInterest}
+                  isLoading={pending}
+                  loadingText={interested ? "Wypisywanie..." : "Zapisywanie..."}
                   size="sm"
                 >
-                  Zapisz się
-                </Button>
+                  {interested ? "Anuluj" : "Jestem zainteresowany"}
+                </Button>}
               </Box>
             </Flex>
-
+            
             {/* dropdown below description and button */}
-            <Box mt={4}>
+            {!a.isOwnByUser && <Box mt={4}>
               <Flex direction={{ base: "column", md: "row" }} gap={2} align="center">
                 <Select
                   flex={1}
@@ -170,7 +229,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
                   Zapisz
                 </Button>
               </Flex>
-            </Box>
+            </Box>}
           </Td>
         </Tr>
       )}

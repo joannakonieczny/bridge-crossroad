@@ -88,11 +88,7 @@ export default function AnnoucmentsList() {
   const postsQuery = usePartnershipPostsQuery(
     { page, limit: PartnershipPostsLimitPerPage, groupId: groupIdParam, status, type, onboardingData, onboardingBucket },
   );
-
-  useEffect(() => {
-    console.log("partnership posts:", postsQuery.data);
-  }, [postsQuery.data]);
-
+  
   if (postsQuery.isLoading) {
     return (
       <Box bg="bg" p={4} borderRadius="md">
@@ -131,8 +127,11 @@ export default function AnnoucmentsList() {
     );
   }
 
+  // defensive read: if data is an array use it, otherwise use data.data or fallback to []
   const raw = postsQuery.data as any;
-  const posts: PartnershipPostSchemaTypePopulated[] = Array.isArray(raw) ? raw : raw.data;
+  const posts: PartnershipPostSchemaTypePopulated[] = Array.isArray(raw)
+    ? raw
+    : (raw?.data ?? []);
 
   const parseDate = (s: string) => {
     const cleaned = String(s).replace(/^\$D/, "");
@@ -166,7 +165,7 @@ export default function AnnoucmentsList() {
             const playerNick = owner.nickname;
             const description = p.description;
 
-            const interestedUsers = (p as any).interestedUsers ?? (p as any).intrestedUSers ?? [];
+            const interestedUsers = (p).interestedUsers ?? (p as any).intrestedUSers ?? [];
 
             const ann: any = {
               id,
@@ -177,7 +176,10 @@ export default function AnnoucmentsList() {
               frequency,
               preferredSystem,
               description,
+              groupId: groupIdParam,
+              isUserInterested: (p as any).isUserInterested ?? false,
               interestedUsers,
+              isOwnByUser: p.isOwnByUser ?? false,
             };
 
             return <Annoucment key={id} a={ann} />;

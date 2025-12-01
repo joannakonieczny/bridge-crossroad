@@ -6,7 +6,7 @@ import { FaAngleLeft, FaAngleRight, FaAngleDoubleLeft, FaAngleDoubleRight } from
 
 type PaginationProps = {
   current: number;
-  totalPages: number;
+  totalPages: number | undefined;
   onChange: (page: number) => void;
   /**
    * Optional renderer for page button content.
@@ -27,19 +27,19 @@ export default function Pagination<T = unknown>({
   nextLabel = "Następna",
   size = "sm",
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  if (!totalPages || totalPages <= 1) return null;
 
   const handlePrev = () => {
     if (current > 1) onChange(current - 1);
   };
   const handleNext = () => {
-    if (current < totalPages) onChange(current + 1);
+    if (current < (totalPages ?? 1)) onChange(current + 1);
   };
   const handleFirst = () => {
     if (current > 1) onChange(1);
   };
   const handleLast = () => {
-    if (current < totalPages) onChange(totalPages);
+    if (current < (totalPages ?? 1)) onChange(totalPages ?? 1);
   };
 
   // compute pages to show: first, last, current, current-1, current+1
@@ -48,10 +48,10 @@ export default function Pagination<T = unknown>({
     current - 1,
     current,
     current + 1,
-    totalPages,
+    totalPages ?? 1,
   ]);
   const pages = Array.from(pagesSet)
-    .filter((p) => p >= 1 && p <= totalPages)
+    .filter((p) => p >= 1 && p <= (totalPages ?? 1))
     .sort((a, b) => a - b);
 
   return (
@@ -109,7 +109,7 @@ export default function Pagination<T = unknown>({
           size={size}
           variant="ghost"
           onClick={handleNext}
-          isDisabled={current >= totalPages}
+          isDisabled={current >= (totalPages ?? 1)}
           aria-label={nextLabel}
         >
           <FaAngleRight />
@@ -119,7 +119,7 @@ export default function Pagination<T = unknown>({
           size={size}
           variant="ghost"
           onClick={handleLast}
-          isDisabled={current >= totalPages}
+          isDisabled={current >= (totalPages ?? 1)}
           aria-label="last"
         >
           <FaAngleDoubleRight />

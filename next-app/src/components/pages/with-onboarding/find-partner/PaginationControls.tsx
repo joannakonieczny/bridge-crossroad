@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Pagination from "@/components/common/Pagination";
-// use nuqs to sync page with URL
 import { useQueryState } from "nuqs";
+import { usePartnershipPostsQuery } from "@/lib/queries";
+import { PartnershipPostsLimitPerPage } from "@/club-preset/partnership-post";
 
 export default function PaginationControls() {
   // sync "page" query param with URL; default to 1
@@ -14,17 +15,29 @@ export default function PaginationControls() {
     serialize: (v: number) => String(v ?? 1),
   });
 
-  const totalPages = 4;
+  // read groupId from URL params (nuqs)
+  const [groupIdParamRaw] = useQueryState("groupId");
+  const groupIdParam = groupIdParamRaw ? String(groupIdParamRaw) : undefined;
+
+  // query to get pagination info from server
+  const postsQuery = usePartnershipPostsQuery({ page, groupId: groupIdParam, limit: PartnershipPostsLimitPerPage });
+
+  const totalPages = postsQuery.data?.pagination?.totalPages ?? 1;
+
+  useEffect(() => {console.log(postsQuery.data);}, [postsQuery.data]);
 
   const handleChange = (p: number) => {
-    // write new page to URL; nuqs keeps history by default
     setPage(p);
   };
+
+  useEffect(() => {
+    console.log(postsQuery.data?.pagination?.totalPages);
+  }, [postsQuery.data]);
 
   return (
     <Pagination
       current={page}
-      totalPages={totalPages}
+      totalPages={postsQuery.data?.pagination?.totalPages}
       onChange={handleChange}
       size="sm"
     />
