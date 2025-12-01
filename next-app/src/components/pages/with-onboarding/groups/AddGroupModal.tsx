@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -17,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import FormInput from "@/components/common/form/FormInput";
+import ImageUploader from "@/components/common/form/ImageUploader";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createNewGroup } from "@/services/groups/api";
@@ -119,6 +121,8 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
                   />
                 )}
               />
+
+              <ImageUploader placeholder="Wybierz zdjęcie grupy" />
 
               <FormMainButton text={t("submitButton")} type="submit" />
             </Stack>
