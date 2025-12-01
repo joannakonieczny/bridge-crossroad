@@ -17,6 +17,8 @@ import {
   ALLOWED_MIME_TYPE_IMAGE,
   ALLOWED_MIME,
   MAX_SIZE,
+  ALLOWED_EXT_IMAGE,
+  ALLOWED_EXT,
 } from "@/util/constants";
 
 export type IFileUploaderProps = {
@@ -28,6 +30,7 @@ export type IFileUploaderProps = {
   onElementProps?: FormControlProps;
   value?: string; // URL lub base64 pliku
   onChange?: (file: File | null, preview: string | null) => void;
+  onError?: (error: string) => void;
   genericFileType?: "image" | "any";
   acceptedFormats?: string; // opcjonalne, nadpisuje genericFileType
   maxSizeMB?: number;
@@ -51,11 +54,31 @@ export default function FileUploader(props: IFileUploaderProps) {
   const [fileName, setFileName] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const processFile = (file: File) => {
+    setValidationError(null);
+
+    // Walidacja typu pliku
+    const allowedMimeTypes =
+      genericFileType === "image" ? ALLOWED_MIME_TYPE_IMAGE : ALLOWED_MIME;
+
+    if (!allowedMimeTypes.has(file.type)) {
+      const errorMsg = `Niedozwolony typ pliku: ${file.type}`;
+      setValidationError(errorMsg);
+      props.onError?.(errorMsg);
+      props.onChange?.(null, null);
+      return;
+    }
+
     // Walidacja rozmiaru
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSizeMB) {
+      const errorMsg = `Plik jest za duży (${fileSizeMB.toFixed(
+        2
+      )}MB). Maksymalny rozmiar: ${maxSizeMB}MB`;
+      setValidationError(errorMsg);
+      props.onError?.(errorMsg);
       props.onChange?.(null, null);
       return;
     }
@@ -124,6 +147,7 @@ export default function FileUploader(props: IFileUploaderProps) {
     setPreview(null);
     setFileName(null);
     setIsImage(false);
+    setValidationError(null);
     props.onChange?.(null, null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -132,13 +156,15 @@ export default function FileUploader(props: IFileUploaderProps) {
 
   return (
     <FormControl
-      isInvalid={props.isInvalid}
+      isInvalid={props.isInvalid || !!validationError}
       id={props.id}
       isRequired={props.isRequired}
       {...props.onElementProps}
     >
-      {props.errorMessage && (
-        <FormErrorMessage mb={2}>{props.errorMessage}</FormErrorMessage>
+      {(props.errorMessage || validationError) && (
+        <FormErrorMessage mb={2}>
+          {props.errorMessage || validationError}
+        </FormErrorMessage>
       )}
 
       <VStack align="stretch" spacing={1}>
@@ -206,12 +232,28 @@ export default function FileUploader(props: IFileUploaderProps) {
             <Button
               onClick={handleClick}
               variant="outline"
-              borderColor={isDragging ? "accent.500" : "gray.300"}
-              _hover={{ borderColor: "accent.500" }}
-              _focus={{ borderColor: "accent.500" }}
+              borderColor={
+                validationError
+                  ? "red.500"
+                  : isDragging
+                  ? "accent.500"
+                  : "gray.300"
+              }
+              _hover={{
+                borderColor: validationError ? "red.600" : "accent.500",
+              }}
+              _focus={{
+                borderColor: validationError ? "red.600" : "accent.500",
+              }}
               w="100%"
               h="100px"
-              bg={isDragging ? "accent.50" : "transparent"}
+              bg={
+                validationError
+                  ? "red.50"
+                  : isDragging
+                  ? "accent.50"
+                  : "transparent"
+              }
               transition="all 0.2s"
             >
               <Text color="gray.500">{placeholder}</Text>
@@ -220,7 +262,13 @@ export default function FileUploader(props: IFileUploaderProps) {
         )}
 
         <Text fontSize="xs" color="gray.500">
-          Akceptowane formaty: {acceptedFormats}.
+          Akceptowane formaty:{" "}
+          {props.genericFileType === "image"
+            ? [...ALLOWED_EXT_IMAGE].join(", ")
+            : props.genericFileType === "any"
+            ? [...ALLOWED_EXT].join(", ")
+            : acceptedFormats.replaceAll(",", ", ")}
+          .
         </Text>
         <Text fontSize="xs" color="gray.500">
           Maksymalny rozmiar: {maxSizeMB}MB
