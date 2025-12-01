@@ -4,7 +4,6 @@ import { Controller, useFormContext } from "react-hook-form";
 import { VStack, Stack, HStack, Text } from "@chakra-ui/react";
 import { EventType } from "@/club-preset/event-type";
 import FormInput from "@/components/common/form/FormInput";
-import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import {
   useTranslationsWithFallback,
   useTranslations,
@@ -25,15 +24,9 @@ import { useEffect } from "react";
 export type StepProps = {
   setNextStep?: () => void;
   setPrevStep?: () => void;
-  handleImageChange?: (file: File | null, preview: string | null) => void;
-  isUploadError?: boolean;
 };
 
-export function PrimaryInfoStep({
-  setNextStep,
-  handleImageChange,
-  isUploadError,
-}: StepProps) {
+export function PrimaryInfoStep({ setNextStep }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
 
   const t = useTranslations("pages.EventFormPage");
@@ -213,17 +206,6 @@ export function PrimaryInfoStep({
           value: type,
           label: tEvents(type),
         }))}
-      />
-      <FileUploader
-        genericFileType="image"
-        onChange={handleImageChange}
-        isUploadError={isUploadError}
-        text={{
-          label: t("primaryInfoStep.image.label"),
-          additionalLabel: t("primaryInfoStep.image.additionalLabel"),
-          placeholder: t("primaryInfoStep.image.placeholder"),
-          errorUpload: t("primaryInfoStep.image.errorUpload"),
-        }}
       />
       <SteeringButtons
         nextButton={{

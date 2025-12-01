@@ -27,6 +27,7 @@ import { Divider } from "@chakra-ui/react";
 import { PrimaryInfoStep } from "./step/PrimaryInfoStep";
 import { DetailedInfoStep } from "./step/DetailedInfoStep/DetailedInfoStep";
 import { SummaryStep } from "./step/SummaryStep";
+import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { createEvent } from "@/services/events/api";
@@ -101,13 +102,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const steps = [
     {
       title: t("steps.primary"),
-      content: (
-        <PrimaryInfoStep
-          setNextStep={() => setActiveStep(1)}
-          handleImageChange={handleImageChange}
-          isUploadError={isUploadError}
-        />
-      ),
+      content: <PrimaryInfoStep setNextStep={() => setActiveStep(1)} />,
     },
     {
       title: t("steps.detailed"),
@@ -197,7 +192,20 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                   ))}
                 </Stepper>
               </Box>
-              <Box mt={8}>{steps[activeStep].content}</Box>
+              <Box mt={8}>
+                {steps[activeStep].content}
+                <FileUploader
+                  genericFileType="image"
+                  onChange={handleImageChange}
+                  isUploadError={isUploadError}
+                  text={{
+                    label: t("primaryInfoStep.image.label"),
+                    additionalLabel: t("primaryInfoStep.image.additionalLabel"),
+                    placeholder: t("primaryInfoStep.image.placeholder"),
+                    errorUpload: t("primaryInfoStep.image.errorUpload"),
+                  }}
+                />
+              </Box>
             </form>
           </FormProvider>
         </ModalBody>
