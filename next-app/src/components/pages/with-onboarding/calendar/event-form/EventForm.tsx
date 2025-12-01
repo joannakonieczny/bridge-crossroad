@@ -27,6 +27,7 @@ import { Divider } from "@chakra-ui/react";
 import { PrimaryInfoStep } from "./step/PrimaryInfoStep";
 import { DetailedInfoStep } from "./step/DetailedInfoStep/DetailedInfoStep";
 import { SummaryStep } from "./step/SummaryStep";
+import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { createEvent } from "@/services/events/api";
 import type {
@@ -64,7 +65,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         endsAt: new Date(),
       },
       additionalDescription: "",
-      imageUrl: undefined, //TODO add image upload in future
+      imageUrl: "",
       data: {
         type: EventType.OTHER,
       },
@@ -75,6 +76,23 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
+  const {
+    selectedImage,
+    uploadImage,
+    resetImage,
+    handleImageChange,
+    isUploading,
+    isError: isUploadError,
+  } = useImageUpload({
+    text: {
+      toast: {
+        loading: { title: t("imageToast.loading") },
+        success: { title: t("imageToast.success") },
+        error: { title: t("imageToast.error") },
+      },
+    },
+  });
+
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: 3,
@@ -83,7 +101,13 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const steps = [
     {
       title: t("steps.primary"),
-      content: <PrimaryInfoStep setNextStep={() => setActiveStep(1)} />,
+      content: (
+        <PrimaryInfoStep
+          setNextStep={() => setActiveStep(1)}
+          handleImageChange={handleImageChange}
+          isUploadError={isUploadError}
+        />
+      ),
     },
     {
       title: t("steps.detailed"),
@@ -96,7 +120,12 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     },
     {
       title: t("steps.summary"),
-      content: <SummaryStep setPrevStep={() => setActiveStep(1)} />,
+      content: (
+        <SummaryStep
+          setPrevStep={() => setActiveStep(1)}
+          isUploading={isUploading}
+        />
+      ),
     },
   ];
 
@@ -110,13 +139,21 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
         ),
       });
       form.reset();
+      resetImage();
       setActiveStep(0);
       onClose();
     },
   });
 
-  function handleWithToast(data: ActionInput<typeof createEvent>) {
-    const promise = createEventAction.mutateAsync(data);
+  async function handleWithToast(data: ActionInput<typeof createEvent>) {
+    const uploadedPath = await uploadImage();
+
+    // Check upload error
+    if (selectedImage && !uploadedPath) return;
+
+    const eventData = { ...data, imageUrl: uploadedPath, groupId: data.group };
+
+    const promise = createEventAction.mutateAsync(eventData);
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },

@@ -13,9 +13,10 @@ import dayjs from "dayjs";
 export type StepProps = {
   setNextStep?: () => void;
   setPrevStep?: () => void;
+  isUploading?: boolean;
 };
 
-export function SummaryStep({ setPrevStep }: StepProps) {
+export function SummaryStep({ setPrevStep, isUploading }: StepProps) {
   const t = useTranslations("pages.EventFormPage");
   const tEvent = useTranslations("common.eventType");
   const tTournament = useTranslations("common.tournamentType");
@@ -292,9 +293,10 @@ export function SummaryStep({ setPrevStep }: StepProps) {
           onClick: setPrevStep,
         }}
         nextButton={{
-          text: t("buttons.next"),
+          text: t("buttons.submit"),
           onElementProps: {
             type: "submit",
+            isLoading: isUploading,
           },
         }}
       />

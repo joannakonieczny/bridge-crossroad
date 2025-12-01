@@ -602,6 +602,11 @@ const eventForm = {
     next: "Dalej",
     submit: "Dodaj wydarzenie",
   },
+  imageToast: {
+    loading: "Przesyłanie zdjęcia...",
+    success: "Zdjęcie zostało przesłane!",
+    error: "Nie udało się przesłać zdjęcia",
+  },
   toast: {
     loading: "Trwa dodawanie wydarzenia...",
     success: "Wydarzenie zostało dodane!",
@@ -620,6 +625,13 @@ const eventForm = {
     eventStartPlaceholder: "Początek wydarzenia",
     eventEndPlaceholder: "Koniec wydarzenia",
     eventTypePlaceholder: "Typ wydarzenia",
+    image: {
+      label: "Zdjęcie wydarzenia (opcjonalnie)",
+      additionalLabel: "Pamiętaj, że zawsze możesz je później zmienić.",
+      placeholder: "Wybierz zdjęcie dla wydarzenia",
+      errorUpload:
+        "Nie udało się przesłać zdjęcia, spróbuj ponownie lub usuń je.",
+    },
   },
   detailedInfoStep: {
     trainingPanel: {
