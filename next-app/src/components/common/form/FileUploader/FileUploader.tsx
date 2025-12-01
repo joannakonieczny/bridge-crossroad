@@ -1,4 +1,4 @@
-import type { FormControlProps } from "@chakra-ui/react";
+import type { FormControlProps, StackProps } from "@chakra-ui/react";
 import {
   FormControl,
   FormErrorMessage,
@@ -42,6 +42,7 @@ export type IFileUploaderProps = {
   genericFileType?: "image" | "any";
   acceptedFormats?: string; // opcjonalne, nadpisuje genericFileType
   maxSizeMB?: number;
+  onElementWrapperProps?: StackProps;
 };
 
 export default function FileUploader(props: IFileUploaderProps) {
@@ -173,7 +174,7 @@ export default function FileUploader(props: IFileUploaderProps) {
   };
 
   return (
-    <Stack spacing={1}>
+    <Stack spacing={1} {...props.onElementWrapperProps}>
       {defaultTexts.label && (
         <Text color="gray.500" fontSize="sm">
           {defaultTexts.label}

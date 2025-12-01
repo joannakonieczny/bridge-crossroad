@@ -213,6 +213,9 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                     placeholder: t("primaryInfoStep.image.placeholder"),
                     errorUpload: t("primaryInfoStep.image.errorUpload"),
                   }}
+                  onElementWrapperProps={
+                    activeStep === 1 ? { h: 0, overflow: "hidden" } : {}
+                  }
                 />
               </Stack>
               <SteeringButtons
@@ -226,9 +229,8 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                 }
                 nextButton={{
                   text: isLastStep ? t("buttons.submit") : t("buttons.next"),
-                  onClick: isLastStep
-                    ? undefined
-                    : async () => {
+                  onClick: !isLastStep
+                    ? async () => {
                         const currentStepValidate = steps[activeStep].validate;
                         const isValid = currentStepValidate
                           ? await currentStepValidate()
@@ -237,9 +239,13 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                         if (isValid) {
                           setActiveStep(activeStep + 1);
                         }
+                      }
+                    : async () => {
+                        form.handleSubmit((d) =>
+                          handleWithToast({ ...d, groupId: d.group })
+                        )();
                       },
                   onElementProps: {
-                    type: isLastStep ? "submit" : "button",
                     isLoading: isLastStep ? isUploading : false,
                   },
                 }}
