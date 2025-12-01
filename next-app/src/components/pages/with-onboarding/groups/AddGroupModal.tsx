@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import FormInput from "@/components/common/form/FormInput";
-import ImageUploader from "@/components/common/form/ImageUploader";
+import FileUploader from "@/components/common/form/FileUploader";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createNewGroup } from "@/services/groups/api";
@@ -122,7 +122,7 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
                 )}
               />
 
-              <ImageUploader
+              <FileUploader
                 placeholder="Wybierz zdjęcie grupy"
                 genericFileType="image"
               />

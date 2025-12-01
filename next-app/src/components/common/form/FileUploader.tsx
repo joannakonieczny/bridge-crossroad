@@ -13,8 +13,13 @@ import {
 import type { ChangeEvent } from "react";
 import { useRef, useState } from "react";
 import { MdDelete } from "react-icons/md";
+import {
+  ALLOWED_MIME_TYPE_IMAGE,
+  ALLOWED_MIME,
+  MAX_SIZE,
+} from "@/util/constants";
 
-export type IImageUploaderProps = {
+export type IFileUploaderProps = {
   placeholder?: string;
   errorMessage?: string;
   isInvalid?: boolean;
@@ -28,18 +33,18 @@ export type IImageUploaderProps = {
   maxSizeMB?: number;
 };
 
-export default function ImageUploader(props: IImageUploaderProps) {
+export default function FileUploader(props: IFileUploaderProps) {
   const {
     placeholder = "Wybierz plik",
     genericFileType = "any",
-    maxSizeMB = 5,
+    maxSizeMB = MAX_SIZE / (1024 * 1024), // Domyślnie 10MB
   } = props;
 
   const acceptedFormats =
     props.acceptedFormats ??
     (genericFileType === "image"
-      ? "image/png,image/jpeg,image/jpg,image/webp,image/gif"
-      : "*");
+      ? Array.from(ALLOWED_MIME_TYPE_IMAGE).join(",")
+      : Array.from(ALLOWED_MIME).join(","));
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(props.value ?? null);
@@ -56,7 +61,7 @@ export default function ImageUploader(props: IImageUploaderProps) {
     }
 
     // Sprawdzenie czy plik jest obrazem
-    const fileIsImage = file.type.startsWith("image/");
+    const fileIsImage = ALLOWED_MIME_TYPE_IMAGE.has(file.type);
     setIsImage(fileIsImage);
     setFileName(file.name);
 
