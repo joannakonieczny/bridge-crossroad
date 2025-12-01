@@ -13,39 +13,35 @@ import {
 } from "@chakra-ui/react";
 import { useJoinedGroupsQuery } from "@/lib/queries";
 import { useQueryState } from "nuqs";
-import { GroupIdType } from "@/schemas/model/group/group-types";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { TrainingGroup } from "@/club-preset/training-group";
 import { PartnershipPostType } from "@/club-preset/partnership-post";
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function FiltersBar() {
-  const [scope, setScope] = useState("all"); // "all" = Wszystkie, "mine" = Moje
-  // sync activity with URL param "activity" — possible values: "active" | "inactive"
+  const t = useTranslations("pages.FindPartner.FiltersBar");
+  const [scope, setScope] = useState("all");
   const [activityParamRaw, setActivityParam] = useQueryState("activity");
   const activity = activityParamRaw ? String(activityParamRaw) : "active";
 
-  // sync selected group with URL param `groupId`
   const [groupId, setGroupId] = useQueryState("groupId");
-  // sync frequency with URL param `frequency` (values: "any" | "SINGLE" | "PERIOD")
   const [frequencyParamRaw, setFrequencyParam] = useQueryState("frequency");
   const frequency = frequencyParamRaw ? String(frequencyParamRaw) : "any";
 
-  // sync experience with URL param `experience` ("any" | "SINGLE" | "PERIOD" | "<1" | "1" | "2" | ...)
   const [experienceParamRaw, setExperienceParam] = useQueryState("experience");
   const experience = experienceParamRaw ? String(experienceParamRaw) : "any";
 
-  // sync trainingGroup with URL param `trainingGroup`
   const [trainingGroup, setTrainingGroup] = useQueryState("trainingGroup");
   const [biddingSystem, setBiddingSystem] = useState("");
 
   const groupsQuery = useJoinedGroupsQuery();
-  const groupsRaw = groupsQuery.data as any;
-  const groupsArr = Array.isArray(groupsRaw) ? groupsRaw : groupsRaw?.data ?? [];
+  const groupsArr = Array.isArray(groupsQuery.data) ? groupsQuery.data : [];
 
   const mainGroupId: GroupIdType | undefined = (() => {
-    const arr = Array.isArray(groupsRaw) ? groupsRaw : groupsRaw?.data ?? [];
-    const main = (arr || []).find((g: any) => g?.isMain === true);
+    const arr = Array.isArray(groupsArr) ? groupsArr : [];
+    const main = (arr).find((g) => g?.isMain === true);
     if (!main) return undefined;
-    return (main.id ?? main._id ?? main._id?.toString?.() ?? undefined) as GroupIdType | undefined;
+    return (main.id ?? undefined) as GroupIdType | undefined;
   })();
 
   useEffect(() => {
@@ -66,20 +62,20 @@ export default function FiltersBar() {
           onChange={(e) => setActivityParam(e.target.value || null)}
           width="150px"
         >
-          <option value="active">Aktywne</option>
-          <option value="inactive">Nieaktywne</option>
+          <option value="active">{t("activity.active")}</option>
+          <option value="inactive">{t("activity.inactive")}</option>
         </Select>
 
         <Select
           value={groupId ?? ""}
           onChange={(e) => setGroupId(e.target.value || null)}
-          placeholder="Grupa"
+          placeholder={t("placeholders.group")}
           width="160px"
         >
-          <option value="">Wszystkie grupy</option>
-          {groupsArr.map((g: any) => {
-            const id = g.id ?? g._id ?? String(g._id ?? "");
-            const label = g.name ?? g.title ?? g.displayName ?? id;
+          <option value="">{t("allGroups")}</option>
+          {groupsArr.map((g) => {
+            const id = g.id;
+            const label = g.name;
             return (
               <option key={id} value={id}>
                 {label}
@@ -91,41 +87,41 @@ export default function FiltersBar() {
         <Select
           value={frequency}
           onChange={(e) => setFrequencyParam(e.target.value || null)}
-          placeholder="Częstotliwość"
+          placeholder={t("placeholders.frequency")}
           width="160px"
         >
-          <option value="any">Dowolna</option>
-          <option value={PartnershipPostType.SINGLE}>Pojedyńcza</option>
-          <option value={PartnershipPostType.PERIOD}>Okresowa</option>
+          <option value="any">{t("frequencyOptions.any")}</option>
+          <option value={PartnershipPostType.SINGLE}>{t("frequencyOptions.SINGLE")}</option>
+          <option value={PartnershipPostType.PERIOD}>{t("frequencyOptions.PERIOD")}</option>
         </Select>
 
         <Select
           value={experience}
           onChange={(e) => setExperienceParam(e.target.value || null)}
-          placeholder="Doświadczenie"
+          placeholder={t("placeholders.experience")}
           width="170px"
         >
-          <option value="any">Dowolne</option>
-          <option value="<1">mniej niż rok</option>
-          <option value="1">1 rok</option>
-          <option value="2">2 lata</option>
-          <option value="3">3 lata</option>
-          <option value="4">4 lata</option>
-          <option value="5+">5+ lat</option>
-          <option value="10+">10+ lat</option>
-          <option value="15+">15+ lat</option>
+          <option value="any">{t("experienceOptions.any")}</option>
+          <option value="<1">{t("experienceOptions.<1")}</option>
+          <option value="1">{t("experienceOptions.1")}</option>
+          <option value="2">{t("experienceOptions.2")}</option>
+          <option value="3">{t("experienceOptions.3")}</option>
+          <option value="4">{t("experienceOptions.4")}</option>
+          <option value="5+">{t("experienceOptions.5+")}</option>
+          <option value="10+">{t("experienceOptions.10+")}</option>
+          <option value="15+">{t("experienceOptions.15+")}</option>
         </Select>
 
         <Select
           value={trainingGroup ?? ""}
           onChange={(e) => setTrainingGroup(e.target.value || null)}
-          placeholder="Grupa treningowa"
+          placeholder={t("placeholders.trainingGroup")}
           width="180px"
         >
-          <option value={TrainingGroup.BASIC}>{/* "basic" */}Podstawowa</option>
-          <option value={TrainingGroup.INTERMEDIATE}>{/* "intermediate" */}Średniozaawansowana</option>
-          <option value={TrainingGroup.ADVANCED}>{/* "advanced" */}Zaawansowana</option>
-          <option value={TrainingGroup.NONE}>{/* "not_participating" */}Nie biorę udziału w zajęciach</option>
+          <option value={TrainingGroup.BASIC}>{t("trainingGroupOptions.BASIC")}</option>
+          <option value={TrainingGroup.INTERMEDIATE}>{t("trainingGroupOptions.INTERMEDIATE")}</option>
+          <option value={TrainingGroup.ADVANCED}>{t("trainingGroupOptions.ADVANCED")}</option>
+          <option value={TrainingGroup.NONE}>{t("trainingGroupOptions.NONE")}</option>
         </Select>
 
         <Button
@@ -138,16 +134,14 @@ export default function FiltersBar() {
             setGroupId(null);
             setFrequencyParam(null);
             setExperienceParam(null);
-            // clear trainingGroup URL param
             setTrainingGroup(null);
             setBiddingSystem("");
           }}
         >
-          Wyczyść
+          {t("button.clear")}
         </Button>
       </HStack>
 
-      {/* md and smaller: accordion with column layout */}
       <Accordion
         allowToggle
         display={{ base: "block", md: "block", lg: "none" }}
@@ -155,7 +149,7 @@ export default function FiltersBar() {
         <AccordionItem border="none">
           <AccordionButton px={0} _hover={{ bg: "transparent" }}>
             <Box flex="1" textAlign="left" fontWeight="semibold">
-              Filtry
+              {t("button.filtersLabel")}
             </Box>
             <AccordionIcon />
           </AccordionButton>
@@ -166,8 +160,8 @@ export default function FiltersBar() {
                 onChange={(e) => setScope(e.target.value)}
                 width="100%"
               >
-                <option value="all">Wszystkie</option>
-                <option value="mine">Moje</option>
+                <option value="all">{t("scopeOptions.all")}</option>
+                <option value="mine">{t("scopeOptions.mine")}</option>
               </Select>
 
               <Select
@@ -175,20 +169,20 @@ export default function FiltersBar() {
                 onChange={(e) => setActivityParam(e.target.value || null)}
                 width="100%"
               >
-                <option value="active">Aktywne</option>
-                <option value="inactive">Nieaktywne</option>
+                <option value="active">{t("activity.active")}</option>
+                <option value="inactive">{t("activity.inactive")}</option>
               </Select>
 
               <Select
                 value={groupId ?? ""}
                 onChange={(e) => setGroupId(e.target.value || null)}
-                placeholder="Grupa"
+                placeholder={t("placeholders.group")}
                 width="100%"
               >
-                <option value="">Wszystkie grupy</option>
-                {groupsArr.map((g: any) => {
-                  const id = g.id ?? g._id ?? String(g._id ?? "");
-                  const label = g.name ?? g.title ?? g.displayName ?? id;
+                <option value="">{t("allGroups")}</option>
+                {groupsArr.map((g) => {
+                  const id = g.id;
+                  const label = g.name;
                   return (
                     <option key={id} value={id}>
                       {label}
@@ -200,58 +194,58 @@ export default function FiltersBar() {
               <Select
                 value={frequency}
                 onChange={(e) => setFrequencyParam(e.target.value || null)}
-                placeholder="Częstotliwość"
+                placeholder={t("placeholders.frequency")}
                 width="100%"
               >
-                <option value="any">Dowolna</option>
-                <option value={PartnershipPostType.SINGLE}>Pojedyńcza</option>
-                <option value={PartnershipPostType.PERIOD}>Okresowa</option>
+                <option value="any">{t("frequencyOptions.any")}</option>
+                <option value={PartnershipPostType.SINGLE}>{t("frequencyOptions.SINGLE")}</option>
+                <option value={PartnershipPostType.PERIOD}>{t("frequencyOptions.PERIOD")}</option>
               </Select>
 
               <Select
                 value={experience}
                 onChange={(e) => setExperienceParam(e.target.value || null)}
-                placeholder="Doświadczenie"
+                placeholder={t("placeholders.experience")}
                 width="100%"
               >
-                <option value="any">Dowolne</option>
-                <option value="<1">mniej niż rok</option>
-                <option value="1">1 rok</option>
-                <option value="2">2 lata</option>
-                <option value="3">3 lata</option>
-                <option value="4">4 lata</option>
-                <option value="5+">5+ lat</option>
-                <option value="10+">10+ lat</option>
-                <option value="15+">15+ lat</option>
+                <option value="any">{t("experienceOptions.any")}</option>
+                <option value="<1">{t("experienceOptions.<1")}</option>
+                <option value="1">{t("experienceOptions.1")}</option>
+                <option value="2">{t("experienceOptions.2")}</option>
+                <option value="3">{t("experienceOptions.3")}</option>
+                <option value="4">{t("experienceOptions.4")}</option>
+                <option value="5+">{t("experienceOptions.5+")}</option>
+                <option value="10+">{t("experienceOptions.10+")}</option>
+                <option value="15+">{t("experienceOptions.15+")}</option>
               </Select>
 
               <Select
                 value={trainingGroup ?? ""}
                 onChange={(e) => setTrainingGroup(e.target.value || null)}
-                placeholder="Grupa treningowa"
+                placeholder={t("placeholders.trainingGroup")}
                 width="100%"
               >
-                <option value={TrainingGroup.BASIC}>Podstawowa</option>
-                <option value={TrainingGroup.INTERMEDIATE}>Średniozaawansowana</option>
-                <option value={TrainingGroup.ADVANCED}>Zaawansowana</option>
-                <option value={TrainingGroup.NONE}>Nie biorę udziału w zajęciach</option>
+                <option value={TrainingGroup.BASIC}>{t("trainingGroupOptions.BASIC")}</option>
+                <option value={TrainingGroup.INTERMEDIATE}>{t("trainingGroupOptions.INTERMEDIATE")}</option>
+                <option value={TrainingGroup.ADVANCED}>{t("trainingGroupOptions.ADVANCED")}</option>
+                <option value={TrainingGroup.NONE}>{t("trainingGroupOptions.NONE")}</option>
               </Select>
 
               <Select
                 value={biddingSystem}
                 onChange={(e) => setBiddingSystem(e.target.value)}
-                placeholder="System licytacyjny"
+                placeholder={t("placeholders.biddingSystem")}
                 width="100%"
               >
-                <option value="strefa">Strefa</option>
-                <option value="wspolny-jezyk">Wspólny Język</option>
-                <option value="dubeltowka">Dubeltówka</option>
-                <option value="sayc">SAYC (Standard American Yellow Card)</option>
-                <option value="lepszy-mlodszy">Lepszy Młodszy</option>
-                <option value="sso">SSO (System słabych otwarć)</option>
-                <option value="totolotek">Totolotek</option>
-                <option value="naturalny">Naturalny</option>
-                <option value="other">Własny / inny</option>
+                <option value="strefa">{t("biddingSystemOptions.strefa")}</option>
+                <option value="wspolny-jezyk">{t("biddingSystemOptions.wspolnyJezyk")}</option>
+                <option value="dubeltowka">{t("biddingSystemOptions.dubeltowka")}</option>
+                <option value="sayc">{t("biddingSystemOptions.sayc")}</option>
+                <option value="lepszy-mlodszy">{t("biddingSystemOptions.lepszyMlodszy")}</option>
+                <option value="sso">{t("biddingSystemOptions.sso")}</option>
+                <option value="totolotek">{t("biddingSystemOptions.totolotek")}</option>
+                <option value="naturalny">{t("biddingSystemOptions.naturalny")}</option>
+                <option value="other">{t("biddingSystemOptions.other")}</option>
               </Select>
 
               <Button
@@ -268,7 +262,7 @@ export default function FiltersBar() {
                   setBiddingSystem("");
                 }}
               >
-                Wyczyść
+                {t("button.clear")}
               </Button>
             </VStack>
           </AccordionPanel>

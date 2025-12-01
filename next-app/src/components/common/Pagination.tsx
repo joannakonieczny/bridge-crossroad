@@ -8,23 +8,19 @@ type PaginationProps = {
   current: number;
   totalPages: number | undefined;
   onChange: (page: number) => void;
-  /**
-   * Optional renderer for page button content.
-   * If omitted, the page number is rendered.
-   */
   renderPage?: (page: number, isCurrent: boolean) => React.ReactNode;
   prevLabel?: string;
   nextLabel?: string;
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export default function Pagination<T = unknown>({
+export default function Pagination({
   current,
   totalPages,
   onChange,
   renderPage,
-  prevLabel = "Poprzednia",
-  nextLabel = "Następna",
+  prevLabel = "",
+  nextLabel = "",
   size = "sm",
 }: PaginationProps) {
   if (!totalPages || totalPages <= 1) return null;
@@ -42,7 +38,6 @@ export default function Pagination<T = unknown>({
     if (current < (totalPages ?? 1)) onChange(totalPages ?? 1);
   };
 
-  // compute pages to show: first, last, current, current-1, current+1
   const pagesSet = new Set<number>([
     1,
     current - 1,

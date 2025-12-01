@@ -1,18 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Table, Thead, Tbody, Tr, Th, Box, Skeleton, SkeletonText, Td } from "@chakra-ui/react";
 import Annoucment from "./Annoucment";
-import { useGroupQuery, useJoinedGroupsQuery, usePartnershipPostsQuery } from "@/lib/queries";
+import { usePartnershipPostsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
-import { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
+import type { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
 import { useQueryState } from "nuqs";
 import { PartnershipPostsLimitPerPage } from "@/club-preset/partnership-post";
 import { PartnershipPostStatus, PartnershipPostType } from "@/club-preset/partnership-post";
 import { TrainingGroup } from "@/club-preset/training-group";
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function AnnoucmentsList() {
+  const t = useTranslations("pages.FindPartner.List");
   const [page] = useQueryState("page", {
     defaultValue: 1,
-    parse: (v: any) => {
+    parse: (v: unknown) => {
       const n = Number(v);
       return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
     },
@@ -26,7 +28,6 @@ export default function AnnoucmentsList() {
   const activityParam = activityParamRaw ? String(activityParamRaw) : "active";
   const status = activityParam === "inactive" ? PartnershipPostStatus.EXPIRED : PartnershipPostStatus.ACTIVE;
 
-  // read frequency param from URL (values: "any" | "SINGLE" | "PERIOD")
   const [frequencyParamRaw] = useQueryState("frequency");
   const frequencyParam = frequencyParamRaw ? String(frequencyParamRaw) : "any";
   const type =
@@ -36,24 +37,24 @@ export default function AnnoucmentsList() {
       ? PartnershipPostType.PERIOD
       : undefined;
 
-  // read experience param from URL
   const [experienceParamRaw] = useQueryState("experience");
   const experienceParam = experienceParamRaw ? String(experienceParamRaw) : "any";
 
-  // read trainingGroup from URL (sync with FiltersBar)
   const [trainingGroupParamRaw] = useQueryState("trainingGroup");
   const rawTG = trainingGroupParamRaw ? String(trainingGroupParamRaw) : undefined;
-  // normalize legacy "none" or "not_participating" into enum TrainingGroup.NONE
   const trainingGroupParam =
     rawTG === "none" || rawTG === TrainingGroup.NONE ? TrainingGroup.NONE : rawTG ?? undefined;
 
-  // convert experience bucket into onboardingData.startPlayingDate { min?: Date, max?: Date }
   const toDateYearsAgo = (years: number) => dayjs().subtract(years, "year").toDate();
 
-  let onboardingData: any = undefined;
+  type OnboardingData = {
+    startPlayingDate?: { min?: Date; max?: Date };
+    trainingGroup?: TrainingGroup;
+  };
+
+  let onboardingData: OnboardingData | undefined = undefined;
   if (experienceParam && experienceParam !== "any") {
     if (experienceParam === "<1") {
-      // started less than 1 year ago -> startPlayingDate in [now - 1yr, now]
       onboardingData = { startPlayingDate: { min: toDateYearsAgo(1), max: new Date() } };
     } else if (experienceParam === "1") {
       onboardingData = { startPlayingDate: { min: toDateYearsAgo(2), max: toDateYearsAgo(1) } };
@@ -64,7 +65,6 @@ export default function AnnoucmentsList() {
     } else if (experienceParam === "4") {
       onboardingData = { startPlayingDate: { min: toDateYearsAgo(5), max: toDateYearsAgo(4) } };
     } else if (experienceParam === "5+") {
-      // started 5 or more years ago -> startPlayingDate <= now -5yr
       onboardingData = { startPlayingDate: { max: toDateYearsAgo(5) } };
     } else if (experienceParam === "10+") {
       onboardingData = { startPlayingDate: { max: toDateYearsAgo(10) } };
@@ -73,32 +73,30 @@ export default function AnnoucmentsList() {
     }
   }
 
-  // include trainingGroup in onboardingData only when provided and NOT coach
   const trainingGroupIncluded =
     trainingGroupParam && trainingGroupParam !== TrainingGroup.COACH
       ? trainingGroupParam
       : undefined;
 
   if (trainingGroupIncluded !== undefined) {
-    onboardingData = { ...(onboardingData ?? {}), trainingGroup: trainingGroupIncluded };
+    onboardingData = { ...(onboardingData ?? {}), trainingGroup: trainingGroupIncluded as TrainingGroup | undefined};
   }
 
-  // pass primitive onboardingBucket (experience + trainingGroupIncluded) to avoid unstable queryKey changes
   const onboardingBucket = `${experienceParam}|${trainingGroupIncluded ?? "none"}`;
   const postsQuery = usePartnershipPostsQuery(
     { page, limit: PartnershipPostsLimitPerPage, groupId: groupIdParam, status, type, onboardingData, onboardingBucket },
   );
-  
-  if (postsQuery.isLoading) {
+
+  function AnnouncementsSkeletonLoader() {
     return (
       <Box bg="bg" p={4} borderRadius="md">
         <Table variant="simple" size="md">
           <Thead>
             <Tr>
-              <Th>Nazwa</Th>
-              <Th>Zawodnik</Th>
-              <Th display={{ base: "none", md: "table-cell" }}>Częstotliwość</Th>
-              <Th display={{ base: "none", md: "table-cell" }}>Preferowany system</Th>
+              <Th>{t("tableHeaders.name")}</Th>
+              <Th>{t("tableHeaders.player")}</Th>
+              <Th display={{ base: "none", md: "table-cell" }}>{t("tableHeaders.frequency")}</Th>
+              <Th display={{ base: "none", md: "table-cell" }}>{t("tableHeaders.preferredSystem")}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -127,16 +125,18 @@ export default function AnnoucmentsList() {
     );
   }
 
-  // defensive read: if data is an array use it, otherwise use data.data or fallback to []
-  const raw = postsQuery.data as any;
-  const posts: PartnershipPostSchemaTypePopulated[] = Array.isArray(raw)
-    ? raw
-    : (raw?.data ?? []);
+  if (postsQuery.isLoading) {
+    return <AnnouncementsSkeletonLoader />;
+  }
 
-  const parseDate = (s: string) => {
-    const cleaned = String(s).replace(/^\$D/, "");
-    const d = dayjs(cleaned);
-    return d.isValid() ? d.format("DD.MM.YYYY, HH:mm") : "";
+  const posts: PartnershipPostSchemaTypePopulated[] = Array.isArray(postsQuery.data)
+    ? postsQuery.data
+    : (postsQuery.data?.data ?? []);
+
+  const parseDate = (s?: string): Date | undefined => {
+    if (!s) return undefined;
+    const d = new Date(String(s));
+    return Number.isFinite(d.getTime()) ? d : undefined;
   };
 
   return (
@@ -144,40 +144,37 @@ export default function AnnoucmentsList() {
       <Table variant="simple" size="md">
         <Thead>
           <Tr>
-            <Th>Nazwa</Th>
-            <Th>Zawodnik</Th>
-            <Th display={{ base: "none", md: "table-cell" }}>Częstotliwość</Th>
-            <Th display={{ base: "none", md: "table-cell" }}>Preferowany system</Th>
+            <Th>{t("tableHeaders.name")}</Th>
+            <Th>{t("tableHeaders.player")}</Th>
+            <Th display={{ base: "none", md: "table-cell" }}>{t("tableHeaders.frequency")}</Th>
+            <Th display={{ base: "none", md: "table-cell" }}>{t("tableHeaders.preferredSystem")}</Th>
           </Tr>
         </Thead>
         <Tbody>
           {posts.map((p: PartnershipPostSchemaTypePopulated) => {
             const id = p.id;
             const title = p.name;
-            const frequency = p.data.type; // "SINGLE" lub "PERIOD"
+            const frequency = p.data.type;
             const preferredSystem = p.biddingSystem;
-            const date =
+            const date: Date | undefined =
               p.data.type === "PERIOD"
                 ? parseDate(p.data.endsAt as unknown as string)
                 : parseDate(p.data.event.duration.startsAt as unknown as string);
             const owner = p.owner;
-            const playerName = `${owner.name.firstName} ${owner.name.lastName}`;
-            const playerNick = owner.nickname;
             const description = p.description;
 
-            const interestedUsers = (p).interestedUsers ?? (p as any).intrestedUSers ?? [];
+            const interestedUsers = (p).interestedUsers ?? [];
 
-            const ann: any = {
+            const ann = {
               id,
               title,
               date,
-              playerName,
-              playerNick,
+              owner,
               frequency,
               preferredSystem,
               description,
               groupId: groupIdParam,
-              isUserInterested: (p as any).isUserInterested ?? false,
+              isUserInterested: p.isUserInterested ?? false,
               interestedUsers,
               isOwnByUser: p.isOwnByUser ?? false,
             };

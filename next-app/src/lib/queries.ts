@@ -16,14 +16,15 @@ import {
 import { listPartnershipPosts } from "@/services/find-partner/api";
 import {
   PartnershipPostStatus,
-  PartnershipPostType,
 } from "@/club-preset/partnership-post";
+import type { PartnershipPostType } from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type {
   ActionError,
   TActionQueryOptionsHelper,
 } from "./tanstack-action/types";
+import type { Academy } from "@/club-preset/academy";
 
 export const QUERY_KEYS = {
   userInfo: ["user", "info"],
@@ -145,16 +146,20 @@ export function usePartnershipPostsQuery(
     limit?: number;
     status?: PartnershipPostStatus;
     type?: PartnershipPostType;
-    onboardingData?: any;
+    onboardingData?: {
+        academy?: Academy;
+        yearOfBirth?: {
+          min?: number;
+          max?: number;
+        };
+        startPlayingDate?: {
+          min?: Date;
+          max?: Date;
+        };
+    };
     onboardingBucket?: string;
-  },
-  props?: TActionQueryOptionsHelper<typeof listPartnershipPosts>
+  }
 ) {
-  const e = useOnErrorToast(
-    "ogłoszeń szukania partnera",
-    "listPartnershipPosts"
-  );
-
   const page = input?.page ?? 1;
   const limit = input?.limit ?? 10;
   const status = input?.status ?? PartnershipPostStatus.ACTIVE;
@@ -165,7 +170,6 @@ export function usePartnershipPostsQuery(
   const onboardingKey = input?.onboardingBucket ?? "none";
 
   return useActionQuery({
-    // use onboardingKey (primitive) instead of full object to prevent excessive ref-triggered fetches
     queryKey: [
       "partnershipPosts",
       page,

@@ -1,29 +1,30 @@
 import React, { useState } from "react";
 import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex, IconButton, Button, Select } from "@chakra-ui/react";
-// replace Chakra icon with react-icons chevron
 import { FiChevronDown } from "react-icons/fi";
 import { addInterested, removeInterested } from "@/services/find-partner/api";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import { useToast } from "@chakra-ui/react";
+import { useTranslations } from "@/lib/typed-translations";
+import { BiddingSystem } from "@/club-preset/partnership-post";
+import type { UserTypeBasic } from "@/schemas/model/user/user-types";
+import { getPersonLabel, getDateLabel } from "@/util/formatters";
 
 type Announcement = {
   id: number | string;
   title: string;
-  date: string; 
-  playerName: string;
-  playerNick?: string;
+  date?: Date; 
+  owner?: UserTypeBasic;
   characteristics?: string[]; 
   frequency: string;
   preferredSystem: string;
   isOwnByUser: boolean;
   description?: string;
-  interestedUsers?: Array<any>;
+  interestedUsers?: Array<UserTypeBasic>;
   isUserInterested?: boolean;
   isInterested?: boolean;
   groupId?: string;
-  
 };
 
 export default function Annoucment({ a }: { a: Announcement }) {
@@ -31,25 +32,24 @@ export default function Annoucment({ a }: { a: Announcement }) {
   const [selectedInterestedUser, setSelectedInterestedUser] = useState<string | undefined>(
     undefined
   );
-  // prefer server-provided isUserInterested; fallback to legacy isInterested then false
   const [interested, setInterested] = useState<boolean>(
-    a.isUserInterested ?? a.isInterested ?? false
+    a.isInterested ?? false
   );
-  const [pending, setPending] = useState(false); // local pending flag while mutation is in-flight (useActionMutation implementation may not expose isLoading)
+  const [pending, setPending] = useState(false);
   
   const toast = useToast();
   const queryClient = useQueryClient();
+  const t = useTranslations("pages.FindPartner.Announcement");
 
-  // mutations: show toasts in callbacks
   const addAction = useActionMutation({
     action: addInterested,
     onSuccess: () => {
       setInterested(true);
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts });
-      toast({ status: "success", title: "Zapisano na zgłoszenie - zostaniesz powiadomiony, jeśli zgłoszeniodawca zatwierdzi chęć wspólnej gry." });
+      toast({ status: "success", title: t("toast.add.success") });
     },
     onError: () => {
-      toast({ status: "error", title: "Błąd podczas zapisywania" });
+      toast({ status: "error", title: t("toast.add.error") });
     },
   });
 
@@ -58,10 +58,10 @@ export default function Annoucment({ a }: { a: Announcement }) {
     onSuccess: () => {
       setInterested(false);
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts });
-      toast({ status: "success", title: "Wypisano z zgłoszenia" });
+      toast({ status: "success", title: t("toast.remove.success") });
     },
     onError: () => {
-      toast({ status: "error", title: "Błąd podczas wypisywania" });
+      toast({ status: "error", title: t("toast.remove.error") });
     },
   });
 
@@ -75,14 +75,38 @@ export default function Annoucment({ a }: { a: Announcement }) {
       } else {
         await removeAction.mutateAsync(payload);
       }
-      // success handled in onSuccess
     } catch {
-      // error handled in onError
     } finally {
       setPending(false);
     }
   };
   
+  const ariaLabel = open ? "Hide details" : "Show details";
+  const freqKey =
+    a.frequency === "SINGLE" ? "SINGLE" :
+    a.frequency === "PERIOD" ? "PERIOD" :
+    null;
+  const frequencyLabel = freqKey ? t(`frequency.${freqKey}`) : a.frequency;
+
+  const biddingSystemLabels: Record<BiddingSystem, string> = {
+    [BiddingSystem.ZONE]: t("system.ZONE"),
+    [BiddingSystem.COMMON_LANGUAGE]: t("system.COMMON_LANGUAGE"),
+    [BiddingSystem.DOUBLETON]: t("system.DOUBLETON"),
+    [BiddingSystem.SAYC]: t("system.SAYC"),
+    [BiddingSystem.BETTER_MINOR]: t("system.BETTER_MINOR"),
+    [BiddingSystem.WEAK_OPENINGS_SSO]: t("system.WEAK_OPENINGS_SSO"),
+    [BiddingSystem.TOTOLOTEK]: t("system.TOTOLOTEK"),
+    [BiddingSystem.NATURAL]: t("system.NATURAL"),
+    [BiddingSystem.OTHER]: t("system.OTHER"),
+  };
+
+  const systemLabel = biddingSystemLabels[a.preferredSystem as BiddingSystem] ?? a.preferredSystem;
+  
+  const noDescription = t("ui.noDescription");
+  const interestButtonLabel = interested ? t("ui.button.cancel") : t("ui.button.interested");
+  const interestButtonLoadingText = interested ? t("ui.loading.unregistering") : t("ui.loading.saving");
+  const selectPlaceholder = (a.interestedUsers && a.interestedUsers.length) ? t("ui.select.playWith") : t("ui.select.noInterested");
+
   return (
     <>
       <Tr
@@ -99,15 +123,23 @@ export default function Annoucment({ a }: { a: Announcement }) {
               mr={3}
               transition="background-color 150ms ease"
               alignSelf="stretch"
-              display={{ base: "none", md: "block" }} // hidden on phone
+              display={{ base: "none", md: "block" }}
             />
             <HStack spacing={3} align={{ base: "center", md: "flex-start" }}>
-              <Avatar size="sm" name={a.playerName} display={{ base: "none", md: "flex" }} /> {/* hidden on phone */}
+              <Avatar
+                size="sm"
+                name={
+                  a.owner && a.owner.name
+                    ? `${a.owner.name.firstName} ${a.owner.name.lastName}`
+                    : a.title
+                }
+                display={{ base: "none", md: "flex" }}
+              />
               <Box>
                 <Link color="accent.500" fontWeight="semibold" href="#" _hover={{ textDecoration: "underline" }}>
                   {a.title}
                 </Link>
-                <Text fontSize="sm" color="border.500">{a.date}</Text>
+                <Text fontSize="sm" color="border.500">{getDateLabel(a.date)}</Text>
               </Box>
             </HStack>
           </Flex>
@@ -115,52 +147,21 @@ export default function Annoucment({ a }: { a: Announcement }) {
 
         <Td py={2}>
           <Box>
-            <Text fontWeight="medium">{a.playerName}</Text>
-            {a.playerNick && <Text fontSize="sm" color="border.500" fontStyle="italic">{a.playerNick}</Text>}
+            <Text fontWeight="medium">{getPersonLabel(a.owner)}</Text>
           </Box>
         </Td>
 
-        {/* hidden on phone */}
         <Td py={2} display={{ base: "none", md: "table-cell" }}>
-          {/* map frequency codes to user-friendly labels */}
-          <Text>
-            {a.frequency === "SINGLE"
-              ? "Pojedyńcza"
-              : a.frequency === "PERIOD"
-              ? "Okresowa"
-              : a.frequency}
-          </Text>
+          <Text>{frequencyLabel}</Text>
         </Td>
 
-        {/* hidden on phone */}
         <Td py={2} display={{ base: "none", md: "table-cell" }}>
-          <Text>
-            {a.preferredSystem === "ZONE"
-              ? "Strefa"
-              : a.preferredSystem === "COMMON_LANGUAGE"
-              ? "Wspólny Język"
-              : a.preferredSystem === "DOUBLETON"
-              ? "Dubeltówka"
-              : a.preferredSystem === "SAYC"
-              ? "SAYC"
-              : a.preferredSystem === "BETTER_MINOR"
-              ? "Lepszy Młodszy"
-              : a.preferredSystem === "WEAK_OPENINGS_SSO"
-              ? "SSO"
-              : a.preferredSystem === "TOTOLOTEK"
-              ? "Totolotek"
-              : a.preferredSystem === "NATURAL"
-              ? "Naturalny"
-              : a.preferredSystem === "OTHER"
-              ? "Inny"
-              : a.preferredSystem}
-          </Text>
+          <Text>{systemLabel}</Text>
         </Td>
 
-        {/* toggle arrow column (zawsze widoczna) */}
         <Td py={2} textAlign="right" w="48px">
           <IconButton
-            aria-label={open ? "Ukryj szczegóły" : "Pokaż szczegóły"}
+            aria-label={ariaLabel}
             icon={
               <FiChevronDown
                 style={{
@@ -178,44 +179,38 @@ export default function Annoucment({ a }: { a: Announcement }) {
 
       {open && (
         <Tr>
-          {/* colSpan = liczba kolumn w wierszu powyżej (tutaj 5) */}
           <Td colSpan={5} p={4} bg="bg">
             <Flex direction={{ base: "column", md: "row" }} align="center" justify="space-between" gap={4}>
-              {/* render description from data, preserve line breaks */}
               <Box flex="1">
-                <Text whiteSpace="pre-wrap">{a.description ?? "Brak opisu"}</Text>
+                <Text whiteSpace="pre-wrap">{a.description ?? noDescription}</Text>
               </Box>
 
               <Box>
-                {/* główny przycisk zapisania/wyrejestrowania */}
                 {a.isOwnByUser && <Button
                   colorScheme={interested ? "red" : "accent"}
                   onClick={handleToggleInterest}
                   isLoading={pending}
-                  loadingText={interested ? "Wypisywanie..." : "Zapisywanie..."}
+                  loadingText={interestButtonLoadingText}
                   size="sm"
                 >
-                  {interested ? "Anuluj" : "Jestem zainteresowany"}
+                  {interestButtonLabel}
                 </Button>}
               </Box>
             </Flex>
             
-            {/* dropdown below description and button */}
             {!a.isOwnByUser && <Box mt={4}>
               <Flex direction={{ base: "column", md: "row" }} gap={2} align="center">
                 <Select
                   flex={1}
-                  placeholder={a.interestedUsers && a.interestedUsers.length ? "Zagram z..." : "Brak zainteresowanych"}
+                  placeholder={selectPlaceholder}
                   value={selectedInterestedUser}
                   onChange={(e) => setSelectedInterestedUser(e.target.value || undefined)}
                   isDisabled={!a.interestedUsers || a.interestedUsers.length === 0}
                   size="sm"
                 >
-                  {(a.interestedUsers || []).map((u: any) => {
-                    // try to derive readable label from possible shapes
-                    const id = (u && (u._id ?? u.id ?? u)) as string;
-                    const label =
-                      u && (u.name ? `${u.name.firstName ?? ""} ${u.name.lastName ?? ""}`.trim() : u.nickname ?? u.displayName ?? `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim());
+                  {(a.interestedUsers || []).map((u: UserTypeBasic) => {
+                    const id = (u && (u.id ?? u)) as string;
+                    const label = getPersonLabel(u);
                     return (
                       <option key={String(id)} value={String(id)}>
                         {label || String(id)}
@@ -224,9 +219,8 @@ export default function Annoucment({ a }: { a: Announcement }) {
                   })}
                 </Select>
 
-                {/* przycisk po prawej stronie Select (na razie no-op) */}
                 <Button size="sm" onClick={() => {}}>
-                  Zapisz
+                  {t("ui.button.save")}
                 </Button>
               </Flex>
             </Box>}

@@ -690,6 +690,122 @@ const chatPage = {
   },
 };
 
+const findPartner = {
+  Announcement: {
+    toast: {
+      add: {
+        success: "Zapisano na zgłoszenie - zostaniesz powiadomiony, jeśli zgłoszeniodawca zatwierdzi chęć wspólnej gry.",
+        error: "Błąd podczas zapisywania",
+      },
+      remove: {
+        success: "Wypisano z zgłoszenia",
+        error: "Błąd podczas wypisywania",
+      },
+    },
+    frequency: {
+      SINGLE: "Pojedyńcza",
+      PERIOD: "Okresowa",
+    },
+    system: {
+      ZONE: "Strefa",
+      COMMON_LANGUAGE: "Wspólny Język",
+      DOUBLETON: "Dubeltówka",
+      SAYC: "SAYC",
+      BETTER_MINOR: "Lepszy Młodszy",
+      WEAK_OPENINGS_SSO: "SSO",
+      TOTOLOTEK: "Totolotek",
+      NATURAL: "Naturalny",
+      OTHER: "Inny",
+    },
+    ui: {
+      noDescription: "Brak opisu",
+      button: {
+        cancel: "Anuluj",
+        interested: "Jestem zainteresowany",
+        save: "Zapisz",
+      },
+      loading: {
+        saving: "Zapisywanie...",
+        unregistering: "Wypisywanie...",
+      },
+      select: {
+        playWith: "Zagram z...",
+        noInterested: "Brak zainteresowanych",
+      },
+    },
+  },
+  List: {
+    tableHeaders: {
+      name: "Nazwa",
+      player: "Zawodnik",
+      frequency: "Częstotliwość",
+      preferredSystem: "Preferowany system",
+    },
+    skeleton: {
+      noInterestedPlaceholder: "Brak zainteresowanych",
+    },
+  },
+  FiltersBar: {
+    activity: {
+      active: "Aktywne",
+      inactive: "Nieaktywne",
+    },
+    placeholders: {
+      group: "Grupa",
+      frequency: "Częstotliwość",
+      experience: "Doświadczenie",
+      trainingGroup: "Grupa treningowa",
+      biddingSystem: "System licytacyjny",
+    },
+    allGroups: "Wszystkie grupy",
+    scopeOptions: {
+      all: "Wszystkie",
+      mine: "Moje",
+    },
+    frequencyOptions: {
+      any: "Dowolna",
+      SINGLE: "Pojedyńcza",
+      PERIOD: "Okresowa",
+    },
+    experienceOptions: {
+      any: "Dowolne",
+      "<1": "mniej niż rok",
+      "1": "1 rok",
+      "2": "2 lata",
+      "3": "3 lata",
+      "4": "4 lata",
+      "5+": "5+ lat",
+      "10+": "10+ lat",
+      "15+": "15+ lat",
+    },
+    trainingGroupOptions: {
+      BASIC: "Podstawowa",
+      INTERMEDIATE: "Średniozaawansowana",
+      ADVANCED: "Zaawansowana",
+      NONE: "Nie biorę udziału w zajęciach",
+      COACH: "Jestem trenerem!",
+    },
+    biddingSystemOptions: {
+      strefa: "Strefa",
+      wspolnyJezyk: "Wspólny Język",
+      dubeltowka: "Dubeltówka",
+      sayc: "SAYC (Standard American Yellow Card)",
+      lepszyMlodszy: "Lepszy Młodszy",
+      sso: "SSO (System słabych otwarć)",
+      totolotek: "Totolotek",
+      naturalny: "Naturalny",
+      other: "Własny / inny",
+    },
+    button: {
+      clear: "Wyczyść",
+      filtersLabel: "Filtry",
+    },
+  },
+  MainBar: {
+    searchPlaceholder: "Szukaj oferty, turnieju, partnera...",
+  },
+};
+
 const messages = {
   common: {
     date: {
@@ -846,6 +962,7 @@ const messages = {
     ChatPage: chatPage,
     CalendarPage: calendarPage,
     EventFormPage: eventForm,
+    FindPartner: findPartner,
   },
   components: {
     Navbar: navbar,

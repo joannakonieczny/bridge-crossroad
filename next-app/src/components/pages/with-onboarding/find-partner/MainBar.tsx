@@ -1,9 +1,10 @@
 import React, { type ChangeEvent, useState } from "react";
 import { Box, HStack } from "@chakra-ui/react";
 import SearchInput from "@/components/common/SearchInput";
-
+import { useTranslations } from "@/lib/typed-translations";
 
 export default function MainBar() {
+  const t = useTranslations("pages.FindPartner.MainBar");
   const [query, setQuery] = useState("");
 
   return (
@@ -13,7 +14,7 @@ export default function MainBar() {
           <SearchInput
             value={query}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-            placeholder="Szukaj oferty, turnieju, partnera..."
+            placeholder={t("searchPlaceholder")}
           />
         </Box>
       </HStack>
