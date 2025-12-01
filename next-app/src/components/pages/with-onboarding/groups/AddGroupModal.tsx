@@ -55,9 +55,9 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   } = useImageUpload({
     text: {
       toast: {
-        loading: { title: "toast.uploadingImageLoading" },
-        success: { title: "toast.uploadingImageSuccess" },
-        error: { title: "toast.uploadingImageError" },
+        loading: { title: t("imageToast.loading") },
+        success: { title: t("imageToast.success") },
+        error: { title: t("imageToast.error") },
       },
     },
   });
@@ -153,6 +153,7 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
                 isUploadError={isUploadError}
                 text={{
                   label: t("form.image.label"),
+                  additionalLabel: t("form.image.additionalLabel"),
                   placeholder: t("form.image.placeholder"),
                   errorUpload: t("form.image.errorUpload"),
                 }}

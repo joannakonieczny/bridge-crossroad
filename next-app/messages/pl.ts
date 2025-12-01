@@ -257,9 +257,22 @@ const groupsPage = {
       description: {
         placeholder: "Opis grupy (opcjonalnie)",
       },
+      image: {
+        label: "Zdjęcie grupy (opcjonalnie)",
+        additionalLabel:
+          "Pamiętaj, że zawsze możesz je później zmienić na stronie grupy.",
+        placeholder: "Wybierz zdjęcie dla twojej grupy",
+        errorUpload:
+          "Nie udało się przesłać zdjęcia, spróbuj ponownie lub usuń je.",
+      },
     },
     submitButton: "Utwórz",
     cancelButton: "Anuluj",
+    imageToast: {
+      loading: "Przesyłanie zdjęcia...",
+      success: "Zdjęcie zostało przesłane!",
+      error: "Nie udało się przesłać zdjęcia",
+    },
     toast: {
       loading: "Tworzenie grupy...",
       success: "Utworzono grupę!",

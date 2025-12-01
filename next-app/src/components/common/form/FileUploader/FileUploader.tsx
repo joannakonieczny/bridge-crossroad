@@ -28,6 +28,7 @@ export type IFileUploaderProps = {
     label?: string;
     placeholder?: string;
     errorUpload?: string;
+    additionalLabel?: string;
   };
   errorMessage?: string;
   isInvalid?: boolean;
@@ -48,11 +49,12 @@ export default function FileUploader(props: IFileUploaderProps) {
 
   const {
     genericFileType = "any",
-    maxSizeMB = MAX_SIZE / (1024 * 1024), // Domyślnie 10MB
+    maxSizeMB = MAX_SIZE / (1024 * 1024), // Default 10MB
   } = props;
 
   const defaultTexts = {
     label: props.text?.label,
+    additionalLabel: props.text?.additionalLabel,
     placeholder: props.text?.placeholder || t("placeholder"),
     errorUpload: props.text?.errorUpload || t("errorUpload"),
     formats: t("formats"),
@@ -75,7 +77,7 @@ export default function FileUploader(props: IFileUploaderProps) {
   const processFile = (file: File) => {
     setValidationError(null);
 
-    // Walidacja typu pliku
+    // Validate file type
     const allowedMimeTypes =
       genericFileType === "image" ? ALLOWED_MIME_TYPE_IMAGE : ALLOWED_MIME;
 
@@ -87,7 +89,7 @@ export default function FileUploader(props: IFileUploaderProps) {
       return;
     }
 
-    // Walidacja rozmiaru
+    // Validate file size
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSizeMB) {
       const errorMsg = `${t("errorFileTooBig")} (${fileSizeMB.toFixed(
@@ -99,13 +101,13 @@ export default function FileUploader(props: IFileUploaderProps) {
       return;
     }
 
-    // Sprawdzenie czy plik jest obrazem
+    // Check if file is an image
     const fileIsImage = ALLOWED_MIME_TYPE_IMAGE.has(file.type);
     setIsImage(fileIsImage);
     setFileName(file.name);
 
     if (fileIsImage) {
-      // Tworzenie podglądu dla obrazu
+      // Create preview for image
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
@@ -114,7 +116,7 @@ export default function FileUploader(props: IFileUploaderProps) {
       };
       reader.readAsDataURL(file);
     } else {
-      // Dla innych plików nie tworzymy podglądu
+      // No preview for non-image files
       setPreview(null);
       props.onChange?.(file, null);
     }
@@ -171,10 +173,15 @@ export default function FileUploader(props: IFileUploaderProps) {
   };
 
   return (
-    <Stack>
+    <Stack spacing={1}>
       {defaultTexts.label && (
         <Text color="gray.500" fontSize="sm">
           {defaultTexts.label}
+        </Text>
+      )}
+      {defaultTexts.additionalLabel && (
+        <Text color="gray.500" fontSize="xs">
+          {defaultTexts.additionalLabel}
         </Text>
       )}
       <FormControl
@@ -291,7 +298,7 @@ export default function FileUploader(props: IFileUploaderProps) {
             </Box>
           )}
 
-          <Text fontSize="xs" color="gray.500">
+          <Text fontSize="xs" color="gray.500" mt="2">
             {defaultTexts.formats}:{" "}
             {props.genericFileType === "image"
               ? [...ALLOWED_EXT_IMAGE].join(", ")
