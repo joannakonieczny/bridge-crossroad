@@ -25,6 +25,7 @@ export type IFileUploaderProps = {
   placeholder?: string;
   errorMessage?: string;
   isInvalid?: boolean;
+  isUploadError?: boolean;
   id?: string;
   isRequired?: boolean;
   onElementProps?: FormControlProps;
@@ -156,14 +157,17 @@ export default function FileUploader(props: IFileUploaderProps) {
 
   return (
     <FormControl
-      isInvalid={props.isInvalid || !!validationError}
+      isInvalid={props.isInvalid || !!validationError || props.isUploadError}
       id={props.id}
       isRequired={props.isRequired}
       {...props.onElementProps}
     >
-      {(props.errorMessage || validationError) && (
+      {(props.errorMessage || validationError || props.isUploadError) && (
         <FormErrorMessage mb={2}>
-          {props.errorMessage || validationError}
+          {props.errorMessage ||
+            validationError ||
+            (props.isUploadError &&
+              "Błąd przesyłania pliku. Spróbuj ponownie lub usuń zdjęcie. Zdjęcie grupy zawsze możesz zmienić na stronie grupy.")}
         </FormErrorMessage>
       )}
 
@@ -233,22 +237,28 @@ export default function FileUploader(props: IFileUploaderProps) {
               onClick={handleClick}
               variant="outline"
               borderColor={
-                validationError
+                validationError || props.isUploadError
                   ? "red.500"
                   : isDragging
                   ? "accent.500"
                   : "gray.300"
               }
               _hover={{
-                borderColor: validationError ? "red.600" : "accent.500",
+                borderColor:
+                  validationError || props.isUploadError
+                    ? "red.600"
+                    : "accent.500",
               }}
               _focus={{
-                borderColor: validationError ? "red.600" : "accent.500",
+                borderColor:
+                  validationError || props.isUploadError
+                    ? "red.600"
+                    : "accent.500",
               }}
               w="100%"
               h="100px"
               bg={
-                validationError
+                validationError || props.isUploadError
                   ? "red.50"
                   : isDragging
                   ? "accent.50"
