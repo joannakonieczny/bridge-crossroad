@@ -102,25 +102,20 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const steps = [
     {
       title: t("steps.primary"),
-      content: <PrimaryInfoStep setNextStep={() => setActiveStep(1)} />,
+      content: PrimaryInfoStep,
+      setNextStep: () => setActiveStep(1),
     },
     {
       title: t("steps.detailed"),
-      content: (
-        <DetailedInfoStep
-          setNextStep={() => setActiveStep(2)}
-          setPrevStep={() => setActiveStep(0)}
-        />
-      ),
+      content: DetailedInfoStep,
+      setNextStep: () => setActiveStep(2),
+      setPrevStep: () => setActiveStep(0),
     },
     {
       title: t("steps.summary"),
-      content: (
-        <SummaryStep
-          setPrevStep={() => setActiveStep(1)}
-          isUploading={isUploading}
-        />
-      ),
+      content: SummaryStep,
+      isUploading: isUploading,
+      setPrevStep: () => setActiveStep(1),
     },
   ];
 
@@ -161,6 +156,13 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     });
   }
 
+  const StepComponent = steps[activeStep].content;
+  const stepProps = {
+    setNextStep: steps[activeStep].setNextStep,
+    setPrevStep: steps[activeStep].setPrevStep,
+    isUploading: steps[activeStep].isUploading,
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -193,18 +195,21 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                 </Stepper>
               </Box>
               <Box mt={8}>
-                {steps[activeStep].content}
-                <FileUploader
-                  genericFileType="image"
-                  onChange={handleImageChange}
-                  isUploadError={isUploadError}
-                  text={{
-                    label: t("primaryInfoStep.image.label"),
-                    additionalLabel: t("primaryInfoStep.image.additionalLabel"),
-                    placeholder: t("primaryInfoStep.image.placeholder"),
-                    errorUpload: t("primaryInfoStep.image.errorUpload"),
-                  }}
-                />
+                <StepComponent {...stepProps}>
+                  <FileUploader
+                    genericFileType="image"
+                    onChange={handleImageChange}
+                    isUploadError={isUploadError}
+                    text={{
+                      label: t("primaryInfoStep.image.label"),
+                      additionalLabel: t(
+                        "primaryInfoStep.image.additionalLabel"
+                      ),
+                      placeholder: t("primaryInfoStep.image.placeholder"),
+                      errorUpload: t("primaryInfoStep.image.errorUpload"),
+                    }}
+                  />
+                </StepComponent>
               </Box>
             </form>
           </FormProvider>

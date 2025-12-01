@@ -18,15 +18,16 @@ import {
 } from "@/lib/queries";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import type { PropsWithChildren } from "react";
 import { getPersonLabel } from "@/util/formatters";
 import { useEffect } from "react";
 
 export type StepProps = {
   setNextStep?: () => void;
   setPrevStep?: () => void;
-};
+} & PropsWithChildren;
 
-export function PrimaryInfoStep({ setNextStep }: StepProps) {
+export function PrimaryInfoStep({ setNextStep, children }: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
 
   const t = useTranslations("pages.EventFormPage");
@@ -207,6 +208,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
           label: tEvents(type),
         }))}
       />
+      {children}
       <SteeringButtons
         nextButton={{
           text: t("buttons.next"),

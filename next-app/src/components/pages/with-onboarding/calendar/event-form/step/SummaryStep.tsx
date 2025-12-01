@@ -9,14 +9,15 @@ import { useTranslations } from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
 import { getPersonLabel } from "@/util/formatters";
 import dayjs from "dayjs";
+import type { PropsWithChildren } from "react";
 
 export type StepProps = {
   setNextStep?: () => void;
   setPrevStep?: () => void;
   isUploading?: boolean;
-};
+} & PropsWithChildren;
 
-export function SummaryStep({ setPrevStep, isUploading }: StepProps) {
+export function SummaryStep({ setPrevStep, isUploading, children }: StepProps) {
   const t = useTranslations("pages.EventFormPage");
   const tEvent = useTranslations("common.eventType");
   const tTournament = useTranslations("common.tournamentType");
@@ -287,6 +288,7 @@ export function SummaryStep({ setPrevStep, isUploading }: StepProps) {
         <Text fontWeight="bold">{values.additionalDescription ?? "-"}</Text>
       </Stack>
       <Divider />
+      {children}
       <SteeringButtons
         prevButton={{
           text: t("buttons.prev"),

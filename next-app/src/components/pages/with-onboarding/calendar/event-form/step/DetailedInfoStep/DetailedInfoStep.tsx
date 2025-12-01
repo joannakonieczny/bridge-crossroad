@@ -14,13 +14,18 @@ import TrainingPanel from "./components/TrainingPanel";
 import { SteeringButtons } from "../../components/SteeringButtons";
 import type { FieldPath } from "react-hook-form";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import type { PropsWithChildren } from "react";
 
 export type StepProps = {
   setNextStep?: () => void;
   setPrevStep?: () => void;
-};
+} & PropsWithChildren;
 
-export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
+export function DetailedInfoStep({
+  setNextStep,
+  setPrevStep,
+  children,
+}: StepProps) {
   const form = useFormContext<AddEventSchemaType>();
   const tValidation = useTranslationsWithFallback();
   const t = useTranslations("pages.EventFormPage");
@@ -96,6 +101,7 @@ export function DetailedInfoStep({ setNextStep, setPrevStep }: StepProps) {
           />
         )}
       />
+      {children}
       <SteeringButtons
         prevButton={{
           onClick: setPrevStep,
