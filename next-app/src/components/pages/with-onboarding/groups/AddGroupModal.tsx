@@ -148,10 +148,14 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
               />
 
               <FileUploader
-                placeholder="Wybierz zdjęcie grupy"
                 genericFileType="image"
                 onChange={handleImageChange}
                 isUploadError={isUploadError}
+                text={{
+                  label: t("form.image.label"),
+                  placeholder: t("form.image.placeholder"),
+                  errorUpload: t("form.image.errorUpload"),
+                }}
               />
 
               <FormMainButton

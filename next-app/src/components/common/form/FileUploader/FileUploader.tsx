@@ -21,9 +21,14 @@ import {
   ALLOWED_EXT_IMAGE,
   ALLOWED_EXT,
 } from "@/util/constants";
+import { useTranslations } from "@/lib/typed-translations";
 
 export type IFileUploaderProps = {
-  placeholder?: string;
+  text?: {
+    label?: string;
+    placeholder?: string;
+    errorUpload?: string;
+  };
   errorMessage?: string;
   isInvalid?: boolean;
   isUploadError?: boolean;
@@ -39,11 +44,20 @@ export type IFileUploaderProps = {
 };
 
 export default function FileUploader(props: IFileUploaderProps) {
+  const t = useTranslations("components.FileUploader");
+
   const {
-    placeholder = "Wybierz plik",
     genericFileType = "any",
     maxSizeMB = MAX_SIZE / (1024 * 1024), // Domyślnie 10MB
   } = props;
+
+  const defaultTexts = {
+    label: props.text?.label,
+    placeholder: props.text?.placeholder || t("placeholder"),
+    errorUpload: props.text?.errorUpload || t("errorUpload"),
+    formats: t("formats"),
+    maxSize: t("maxSize"),
+  };
 
   const acceptedFormats =
     props.acceptedFormats ??
@@ -66,7 +80,7 @@ export default function FileUploader(props: IFileUploaderProps) {
       genericFileType === "image" ? ALLOWED_MIME_TYPE_IMAGE : ALLOWED_MIME;
 
     if (!allowedMimeTypes.has(file.type)) {
-      const errorMsg = `Niedozwolony typ pliku: ${file.type}`;
+      const errorMsg = `${t("errorInvalidType")}: ${file.type}`;
       setValidationError(errorMsg);
       props.onError?.(errorMsg);
       props.onChange?.(null, null);
@@ -76,9 +90,9 @@ export default function FileUploader(props: IFileUploaderProps) {
     // Walidacja rozmiaru
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSizeMB) {
-      const errorMsg = `Plik jest za duży (${fileSizeMB.toFixed(
+      const errorMsg = `${t("errorFileTooBig")} (${fileSizeMB.toFixed(
         2
-      )}MB). Maksymalny rozmiar: ${maxSizeMB}MB`;
+      )}MB): ${maxSizeMB}MB`;
       setValidationError(errorMsg);
       props.onError?.(errorMsg);
       props.onChange?.(null, null);
@@ -158,9 +172,11 @@ export default function FileUploader(props: IFileUploaderProps) {
 
   return (
     <Stack>
-      <Text color="gray.500" fontSize="sm">
-        Zamieść zdjęcie grupy (opcjonalnie)
-      </Text>
+      {defaultTexts.label && (
+        <Text color="gray.500" fontSize="sm">
+          {defaultTexts.label}
+        </Text>
+      )}
       <FormControl
         isInvalid={props.isInvalid || !!validationError || props.isUploadError}
         id={props.id}
@@ -171,8 +187,7 @@ export default function FileUploader(props: IFileUploaderProps) {
           <FormErrorMessage mb={2}>
             {props.errorMessage ||
               validationError ||
-              (props.isUploadError &&
-                "Błąd przesyłania pliku. Spróbuj ponownie lub usuń zdjęcie. Zdjęcie grupy zawsze możesz zmienić na stronie grupy.")}
+              (props.isUploadError && defaultTexts.errorUpload)}
           </FormErrorMessage>
         )}
 
@@ -202,7 +217,7 @@ export default function FileUploader(props: IFileUploaderProps) {
                     right={0}
                     size="sm"
                     colorScheme="red"
-                    aria-label="Usuń plik"
+                    aria-label="Remove file"
                     icon={<MdDelete />}
                     onClick={handleRemove}
                   />
@@ -225,7 +240,7 @@ export default function FileUploader(props: IFileUploaderProps) {
                   <IconButton
                     size="sm"
                     colorScheme="red"
-                    aria-label="Usuń plik"
+                    aria-label="Remove file"
                     icon={<MdDelete />}
                     onClick={handleRemove}
                   />
@@ -271,13 +286,13 @@ export default function FileUploader(props: IFileUploaderProps) {
                 }
                 transition="all 0.2s"
               >
-                <Text color="gray.500">{placeholder}</Text>
+                <Text color="gray.500">{defaultTexts.placeholder}</Text>
               </Button>
             </Box>
           )}
 
           <Text fontSize="xs" color="gray.500">
-            Akceptowane formaty:{" "}
+            {defaultTexts.formats}:{" "}
             {props.genericFileType === "image"
               ? [...ALLOWED_EXT_IMAGE].join(", ")
               : props.genericFileType === "any"
@@ -286,7 +301,7 @@ export default function FileUploader(props: IFileUploaderProps) {
             .
           </Text>
           <Text fontSize="xs" color="gray.500">
-            Maksymalny rozmiar: {maxSizeMB}MB
+            {defaultTexts.maxSize}: {maxSizeMB}MB
           </Text>
         </VStack>
       </FormControl>

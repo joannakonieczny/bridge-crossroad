@@ -924,6 +924,14 @@ const messages = {
     SidebarCard: {
       detailsButtonText: "Szczegóły",
     },
+    FileUploader: {
+      placeholder: "Wybierz plik",
+      errorUpload: "Nie udało się zapisać pliku, spróbuj ponownie później",
+      formats: "Akceptowane formaty",
+      maxSize: "Maksymalny rozmiar",
+      errorInvalidType: "Niedozwolony typ pliku",
+      errorFileTooBig: "Plik jest za duży. Maksymalny rozmiar",
+    },
     EventPage: {
       EventDetails: {
         organizer: "Organizator",
