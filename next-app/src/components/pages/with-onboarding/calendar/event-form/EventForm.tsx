@@ -22,11 +22,17 @@ import {
   Stepper,
   useSteps,
   useToast,
+  Stack,
 } from "@chakra-ui/react";
 import { Divider } from "@chakra-ui/react";
 import { PrimaryInfoStep } from "./step/PrimaryInfoStep";
 import { DetailedInfoStep } from "./step/DetailedInfoStep/DetailedInfoStep";
 import { SummaryStep } from "./step/SummaryStep";
+import { SteeringButtons } from "./components/SteeringButtons";
+import {
+  useValidatePrimaryInfoStep,
+  useValidateDetailedInfoStep,
+} from "./hooks";
 import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
@@ -77,6 +83,13 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
+  const onCloseWithReset = () => {
+    form.reset();
+    resetImage();
+    setActiveStep(0);
+    onClose();
+  };
+
   const {
     selectedImage,
     uploadImage,
@@ -99,23 +112,23 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     count: 3,
   });
 
+  const validatePrimaryInfoStep = useValidatePrimaryInfoStep(form);
+  const validateDetailedInfoStep = useValidateDetailedInfoStep(form);
+
   const steps = [
     {
       title: t("steps.primary"),
       content: PrimaryInfoStep,
-      setNextStep: () => setActiveStep(1),
+      validate: validatePrimaryInfoStep,
     },
     {
       title: t("steps.detailed"),
       content: DetailedInfoStep,
-      setNextStep: () => setActiveStep(2),
-      setPrevStep: () => setActiveStep(0),
+      validate: validateDetailedInfoStep,
     },
     {
       title: t("steps.summary"),
       content: SummaryStep,
-      isUploading: isUploading,
-      setPrevStep: () => setActiveStep(1),
     },
   ];
 
@@ -128,10 +141,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           d.duration.endsAt
         ),
       });
-      form.reset();
-      resetImage();
-      setActiveStep(0);
-      onClose();
+      onCloseWithReset();
     },
   });
 
@@ -157,17 +167,13 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   }
 
   const StepComponent = steps[activeStep].content;
-  const stepProps = {
-    setNextStep: steps[activeStep].setNextStep,
-    setPrevStep: steps[activeStep].setPrevStep,
-    isUploading: steps[activeStep].isUploading,
-  };
+  const isLastStep = activeStep === steps.length - 1;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isOpen={isOpen} onClose={onCloseWithReset} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Dodaj wydarzenie</ModalHeader>
+        <ModalHeader>{t("header")}</ModalHeader>
         <ModalCloseButton />
         <Divider />
         <ModalBody>
@@ -194,23 +200,49 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                   ))}
                 </Stepper>
               </Box>
-              <Box mt={8}>
-                <StepComponent {...stepProps}>
-                  <FileUploader
-                    genericFileType="image"
-                    onChange={handleImageChange}
-                    isUploadError={isUploadError}
-                    text={{
-                      label: t("primaryInfoStep.image.label"),
-                      additionalLabel: t(
-                        "primaryInfoStep.image.additionalLabel"
-                      ),
-                      placeholder: t("primaryInfoStep.image.placeholder"),
-                      errorUpload: t("primaryInfoStep.image.errorUpload"),
-                    }}
-                  />
-                </StepComponent>
-              </Box>
+              <Stack mt={8}>
+                <StepComponent />
+                <FileUploader
+                  genericFileType="image"
+                  onChange={handleImageChange}
+                  isUploadError={isUploadError}
+                  text={{
+                    label: t("primaryInfoStep.image.label"),
+                    additionalLabel: t("primaryInfoStep.image.additionalLabel"),
+                    placeholder: t("primaryInfoStep.image.placeholder"),
+                    errorUpload: t("primaryInfoStep.image.errorUpload"),
+                  }}
+                />
+              </Stack>
+              <SteeringButtons
+                prevButton={
+                  activeStep > 0
+                    ? {
+                        text: t("buttons.prev"),
+                        onClick: () => setActiveStep(activeStep - 1),
+                      }
+                    : undefined
+                }
+                nextButton={{
+                  text: isLastStep ? t("buttons.submit") : t("buttons.next"),
+                  onClick: isLastStep
+                    ? undefined
+                    : async () => {
+                        const currentStepValidate = steps[activeStep].validate;
+                        const isValid = currentStepValidate
+                          ? await currentStepValidate()
+                          : true;
+
+                        if (isValid) {
+                          setActiveStep(activeStep + 1);
+                        }
+                      },
+                  onElementProps: {
+                    type: isLastStep ? "submit" : "button",
+                    isLoading: isLastStep ? isUploading : false,
+                  },
+                }}
+              />
             </form>
           </FormProvider>
         </ModalBody>

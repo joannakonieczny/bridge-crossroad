@@ -2,22 +2,14 @@
 
 import { useFormContext } from "react-hook-form";
 import { Stack, Text, Divider, Center, Spacer } from "@chakra-ui/react";
-import { SteeringButtons } from "../components/SteeringButtons";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import { EventType } from "@/club-preset/event-type";
 import { useTranslations } from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
 import { getPersonLabel } from "@/util/formatters";
 import dayjs from "dayjs";
-import type { PropsWithChildren } from "react";
 
-export type StepProps = {
-  setNextStep?: () => void;
-  setPrevStep?: () => void;
-  isUploading?: boolean;
-} & PropsWithChildren;
-
-export function SummaryStep({ setPrevStep, isUploading, children }: StepProps) {
+export function SummaryStep() {
   const t = useTranslations("pages.EventFormPage");
   const tEvent = useTranslations("common.eventType");
   const tTournament = useTranslations("common.tournamentType");
@@ -288,20 +280,6 @@ export function SummaryStep({ setPrevStep, isUploading, children }: StepProps) {
         <Text fontWeight="bold">{values.additionalDescription ?? "-"}</Text>
       </Stack>
       <Divider />
-      {children}
-      <SteeringButtons
-        prevButton={{
-          text: t("buttons.prev"),
-          onClick: setPrevStep,
-        }}
-        nextButton={{
-          text: t("buttons.submit"),
-          onElementProps: {
-            type: "submit",
-            isLoading: isUploading,
-          },
-        }}
-      />
     </Stack>
   );
 }

@@ -10,7 +10,6 @@ import {
 } from "@/lib/typed-translations";
 import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
-import { SteeringButtons } from "../components/SteeringButtons";
 import {
   useGroupQuery,
   useJoinedGroupsAsAdminQuery,
@@ -18,16 +17,10 @@ import {
 } from "@/lib/queries";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
-import type { PropsWithChildren } from "react";
 import { getPersonLabel } from "@/util/formatters";
 import { useEffect } from "react";
 
-export type StepProps = {
-  setNextStep?: () => void;
-  setPrevStep?: () => void;
-} & PropsWithChildren;
-
-export function PrimaryInfoStep({ setNextStep, children }: StepProps) {
+export function PrimaryInfoStep() {
   const form = useFormContext<AddEventSchemaType>();
 
   const t = useTranslations("pages.EventFormPage");
@@ -46,19 +39,6 @@ export function PrimaryInfoStep({ setNextStep, children }: StepProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ownInfoQ.data?.id]);
-
-  const handleNextStep = async () => {
-    const ok = await form.trigger([
-      "title",
-      "description",
-      "group",
-      "organizer",
-      "data.type",
-      "duration.startsAt",
-      "duration.endsAt",
-    ]);
-    if (ok) setNextStep?.();
-  };
 
   function RenderFormInput(p: {
     name: "title" | "description";
@@ -207,20 +187,6 @@ export function PrimaryInfoStep({ setNextStep, children }: StepProps) {
           value: type,
           label: tEvents(type),
         }))}
-      />
-      {children}
-      <SteeringButtons
-        nextButton={{
-          text: t("buttons.next"),
-          onClick: () => handleNextStep(),
-          onElementProps: {
-            disabled:
-              groupsQ.isLoading ||
-              peopleQ.isLoading ||
-              ownInfoQ.isLoading ||
-              !selectedGroup,
-          },
-        }}
       />
     </Stack>
   );

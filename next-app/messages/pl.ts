@@ -597,6 +597,7 @@ const onboardingPageValidation = {
 };
 
 const eventForm = {
+  header: "Dodaj wydarzenie",
   buttons: {
     prev: "Cofnij",
     next: "Dalej",
