@@ -530,7 +530,7 @@ const eventModelValidation = {
     },
   },
   group: {
-    required: "Wybierz grupę",
+    required: "Wybierz grupę, do której należy wydarzenie",
   },
   organizer: {
     required: "Wybierz organizatora",

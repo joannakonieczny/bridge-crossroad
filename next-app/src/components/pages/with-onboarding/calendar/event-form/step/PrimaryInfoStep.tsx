@@ -137,6 +137,16 @@ export function PrimaryInfoStep() {
         placeholder={t("primaryInfoStep.descriptionPlaceholder")}
         type="text"
       />
+      {!selectedGroup && (
+        <Stack>
+          <Text fontSize="sm" textColor={"gray.500"}>
+            Pamiętaj o wybraniu grupy do której należy wydarzenie!
+          </Text>
+          <Text fontSize="sm" textColor={"gray.500"}>
+            Bez tego nie możemy dodać organizatora.
+          </Text>
+        </Stack>
+      )}
       <RenderSelectInput
         name="group"
         placeholder={t("primaryInfoStep.groupPlaceholder")}
@@ -146,21 +156,27 @@ export function PrimaryInfoStep() {
         }))}
         isLoading={groupsQ.isLoading}
       />
-      <RenderSelectInput
-        name="organizer"
-        placeholder={t("primaryInfoStep.organizerPlaceholder")}
-        options={(peopleQ.data?.members ?? []).map((member) => ({
-          value: member.id,
-          label: getPersonLabel(member),
-        }))}
-        isLoading={
-          !!!selectedGroup ? false : peopleQ.isLoading || ownInfoQ.isLoading
-        }
-        isDisabled={!!!selectedGroup}
-      />
+      <Stack>
+        <Text color="gray.500" fontSize="sm">
+          {t("primaryInfoStep.organizerPlaceholder")}
+        </Text>
+        <RenderSelectInput
+          name="organizer"
+          placeholder={t("primaryInfoStep.organizerPlaceholder")}
+          options={(peopleQ.data?.members ?? []).map((member) => ({
+            value: member.id,
+            label: getPersonLabel(member),
+          }))}
+          isLoading={
+            !!!selectedGroup ? false : peopleQ.isLoading || ownInfoQ.isLoading
+          }
+          isDisabled={!!!selectedGroup}
+        />
+      </Stack>
+
       <HStack spacing={4}>
         <VStack flex={1}>
-          <Text color="gray.500" alignSelf="start">
+          <Text color="gray.500" alignSelf="start" fontSize="sm">
             {t("primaryInfoStep.eventStartPlaceholder")}
           </Text>
           <RenderDateTimeInput
@@ -169,7 +185,7 @@ export function PrimaryInfoStep() {
           />
         </VStack>
         <VStack flex={1}>
-          <Text color="gray.500" alignSelf="start">
+          <Text color="gray.500" alignSelf="start" fontSize="sm">
             {t("primaryInfoStep.eventEndPlaceholder")}
           </Text>
           <RenderDateTimeInput
@@ -178,16 +194,18 @@ export function PrimaryInfoStep() {
           />
         </VStack>
       </HStack>
-      <Text color="gray.500" alignSelf="start">
-        {t("primaryInfoStep.eventTypePlaceholder")}
-      </Text>
-      <RenderSelectInput
-        name="data.type"
-        options={Object.values(EventType).map((type) => ({
-          value: type,
-          label: tEvents(type),
-        }))}
-      />
+      <Stack>
+        <Text color="gray.500" alignSelf="start" fontSize="sm">
+          {t("primaryInfoStep.eventTypePlaceholder")}
+        </Text>
+        <RenderSelectInput
+          name="data.type"
+          options={Object.values(EventType).map((type) => ({
+            value: type,
+            label: tEvents(type),
+          }))}
+        />
+      </Stack>
     </Stack>
   );
 }

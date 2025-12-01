@@ -50,6 +50,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import { EventType } from "@/club-preset/event-type";
 import { withEmptyToUndefined } from "@/schemas/common";
+import dayjs from "dayjs";
 
 type EventFormProps = {
   isOpen: boolean;
@@ -69,7 +70,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       organizer: "",
       duration: {
         startsAt: new Date(),
-        endsAt: new Date(),
+        endsAt: dayjs().add(1, "hour").toDate(),
       },
       additionalDescription: "",
       imageUrl: "",
@@ -200,7 +201,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                   ))}
                 </Stepper>
               </Box>
-              <Stack mt={8}>
+              <Stack my={8} spacing={6}>
                 <StepComponent />
                 <FileUploader
                   genericFileType="image"
