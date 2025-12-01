@@ -12,14 +12,13 @@ import {
   Stack,
   useToast,
   Button,
-  Text,
 } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import FormInput from "@/components/common/form/FormInput";
-import FileUploader from "@/components/common/form/FileUploader";
+import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createNewGroup } from "@/services/groups/api";
@@ -80,6 +79,7 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.joinedGroups });
       reset();
       setSelectedImage(null);
+      onClose();
     },
     onError: (err) => {
       const errKey = getMessageKeyFromError(err);
@@ -88,45 +88,31 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   });
 
   const onSubmit = async (data: CreateGroupFormType) => {
-    try {
-      // 1. Upload zdjęcia jeśli zostało wybrane
-      if (selectedImage) {
-        const uploadedPath = await uploadImageMutation.mutateAsync(
-          selectedImage
-        );
-
-        // 2. Ustawienie ścieżki do zdjęcia
-        setValue("imageUrl", uploadedPath);
-        data.imageUrl = uploadedPath;
-      } else {
-        setValue("imageUrl", undefined);
-        data.imageUrl = undefined;
-      }
-
-      // 3. Utworzenie grupy
-      onClose();
-      const promise = createGroupAction.mutateAsync(data);
-
+    if (selectedImage) {
+      const promise = uploadImageMutation.mutateAsync(selectedImage);
       toast.promise(promise, {
-        loading: { title: t("toast.loading") },
-        success: { title: t("toast.success") },
-        error: (err: MutationOrQuerryError<typeof createGroupAction>) => {
-          const errKey = getMessageKeyFromError(err, {
-            generalErrorKey:
-              "pages.GroupsPage.AddGroupModal.toast.errorDefault",
-          });
-          return { title: tValidation(errKey) };
-        },
+        loading: { title: "upload zdjecia" },
+        success: { title: "udalo sie uploadowac" },
+        error: { title: "nie udalo sie uploadowac" },
       });
-    } catch {
-      // Upload się nie powiódł
-      setValue("imageUrl", undefined);
-      toast({
-        title: "Nie udało się przesłać zdjęcia",
-        status: "error",
-        duration: 3000,
-      });
+      const uploadedPath = await promise.catch(() => undefined);
+
+      setValue("imageUrl", uploadedPath);
+      data.imageUrl = uploadedPath;
+      if (!uploadedPath) return; // stop if upload failed
     }
+
+    const promise = createGroupAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof createGroupAction>) => {
+        const errKey = getMessageKeyFromError(err, {
+          generalErrorKey: "pages.GroupsPage.AddGroupModal.toast.errorDefault",
+        });
+        return { title: tValidation(errKey) };
+      },
+    });
   };
 
   return (
@@ -169,22 +155,18 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
                   />
                 )}
               />
-              <Stack>
-                <Text color="gray.500" fontSize="sm">
-                  Zamieść zdjęcie grupy (opcjonalnie)
-                </Text>
-                <FileUploader
-                  placeholder="Wybierz zdjęcie grupy"
-                  genericFileType="image"
-                  onChange={(file) => {
-                    setSelectedImage(file);
-                    if (!file) {
-                      uploadImageMutation.reset();
-                    }
-                  }}
-                  isUploadError={uploadImageMutation.isError}
-                />
-              </Stack>
+
+              <FileUploader
+                placeholder="Wybierz zdjęcie grupy"
+                genericFileType="image"
+                onChange={(file) => {
+                  setSelectedImage(file);
+                  if (!file) {
+                    uploadImageMutation.reset();
+                  }
+                }}
+                isUploadError={uploadImageMutation.isError}
+              />
 
               <FormMainButton
                 text={t("submitButton")}
