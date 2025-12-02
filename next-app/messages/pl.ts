@@ -703,7 +703,7 @@ const findPartner = {
       },
     },
     frequency: {
-      SINGLE: "Pojedyńcza",
+      SINGLE: "Pojedyncza",
       PERIOD: "Okresowa",
     },
     system: {

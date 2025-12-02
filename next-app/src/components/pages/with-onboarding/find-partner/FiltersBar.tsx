@@ -20,7 +20,6 @@ import { useTranslations } from "@/lib/typed-translations";
 
 export default function FiltersBar() {
   const t = useTranslations("pages.FindPartner.FiltersBar");
-  const [scope, setScope] = useState("all");
   const [activityParamRaw, setActivityParam] = useQueryState("activity");
   const activity = activityParamRaw ? String(activityParamRaw) : "active";
 
@@ -32,7 +31,7 @@ export default function FiltersBar() {
   const experience = experienceParamRaw ? String(experienceParamRaw) : "any";
 
   const [trainingGroup, setTrainingGroup] = useQueryState("trainingGroup");
-  const [biddingSystem, setBiddingSystem] = useState("");
+  const [biddingSystem, setBiddingSystem] = useState(""); //currently no bidding system filter
 
   const groupsQuery = useJoinedGroupsQuery();
   const groupsArr = Array.isArray(groupsQuery.data) ? groupsQuery.data : [];
@@ -129,7 +128,6 @@ export default function FiltersBar() {
           colorScheme="gray"
           variant="outline"
           onClick={() => {
-            setScope("all");
             setActivityParam(null);
             setGroupId(null);
             setFrequencyParam(null);
@@ -155,15 +153,6 @@ export default function FiltersBar() {
           </AccordionButton>
           <AccordionPanel px={0} pt={3}>
             <VStack spacing={3} align="stretch">
-              <Select
-                value={scope}
-                onChange={(e) => setScope(e.target.value)}
-                width="100%"
-              >
-                <option value="all">{t("scopeOptions.all")}</option>
-                <option value="mine">{t("scopeOptions.mine")}</option>
-              </Select>
-
               <Select
                 value={activity}
                 onChange={(e) => setActivityParam(e.target.value || null)}
@@ -253,7 +242,6 @@ export default function FiltersBar() {
                 colorScheme="gray"
                 variant="outline"
                 onClick={() => {
-                  setScope("all");
                   setActivityParam(null);
                   setGroupId(null);
                   setFrequencyParam(null);

@@ -16,14 +16,13 @@ type Announcement = {
   title: string;
   date?: Date; 
   owner?: UserTypeBasic;
-  characteristics?: string[]; 
+  characteristics?: string[]; //for future use (user tags)
   frequency: string;
   preferredSystem: string;
   isOwnByUser: boolean;
   description?: string;
   interestedUsers?: Array<UserTypeBasic>;
   isUserInterested?: boolean;
-  isInterested?: boolean;
   groupId?: string;
 };
 
@@ -33,7 +32,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
     undefined
   );
   const [interested, setInterested] = useState<boolean>(
-    a.isInterested ?? false
+    a.isUserInterested ?? false
   );
   const [pending, setPending] = useState(false);
   
@@ -45,7 +44,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
     action: addInterested,
     onSuccess: () => {
       setInterested(true);
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts() });
       toast({ status: "success", title: t("toast.add.success") });
     },
     onError: () => {
@@ -57,7 +56,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
     action: removeInterested,
     onSuccess: () => {
       setInterested(false);
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts() });
       toast({ status: "success", title: t("toast.remove.success") });
     },
     onError: () => {
@@ -186,7 +185,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
               </Box>
 
               <Box>
-                {a.isOwnByUser && <Button
+                {!a.isOwnByUser && <Button
                   colorScheme={interested ? "red" : "accent"}
                   onClick={handleToggleInterest}
                   isLoading={pending}
@@ -198,7 +197,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
               </Box>
             </Flex>
             
-            {!a.isOwnByUser && <Box mt={4}>
+            {a.isOwnByUser && <Box mt={4}>
               <Flex direction={{ base: "column", md: "row" }} gap={2} align="center">
                 <Select
                   flex={1}

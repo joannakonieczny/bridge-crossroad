@@ -1,6 +1,6 @@
 import React from "react";
 import { Table, Thead, Tbody, Tr, Th, Box, Skeleton, SkeletonText, Td } from "@chakra-ui/react";
-import Annoucment from "./Annoucment";
+import Annoucement from "./Annoucement";
 import { usePartnershipPostsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
 import type { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
@@ -10,7 +10,7 @@ import { PartnershipPostStatus, PartnershipPostType } from "@/club-preset/partne
 import { TrainingGroup } from "@/club-preset/training-group";
 import { useTranslations } from "@/lib/typed-translations";
 
-export default function AnnoucmentsList() {
+export default function AnnoucementsList() {
   const t = useTranslations("pages.FindPartner.List");
   const [page] = useQueryState("page", {
     defaultValue: 1,
@@ -179,7 +179,7 @@ export default function AnnoucmentsList() {
               isOwnByUser: p.isOwnByUser ?? false,
             };
 
-            return <Annoucment key={id} a={ann} />;
+            return <Annoucement key={id} a={ann} />;
           })}
         </Tbody>
       </Table>

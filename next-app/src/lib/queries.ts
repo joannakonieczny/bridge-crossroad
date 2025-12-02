@@ -37,7 +37,15 @@ export const QUERY_KEYS = {
   ],
   eventDetail: (id: EventIdType) => ["event", id],
   latestEvents: (limit: number) => ["event", "latest", limit],
-  partnershipPosts: ["partnershipPosts"],
+  partnershipPosts: (page = 1, groupId = "" as GroupIdType, limit = 6, status?: PartnershipPostStatus, type?: PartnershipPostType, onboardingKey: string = "none") => [
+    "partnershipPosts",
+    page,
+    groupId,
+    limit,
+    status,
+    type,
+    onboardingKey,
+  ],
 } as const;
 
 function useOnErrorToast(template: string, toastId: string) {
@@ -164,21 +172,12 @@ export function usePartnershipPostsQuery(
   const limit = input?.limit ?? 10;
   const status = input?.status ?? PartnershipPostStatus.ACTIVE;
   const groupId = input?.groupId ?? ("" as GroupIdType);
-  console.log(groupId);
   const type = input?.type;
   const onboardingData = input?.onboardingData;
   const onboardingKey = input?.onboardingBucket ?? "none";
 
   return useActionQuery({
-    queryKey: [
-      "partnershipPosts",
-      page,
-      groupId,
-      limit,
-      status,
-      type,
-      onboardingKey,
-    ],
+    queryKey: QUERY_KEYS.partnershipPosts(page, groupId, limit, status, type, onboardingKey),
     action: () =>
       listPartnershipPosts({
         status,

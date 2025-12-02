@@ -5,7 +5,7 @@ import { useTranslations } from "@/lib/typed-translations";
 
 export default function MainBar() {
   const t = useTranslations("pages.FindPartner.MainBar");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(""); //Still mocked
 
   return (
     <Box bg="bg" p={4} borderRadius="md">

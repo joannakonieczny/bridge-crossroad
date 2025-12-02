@@ -43,7 +43,7 @@ export default function Pagination({
     current - 1,
     current,
     current + 1,
-    totalPages ?? 1,
+    totalPages,
   ]);
   const pages = Array.from(pagesSet)
     .filter((p) => p >= 1 && p <= (totalPages ?? 1))
@@ -104,7 +104,7 @@ export default function Pagination({
           size={size}
           variant="ghost"
           onClick={handleNext}
-          isDisabled={current >= (totalPages ?? 1)}
+          isDisabled={current >= (totalPages)}
           aria-label={nextLabel}
         >
           <FaAngleRight />
