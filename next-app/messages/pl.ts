@@ -6,6 +6,7 @@ import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-c
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
 import { PartnershipPostValidationConstants as PARTNERSHIP_POST } from "@/schemas/model/partnership-post/partnership-post-const";
+import { BiddingSystem } from "@/club-preset/partnership-post";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -694,6 +695,113 @@ const chatPage = {
   },
 };
 
+const findPartner = {
+  Announcement: {
+    toast: {
+      add: {
+        success: "Zapisano na zgłoszenie - zostaniesz powiadomiony, jeśli zgłoszeniodawca zatwierdzi chęć wspólnej gry.",
+        error: "Błąd podczas zapisywania",
+        loading: "Zapisywanie...",
+      },
+      remove: {
+        success: "Wypisano z zgłoszenia",
+        error: "Błąd podczas wypisywania",
+        loading: "Wypisywanie...",
+      },
+    },
+    frequency: {
+      SINGLE: "Pojedyncza",
+      PERIOD: "Okresowa",
+    },
+    ui: {
+      noDescription: "Brak opisu",
+      button: {
+        cancel: "Anuluj",
+        interested: "Jestem zainteresowany",
+        save: "Zapisz",
+      },
+      loading: {
+        saving: "Zapisywanie...",
+        unregistering: "Wypisywanie...",
+      },
+      select: {
+        playWith: "Zagram z...",
+        noInterested: "Brak zainteresowanych",
+      },
+    },
+  },
+  List: {
+    tableHeaders: {
+      name: "Nazwa",
+      player: "Zawodnik",
+      frequency: "Częstotliwość",
+      preferredSystem: "Preferowany system",
+    },
+    skeleton: {
+      noInterestedPlaceholder: "Brak zainteresowanych",
+    },
+  },
+  FiltersBar: {
+    activity: {
+      active: "Aktywne",
+      inactive: "Nieaktywne",
+    },
+    placeholders: {
+      group: "Grupa",
+      frequency: "Częstotliwość",
+      experience: "Doświadczenie",
+      trainingGroup: "Grupa treningowa",
+      biddingSystem: "System licytacyjny",
+    },
+    allGroups: "Wszystkie grupy",
+    scopeOptions: {
+      all: "Wszystkie",
+      mine: "Moje",
+    },
+    frequencyOptions: {
+      any: "Dowolna",
+      SINGLE: "Pojedyńcza",
+      PERIOD: "Okresowa",
+    },
+    experienceOptions: {
+      any: "Dowolne",
+      "<1": "mniej niż rok",
+      "1": "1 rok",
+      "2": "2 lata",
+      "3": "3 lata",
+      "4": "4 lata",
+      "5+": "5+ lat",
+      "10+": "10+ lat",
+      "15+": "15+ lat",
+    },
+    trainingGroupOptions: {
+      BASIC: "Podstawowa",
+      INTERMEDIATE: "Średniozaawansowana",
+      ADVANCED: "Zaawansowana",
+      NONE: "Nie biorę udziału w zajęciach",
+      COACH: "Jestem trenerem!",
+    },
+    biddingSystemOptions: {
+      strefa: "Strefa",
+      wspolnyJezyk: "Wspólny Język",
+      dubeltowka: "Dubeltówka",
+      sayc: "SAYC (Standard American Yellow Card)",
+      lepszyMlodszy: "Lepszy Młodszy",
+      sso: "SSO (System słabych otwarć)",
+      totolotek: "Totolotek",
+      naturalny: "Naturalny",
+      other: "Własny / inny",
+    },
+    button: {
+      clear: "Wyczyść",
+      filtersLabel: "Filtry",
+    },
+  },
+  MainBar: {
+    searchPlaceholder: "Szukaj oferty, turnieju, partnera...",
+  },
+};
+
 const messages = {
   common: {
     date: {
@@ -733,6 +841,17 @@ const messages = {
       [TournamentType.CRAZY]: "Crazy",
       [TournamentType.BAMY]: "BAMY",
     },
+    biddingSystem: {
+      [BiddingSystem.ZONE]: "Strefa",
+      [BiddingSystem.COMMON_LANGUAGE]: "Wspólny Język",
+      [BiddingSystem.DOUBLETON]: "Dubeltówka",
+      [BiddingSystem.SAYC]: "SAYC",
+      [BiddingSystem.BETTER_MINOR]: "Lepszy Młodszy",
+      [BiddingSystem.WEAK_OPENINGS_SSO]: "SSO",
+      [BiddingSystem.TOTOLOTEK]: "Totolotek",
+      [BiddingSystem.NATURAL]: "Naturalny",
+      [BiddingSystem.OTHER]: "Inny",
+    },
     error: {
       messageKeyNotExisting: "Wystąpił błąd",
       serverError: "Wystąpił błąd. Spróbuj ponownie później.",
@@ -750,6 +869,7 @@ const messages = {
         "Wystąpił błąd przy pobieraniu {template}. Spróbuj ponownie później.",
     },
   },
+
   validation: {
     model: {
       user: userModelValidation,
@@ -918,6 +1038,7 @@ const messages = {
     ChatPage: chatPage,
     CalendarPage: calendarPage,
     EventFormPage: eventForm,
+    FindPartner: findPartner,
   },
   components: {
     Navbar: navbar,

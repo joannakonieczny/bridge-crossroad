@@ -7,6 +7,7 @@ import { Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { baseConfig } from "@/club-preset/baseConfig";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata: Metadata = {
   title: baseConfig.appName,
@@ -31,9 +32,11 @@ export default async function RootLayout({
     >
       <body>
         <ReactQuerryProvider>
-          <NextIntlClientProvider>
-            <ChakraCustomProvider>{children}</ChakraCustomProvider>
-          </NextIntlClientProvider>
+          <NuqsAdapter>
+            <NextIntlClientProvider>
+              <ChakraCustomProvider>{children}</ChakraCustomProvider>
+            </NextIntlClientProvider>
+          </NuqsAdapter>
         </ReactQuerryProvider>
       </body>
     </html>
