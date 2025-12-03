@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex, IconButton, Button, Select } from "@chakra-ui/react";
+import React, { useMemo, useState } from "react";
+import { Tr, Td, Box, Avatar, Text, Link, HStack, Flex, IconButton, Button, useDisclosure } from "@chakra-ui/react";
 import { FiChevronDown } from "react-icons/fi";
 import { addInterested, removeInterested } from "@/services/find-partner/api";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
@@ -10,6 +10,8 @@ import { useTranslations } from "@/lib/typed-translations";
 import { BiddingSystem } from "@/club-preset/partnership-post";
 import type { UserTypeBasic } from "@/schemas/model/user/user-types";
 import { getPersonLabel, getDateLabel } from "@/util/formatters";
+import type { GroupIdType } from "@/schemas/model/group/group-types";
+import SelectInput from "@/components/common/form/SelectInput";
 
 type Announcement = {
   id: number | string;
@@ -23,32 +25,33 @@ type Announcement = {
   description?: string;
   interestedUsers?: Array<UserTypeBasic>;
   isUserInterested?: boolean;
-  groupId?: string;
+  groupId?: GroupIdType;
 };
 
 export default function Annoucment({ a }: { a: Announcement }) {
-  const [open, setOpen] = useState(false);
+  const { isOpen, onToggle } = useDisclosure();
   const [selectedInterestedUser, setSelectedInterestedUser] = useState<string | undefined>(
     undefined
   );
   const [interested, setInterested] = useState<boolean>(
     a.isUserInterested ?? false
   );
-  const [pending, setPending] = useState(false);
   
   const toast = useToast();
   const queryClient = useQueryClient();
   const t = useTranslations("pages.FindPartner.Announcement");
-
+  // system translations (pl.ts -> system)
+  const tSystem = useTranslations("common.biddingSystem");
+  
   const addAction = useActionMutation({
     action: addInterested,
     onSuccess: () => {
       setInterested(true);
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts() });
-      toast({ status: "success", title: t("toast.add.success") });
+      // note: keep logic in onSuccess; toast now handled via toast.promise in handler
     },
     onError: () => {
-      toast({ status: "error", title: t("toast.add.error") });
+      // onError kept for any side-effects; toast handled via toast.promise
     },
   });
 
@@ -57,49 +60,45 @@ export default function Annoucment({ a }: { a: Announcement }) {
     onSuccess: () => {
       setInterested(false);
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.partnershipPosts() });
-      toast({ status: "success", title: t("toast.remove.success") });
+      // toast handled via toast.promise
     },
     onError: () => {
-      toast({ status: "error", title: t("toast.remove.error") });
+      // onError kept for any side-effects
     },
   });
 
-  const handleToggleInterest = async () => {
-    if (pending) return;
-    setPending(true);
+  const handleToggleInterest = () => {
     const payload = { partnershipPostId: String(a.id), groupId: String(a.groupId ?? "") };
-    try {
-      if (!interested) {
-        await addAction.mutateAsync(payload);
-      } else {
-        await removeAction.mutateAsync(payload);
-      }
-    } catch {
-    } finally {
-      setPending(false);
-    }
+    const promise = !interested
+      ? addAction.mutateAsync(payload)
+      : removeAction.mutateAsync(payload);
+
+    toast.promise(promise, {
+      loading: { title: !interested ? t("toast.add.loading") : t("toast.remove.loading") },
+      success: { title: !interested ? t("toast.add.success") : t("toast.remove.success") },
+      error: { title: !interested ? t("toast.add.error") : t("toast.remove.error") },
+    });
   };
   
-  const ariaLabel = open ? "Hide details" : "Show details";
+  const ariaLabel = isOpen ? "Hide details" : "Show details";
   const freqKey =
     a.frequency === "SINGLE" ? "SINGLE" :
     a.frequency === "PERIOD" ? "PERIOD" :
     null;
   const frequencyLabel = freqKey ? t(`frequency.${freqKey}`) : a.frequency;
 
-  const biddingSystemLabels: Record<BiddingSystem, string> = {
-    [BiddingSystem.ZONE]: t("system.ZONE"),
-    [BiddingSystem.COMMON_LANGUAGE]: t("system.COMMON_LANGUAGE"),
-    [BiddingSystem.DOUBLETON]: t("system.DOUBLETON"),
-    [BiddingSystem.SAYC]: t("system.SAYC"),
-    [BiddingSystem.BETTER_MINOR]: t("system.BETTER_MINOR"),
-    [BiddingSystem.WEAK_OPENINGS_SSO]: t("system.WEAK_OPENINGS_SSO"),
-    [BiddingSystem.TOTOLOTEK]: t("system.TOTOLOTEK"),
-    [BiddingSystem.NATURAL]: t("system.NATURAL"),
-    [BiddingSystem.OTHER]: t("system.OTHER"),
-  };
+  const biddingSystemOptions = useMemo(
+    () =>
+      Object.values(BiddingSystem).map((value) => ({
+        value,
+        label: tSystem(value),
+      })),
+    [tSystem]
+  );
 
-  const systemLabel = biddingSystemLabels[a.preferredSystem as BiddingSystem] ?? a.preferredSystem;
+  const systemLabel =
+    biddingSystemOptions.find((o) => o.value === a.preferredSystem)?.label ??
+    a.preferredSystem;
   
   const noDescription = t("ui.noDescription");
   const interestButtonLabel = interested ? t("ui.button.cancel") : t("ui.button.interested");
@@ -110,8 +109,8 @@ export default function Annoucment({ a }: { a: Announcement }) {
     <>
       <Tr
         _hover={{ ".vertical-bar": { bg: "accent.500" } }}
-        borderBottomWidth={open ? "0" : "1px"}
-        borderBottomColor={open ? "transparent" : "border.200"}
+        borderBottomWidth={isOpen ? "0" : "1px"}
+        borderBottomColor={isOpen ? "transparent" : "border.200"}
       >
         <Td py={2}>
           <Flex align="center">
@@ -164,19 +163,19 @@ export default function Annoucment({ a }: { a: Announcement }) {
             icon={
               <FiChevronDown
                 style={{
-                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                  transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 150ms ease",
                 }}
               />
             }
             size="sm"
             variant="ghost"
-            onClick={() => setOpen(!open)}
+            onClick={onToggle}
           />
         </Td>
       </Tr>
 
-      {open && (
+      {isOpen && (
         <Tr>
           <Td colSpan={5} p={4} bg="bg">
             <Flex direction={{ base: "column", md: "row" }} align="center" justify="space-between" gap={4}>
@@ -188,7 +187,7 @@ export default function Annoucment({ a }: { a: Announcement }) {
                 {!a.isOwnByUser && <Button
                   colorScheme={interested ? "red" : "accent"}
                   onClick={handleToggleInterest}
-                  isLoading={pending}
+                  isLoading={addAction.isPending || removeAction.isPending}
                   loadingText={interestButtonLoadingText}
                   size="sm"
                 >
@@ -199,24 +198,16 @@ export default function Annoucment({ a }: { a: Announcement }) {
             
             {a.isOwnByUser && <Box mt={4}>
               <Flex direction={{ base: "column", md: "row" }} gap={2} align="center">
-                <Select
-                  flex={1}
+                <SelectInput
                   placeholder={selectPlaceholder}
                   value={selectedInterestedUser}
                   onChange={(e) => setSelectedInterestedUser(e.target.value || undefined)}
                   isDisabled={!a.interestedUsers || a.interestedUsers.length === 0}
-                  size="sm"
-                >
-                  {(a.interestedUsers || []).map((u: UserTypeBasic) => {
+                  options={(a.interestedUsers || []).map((u: UserTypeBasic) => {
                     const id = (u && (u.id ?? u)) as string;
-                    const label = getPersonLabel(u);
-                    return (
-                      <option key={String(id)} value={String(id)}>
-                        {label || String(id)}
-                      </option>
-                    );
+                    return { value: String(id), label: getPersonLabel(u) || String(id) };
                   })}
-                </Select>
+                />
 
                 <Button size="sm" onClick={() => {}}>
                   {t("ui.button.save")}

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  HStack,
+  Grid,
   VStack,
-  Select,
   Button,
   Accordion,
   AccordionItem,
@@ -17,6 +16,7 @@ import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { TrainingGroup } from "@/club-preset/training-group";
 import { PartnershipPostType } from "@/club-preset/partnership-post";
 import { useTranslations } from "@/lib/typed-translations";
+import SelectInput from "@/components/common/form/SelectInput";
 
 export default function FiltersBar() {
   const t = useTranslations("pages.FindPartner.FiltersBar");
@@ -51,80 +51,76 @@ export default function FiltersBar() {
 
   return (
     <Box bg="bg" p={4} borderRadius="md">
-      <HStack
-        spacing={3}
-        flexWrap="wrap"
-        display={{ base: "none", md: "none", lg: "flex" }}
+      <Grid
+        gap={3}
+        alignItems="center"
+        display={{ base: "none", md: "none", lg: "grid" }}
+        templateColumns={{ lg: "150px 160px 160px 170px 180px auto" }}
       >
-        <Select
+        <SelectInput
           value={activity}
           onChange={(e) => setActivityParam(e.target.value || null)}
-          width="150px"
-        >
-          <option value="active">{t("activity.active")}</option>
-          <option value="inactive">{t("activity.inactive")}</option>
-        </Select>
+          options={[
+            { value: "active", label: t("activity.active") },
+            { value: "inactive", label: t("activity.inactive") },
+          ]}
+          onSelectProps={{ width: "150px" }}
+        />
 
-        <Select
+        <SelectInput
           value={groupId ?? ""}
           onChange={(e) => setGroupId(e.target.value || null)}
           placeholder={t("placeholders.group")}
-          width="160px"
-        >
-          <option value="">{t("allGroups")}</option>
-          {groupsArr.map((g) => {
-            const id = g.id;
-            const label = g.name;
-            return (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            );
-          })}
-        </Select>
+          emptyValueLabel={t("allGroups")}
+          options={groupsArr.map((g) => ({ value: String(g.id), label: g.name }))}
+          onSelectProps={{ width: "160px" }}
+        />
 
-        <Select
+        <SelectInput
           value={frequency}
           onChange={(e) => setFrequencyParam(e.target.value || null)}
           placeholder={t("placeholders.frequency")}
-          width="160px"
-        >
-          <option value="any">{t("frequencyOptions.any")}</option>
-          <option value={PartnershipPostType.SINGLE}>{t("frequencyOptions.SINGLE")}</option>
-          <option value={PartnershipPostType.PERIOD}>{t("frequencyOptions.PERIOD")}</option>
-        </Select>
+          options={[
+            { value: "any", label: t("frequencyOptions.any") },
+            { value: PartnershipPostType.SINGLE, label: t("frequencyOptions.SINGLE") },
+            { value: PartnershipPostType.PERIOD, label: t("frequencyOptions.PERIOD") },
+          ]}
+          onSelectProps={{ width: "160px" }}
+        />
 
-        <Select
+        <SelectInput
           value={experience}
           onChange={(e) => setExperienceParam(e.target.value || null)}
           placeholder={t("placeholders.experience")}
-          width="170px"
-        >
-          <option value="any">{t("experienceOptions.any")}</option>
-          <option value="<1">{t("experienceOptions.<1")}</option>
-          <option value="1">{t("experienceOptions.1")}</option>
-          <option value="2">{t("experienceOptions.2")}</option>
-          <option value="3">{t("experienceOptions.3")}</option>
-          <option value="4">{t("experienceOptions.4")}</option>
-          <option value="5+">{t("experienceOptions.5+")}</option>
-          <option value="10+">{t("experienceOptions.10+")}</option>
-          <option value="15+">{t("experienceOptions.15+")}</option>
-        </Select>
+          options={[
+            { value: "any", label: t("experienceOptions.any") },
+            { value: "<1", label: t("experienceOptions.<1") },
+            { value: "1", label: t("experienceOptions.1") },
+            { value: "2", label: t("experienceOptions.2") },
+            { value: "3", label: t("experienceOptions.3") },
+            { value: "4", label: t("experienceOptions.4") },
+            { value: "5+", label: t("experienceOptions.5+") },
+            { value: "10+", label: t("experienceOptions.10+") },
+            { value: "15+", label: t("experienceOptions.15+") },
+          ]}
+          onSelectProps={{ width: "170px" }}
+        />
 
-        <Select
+        <SelectInput
           value={trainingGroup ?? ""}
           onChange={(e) => setTrainingGroup(e.target.value || null)}
           placeholder={t("placeholders.trainingGroup")}
-          width="180px"
-        >
-          <option value={TrainingGroup.BASIC}>{t("trainingGroupOptions.BASIC")}</option>
-          <option value={TrainingGroup.INTERMEDIATE}>{t("trainingGroupOptions.INTERMEDIATE")}</option>
-          <option value={TrainingGroup.ADVANCED}>{t("trainingGroupOptions.ADVANCED")}</option>
-          <option value={TrainingGroup.NONE}>{t("trainingGroupOptions.NONE")}</option>
-        </Select>
+          options={[
+            { value: TrainingGroup.BASIC, label: t("trainingGroupOptions.BASIC") },
+            { value: TrainingGroup.INTERMEDIATE, label: t("trainingGroupOptions.INTERMEDIATE") },
+            { value: TrainingGroup.ADVANCED, label: t("trainingGroupOptions.ADVANCED") },
+            { value: TrainingGroup.NONE, label: t("trainingGroupOptions.NONE") },
+          ]}
+          onSelectProps={{ width: "180px" }}
+        />
 
         <Button
-          ml="auto"
+          justifySelf="end"
           colorScheme="gray"
           variant="outline"
           onClick={() => {
@@ -138,7 +134,7 @@ export default function FiltersBar() {
         >
           {t("button.clear")}
         </Button>
-      </HStack>
+      </Grid>
 
       <Accordion
         allowToggle
@@ -153,89 +149,85 @@ export default function FiltersBar() {
           </AccordionButton>
           <AccordionPanel px={0} pt={3}>
             <VStack spacing={3} align="stretch">
-              <Select
+              <SelectInput
                 value={activity}
                 onChange={(e) => setActivityParam(e.target.value || null)}
-                width="100%"
-              >
-                <option value="active">{t("activity.active")}</option>
-                <option value="inactive">{t("activity.inactive")}</option>
-              </Select>
+                options={[
+                  { value: "active", label: t("activity.active") },
+                  { value: "inactive", label: t("activity.inactive") },
+                ]}
+                onSelectProps={{ width: "100%" }}
+              />
 
-              <Select
+              <SelectInput
                 value={groupId ?? ""}
                 onChange={(e) => setGroupId(e.target.value || null)}
                 placeholder={t("placeholders.group")}
-                width="100%"
-              >
-                <option value="">{t("allGroups")}</option>
-                {groupsArr.map((g) => {
-                  const id = g.id;
-                  const label = g.name;
-                  return (
-                    <option key={id} value={id}>
-                      {label}
-                    </option>
-                  );
-                })}
-              </Select>
+                emptyValueLabel={t("allGroups")}
+                options={groupsArr.map((g) => ({ value: String(g.id), label: g.name }))}
+                onSelectProps={{ width: "100%" }}
+              />
 
-              <Select
+              <SelectInput
                 value={frequency}
                 onChange={(e) => setFrequencyParam(e.target.value || null)}
                 placeholder={t("placeholders.frequency")}
-                width="100%"
-              >
-                <option value="any">{t("frequencyOptions.any")}</option>
-                <option value={PartnershipPostType.SINGLE}>{t("frequencyOptions.SINGLE")}</option>
-                <option value={PartnershipPostType.PERIOD}>{t("frequencyOptions.PERIOD")}</option>
-              </Select>
+                options={[
+                  { value: "any", label: t("frequencyOptions.any") },
+                  { value: PartnershipPostType.SINGLE, label: t("frequencyOptions.SINGLE") },
+                  { value: PartnershipPostType.PERIOD, label: t("frequencyOptions.PERIOD") },
+                ]}
+                onSelectProps={{ width: "100%" }}
+              />
 
-              <Select
+              <SelectInput
                 value={experience}
                 onChange={(e) => setExperienceParam(e.target.value || null)}
                 placeholder={t("placeholders.experience")}
-                width="100%"
-              >
-                <option value="any">{t("experienceOptions.any")}</option>
-                <option value="<1">{t("experienceOptions.<1")}</option>
-                <option value="1">{t("experienceOptions.1")}</option>
-                <option value="2">{t("experienceOptions.2")}</option>
-                <option value="3">{t("experienceOptions.3")}</option>
-                <option value="4">{t("experienceOptions.4")}</option>
-                <option value="5+">{t("experienceOptions.5+")}</option>
-                <option value="10+">{t("experienceOptions.10+")}</option>
-                <option value="15+">{t("experienceOptions.15+")}</option>
-              </Select>
+                options={[
+                  { value: "any", label: t("experienceOptions.any") },
+                  { value: "<1", label: t("experienceOptions.<1") },
+                  { value: "1", label: t("experienceOptions.1") },
+                  { value: "2", label: t("experienceOptions.2") },
+                  { value: "3", label: t("experienceOptions.3") },
+                  { value: "4", label: t("experienceOptions.4") },
+                  { value: "5+", label: t("experienceOptions.5+") },
+                  { value: "10+", label: t("experienceOptions.10+") },
+                  { value: "15+", label: t("experienceOptions.15+") },
+                ]}
+                onSelectProps={{ width: "100%" }}
+              />
 
-              <Select
+              <SelectInput
                 value={trainingGroup ?? ""}
                 onChange={(e) => setTrainingGroup(e.target.value || null)}
                 placeholder={t("placeholders.trainingGroup")}
-                width="100%"
-              >
-                <option value={TrainingGroup.BASIC}>{t("trainingGroupOptions.BASIC")}</option>
-                <option value={TrainingGroup.INTERMEDIATE}>{t("trainingGroupOptions.INTERMEDIATE")}</option>
-                <option value={TrainingGroup.ADVANCED}>{t("trainingGroupOptions.ADVANCED")}</option>
-                <option value={TrainingGroup.NONE}>{t("trainingGroupOptions.NONE")}</option>
-              </Select>
+                options={[
+                  { value: TrainingGroup.BASIC, label: t("trainingGroupOptions.BASIC") },
+                  { value: TrainingGroup.INTERMEDIATE, label: t("trainingGroupOptions.INTERMEDIATE") },
+                  { value: TrainingGroup.ADVANCED, label: t("trainingGroupOptions.ADVANCED") },
+                  { value: TrainingGroup.NONE, label: t("trainingGroupOptions.NONE") },
+                ]}
+                onSelectProps={{ width: "100%" }}
+              />
 
-              <Select
+              <SelectInput
                 value={biddingSystem}
                 onChange={(e) => setBiddingSystem(e.target.value)}
                 placeholder={t("placeholders.biddingSystem")}
-                width="100%"
-              >
-                <option value="strefa">{t("biddingSystemOptions.strefa")}</option>
-                <option value="wspolny-jezyk">{t("biddingSystemOptions.wspolnyJezyk")}</option>
-                <option value="dubeltowka">{t("biddingSystemOptions.dubeltowka")}</option>
-                <option value="sayc">{t("biddingSystemOptions.sayc")}</option>
-                <option value="lepszy-mlodszy">{t("biddingSystemOptions.lepszyMlodszy")}</option>
-                <option value="sso">{t("biddingSystemOptions.sso")}</option>
-                <option value="totolotek">{t("biddingSystemOptions.totolotek")}</option>
-                <option value="naturalny">{t("biddingSystemOptions.naturalny")}</option>
-                <option value="other">{t("biddingSystemOptions.other")}</option>
-              </Select>
+                options={[
+                  { value: "strefa", label: t("biddingSystemOptions.strefa") },
+                  { value: "wspolny-jezyk", label: t("biddingSystemOptions.wspolnyJezyk") },
+                  { value: "dubeltowka", label: t("biddingSystemOptions.dubeltowka") },
+                  { value: "sayc", label: t("biddingSystemOptions.sayc") },
+                  { value: "lepszy-mlodszy", label: t("biddingSystemOptions.lepszyMlodszy") },
+                  { value: "sso", label: t("biddingSystemOptions.sso") },
+                  { value: "totolotek", label: t("biddingSystemOptions.totolotek") },
+                  { value: "naturalny", label: t("biddingSystemOptions.naturalny") },
+                  { value: "other", label: t("biddingSystemOptions.other") },
+                ]}
+                onSelectProps={{ width: "100%" }}
+              />
 
               <Button
                 alignSelf="flex-end"

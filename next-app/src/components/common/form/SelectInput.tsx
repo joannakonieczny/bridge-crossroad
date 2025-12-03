@@ -1,9 +1,4 @@
-import {
-  InputGroup,
-  InputRightElement,
-  Select,
-  Spinner,
-} from "@chakra-ui/react";
+import { InputGroup, InputRightElement, Select, Spinner } from "@chakra-ui/react";
 import { WithFormControlWrapper } from "./util/FormControlWrapper";
 import type { FormControlWrapperProps } from "./util/FormControlWrapper";
 import type { SelectProps } from "@chakra-ui/react";
@@ -20,6 +15,7 @@ type ISelectInputProps = {
   value?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
+  // expect native event handler
   onChange?: ChangeEventHandler<HTMLSelectElement>;
   onSelectProps?: SelectProps;
 };
@@ -30,7 +26,7 @@ function SelectInputSolo(props: ISelectInputProps) {
       focusBorderColor="accent.500"
       _focus={{ borderColor: "accent.500" }}
       value={props.value}
-      disabled={props.isDisabled}
+      isDisabled={props.isDisabled}
       onChange={props.onChange}
       {...props.onSelectProps}
     >
@@ -43,11 +39,7 @@ function SelectInputSolo(props: ISelectInputProps) {
         <option value="">{props.emptyValueLabel}</option>
       )}
       {props.options?.map((option) => (
-        <option
-          key={option.value}
-          value={option.value}
-          disabled={option.disabled}
-        >
+        <option key={option.value} value={option.value} disabled={option.disabled}>
           {option.label}
         </option>
       ))}

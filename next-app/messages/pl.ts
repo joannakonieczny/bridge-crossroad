@@ -6,6 +6,7 @@ import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-c
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
 import { PartnershipPostValidationConstants as PARTNERSHIP_POST } from "@/schemas/model/partnership-post/partnership-post-const";
+import { BiddingSystem } from "@/club-preset/partnership-post";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -696,26 +697,17 @@ const findPartner = {
       add: {
         success: "Zapisano na zgłoszenie - zostaniesz powiadomiony, jeśli zgłoszeniodawca zatwierdzi chęć wspólnej gry.",
         error: "Błąd podczas zapisywania",
+        loading: "Zapisywanie...",
       },
       remove: {
         success: "Wypisano z zgłoszenia",
         error: "Błąd podczas wypisywania",
+        loading: "Wypisywanie...",
       },
     },
     frequency: {
       SINGLE: "Pojedyncza",
       PERIOD: "Okresowa",
-    },
-    system: {
-      ZONE: "Strefa",
-      COMMON_LANGUAGE: "Wspólny Język",
-      DOUBLETON: "Dubeltówka",
-      SAYC: "SAYC",
-      BETTER_MINOR: "Lepszy Młodszy",
-      WEAK_OPENINGS_SSO: "SSO",
-      TOTOLOTEK: "Totolotek",
-      NATURAL: "Naturalny",
-      OTHER: "Inny",
     },
     ui: {
       noDescription: "Brak opisu",
@@ -845,6 +837,17 @@ const messages = {
       [TournamentType.CRAZY]: "Crazy",
       [TournamentType.BAMY]: "BAMY",
     },
+    biddingSystem: {
+      [BiddingSystem.ZONE]: "Strefa",
+      [BiddingSystem.COMMON_LANGUAGE]: "Wspólny Język",
+      [BiddingSystem.DOUBLETON]: "Dubeltówka",
+      [BiddingSystem.SAYC]: "SAYC",
+      [BiddingSystem.BETTER_MINOR]: "Lepszy Młodszy",
+      [BiddingSystem.WEAK_OPENINGS_SSO]: "SSO",
+      [BiddingSystem.TOTOLOTEK]: "Totolotek",
+      [BiddingSystem.NATURAL]: "Naturalny",
+      [BiddingSystem.OTHER]: "Inny",
+    },
     error: {
       messageKeyNotExisting: "Wystąpił błąd",
       serverError: "Wystąpił błąd. Spróbuj ponownie później.",
@@ -862,6 +865,7 @@ const messages = {
         "Wystąpił błąd przy pobieraniu {template}. Spróbuj ponownie później.",
     },
   },
+
   validation: {
     model: {
       user: userModelValidation,
