@@ -6,6 +6,8 @@ import { GroupValidationConstants as GROUP } from "@/schemas/model/group/group-c
 import { EventValidationConstants as EVENT } from "@/schemas/model/event/event-const";
 import { ChatMessageValidationConstants as CHAT_MESSAGE } from "@/schemas/model/chat-message/chat-message-const";
 import { PartnershipPostValidationConstants as PARTNERSHIP_POST } from "@/schemas/model/partnership-post/partnership-post-const";
+import { error } from "console";
+import { no } from "zod/v4/locales";
 
 const MONTHS = {
   jan: "Styczeń",
@@ -331,6 +333,16 @@ const groupsPage = {
     buttons: {
       retry: "Spróbuj ponownie",
       backToList: "Wróć do grup",
+    },
+    toast: {
+      success: "Kod dołączenia skopiowany do schowka",
+      loading: "Kopiowanie...",
+      error: "Nie udało się skopiować kodu dołączenia",
+    },
+    adminBox: {
+      heading: "Kod dołączenia",
+      noData: "Brak danych",
+      copyButton: "Kopiuj",
     },
   },
 
