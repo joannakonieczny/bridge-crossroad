@@ -115,11 +115,11 @@ export default function GroupView(props: IGroupViewProps) {
                 />
                 <Spacer />
                 {group?.invitationCode ? (
-                  <ResponsiveText fontSize="2xl">
+                  <ResponsiveText color="accent.700" fontSize="lg">
                     {group.invitationCode}
                   </ResponsiveText>
                 ) : (
-                  <ResponsiveText fontSize="2xl">
+                  <ResponsiveText color="accent.700" fontSize="lg">
                     {t("adminBox.noData")}
                   </ResponsiveText>
                 )}
@@ -130,10 +130,10 @@ export default function GroupView(props: IGroupViewProps) {
                 backgroundColor="bg"
                 color="accent.500"
                 outlineColor="accent.500"
-                size={btnSize}
-                width={btnWidth}
                 leftIcon={<MdOutlineContentCopy />}
                 alignSelf="flex-end"
+                size={btnSize}
+                width={btnWidth}
               >
                 {t("adminBox.copyButton")}
               </Button>
