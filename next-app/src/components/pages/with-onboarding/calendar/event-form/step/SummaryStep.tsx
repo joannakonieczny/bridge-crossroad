@@ -2,7 +2,6 @@
 
 import { useFormContext } from "react-hook-form";
 import { Stack, Text, Divider, Center, Spacer } from "@chakra-ui/react";
-import { SteeringButtons } from "../components/SteeringButtons";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import { EventType } from "@/club-preset/event-type";
 import { useTranslations } from "@/lib/typed-translations";
@@ -10,12 +9,7 @@ import { useGroupQuery } from "@/lib/queries";
 import { getPersonLabel } from "@/util/formatters";
 import dayjs from "dayjs";
 
-export type StepProps = {
-  setNextStep?: () => void;
-  setPrevStep?: () => void;
-};
-
-export function SummaryStep({ setPrevStep }: StepProps) {
+export function SummaryStep() {
   const t = useTranslations("pages.EventFormPage");
   const tEvent = useTranslations("common.eventType");
   const tTournament = useTranslations("common.tournamentType");
@@ -286,18 +280,6 @@ export function SummaryStep({ setPrevStep }: StepProps) {
         <Text fontWeight="bold">{values.additionalDescription ?? "-"}</Text>
       </Stack>
       <Divider />
-      <SteeringButtons
-        prevButton={{
-          text: t("buttons.prev"),
-          onClick: setPrevStep,
-        }}
-        nextButton={{
-          text: t("buttons.next"),
-          onElementProps: {
-            type: "submit",
-          },
-        }}
-      />
     </Stack>
   );
 }

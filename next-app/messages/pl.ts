@@ -259,9 +259,22 @@ const groupsPage = {
       description: {
         placeholder: "Opis grupy (opcjonalnie)",
       },
+      image: {
+        label: "Zdjęcie grupy (opcjonalnie)",
+        additionalLabel:
+          "Pamiętaj, że zawsze możesz je później zmienić na stronie grupy.",
+        placeholder: "Wybierz zdjęcie dla twojej grupy",
+        errorUpload:
+          "Nie udało się przesłać zdjęcia, spróbuj ponownie lub usuń je.",
+      },
     },
     submitButton: "Utwórz",
     cancelButton: "Anuluj",
+    imageToast: {
+      loading: "Przesyłanie zdjęcia...",
+      success: "Zdjęcie zostało przesłane!",
+      error: "Nie udało się przesłać zdjęcia",
+    },
     toast: {
       loading: "Tworzenie grupy...",
       success: "Utworzono grupę!",
@@ -529,7 +542,7 @@ const eventModelValidation = {
     },
   },
   group: {
-    required: "Wybierz grupę",
+    required: "Wybierz grupę, do której należy wydarzenie",
   },
   organizer: {
     required: "Wybierz organizatora",
@@ -596,10 +609,16 @@ const onboardingPageValidation = {
 };
 
 const eventForm = {
+  header: "Dodaj wydarzenie",
   buttons: {
     prev: "Cofnij",
     next: "Dalej",
     submit: "Dodaj wydarzenie",
+  },
+  imageToast: {
+    loading: "Przesyłanie zdjęcia...",
+    success: "Zdjęcie zostało przesłane!",
+    error: "Nie udało się przesłać zdjęcia",
   },
   toast: {
     loading: "Trwa dodawanie wydarzenia...",
@@ -619,6 +638,13 @@ const eventForm = {
     eventStartPlaceholder: "Początek wydarzenia",
     eventEndPlaceholder: "Koniec wydarzenia",
     eventTypePlaceholder: "Typ wydarzenia",
+    image: {
+      label: "Zdjęcie wydarzenia (opcjonalnie)",
+      additionalLabel: "Pamiętaj, że zawsze możesz je później zmienić.",
+      placeholder: "Wybierz zdjęcie dla wydarzenia",
+      errorUpload:
+        "Nie udało się przesłać zdjęcia, spróbuj ponownie lub usuń je.",
+    },
   },
   detailedInfoStep: {
     trainingPanel: {
@@ -939,6 +965,14 @@ const messages = {
     },
     SidebarCard: {
       detailsButtonText: "Szczegóły",
+    },
+    FileUploader: {
+      placeholder: "Wybierz plik",
+      errorUpload: "Nie udało się zapisać pliku, spróbuj ponownie później",
+      formats: "Akceptowane formaty",
+      maxSize: "Maksymalny rozmiar",
+      errorInvalidType: "Niedozwolony typ pliku",
+      errorFileTooBig: "Plik jest za duży. Maksymalny rozmiar",
     },
     EventPage: {
       EventDetails: {

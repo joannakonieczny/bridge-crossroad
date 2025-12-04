@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -17,6 +18,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import FormInput from "@/components/common/form/FormInput";
+import FileUploader from "@/components/common/form/FileUploader/FileUploader";
+import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createNewGroup } from "@/services/groups/api";
@@ -42,7 +45,24 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
 
   const queryClient = useQueryClient();
 
-  const { handleSubmit, control, setError, reset } = useForm({
+  const {
+    selectedImage,
+    uploadImage,
+    resetImage,
+    handleImageChange,
+    isUploading,
+    isError: isUploadError,
+  } = useImageUpload({
+    text: {
+      toast: {
+        loading: { title: t("imageToast.loading") },
+        success: { title: t("imageToast.success") },
+        error: { title: t("imageToast.error") },
+      },
+    },
+  });
+
+  const { handleSubmit, control, setError, reset, setValue } = useForm({
     resolver: zodResolver(withEmptyToUndefined(createGroupFormSchema)),
     defaultValues: {
       name: "",
@@ -56,6 +76,8 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.joinedGroups });
       reset();
+      resetImage();
+      onClose();
     },
     onError: (err) => {
       const errKey = getMessageKeyFromError(err);
@@ -63,10 +85,15 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
     },
   });
 
-  const onSubmit = (data: CreateGroupFormType) => {
-    onClose();
-    const promise = createGroupAction.mutateAsync(data);
+  const onSubmit = async (data: CreateGroupFormType) => {
+    const uploadedPath = await uploadImage();
 
+    // check upload error
+    if (selectedImage && !uploadedPath) return;
+    setValue("imageUrl", uploadedPath);
+    data.imageUrl = uploadedPath;
+
+    const promise = createGroupAction.mutateAsync(data);
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
@@ -120,7 +147,25 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
                 )}
               />
 
-              <FormMainButton text={t("submitButton")} type="submit" />
+              <FileUploader
+                genericFileType="image"
+                onChange={handleImageChange}
+                isUploadError={isUploadError}
+                text={{
+                  label: t("form.image.label"),
+                  additionalLabel: t("form.image.additionalLabel"),
+                  placeholder: t("form.image.placeholder"),
+                  errorUpload: t("form.image.errorUpload"),
+                }}
+              />
+
+              <FormMainButton
+                text={t("submitButton")}
+                type="submit"
+                onElementProps={{
+                  isLoading: isUploading,
+                }}
+              />
             </Stack>
           </form>
         </ModalBody>

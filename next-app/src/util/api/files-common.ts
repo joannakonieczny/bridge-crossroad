@@ -29,26 +29,3 @@ export async function checkGroupAccess({
   }
   return hasAccess;
 }
-
-export const MAX_SIZE = 10 * 1024 * 1024; // 10 MB limit
-
-export const ALLOWED_MIME = new Set<string>([
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-  "image/gif",
-  "application/pdf",
-  "text/plain",
-  "application/zip",
-]);
-
-export const ALLOWED_EXT = new Set<string>([
-  "png",
-  "jpg",
-  "jpeg",
-  "webp",
-  "gif",
-  "pdf",
-  "txt",
-  "zip",
-]);
