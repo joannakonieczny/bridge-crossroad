@@ -23,6 +23,7 @@ import type {
   ActionInput,
   TActionQueryOptionsHelper,
 } from "./tanstack-action/types";
+import type { Overwrite } from "./types-helpers";
 
 export const QUERY_KEYS = {
   userInfo: ["user", "info"],
@@ -155,9 +156,14 @@ export function useEventQuery(
 }
 
 export function usePartnershipPostsQuery(
-  input: ActionInput<typeof listPartnershipPosts> & {
-    onboardingBucket: string;
-  },
+  input: Overwrite<
+    ActionInput<typeof listPartnershipPosts> & {
+      onboardingBucket: string;
+    },
+    {
+      groupId?: GroupIdType;
+    }
+  >,
   props?: TActionQueryOptionsHelper<typeof listPartnershipPosts>
 ) {
   const e = useOnErrorToast(
@@ -166,7 +172,8 @@ export function usePartnershipPostsQuery(
   );
   return useActionQuery({
     queryKey: QUERY_KEYS.partnershipPosts(input),
-    action: () => listPartnershipPosts(input),
+    action: () =>
+      listPartnershipPosts({ ...input, groupId: input.groupId || "" }),
     enabled: !!input.groupId,
     onError: e,
     ...props,
