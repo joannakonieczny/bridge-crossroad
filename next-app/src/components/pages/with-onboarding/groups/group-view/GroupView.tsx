@@ -19,7 +19,7 @@ import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { useRouter } from "next/navigation";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useTranslations } from "@/lib/typed-translations";
-import { useGroupQuery, useUserInfoQuery } from "@/lib/queries";
+import { useGroupQuery } from "@/lib/queries";
 import { MdOutlineContentCopy } from "react-icons/md";
 
 type IGroupViewProps = {
@@ -32,12 +32,8 @@ export default function GroupView(props: IGroupViewProps) {
   const toast = useToast();
 
   const groupQ = useGroupQuery(props.groupId);
-  const userInfoQ = useUserInfoQuery();
 
   const group = groupQ.data;
-  const user = userInfoQ.data;
-
-  const isAdmin = !!group?.admins?.some((admin) => admin.id === user?.id);
 
   // responsive values
   const gap = useBreakpointValue({ base: "1.25rem", md: "3rem" });
@@ -77,7 +73,7 @@ export default function GroupView(props: IGroupViewProps) {
         <GroupBanner group={group} isLoading={groupQ.isLoading} />
       </Box>
 
-      {isAdmin && (
+      {group?.isAdmin && (
         <Box width="100%">
           {groupQ.isLoading ? (
             <Stack
@@ -114,15 +110,9 @@ export default function GroupView(props: IGroupViewProps) {
                   showBar={true}
                 />
                 <Spacer />
-                {group?.invitationCode ? (
-                  <ResponsiveText color="accent.700" fontSize="lg">
-                    {group.invitationCode}
-                  </ResponsiveText>
-                ) : (
-                  <ResponsiveText color="accent.700" fontSize="lg">
-                    {t("adminBox.noData")}
-                  </ResponsiveText>
-                )}
+                <ResponsiveText color="accent.700" fontSize="lg">
+                  {group?.invitationCode}
+                </ResponsiveText>
               </Stack>
               <Spacer />
               <Button

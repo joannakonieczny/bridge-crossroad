@@ -9,4 +9,7 @@ export type ImageUrlType = z.infer<typeof s.imageUrlSchema>;
 export type GroupIdType = string;
 
 export type GroupBasicType = z.infer<typeof s.groupBasicSchema>;
-export type GroupFullType = z.infer<typeof s.groupFullSchema>;
+export type GroupFullType = z.infer<typeof s.groupFullSchema> & {
+  isMember: boolean;
+  isAdmin: boolean;
+};
