@@ -14,9 +14,7 @@ import {
   getLatestEventsForUser,
 } from "@/services/events/api";
 import { listPartnershipPosts } from "@/services/find-partner/api";
-import {
-  PartnershipPostStatus,
-} from "@/club-preset/partnership-post";
+import { PartnershipPostStatus } from "@/club-preset/partnership-post";
 import type { PartnershipPostType } from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
@@ -37,15 +35,14 @@ export const QUERY_KEYS = {
   ],
   eventDetail: (id: EventIdType) => ["event", id],
   latestEvents: (limit: number) => ["event", "latest", limit],
-  partnershipPosts: (page = 1, groupId = "" as GroupIdType, limit = 6, status?: PartnershipPostStatus, type?: PartnershipPostType, onboardingKey: string = "none") => [
-    "partnershipPosts",
-    page,
-    groupId,
-    limit,
-    status,
-    type,
-    onboardingKey,
-  ],
+  partnershipPosts: (
+    page: number,
+    groupId: GroupIdType,
+    limit: number,
+    status: PartnershipPostStatus | undefined,
+    type: PartnershipPostType | undefined,
+    onboardingKey: string
+  ) => ["partnershipPosts", page, groupId, limit, status, type, onboardingKey],
 } as const;
 
 function useOnErrorToast(template: string, toastId: string) {
@@ -147,27 +144,25 @@ export function useEventQuery(
   });
 }
 
-export function usePartnershipPostsQuery(
-  input?: {
-    groupId?: GroupIdType;
-    page?: number;
-    limit?: number;
-    status?: PartnershipPostStatus;
-    type?: PartnershipPostType;
-    onboardingData?: {
-        academy?: Academy;
-        yearOfBirth?: {
-          min?: number;
-          max?: number;
-        };
-        startPlayingDate?: {
-          min?: Date;
-          max?: Date;
-        };
+export function usePartnershipPostsQuery(input?: {
+  groupId?: GroupIdType;
+  page?: number;
+  limit?: number;
+  status?: PartnershipPostStatus;
+  type?: PartnershipPostType;
+  onboardingData?: {
+    academy?: Academy;
+    yearOfBirth?: {
+      min?: number;
+      max?: number;
     };
-    onboardingBucket?: string;
-  }
-) {
+    startPlayingDate?: {
+      min?: Date;
+      max?: Date;
+    };
+  };
+  onboardingBucket?: string;
+}) {
   const page = input?.page ?? 1;
   const limit = input?.limit ?? 10;
   const status = input?.status ?? PartnershipPostStatus.ACTIVE;
@@ -177,7 +172,14 @@ export function usePartnershipPostsQuery(
   const onboardingKey = input?.onboardingBucket ?? "none";
 
   return useActionQuery({
-    queryKey: QUERY_KEYS.partnershipPosts(page, groupId, limit, status, type, onboardingKey),
+    queryKey: QUERY_KEYS.partnershipPosts(
+      page,
+      groupId,
+      limit,
+      status,
+      type,
+      onboardingKey
+    ),
     action: () =>
       listPartnershipPosts({
         status,

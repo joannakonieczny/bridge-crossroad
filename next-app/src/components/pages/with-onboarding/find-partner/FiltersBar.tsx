@@ -12,18 +12,24 @@ import {
 } from "@chakra-ui/react";
 import { useJoinedGroupsQuery } from "@/lib/queries";
 import { useQueryState } from "nuqs";
-import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { TrainingGroup } from "@/club-preset/training-group";
-import { PartnershipPostType } from "@/club-preset/partnership-post";
+import {
+  BiddingSystem,
+  PartnershipPostType,
+} from "@/club-preset/partnership-post";
 import { useTranslations } from "@/lib/typed-translations";
 import SelectInput from "@/components/common/form/SelectInput";
 
 export default function FiltersBar() {
   const t = useTranslations("pages.FindPartner.FiltersBar");
+  const tTrainingGroup = useTranslations("common.trainingGroup");
+  const tBiddingSystem = useTranslations("common.biddingSystem");
+
   const [activityParamRaw, setActivityParam] = useQueryState("activity");
   const activity = activityParamRaw ? String(activityParamRaw) : "active";
 
   const [groupId, setGroupId] = useQueryState("groupId");
+
   const [frequencyParamRaw, setFrequencyParam] = useQueryState("frequency");
   const frequency = frequencyParamRaw ? String(frequencyParamRaw) : "any";
 
@@ -31,20 +37,19 @@ export default function FiltersBar() {
   const experience = experienceParamRaw ? String(experienceParamRaw) : "any";
 
   const [trainingGroup, setTrainingGroup] = useQueryState("trainingGroup");
+
   const [biddingSystem, setBiddingSystem] = useState(""); //currently no bidding system filter
 
   const groupsQuery = useJoinedGroupsQuery();
-  const groupsArr = Array.isArray(groupsQuery.data) ? groupsQuery.data : [];
 
-  const mainGroupId: GroupIdType | undefined = (() => {
-    const arr = Array.isArray(groupsArr) ? groupsArr : [];
-    const main = (arr).find((g) => g?.isMain === true);
-    if (!main) return undefined;
-    return (main.id ?? undefined) as GroupIdType | undefined;
-  })();
+  const groupsArr = Array.isArray(groupsQuery.data) ? groupsQuery.data : [];
+  const mainGroupId = groupsArr.find((g) => g?.isMain === true)?.id;
 
   useEffect(() => {
-    if ((groupId === null || groupId === undefined || groupId === "") && mainGroupId) {
+    if (
+      (groupId === null || groupId === undefined || groupId === "") &&
+      mainGroupId
+    ) {
       setGroupId(String(mainGroupId));
     }
   }, [groupId, mainGroupId, setGroupId]);
@@ -72,7 +77,10 @@ export default function FiltersBar() {
           onChange={(e) => setGroupId(e.target.value || null)}
           placeholder={t("placeholders.group")}
           emptyValueLabel={t("allGroups")}
-          options={groupsArr.map((g) => ({ value: String(g.id), label: g.name }))}
+          options={groupsArr.map((g) => ({
+            value: String(g.id),
+            label: g.name,
+          }))}
           onSelectProps={{ width: "160px" }}
         />
 
@@ -82,8 +90,14 @@ export default function FiltersBar() {
           placeholder={t("placeholders.frequency")}
           options={[
             { value: "any", label: t("frequencyOptions.any") },
-            { value: PartnershipPostType.SINGLE, label: t("frequencyOptions.SINGLE") },
-            { value: PartnershipPostType.PERIOD, label: t("frequencyOptions.PERIOD") },
+            {
+              value: PartnershipPostType.SINGLE,
+              label: t("frequencyOptions.SINGLE"),
+            },
+            {
+              value: PartnershipPostType.PERIOD,
+              label: t("frequencyOptions.PERIOD"),
+            },
           ]}
           onSelectProps={{ width: "160px" }}
         />
@@ -111,11 +125,14 @@ export default function FiltersBar() {
           onChange={(e) => setTrainingGroup(e.target.value || null)}
           placeholder={t("placeholders.trainingGroup")}
           options={[
-            { value: TrainingGroup.BASIC, label: t("trainingGroupOptions.BASIC") },
-            { value: TrainingGroup.INTERMEDIATE, label: t("trainingGroupOptions.INTERMEDIATE") },
-            { value: TrainingGroup.ADVANCED, label: t("trainingGroupOptions.ADVANCED") },
-            { value: TrainingGroup.NONE, label: t("trainingGroupOptions.NONE") },
-          ]}
+            TrainingGroup.BASIC,
+            TrainingGroup.INTERMEDIATE,
+            TrainingGroup.ADVANCED,
+            TrainingGroup.NONE,
+          ].map((tg) => ({
+            value: tg,
+            label: tTrainingGroup(tg),
+          }))}
           onSelectProps={{ width: "180px" }}
         />
 
@@ -164,7 +181,10 @@ export default function FiltersBar() {
                 onChange={(e) => setGroupId(e.target.value || null)}
                 placeholder={t("placeholders.group")}
                 emptyValueLabel={t("allGroups")}
-                options={groupsArr.map((g) => ({ value: String(g.id), label: g.name }))}
+                options={groupsArr.map((g) => ({
+                  value: String(g.id),
+                  label: g.name,
+                }))}
                 onSelectProps={{ width: "100%" }}
               />
 
@@ -174,8 +194,14 @@ export default function FiltersBar() {
                 placeholder={t("placeholders.frequency")}
                 options={[
                   { value: "any", label: t("frequencyOptions.any") },
-                  { value: PartnershipPostType.SINGLE, label: t("frequencyOptions.SINGLE") },
-                  { value: PartnershipPostType.PERIOD, label: t("frequencyOptions.PERIOD") },
+                  {
+                    value: PartnershipPostType.SINGLE,
+                    label: t("frequencyOptions.SINGLE"),
+                  },
+                  {
+                    value: PartnershipPostType.PERIOD,
+                    label: t("frequencyOptions.PERIOD"),
+                  },
                 ]}
                 onSelectProps={{ width: "100%" }}
               />
@@ -203,11 +229,14 @@ export default function FiltersBar() {
                 onChange={(e) => setTrainingGroup(e.target.value || null)}
                 placeholder={t("placeholders.trainingGroup")}
                 options={[
-                  { value: TrainingGroup.BASIC, label: t("trainingGroupOptions.BASIC") },
-                  { value: TrainingGroup.INTERMEDIATE, label: t("trainingGroupOptions.INTERMEDIATE") },
-                  { value: TrainingGroup.ADVANCED, label: t("trainingGroupOptions.ADVANCED") },
-                  { value: TrainingGroup.NONE, label: t("trainingGroupOptions.NONE") },
-                ]}
+                  TrainingGroup.BASIC,
+                  TrainingGroup.INTERMEDIATE,
+                  TrainingGroup.ADVANCED,
+                  TrainingGroup.NONE,
+                ].map((tg) => ({
+                  value: tg,
+                  label: tTrainingGroup(tg),
+                }))}
                 onSelectProps={{ width: "100%" }}
               />
 
@@ -216,16 +245,19 @@ export default function FiltersBar() {
                 onChange={(e) => setBiddingSystem(e.target.value)}
                 placeholder={t("placeholders.biddingSystem")}
                 options={[
-                  { value: "strefa", label: t("biddingSystemOptions.strefa") },
-                  { value: "wspolny-jezyk", label: t("biddingSystemOptions.wspolnyJezyk") },
-                  { value: "dubeltowka", label: t("biddingSystemOptions.dubeltowka") },
-                  { value: "sayc", label: t("biddingSystemOptions.sayc") },
-                  { value: "lepszy-mlodszy", label: t("biddingSystemOptions.lepszyMlodszy") },
-                  { value: "sso", label: t("biddingSystemOptions.sso") },
-                  { value: "totolotek", label: t("biddingSystemOptions.totolotek") },
-                  { value: "naturalny", label: t("biddingSystemOptions.naturalny") },
-                  { value: "other", label: t("biddingSystemOptions.other") },
-                ]}
+                  BiddingSystem.ZONE,
+                  BiddingSystem.COMMON_LANGUAGE,
+                  BiddingSystem.DOUBLETON,
+                  BiddingSystem.SAYC,
+                  BiddingSystem.BETTER_MINOR,
+                  BiddingSystem.WEAK_OPENINGS_SSO,
+                  BiddingSystem.TOTOLOTEK,
+                  BiddingSystem.NATURAL,
+                  BiddingSystem.OTHER,
+                ].map((bs) => ({
+                  value: bs,
+                  label: tBiddingSystem(bs),
+                }))}
                 onSelectProps={{ width: "100%" }}
               />
 
