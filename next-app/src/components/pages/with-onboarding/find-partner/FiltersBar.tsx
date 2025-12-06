@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Grid,
@@ -11,7 +11,7 @@ import {
   AccordionIcon,
 } from "@chakra-ui/react";
 import { useJoinedGroupsQuery } from "@/lib/queries";
-import { useQueryState } from "nuqs";
+import { useQueryStates, parseAsString } from "nuqs";
 import { TrainingGroup } from "@/club-preset/training-group";
 import {
   BiddingSystem,
@@ -25,20 +25,18 @@ export default function FiltersBar() {
   const tTrainingGroup = useTranslations("common.trainingGroup");
   const tBiddingSystem = useTranslations("common.biddingSystem");
 
-  const [activityParamRaw, setActivityParam] = useQueryState("activity");
-  const activity = activityParamRaw ? String(activityParamRaw) : "active";
+  const [biddingSystem, setBiddingSystem] = React.useState<string>("");
 
-  const [groupId, setGroupId] = useQueryState("groupId");
-
-  const [frequencyParamRaw, setFrequencyParam] = useQueryState("frequency");
-  const frequency = frequencyParamRaw ? String(frequencyParamRaw) : "any";
-
-  const [experienceParamRaw, setExperienceParam] = useQueryState("experience");
-  const experience = experienceParamRaw ? String(experienceParamRaw) : "any";
-
-  const [trainingGroup, setTrainingGroup] = useQueryState("trainingGroup");
-
-  const [biddingSystem, setBiddingSystem] = useState(""); //currently no bidding system filter
+  const [filters, setFilters] = useQueryStates(
+    {
+      activity: parseAsString.withDefault("active"),
+      groupId: parseAsString,
+      frequency: parseAsString.withDefault("any"),
+      experience: parseAsString.withDefault("any"),
+      trainingGroup: parseAsString,
+    },
+    { history: "replace" }
+  );
 
   const groupsQuery = useJoinedGroupsQuery();
 
@@ -46,13 +44,10 @@ export default function FiltersBar() {
   const mainGroupId = groupsArr.find((g) => g?.isMain === true)?.id;
 
   useEffect(() => {
-    if (
-      (groupId === null || groupId === undefined || groupId === "") &&
-      mainGroupId
-    ) {
-      setGroupId(String(mainGroupId));
+    if (filters.groupId && mainGroupId) {
+      setFilters({ groupId: String(mainGroupId) });
     }
-  }, [groupId, mainGroupId, setGroupId]);
+  }, [filters.groupId, mainGroupId, setFilters]);
 
   return (
     <Box bg="bg" p={4} borderRadius="md">
@@ -63,8 +58,8 @@ export default function FiltersBar() {
         templateColumns={{ lg: "150px 160px 160px 170px 180px auto" }}
       >
         <SelectInput
-          value={activity}
-          onChange={(e) => setActivityParam(e.target.value || null)}
+          value={filters.activity}
+          onChange={(e) => setFilters({ activity: e.target.value || "active" })}
           options={[
             { value: "active", label: t("activity.active") },
             { value: "inactive", label: t("activity.inactive") },
@@ -73,8 +68,8 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={groupId ?? ""}
-          onChange={(e) => setGroupId(e.target.value || null)}
+          value={filters.groupId ?? ""}
+          onChange={(e) => setFilters({ groupId: e.target.value || null })}
           placeholder={t("placeholders.group")}
           emptyValueLabel={t("allGroups")}
           options={groupsArr.map((g) => ({
@@ -85,8 +80,8 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={frequency}
-          onChange={(e) => setFrequencyParam(e.target.value || null)}
+          value={filters.frequency}
+          onChange={(e) => setFilters({ frequency: e.target.value || "any" })}
           placeholder={t("placeholders.frequency")}
           options={[
             { value: "any", label: t("frequencyOptions.any") },
@@ -103,8 +98,8 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={experience}
-          onChange={(e) => setExperienceParam(e.target.value || null)}
+          value={filters.experience}
+          onChange={(e) => setFilters({ experience: e.target.value || "any" })}
           placeholder={t("placeholders.experience")}
           options={[
             { value: "any", label: t("experienceOptions.any") },
@@ -121,8 +116,10 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={trainingGroup ?? ""}
-          onChange={(e) => setTrainingGroup(e.target.value || null)}
+          value={filters.trainingGroup ?? ""}
+          onChange={(e) =>
+            setFilters({ trainingGroup: e.target.value || null })
+          }
           placeholder={t("placeholders.trainingGroup")}
           options={[
             TrainingGroup.BASIC,
@@ -141,12 +138,13 @@ export default function FiltersBar() {
           colorScheme="gray"
           variant="outline"
           onClick={() => {
-            setActivityParam(null);
-            setGroupId(null);
-            setFrequencyParam(null);
-            setExperienceParam(null);
-            setTrainingGroup(null);
-            setBiddingSystem("");
+            setFilters({
+              activity: "active",
+              groupId: null,
+              frequency: "any",
+              experience: "any",
+              trainingGroup: null,
+            });
           }}
         >
           {t("button.clear")}
@@ -167,8 +165,10 @@ export default function FiltersBar() {
           <AccordionPanel px={0} pt={3}>
             <VStack spacing={3} align="stretch">
               <SelectInput
-                value={activity}
-                onChange={(e) => setActivityParam(e.target.value || null)}
+                value={filters.activity}
+                onChange={(e) =>
+                  setFilters({ activity: e.target.value || "active" })
+                }
                 options={[
                   { value: "active", label: t("activity.active") },
                   { value: "inactive", label: t("activity.inactive") },
@@ -177,8 +177,10 @@ export default function FiltersBar() {
               />
 
               <SelectInput
-                value={groupId ?? ""}
-                onChange={(e) => setGroupId(e.target.value || null)}
+                value={filters.groupId ?? ""}
+                onChange={(e) =>
+                  setFilters({ groupId: e.target.value || null })
+                }
                 placeholder={t("placeholders.group")}
                 emptyValueLabel={t("allGroups")}
                 options={groupsArr.map((g) => ({
@@ -189,8 +191,10 @@ export default function FiltersBar() {
               />
 
               <SelectInput
-                value={frequency}
-                onChange={(e) => setFrequencyParam(e.target.value || null)}
+                value={filters.frequency}
+                onChange={(e) =>
+                  setFilters({ frequency: e.target.value || "any" })
+                }
                 placeholder={t("placeholders.frequency")}
                 options={[
                   { value: "any", label: t("frequencyOptions.any") },
@@ -207,8 +211,10 @@ export default function FiltersBar() {
               />
 
               <SelectInput
-                value={experience}
-                onChange={(e) => setExperienceParam(e.target.value || null)}
+                value={filters.experience}
+                onChange={(e) =>
+                  setFilters({ experience: e.target.value || "any" })
+                }
                 placeholder={t("placeholders.experience")}
                 options={[
                   { value: "any", label: t("experienceOptions.any") },
@@ -225,8 +231,10 @@ export default function FiltersBar() {
               />
 
               <SelectInput
-                value={trainingGroup ?? ""}
-                onChange={(e) => setTrainingGroup(e.target.value || null)}
+                value={filters.trainingGroup ?? ""}
+                onChange={(e) =>
+                  setFilters({ trainingGroup: e.target.value || null })
+                }
                 placeholder={t("placeholders.trainingGroup")}
                 options={[
                   TrainingGroup.BASIC,
@@ -266,12 +274,13 @@ export default function FiltersBar() {
                 colorScheme="gray"
                 variant="outline"
                 onClick={() => {
-                  setActivityParam(null);
-                  setGroupId(null);
-                  setFrequencyParam(null);
-                  setExperienceParam(null);
-                  setTrainingGroup(null);
-                  setBiddingSystem("");
+                  setFilters({
+                    activity: "active",
+                    groupId: null,
+                    frequency: "any",
+                    experience: "any",
+                    trainingGroup: null,
+                  });
                 }}
               >
                 {t("button.clear")}
