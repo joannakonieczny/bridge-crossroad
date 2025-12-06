@@ -59,7 +59,7 @@ export const groupBasicSchema = z.object({
 
 export const groupFullSchema = groupBasicSchema
   .extend({
-    invitationCode: invitationCodeSchema.optional(),
+    invitationCode: invitationCodeSchema,
     members: z.array(userSchemaBasic),
     admins: z.array(userSchemaBasic),
   })
