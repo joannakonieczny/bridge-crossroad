@@ -2,7 +2,7 @@ import React from "react";
 import Pagination from "@/components/common/Pagination";
 import { useQueryState } from "nuqs";
 import { usePartnershipPostsQuery } from "@/lib/queries";
-import { PartnershipPostsLimitPerPage } from "@/club-preset/partnership-post";
+import { PartnershipPostsLimitPerPage } from "./util";
 
 export default function PaginationControls() {
   const [page, setPage] = useQueryState("page", {
@@ -17,7 +17,11 @@ export default function PaginationControls() {
   const [groupIdParamRaw] = useQueryState("groupId");
   const groupIdParam = groupIdParamRaw ? String(groupIdParamRaw) : undefined;
 
-  const postsQuery = usePartnershipPostsQuery({ page, groupId: groupIdParam, limit: PartnershipPostsLimitPerPage });
+  const postsQuery = usePartnershipPostsQuery({
+    page,
+    groupId: groupIdParam,
+    limit: PartnershipPostsLimitPerPage,
+  });
 
   const handleChange = (p: number) => {
     setPage(p);

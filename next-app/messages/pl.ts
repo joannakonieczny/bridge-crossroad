@@ -695,7 +695,8 @@ const findPartner = {
   Announcement: {
     toast: {
       add: {
-        success: "Zapisano na zgłoszenie - zostaniesz powiadomiony, jeśli zgłoszeniodawca zatwierdzi chęć wspólnej gry.",
+        success:
+          "Zapisano na zgłoszenie - zostaniesz powiadomiony, jeśli zgłoszeniodawca zatwierdzi chęć wspólnej gry.",
         error: "Błąd podczas zapisywania",
         loading: "Zapisywanie...",
       },
@@ -769,24 +770,6 @@ const findPartner = {
       "5+": "5+ lat",
       "10+": "10+ lat",
       "15+": "15+ lat",
-    },
-    trainingGroupOptions: {
-      BASIC: "Podstawowa",
-      INTERMEDIATE: "Średniozaawansowana",
-      ADVANCED: "Zaawansowana",
-      NONE: "Nie biorę udziału w zajęciach",
-      COACH: "Jestem trenerem!",
-    },
-    biddingSystemOptions: {
-      strefa: "Strefa",
-      wspolnyJezyk: "Wspólny Język",
-      dubeltowka: "Dubeltówka",
-      sayc: "SAYC (Standard American Yellow Card)",
-      lepszyMlodszy: "Lepszy Młodszy",
-      sso: "SSO (System słabych otwarć)",
-      totolotek: "Totolotek",
-      naturalny: "Naturalny",
-      other: "Własny / inny",
     },
     button: {
       clear: "Wyczyść",
