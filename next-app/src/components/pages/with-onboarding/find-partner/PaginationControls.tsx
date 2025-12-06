@@ -16,7 +16,6 @@ export default function PaginationControls() {
     page: validPage,
     groupId: groupId || undefined,
     limit: PartnershipPostsLimitPerPage,
-    onboardingBucket: "",
   });
 
   return (

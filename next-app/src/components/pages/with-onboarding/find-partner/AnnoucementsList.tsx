@@ -13,8 +13,7 @@ import {
 import Annoucement from "./Annoucement";
 import { usePartnershipPostsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
-import type { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
-import { useQueryState } from "nuqs";
+import { useQueryStates, parseAsInteger, parseAsString } from "nuqs";
 import { PartnershipPostsLimitPerPage } from "./util";
 import {
   PartnershipPostStatus,
@@ -23,86 +22,74 @@ import {
 import { TrainingGroup } from "@/club-preset/training-group";
 import { useTranslations } from "@/lib/typed-translations";
 
+type ExperienceRange<T> = {
+  min?: T;
+  max?: T;
+};
+
+type OnboardingData = {
+  startPlayingDate?: ExperienceRange<Date>;
+  trainingGroup?: TrainingGroup;
+};
+
+const experienceMap: Record<string, ExperienceRange<number>> = {
+  "<1": { min: 0, max: 1 },
+  "1": { min: 1, max: 2 },
+  "2": { min: 2, max: 3 },
+  "3": { min: 3, max: 4 },
+  "4": { min: 4, max: 5 },
+  "5+": { max: 5 },
+  "10+": { max: 10 },
+  "15+": { max: 15 },
+} as const;
+
 export default function AnnoucementsList() {
   const t = useTranslations("pages.FindPartner.List");
-  const [page] = useQueryState("page", {
-    defaultValue: 1,
-    parse: (v: unknown) => {
-      const n = Number(v);
-      return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
-    },
-    serialize: (v: number) => String(v ?? 1),
+
+  const [filters] = useQueryStates({
+    page: parseAsInteger.withDefault(1),
+    groupId: parseAsString,
+    activity: parseAsString.withDefault("active"),
+    frequency: parseAsString.withDefault("any"),
+    experience: parseAsString.withDefault("any"),
+    trainingGroup: parseAsString,
   });
 
-  const [groupIdParamRaw] = useQueryState("groupId");
-  const groupIdParam = groupIdParamRaw ? String(groupIdParamRaw) : undefined;
+  const validPage = Math.max(1, filters.page);
 
-  const [activityParamRaw] = useQueryState("activity");
-  const activityParam = activityParamRaw ? String(activityParamRaw) : "active";
   const status =
-    activityParam === "inactive"
+    filters.activity === "inactive"
       ? PartnershipPostStatus.EXPIRED
       : PartnershipPostStatus.ACTIVE;
 
-  const [frequencyParamRaw] = useQueryState("frequency");
-  const frequencyParam = frequencyParamRaw ? String(frequencyParamRaw) : "any";
   const type =
-    frequencyParam === PartnershipPostType.SINGLE
+    filters.frequency === PartnershipPostType.SINGLE
       ? PartnershipPostType.SINGLE
-      : frequencyParam === PartnershipPostType.PERIOD
+      : filters.frequency === PartnershipPostType.PERIOD
       ? PartnershipPostType.PERIOD
       : undefined;
 
-  const [experienceParamRaw] = useQueryState("experience");
-  const experienceParam = experienceParamRaw
-    ? String(experienceParamRaw)
-    : "any";
-
-  const [trainingGroupParamRaw] = useQueryState("trainingGroup");
-  const rawTG = trainingGroupParamRaw
-    ? String(trainingGroupParamRaw)
-    : undefined;
   const trainingGroupParam =
-    rawTG === "none" || rawTG === TrainingGroup.NONE
+    filters.trainingGroup === "none" ||
+    filters.trainingGroup === TrainingGroup.NONE
       ? TrainingGroup.NONE
-      : rawTG ?? undefined;
+      : filters.trainingGroup ?? undefined;
 
-  const toDateYearsAgo = (years: number) =>
-    dayjs().subtract(years, "year").toDate();
-
-  type OnboardingData = {
-    startPlayingDate?: { min?: Date; max?: Date };
-    trainingGroup?: TrainingGroup;
+  const toDateYearsAgo = (years?: number) => {
+    if (!years) return undefined;
+    return dayjs().subtract(years, "year").toDate();
   };
 
   let onboardingData: OnboardingData | undefined = undefined;
-  if (experienceParam && experienceParam !== "any") {
-    if (experienceParam === "<1") {
+  if (filters.experience && filters.experience !== "any") {
+    const experienceRange = experienceMap[filters.experience];
+    if (experienceRange) {
       onboardingData = {
-        startPlayingDate: { min: toDateYearsAgo(1), max: new Date() },
+        startPlayingDate: {
+          min: toDateYearsAgo(experienceRange.min),
+          max: toDateYearsAgo(experienceRange.max),
+        },
       };
-    } else if (experienceParam === "1") {
-      onboardingData = {
-        startPlayingDate: { min: toDateYearsAgo(2), max: toDateYearsAgo(1) },
-      };
-    } else if (experienceParam === "2") {
-      onboardingData = {
-        startPlayingDate: { min: toDateYearsAgo(3), max: toDateYearsAgo(2) },
-      };
-    } else if (experienceParam === "3") {
-      onboardingData = {
-        startPlayingDate: { min: toDateYearsAgo(4), max: toDateYearsAgo(3) },
-      };
-    } else if (experienceParam === "4") {
-      onboardingData = {
-        startPlayingDate: { min: toDateYearsAgo(5), max: toDateYearsAgo(4) },
-      };
-    } else if (experienceParam === "5+") {
-      onboardingData = { startPlayingDate: { max: toDateYearsAgo(5) } };
-    } else if (experienceParam === "10+") {
-      onboardingData = { startPlayingDate: { max: toDateYearsAgo(10) } };
-    } else if (experienceParam === "15+") {
-      onboardingData = { startPlayingDate: { max: toDateYearsAgo(15) } };
     }
   }
 
@@ -113,22 +100,18 @@ export default function AnnoucementsList() {
 
   if (trainingGroupIncluded !== undefined) {
     onboardingData = {
-      ...(onboardingData ?? {}),
+      ...(onboardingData || {}),
       trainingGroup: trainingGroupIncluded as TrainingGroup | undefined,
     };
   }
 
-  const onboardingBucket = `${experienceParam}|${
-    trainingGroupIncluded ?? "none"
-  }`;
   const postsQuery = usePartnershipPostsQuery({
-    page,
+    page: validPage,
     limit: PartnershipPostsLimitPerPage,
-    groupId: groupIdParam,
+    groupId: filters.groupId || undefined,
     status,
     type,
     onboardingData,
-    onboardingBucket,
   });
 
   function AnnouncementsSkeletonLoader() {
@@ -173,21 +156,11 @@ export default function AnnoucementsList() {
     );
   }
 
-  if (postsQuery.isLoading) {
+  if (postsQuery.isLoading || !postsQuery.data) {
     return <AnnouncementsSkeletonLoader />;
   }
 
-  const posts: PartnershipPostSchemaTypePopulated[] = Array.isArray(
-    postsQuery.data
-  )
-    ? postsQuery.data
-    : postsQuery.data?.data ?? [];
-
-  const parseDate = (s?: string): Date | undefined => {
-    if (!s) return undefined;
-    const d = new Date(String(s));
-    return Number.isFinite(d.getTime()) ? d : undefined;
-  };
+  const posts = postsQuery.data?.data || [];
 
   return (
     <Box bg="bg" p={4} borderRadius="md">
@@ -205,38 +178,27 @@ export default function AnnoucementsList() {
           </Tr>
         </Thead>
         <Tbody>
-          {posts.map((p: PartnershipPostSchemaTypePopulated) => {
-            const id = p.id;
-            const title = p.name;
-            const frequency = p.data.type;
-            const preferredSystem = p.biddingSystem;
-            const date: Date | undefined =
-              p.data.type === "PERIOD"
-                ? parseDate(p.data.endsAt as unknown as string)
-                : parseDate(
-                    p.data.event.duration.startsAt as unknown as string
-                  );
-            const owner = p.owner;
-            const description = p.description;
-
-            const interestedUsers = p.interestedUsers ?? [];
-
-            const ann = {
-              id,
-              title,
-              date,
-              owner,
-              frequency,
-              preferredSystem,
-              description,
-              groupId: groupIdParam,
-              isUserInterested: p.isUserInterested ?? false,
-              interestedUsers,
-              isOwnByUser: p.isOwnByUser ?? false,
-            };
-
-            return <Annoucement key={id} a={ann} />;
-          })}
+          {posts.map((p) => (
+            <Annoucement
+              key={p.id}
+              a={{
+                id: p.id,
+                title: p.name,
+                date:
+                  p.data.type === PartnershipPostType.PERIOD
+                    ? p.data.endsAt
+                    : p.data.event.duration.startsAt,
+                owner: p.owner,
+                frequency: p.data.type,
+                preferredSystem: p.biddingSystem,
+                description: p.description,
+                groupId: filters.groupId || undefined,
+                isUserInterested: p.isUserInterested || false,
+                interestedUsers: p.interestedUsers || [],
+                isOwnByUser: p.isOwnByUser || false,
+              }}
+            />
+          ))}
         </Tbody>
       </Table>
     </Box>

@@ -157,9 +157,7 @@ export function useEventQuery(
 
 export function usePartnershipPostsQuery(
   input: Overwrite<
-    ActionInput<typeof listPartnershipPosts> & {
-      onboardingBucket: string;
-    },
+    ActionInput<typeof listPartnershipPosts>,
     {
       groupId?: GroupIdType;
     }
