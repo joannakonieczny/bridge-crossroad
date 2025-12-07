@@ -713,6 +713,8 @@ const findPartner = {
     typeLabel: "Typ ogłoszenia",
     single: "Jednorazowe",
     period: "Okresowe",
+    timeWindowStartLabel: "Wyświetl wydarzenia od",
+    timeWindowEndLabel: "Wyświetl wydarzenia do",
     eventIdLabel: "Wybierz powiązane wydarzenie",
     eventPlaceholder: "-- Wybierz wydarzenie --",
     exampleEvents: {

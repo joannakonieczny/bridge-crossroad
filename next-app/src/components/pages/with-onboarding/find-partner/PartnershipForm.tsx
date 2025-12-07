@@ -32,8 +32,10 @@ import {
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 import { createPartnershipPost } from "@/services/find-partner/api";
+import { listEventsForGroup } from "@/services/events/api";
 import { addPartnershipPostSchema } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import type {
   ActionInput,
   MutationOrQuerryError,
@@ -82,6 +84,24 @@ export default function PartnershipForm() {
     },
   });
 
+  const selectedGroupId = watch("groupId");
+  const dataType = watch("data.type");
+  const durationStart = watch("data.duration.startsAt");
+  const durationEnd = watch("data.duration.endsAt");
+
+  const eventsQuery = useActionQuery({
+    queryKey: ["events", selectedGroupId, durationStart, durationEnd],
+    action: () =>
+      listEventsForGroup({
+        groupId: selectedGroupId,
+        timeWindow: {
+          start: durationStart || new Date(),
+          end: durationEnd || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+        },
+      }),
+    enabled: !!selectedGroupId && dataType === PartnershipPostType.SINGLE,
+  });
+
   const createAction = useActionMutation({
     action: createPartnershipPost,
     onSuccess: (data) => {
@@ -105,8 +125,6 @@ export default function PartnershipForm() {
       },
     });
   }
-
-  const dataType = watch("data.type");
 
   return (
     <>
@@ -227,6 +245,67 @@ export default function PartnershipForm() {
                   )}
                 />
 
+                <HStack spacing={3} align="flex-start">
+                  <Controller
+                    control={formControl}
+                    name="data.duration.startsAt"
+                    render={({ field, fieldState: { error } }) => (
+                      <Box flex={1}>
+                        <FormLabel htmlFor="startsAt">
+                          {dataType === PartnershipPostType.SINGLE
+                            ? t("timeWindowStartLabel")
+                            : t("startsAtLabel")}
+                        </FormLabel>
+                        <FormInput
+                          id="startsAt"
+                          type="datetime"
+                          placeholder={t("startsAtLabel")}
+                          value={
+                            field.value instanceof Date
+                              ? field.value.toISOString().slice(0, 16)
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const date = new Date(e.target.value);
+                            field.onChange(date);
+                          }}
+                          errorMessage={tValidation(error?.message)}
+                          isInvalid={!!error}
+                        />
+                      </Box>
+                    )}
+                  />
+                  <Controller
+                    control={formControl}
+                    name="data.duration.endsAt"
+                    render={({ field, fieldState: { error } }) => (
+                      <Box flex={1}>
+                        <FormLabel htmlFor="endsAt">
+                          {dataType === PartnershipPostType.SINGLE
+                            ? t("timeWindowEndLabel")
+                            : t("endsAtLabel")}
+                        </FormLabel>
+                        <FormInput
+                          id="endsAt"
+                          type="datetime"
+                          placeholder={t("endsAtLabel")}
+                          value={
+                            field.value instanceof Date
+                              ? field.value.toISOString().slice(0, 16)
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const date = new Date(e.target.value);
+                            field.onChange(date);
+                          }}
+                          errorMessage={tValidation(error?.message)}
+                          isInvalid={!!error}
+                        />
+                      </Box>
+                    )}
+                  />
+                </HStack>
+
                 {dataType === PartnershipPostType.SINGLE && (
                   <Controller
                     control={formControl}
@@ -240,83 +319,21 @@ export default function PartnershipForm() {
                           value={field.value}
                           onChange={field.onChange}
                           placeholder={t("eventPlaceholder")}
-                          options={[
-                            {
-                              value: "691b834873fb688327d065b6",
-                              label: t(
-                                "exampleEvents.691b834873fb688327d065b6"
-                              ),
-                            },
-                            {
-                              value: "some-other-event-id",
-                              label: t("exampleEvents.some-other-event-id"),
-                            },
-                          ]}
+                          options={
+                            eventsQuery.data?.map(
+                              (event: { id: string; title: string }) => ({
+                                value: event.id,
+                                label: event.title,
+                              })
+                            ) ?? []
+                          }
                           errorMessage={tValidation(error?.message)}
                           isInvalid={!!error}
+                          isLoading={eventsQuery.isLoading}
                         />
                       </Box>
                     )}
                   />
-                )}
-
-                {dataType === PartnershipPostType.PERIOD && (
-                  <HStack spacing={3} align="flex-start">
-                    <Controller
-                      control={formControl}
-                      name="data.duration.startsAt"
-                      render={({ field, fieldState: { error } }) => (
-                        <Box flex={1}>
-                          <FormLabel htmlFor="startsAt">
-                            {t("startsAtLabel")}
-                          </FormLabel>
-                          <FormInput
-                            id="startsAt"
-                            type="datetime"
-                            placeholder={t("startsAtLabel")}
-                            value={
-                              field.value instanceof Date
-                                ? field.value.toISOString().slice(0, 16)
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const date = new Date(e.target.value);
-                              field.onChange(date);
-                            }}
-                            errorMessage={tValidation(error?.message)}
-                            isInvalid={!!error}
-                          />
-                        </Box>
-                      )}
-                    />
-                    <Controller
-                      control={formControl}
-                      name="data.duration.endsAt"
-                      render={({ field, fieldState: { error } }) => (
-                        <Box flex={1}>
-                          <FormLabel htmlFor="endsAt">
-                            {t("endsAtLabel")}
-                          </FormLabel>
-                          <FormInput
-                            id="endsAt"
-                            type="datetime"
-                            placeholder={t("endsAtLabel")}
-                            value={
-                              field.value instanceof Date
-                                ? field.value.toISOString().slice(0, 16)
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const date = new Date(e.target.value);
-                              field.onChange(date);
-                            }}
-                            errorMessage={tValidation(error?.message)}
-                            isInvalid={!!error}
-                          />
-                        </Box>
-                      )}
-                    />
-                  </HStack>
                 )}
               </Stack>
 
