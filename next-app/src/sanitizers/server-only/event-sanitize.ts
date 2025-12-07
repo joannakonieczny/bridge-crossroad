@@ -34,6 +34,7 @@ import { EventType } from "@/club-preset/event-type";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeGroup } from "./group-sanitize";
 import type { UserIdType } from "@/schemas/model/user/user-types";
+import { sanitizeFileUrl } from "./common";
 
 function sanitizePlayingPair(pair: IPlayingPair): PlayingPairType {
   return {
@@ -116,7 +117,7 @@ export function sanitizeEvent(event: IEventDTO): EventSchemaType {
         : event.data?.type === EventType.TRAINING
         ? sanitizeTrainingData(event.data)
         : sanitizeOtherEventData(event.data),
-    imageUrl: event.imageUrl,
+    imageUrl: sanitizeFileUrl(event.imageUrl),
   };
 }
 
@@ -196,7 +197,7 @@ export function sanitizeEventPopulated(
     group: sanitizeGroup(event.group),
     duration: event.duration,
     additionalDescription: event.additionalDescription,
-    imageUrl: event.imageUrl,
+    imageUrl: sanitizeFileUrl(event.imageUrl),
     data:
       event.data.type === EventType.TOURNAMENT_TEAMS
         ? sanitizeTournamentTeamsDataPopulated(event.data)

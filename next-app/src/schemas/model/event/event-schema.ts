@@ -33,9 +33,10 @@ export const locationSchema = z
   .max(location.max, "validation.model.event.location.max" satisfies TKey);
 
 export const imageUrlSchema = z
-  .string()
-  .max(imageUrl.max, "validation.model.event.imageUrl.max" satisfies TKey)
-  .url("validation.model.event.imageUrl.url" satisfies TKey);
+  .string({
+    message: "validation.model.event.imageUrl.required" satisfies TKey,
+  })
+  .max(imageUrl.max, "validation.model.event.imageUrl.max" satisfies TKey);
 
 export const durationSchema = z
   .object({
