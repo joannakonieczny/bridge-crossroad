@@ -492,10 +492,9 @@ export async function addTeamToTournamentEvent({
   team,
 }: AddTeamToTournamentEventInput) {
   await dbConnect();
-  const existingEvent = check(
-    await Event.findById(eventId).lean<IEventDTO>(),
-    `Event not found with id: ${eventId}`
-  );
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
   checkTrue(
     existingEvent.data.type === EventType.TOURNAMENT_TEAMS,
     "Event must be of type TOURNAMENT_TEAMS to add a team"
@@ -533,17 +532,16 @@ export async function addTeamToTournamentEvent({
     );
   });
 
-  // use $push instead of $addToSet since we're checking duplicates manually
-  const updatedEvent = check(
-    await Event.findByIdAndUpdate(
-      eventId,
-      { $push: { "data.teams": team } },
-      { new: true, runValidators: true }
-    ).lean<IEventDTO>(),
-    `Failed to add team to event ${eventId}`
-  );
+  (existingEvent.data as ITournamentTeamsData).teams.push({
+    name: team.name,
+    members: team.members,
+  } as (typeof existingEvent.data.teams)[0]);
 
-  return { event: updatedEvent };
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
 }
 
 type AddPairToTournamentEventInput = {
@@ -556,10 +554,9 @@ export async function addPairToTournamentEvent({
   pair,
 }: AddPairToTournamentEventInput) {
   await dbConnect();
-  const existingEvent = check(
-    await Event.findById(eventId).lean<IEventDTO>(),
-    `Event not found with id: ${eventId}`
-  );
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
   checkTrue(
     existingEvent.data.type === EventType.TOURNAMENT_PAIRS,
     "Event must be of type TOURNAMENT_PAIRS to add a pair"
@@ -600,14 +597,99 @@ export async function addPairToTournamentEvent({
     `Second player ${pair.second} must be a member of the group`
   );
 
-  const updatedEvent = check(
-    await Event.findByIdAndUpdate(
-      eventId,
-      { $addToSet: { "data.contestantsPairs": pair } },
-      { new: true, runValidators: true }
-    ).lean<IEventDTO>(),
-    `Failed to add pair to event ${eventId}`
+  (existingEvent.data as ITournamentPairsData).contestantsPairs.push({
+    first: pair.first,
+    second: pair.second,
+  } as (typeof existingEvent.data.contestantsPairs)[0]);
+
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
+}
+
+type RemovePairFromTournamentEventInput = {
+  eventId: EventIdType;
+  userId: UserIdType;
+};
+
+export async function removePairFromTournamentEvent({
+  eventId,
+  userId,
+}: RemovePairFromTournamentEventInput) {
+  await dbConnect();
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
+  checkTrue(
+    existingEvent.data.type === EventType.TOURNAMENT_PAIRS,
+    "Event must be of type TOURNAMENT_PAIRS to remove a pair"
   );
 
-  return { event: updatedEvent };
+  const { contestantsPairs } = existingEvent.data as ITournamentPairsData;
+
+  // Find the pair that contains the user
+  const pairIndex = contestantsPairs.findIndex(
+    (p) =>
+      p?.first?.toString() === userId.toString() ||
+      p?.second?.toString() === userId.toString()
+  );
+
+  checkTrue(
+    pairIndex !== -1,
+    `User ${userId} is not enrolled in any pair for this tournament`
+  );
+
+  // Remove the entire pair
+  (existingEvent.data as ITournamentPairsData).contestantsPairs.splice(
+    pairIndex,
+    1
+  );
+
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
+}
+
+type RemoveTeamFromTournamentEventInput = {
+  eventId: EventIdType;
+  userId: UserIdType;
+};
+
+export async function removeTeamFromTournamentEvent({
+  eventId,
+  userId,
+}: RemoveTeamFromTournamentEventInput) {
+  await dbConnect();
+  const existingEvent = await Event.findById(eventId);
+
+  check(existingEvent, `Event not found with id: ${eventId}`);
+  checkTrue(
+    existingEvent.data.type === EventType.TOURNAMENT_TEAMS,
+    "Event must be of type TOURNAMENT_TEAMS to remove a team"
+  );
+
+  const { teams } = existingEvent.data as ITournamentTeamsData;
+
+  // Find the team that contains the user
+  const teamIndex = teams.findIndex((t) =>
+    t.members.some((member) => member.toString() === userId.toString())
+  );
+
+  checkTrue(
+    teamIndex !== -1,
+    `User ${userId} is not enrolled in any team for this tournament`
+  );
+
+  // Remove the entire team
+  (existingEvent.data as ITournamentTeamsData).teams.splice(teamIndex, 1);
+
+  await existingEvent.save();
+
+  const savedEvent = existingEvent.toObject() as IEventDTO;
+
+  return { event: savedEvent };
 }

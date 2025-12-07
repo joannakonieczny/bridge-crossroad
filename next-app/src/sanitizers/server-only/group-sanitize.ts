@@ -5,6 +5,7 @@ import type {
   GroupFullType,
 } from "@/schemas/model/group/group-types";
 import { sanitizeMinUserInfo } from "./user-sanitize";
+import { sanitizeFileUrl } from "./common";
 
 export function sanitizeGroup(
   group: IGroupDTO | IGroupDTOWithPopulatedMembersAdmins
@@ -13,7 +14,7 @@ export function sanitizeGroup(
     id: group._id.toString(),
     name: group.name,
     description: group.description,
-    imageUrl: group.imageUrl,
+    imageUrl: sanitizeFileUrl(group.imageUrl),
     isMain: group.isMain || false,
   };
 }
