@@ -725,6 +725,7 @@ const findPartner = {
     cancelButton: "Anuluj",
     createButton: "Utwórz ogłoszenie",
     toast: {
+      loading: "Tworzenie ogłoszenia...",
       success: "Ogłoszenie utworzone",
       error: "Błąd podczas tworzenia",
       frequency: {

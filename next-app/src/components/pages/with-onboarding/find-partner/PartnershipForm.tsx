@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Button,
@@ -9,85 +11,111 @@ import {
   Divider,
   ModalBody,
   ModalFooter,
-  FormControl,
   FormLabel,
-  Input,
-  Textarea,
-  Select,
   RadioGroup,
   HStack,
   Radio,
   Box,
   useDisclosure,
   useToast,
+  Stack,
 } from "@chakra-ui/react";
-import { useForm, FormProvider } from "react-hook-form";
-import { BiddingSystem } from "@/club-preset/partnership-post";
-import { useTranslations } from "@/lib/typed-translations";
-
-export async function createPartnerShip(postData: any) {
-    //do wywalenia
-}
-
-const BIDDING_LABELS: Record<BiddingSystem, string> = {
-  [BiddingSystem.ZONE]: BiddingSystem.ZONE,
-  [BiddingSystem.COMMON_LANGUAGE]: BiddingSystem.COMMON_LANGUAGE,
-  [BiddingSystem.DOUBLETON]: BiddingSystem.DOUBLETON,
-  [BiddingSystem.SAYC]: BiddingSystem.SAYC,
-  [BiddingSystem.BETTER_MINOR]: BiddingSystem.BETTER_MINOR,
-  [BiddingSystem.WEAK_OPENINGS_SSO]: BiddingSystem.WEAK_OPENINGS_SSO,
-  [BiddingSystem.TOTOLOTEK]: BiddingSystem.TOTOLOTEK,
-  [BiddingSystem.NATURAL]: BiddingSystem.NATURAL,
-  [BiddingSystem.OTHER]: BiddingSystem.OTHER,
-};
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  BiddingSystem,
+  PartnershipPostType,
+} from "@/club-preset/partnership-post";
+import {
+  useTranslations,
+  useTranslationsWithFallback,
+} from "@/lib/typed-translations";
+import { createPartnershipPost } from "@/services/find-partner/api";
+import { addPartnershipPostSchema } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import type {
+  ActionInput,
+  MutationOrQuerryError,
+} from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
+import { QUERY_KEYS } from "@/lib/queries";
+import FormInput from "@/components/common/form/FormInput";
+import SelectInput from "@/components/common/form/SelectInput";
+import { useQueryStates, parseAsString } from "nuqs";
 
 export default function PartnershipForm() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const queryClient = useQueryClient();
 
-  const t = useTranslations("pages.FindPartnerPage.PartnershipForm");
-  const common = useTranslations("common");
+  const t = useTranslations("pages.FindPartner.PartnershipForm");
+  const tBiddingSystem = useTranslations("common.biddingSystem");
+  const tValidation = useTranslationsWithFallback();
 
-  const form = useForm({
+  const [filters] = useQueryStates({
+    groupId: parseAsString,
+  });
+
+  const {
+    handleSubmit: handleFormSubmit,
+    control: formControl,
+    watch,
+    setValue,
+    setError: setFormError,
+  } = useForm({
+    resolver: zodResolver(addPartnershipPostSchema),
     defaultValues: {
       name: "",
       description: "",
-      biddingSystem: "SAYC",
+      biddingSystem: BiddingSystem.SAYC,
+      group: filters.groupId || "",
       data: {
-        type: "SINGLE",
-        eventId: "",
-        startsAt: "",
-        endsAt: "",
+        type: PartnershipPostType.PERIOD,
+        startsAt: new Date(),
+        endsAt: new Date(),
       },
     },
   });
 
-  const handleSubmit = form.handleSubmit(async (values) => {
-    const payload: any = {
-      name: values.name,
-      description: values.description,
-      biddingSystem: values.biddingSystem,
-      data: {
-        type: values.data.type,
-      },
-    };
-    if (values.data.type === "SINGLE") {
-      payload.data.eventId = values.data.eventId;
-    } else {
-      payload.data.startsAt = values.data.startsAt ? new Date(values.data.startsAt).toISOString() : undefined;
-      payload.data.endsAt = values.data.endsAt ? new Date(values.data.endsAt).toISOString() : undefined;
-    }
-
-    try {
-      await createPartnerShip(payload);
-      toast({ status: "success", title: t("toast.success") ?? "Ogłoszenie utworzone (placeholder)" });
+  const createAction = useActionMutation({
+    action: createPartnershipPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.partnershipPosts({}),
+      });
       onClose();
-    } catch (e) {
-      toast({ status: "error", title: t("toast.error") ?? "Błąd podczas tworzenia (placeholder)" });
-    }
+    },
+    onError: (err) => {
+      const hasNameError = Boolean(err?.validationErrors?.name);
+      if (hasNameError) {
+        setFormError("name", {
+          type: "server",
+          message: err.validationErrors?.name?._errors?.[0],
+        });
+      }
+    },
   });
 
-  const type = form.watch("data.type");
+  function handleWithToast(
+    data: Omit<ActionInput<typeof createPartnershipPost>, "groupId"> & {
+      group: string;
+    }
+  ) {
+    const { group, ...rest } = data;
+    const payload = { ...rest, group, groupId: group };
+    const promise = createAction.mutateAsync(payload);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") || "Tworzenie ogłoszenia..." },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof createAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
+    });
+  }
+
+  const dataType = watch("data.type");
 
   return (
     <>
@@ -102,81 +130,210 @@ export default function PartnershipForm() {
           <ModalCloseButton />
           <Divider />
           <ModalBody>
-            <FormProvider {...form}>
-              <form onSubmit={handleSubmit}>
-                <FormControl mb={3} isRequired>
-                  <FormLabel htmlFor="name">{t("nameLabel")}</FormLabel>
-                  <Input id="name" {...form.register("name")} />
-                </FormControl>
+            <form onSubmit={handleFormSubmit(handleWithToast)}>
+              <Stack spacing={3}>
+                <Controller
+                  control={formControl}
+                  name="name"
+                  render={({ field, fieldState: { error } }) => (
+                    <Box>
+                      <FormLabel htmlFor="name">{t("nameLabel")}</FormLabel>
+                      <FormInput
+                        id="name"
+                        type="text"
+                        placeholder={t("nameLabel")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        errorMessage={tValidation(error?.message)}
+                        isInvalid={!!error}
+                        isRequired
+                      />
+                    </Box>
+                  )}
+                />
 
-                <FormControl mb={3}>
-                  <FormLabel htmlFor="description">{t("descriptionLabel")}</FormLabel>
-                  <Textarea id="description" {...form.register("description")} />
-                </FormControl>
+                <Controller
+                  control={formControl}
+                  name="description"
+                  render={({ field, fieldState: { error } }) => (
+                    <Box>
+                      <FormLabel htmlFor="description">
+                        {t("descriptionLabel")}
+                      </FormLabel>
+                      <FormInput
+                        id="description"
+                        type="textarea"
+                        placeholder={t("descriptionLabel")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        errorMessage={tValidation(error?.message)}
+                        isInvalid={!!error}
+                      />
+                    </Box>
+                  )}
+                />
 
-                <FormControl mb={3}>
-                  <FormLabel htmlFor="biddingSystem">{t("biddingSystemLabel")}</FormLabel>
-                  <Select id="biddingSystem" {...form.register("biddingSystem")}>
-                    {Object.values(BiddingSystem).map((v) => (
-                      <option key={v} value={v}>
-                        {common(`biddingSystem.${v}`) ?? String(v)}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Controller
+                  control={formControl}
+                  name="biddingSystem"
+                  render={({ field, fieldState: { error } }) => (
+                    <Box>
+                      <FormLabel htmlFor="biddingSystem">
+                        {t("biddingSystemLabel")}
+                      </FormLabel>
+                      <SelectInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={Object.values(BiddingSystem).map((v) => ({
+                          value: v,
+                          label: tBiddingSystem(v),
+                        }))}
+                        errorMessage={tValidation(error?.message)}
+                        isInvalid={!!error}
+                      />
+                    </Box>
+                  )}
+                />
 
-                <Box mb={3}>
+                <Box>
                   <FormLabel>{t("typeLabel")}</FormLabel>
                   <RadioGroup
-                    value={form.watch("data.type")}
-                    onChange={(v) => form.setValue("data.type", v)}
+                    value={dataType}
+                    onChange={(v) => {
+                      if (v === PartnershipPostType.SINGLE) {
+                        setValue("data", {
+                          type: PartnershipPostType.SINGLE,
+                          eventId: "",
+                        });
+                      } else {
+                        setValue("data", {
+                          type: PartnershipPostType.PERIOD,
+                          startsAt: new Date(),
+                          endsAt: new Date(),
+                        });
+                      }
+                    }}
                   >
                     <HStack spacing={4}>
-                      <Radio value="SINGLE">{t("single")}</Radio>
-                      <Radio value="PERIOD">{t("period")}</Radio>
+                      <Radio value={PartnershipPostType.SINGLE}>
+                        {t("single")}
+                      </Radio>
+                      <Radio value={PartnershipPostType.PERIOD}>
+                        {t("period")}
+                      </Radio>
                     </HStack>
                   </RadioGroup>
                 </Box>
 
-                {/* conditional fields */}
-                {type === "SINGLE" && (
-                  <FormControl mb={3} isRequired>
-                    <FormLabel htmlFor="eventId">{t("eventIdLabel")}</FormLabel>
-                    <Select id="eventId" {...form.register("data.eventId")}>
-                      <option value="">{t("eventPlaceholder")}</option>
-                      <option value="691b834873fb688327d065b6">
-                        {t("exampleEvents.691b834873fb688327d065b6")}
-                      </option>
-                      <option value="some-other-event-id">
-                        {t("exampleEvents.some-other-event-id")}
-                      </option>
-                    </Select>
-                  </FormControl>
+                {dataType === PartnershipPostType.SINGLE && (
+                  <Controller
+                    control={formControl}
+                    name="data.eventId"
+                    render={({ field, fieldState: { error } }) => (
+                      <Box>
+                        <FormLabel htmlFor="eventId">
+                          {t("eventIdLabel")}
+                        </FormLabel>
+                        <SelectInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder={t("eventPlaceholder")}
+                          options={[
+                            {
+                              value: "691b834873fb688327d065b6",
+                              label: t(
+                                "exampleEvents.691b834873fb688327d065b6"
+                              ),
+                            },
+                            {
+                              value: "some-other-event-id",
+                              label: t("exampleEvents.some-other-event-id"),
+                            },
+                          ]}
+                          errorMessage={tValidation(error?.message)}
+                          isInvalid={!!error}
+                          isRequired
+                        />
+                      </Box>
+                    )}
+                  />
                 )}
 
-                {type === "PERIOD" && (
+                {dataType === PartnershipPostType.PERIOD && (
                   <>
-                    <FormControl mb={3} isRequired>
-                      <FormLabel htmlFor="startsAt">{t("startsAtLabel")}</FormLabel>
-                      <Input id="startsAt" type="datetime-local" {...form.register("data.startsAt")} />
-                    </FormControl>
-                    <FormControl mb={3} isRequired>
-                      <FormLabel htmlFor="endsAt">{t("endsAtLabel")}</FormLabel>
-                      <Input id="endsAt" type="datetime-local" {...form.register("data.endsAt")} />
-                    </FormControl>
+                    <Controller
+                      control={formControl}
+                      name="data.startsAt"
+                      render={({ field, fieldState: { error } }) => (
+                        <Box>
+                          <FormLabel htmlFor="startsAt">
+                            {t("startsAtLabel")}
+                          </FormLabel>
+                          <FormInput
+                            id="startsAt"
+                            type="datetime"
+                            placeholder={t("startsAtLabel")}
+                            value={
+                              field.value instanceof Date
+                                ? field.value.toISOString().slice(0, 16)
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const date = new Date(e.target.value);
+                              field.onChange(date);
+                            }}
+                            errorMessage={tValidation(error?.message)}
+                            isInvalid={!!error}
+                            isRequired
+                          />
+                        </Box>
+                      )}
+                    />
+                    <Controller
+                      control={formControl}
+                      name="data.endsAt"
+                      render={({ field, fieldState: { error } }) => (
+                        <Box>
+                          <FormLabel htmlFor="endsAt">
+                            {t("endsAtLabel")}
+                          </FormLabel>
+                          <FormInput
+                            id="endsAt"
+                            type="datetime"
+                            placeholder={t("endsAtLabel")}
+                            value={
+                              field.value instanceof Date
+                                ? field.value.toISOString().slice(0, 16)
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const date = new Date(e.target.value);
+                              field.onChange(date);
+                            }}
+                            errorMessage={tValidation(error?.message)}
+                            isInvalid={!!error}
+                            isRequired
+                          />
+                        </Box>
+                      )}
+                    />
                   </>
                 )}
+              </Stack>
 
-                <ModalFooter px={0}>
-                  <Button variant="ghost" mr={3} onClick={onClose}>
-                    {t("cancelButton")}
-                  </Button>
-                  <Button colorScheme="accent" type="submit">
-                    {t("createButton")}
-                  </Button>
-                </ModalFooter>
-              </form>
-            </FormProvider>
+              <ModalFooter px={0} mt={4}>
+                <Button variant="ghost" mr={3} onClick={onClose}>
+                  {t("cancelButton")}
+                </Button>
+                <Button
+                  colorScheme="accent"
+                  type="submit"
+                  isLoading={createAction.isPending}
+                >
+                  {t("createButton")}
+                </Button>
+              </ModalFooter>
+            </form>
           </ModalBody>
         </ModalContent>
       </Modal>
