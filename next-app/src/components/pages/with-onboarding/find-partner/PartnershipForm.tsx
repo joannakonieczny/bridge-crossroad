@@ -46,6 +46,7 @@ import SelectInput from "@/components/common/form/SelectInput";
 import { useQueryStates, parseAsString } from "nuqs";
 import { withEmptyToUndefined } from "@/schemas/common";
 import { useJoinedGroupsQuery } from "@/lib/queries";
+import dayjs from "dayjs";
 
 export default function PartnershipForm() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -78,7 +79,7 @@ export default function PartnershipForm() {
         type: PartnershipPostType.PERIOD,
         duration: {
           startsAt: new Date(),
-          endsAt: new Date(),
+          endsAt: dayjs().add(1, "week").toDate(),
         },
       },
     },

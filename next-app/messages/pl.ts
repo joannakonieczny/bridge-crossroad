@@ -717,10 +717,6 @@ const findPartner = {
     timeWindowEndLabel: "Wyświetl wydarzenia do",
     eventIdLabel: "Wybierz powiązane wydarzenie",
     eventPlaceholder: "-- Wybierz wydarzenie --",
-    exampleEvents: {
-      "691b834873fb688327d065b6": "Odległa przyszłość",
-      "some-other-event-id": "Przykładowe wydarzenie",
-    },
     startsAtLabel: "Od",
     endsAtLabel: "Do",
     cancelButton: "Anuluj",
