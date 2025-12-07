@@ -463,9 +463,6 @@ const eventModelValidation = {
     max: `URL obrazka nie może być dłuższy niż ${EVENT.imageUrl.max} znaków`,
     required: "Podaj poprawny adres URL",
   },
-  duration: {
-    invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
-  },
   playingPair: {
     firstSecondDistinct: "Obaj zawodnicy pary muszą być różni",
   },
@@ -920,6 +917,11 @@ const messages = {
         register: registerPageValidation,
       },
       onboarding: onboardingPageValidation,
+    },
+    common: {
+      duration: {
+        invalid: "Data zakończenia musi być późniejsza niż data rozpoczęcia",
+      },
     },
   },
   api: {

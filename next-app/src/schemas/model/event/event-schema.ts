@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { EventValidationConstants } from "./event-const";
 import type { TKey } from "@/lib/typed-translations";
-import { idPropSchema } from "@/schemas/common";
+import { durationSchema, idPropSchema } from "@/schemas/common";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 
 const {
@@ -37,16 +37,6 @@ export const imageUrlSchema = z
     message: "validation.model.event.imageUrl.required" satisfies TKey,
   })
   .max(imageUrl.max, "validation.model.event.imageUrl.max" satisfies TKey);
-
-export const durationSchema = z
-  .object({
-    startsAt: z.date(),
-    endsAt: z.date(),
-  })
-  .refine((d) => d.startsAt < d.endsAt, {
-    message: "validation.model.event.duration.invalidRange" satisfies TKey,
-    path: ["endsAt"],
-  });
 
 export const playingPairSchema = z
   .object({

@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { idPropSchema } from "@/schemas/common";
+import { durationSchema, idPropSchema } from "@/schemas/common";
 import {
   additionalDescriptionSchema,
   descriptionSchema,
-  durationSchema,
   havingEventId,
   imageUrlSchema,
   leagueMeetingDataSchema,
