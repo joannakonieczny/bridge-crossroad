@@ -17,7 +17,7 @@ import { Academy } from "@/club-preset/academy";
 export const addPartnershipPostSchema = z.object({
   name: nameSchema,
   description: descriptionSchema.optional(),
-  group: idPropSchema,
+  groupId: idPropSchema,
   biddingSystem: z.nativeEnum(BiddingSystem),
   data: partnershipPostDataSchema,
 });

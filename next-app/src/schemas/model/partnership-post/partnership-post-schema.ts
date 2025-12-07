@@ -10,7 +10,9 @@ import { PartnershipPostValidationConstants as c } from "./partnership-post-cons
 
 // fields
 export const nameSchema = z
-  .string()
+  .string({
+    message: "validation.model.partnershipPost.name.required" satisfies TKey,
+  })
   .min(c.name.min, "validation.model.partnershipPost.name.min" satisfies TKey)
   .max(c.name.max, "validation.model.partnershipPost.name.max" satisfies TKey);
 

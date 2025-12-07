@@ -707,7 +707,9 @@ const chatPage = {
 const findPartner = {
   PartnershipForm: {
     addButton: "Dodaj ogłoszenie",
-    modalHeader: "Ogłoszenie poszukiwania partnera",
+    modalHeader: "Nowe ogłoszenie poszukiwania partnera",
+    groupLabel: "Grupa",
+    groupPlaceholder: "Wybierz grupę",
     nameLabel: "Nazwa",
     descriptionLabel: "Opis",
     biddingSystemLabel: "System licytacji",
@@ -720,8 +722,8 @@ const findPartner = {
       "691b834873fb688327d065b6": "Odległa przyszłość",
       "some-other-event-id": "Przykładowe wydarzenie",
     },
-    startsAtLabel: "Data rozpoczęcia",
-    endsAtLabel: "Data zakończenia",
+    startsAtLabel: "Od",
+    endsAtLabel: "Do",
     cancelButton: "Anuluj",
     createButton: "Utwórz ogłoszenie",
     toast: {
@@ -899,6 +901,7 @@ const messages = {
       chatMessage: chatMessageModelValidation,
       partnershipPost: {
         name: {
+          required: "Podaj nazwę ogłoszenia",
           min: `Min. ${PARTNERSHIP_POST.name.min} znaki`,
           max: `Max. ${PARTNERSHIP_POST.name.max} znaków`,
         },

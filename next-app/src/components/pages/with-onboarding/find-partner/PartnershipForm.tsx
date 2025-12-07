@@ -43,6 +43,8 @@ import { QUERY_KEYS } from "@/lib/queries";
 import FormInput from "@/components/common/form/FormInput";
 import SelectInput from "@/components/common/form/SelectInput";
 import { useQueryStates, parseAsString } from "nuqs";
+import { withEmptyToUndefined } from "@/schemas/common";
+import { useJoinedGroupsQuery } from "@/lib/queries";
 
 export default function PartnershipForm() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -53,23 +55,24 @@ export default function PartnershipForm() {
   const tBiddingSystem = useTranslations("common.biddingSystem");
   const tValidation = useTranslationsWithFallback();
 
-  const [filters] = useQueryStates({
+  const [filters, setFilters] = useQueryStates({
     groupId: parseAsString,
   });
+
+  const groupsQuery = useJoinedGroupsQuery();
 
   const {
     handleSubmit: handleFormSubmit,
     control: formControl,
     watch,
-    setValue,
     setError: setFormError,
   } = useForm({
-    resolver: zodResolver(addPartnershipPostSchema),
+    resolver: zodResolver(withEmptyToUndefined(addPartnershipPostSchema)),
     defaultValues: {
       name: "",
       description: "",
       biddingSystem: BiddingSystem.SAYC,
-      group: filters.groupId || "",
+      groupId: filters.groupId || "",
       data: {
         type: PartnershipPostType.PERIOD,
         startsAt: new Date(),
@@ -80,10 +83,11 @@ export default function PartnershipForm() {
 
   const createAction = useActionMutation({
     action: createPartnershipPost,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.partnershipPosts({}),
       });
+      setFilters({ groupId: data.groupId });
       onClose();
     },
     onError: (err) => {
@@ -97,14 +101,8 @@ export default function PartnershipForm() {
     },
   });
 
-  function handleWithToast(
-    data: Omit<ActionInput<typeof createPartnershipPost>, "groupId"> & {
-      group: string;
-    }
-  ) {
-    const { group, ...rest } = data;
-    const payload = { ...rest, group, groupId: group };
-    const promise = createAction.mutateAsync(payload);
+  function handleWithToast(data: ActionInput<typeof createPartnershipPost>) {
+    const promise = createAction.mutateAsync(data);
     toast.promise(promise, {
       loading: { title: t("toast.loading") || "Tworzenie ogłoszenia..." },
       success: { title: t("toast.success") },
@@ -146,7 +144,6 @@ export default function PartnershipForm() {
                         onChange={field.onChange}
                         errorMessage={tValidation(error?.message)}
                         isInvalid={!!error}
-                        isRequired
                       />
                     </Box>
                   )}
@@ -175,6 +172,28 @@ export default function PartnershipForm() {
 
                 <Controller
                   control={formControl}
+                  name="groupId"
+                  render={({ field, fieldState: { error } }) => (
+                    <Box>
+                      <FormLabel htmlFor="groupId">{t("groupLabel")}</FormLabel>
+                      <SelectInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder={t("groupPlaceholder")}
+                        options={(groupsQuery.data ?? []).map((group) => ({
+                          value: group.id,
+                          label: group.name,
+                        }))}
+                        errorMessage={tValidation(error?.message)}
+                        isInvalid={!!error}
+                        isLoading={groupsQuery.isLoading}
+                      />
+                    </Box>
+                  )}
+                />
+
+                <Controller
+                  control={formControl}
                   name="biddingSystem"
                   render={({ field, fieldState: { error } }) => (
                     <Box>
@@ -195,35 +214,25 @@ export default function PartnershipForm() {
                   )}
                 />
 
-                <Box>
-                  <FormLabel>{t("typeLabel")}</FormLabel>
-                  <RadioGroup
-                    value={dataType}
-                    onChange={(v) => {
-                      if (v === PartnershipPostType.SINGLE) {
-                        setValue("data", {
-                          type: PartnershipPostType.SINGLE,
-                          eventId: "",
-                        });
-                      } else {
-                        setValue("data", {
-                          type: PartnershipPostType.PERIOD,
-                          startsAt: new Date(),
-                          endsAt: new Date(),
-                        });
-                      }
-                    }}
-                  >
-                    <HStack spacing={4}>
-                      <Radio value={PartnershipPostType.SINGLE}>
-                        {t("single")}
-                      </Radio>
-                      <Radio value={PartnershipPostType.PERIOD}>
-                        {t("period")}
-                      </Radio>
-                    </HStack>
-                  </RadioGroup>
-                </Box>
+                <Controller
+                  control={formControl}
+                  name="data.type"
+                  render={({ field }) => (
+                    <Box>
+                      <FormLabel>{t("typeLabel")}</FormLabel>
+                      <RadioGroup value={field.value} onChange={field.onChange}>
+                        <HStack spacing={4}>
+                          <Radio value={PartnershipPostType.SINGLE}>
+                            {t("single")}
+                          </Radio>
+                          <Radio value={PartnershipPostType.PERIOD}>
+                            {t("period")}
+                          </Radio>
+                        </HStack>
+                      </RadioGroup>
+                    </Box>
+                  )}
+                />
 
                 {dataType === PartnershipPostType.SINGLE && (
                   <Controller
@@ -252,7 +261,6 @@ export default function PartnershipForm() {
                           ]}
                           errorMessage={tValidation(error?.message)}
                           isInvalid={!!error}
-                          isRequired
                         />
                       </Box>
                     )}
@@ -260,12 +268,12 @@ export default function PartnershipForm() {
                 )}
 
                 {dataType === PartnershipPostType.PERIOD && (
-                  <>
+                  <HStack spacing={3} align="flex-start">
                     <Controller
                       control={formControl}
                       name="data.startsAt"
                       render={({ field, fieldState: { error } }) => (
-                        <Box>
+                        <Box flex={1}>
                           <FormLabel htmlFor="startsAt">
                             {t("startsAtLabel")}
                           </FormLabel>
@@ -284,7 +292,6 @@ export default function PartnershipForm() {
                             }}
                             errorMessage={tValidation(error?.message)}
                             isInvalid={!!error}
-                            isRequired
                           />
                         </Box>
                       )}
@@ -293,7 +300,7 @@ export default function PartnershipForm() {
                       control={formControl}
                       name="data.endsAt"
                       render={({ field, fieldState: { error } }) => (
-                        <Box>
+                        <Box flex={1}>
                           <FormLabel htmlFor="endsAt">
                             {t("endsAtLabel")}
                           </FormLabel>
@@ -312,12 +319,11 @@ export default function PartnershipForm() {
                             }}
                             errorMessage={tValidation(error?.message)}
                             isInvalid={!!error}
-                            isRequired
                           />
                         </Box>
                       )}
                     />
-                  </>
+                  </HStack>
                 )}
               </Stack>
 
