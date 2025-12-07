@@ -29,8 +29,10 @@ function sanitizeSingleData(data: ISinglePartnershipPostData): SingleDataType {
 function sanitizePeriodData(data: IPeriodPartnershipPostData): PeriodDataType {
   return {
     type: data.type,
-    startsAt: data.startsAt,
-    endsAt: data.endsAt,
+    duration: {
+      startsAt: data.duration.startsAt,
+      endsAt: data.duration.endsAt,
+    },
   };
 }
 

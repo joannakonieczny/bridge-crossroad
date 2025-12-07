@@ -188,7 +188,7 @@ export default function AnnoucementsList() {
                 title: p.name,
                 date:
                   p.data.type === PartnershipPostType.PERIOD
-                    ? p.data.endsAt
+                    ? p.data.duration.endsAt
                     : p.data.event.duration.startsAt,
                 owner: p.owner,
                 frequency: p.data.type,

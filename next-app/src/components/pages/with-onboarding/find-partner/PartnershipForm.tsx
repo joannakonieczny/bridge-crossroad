@@ -75,8 +75,10 @@ export default function PartnershipForm() {
       groupId: filters.groupId || "",
       data: {
         type: PartnershipPostType.PERIOD,
-        startsAt: new Date(),
-        endsAt: new Date(),
+        duration: {
+          startsAt: new Date(),
+          endsAt: new Date(),
+        },
       },
     },
   });
@@ -271,7 +273,7 @@ export default function PartnershipForm() {
                   <HStack spacing={3} align="flex-start">
                     <Controller
                       control={formControl}
-                      name="data.startsAt"
+                      name="data.duration.startsAt"
                       render={({ field, fieldState: { error } }) => (
                         <Box flex={1}>
                           <FormLabel htmlFor="startsAt">
@@ -298,7 +300,7 @@ export default function PartnershipForm() {
                     />
                     <Controller
                       control={formControl}
-                      name="data.endsAt"
+                      name="data.duration.endsAt"
                       render={({ field, fieldState: { error } }) => (
                         <Box flex={1}>
                           <FormLabel htmlFor="endsAt">

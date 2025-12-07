@@ -1,5 +1,9 @@
 import z from "zod";
-import { idPropSchema, withTimeStampsSchema } from "@/schemas/common";
+import {
+  durationSchema,
+  idPropSchema,
+  withTimeStampsSchema,
+} from "@/schemas/common";
 import type { TKey } from "@/lib/typed-translations";
 import {
   BiddingSystem,
@@ -32,8 +36,7 @@ export const singleDataSchema = z.object({
 
 export const periodDataSchema = z.object({
   type: z.literal(PartnershipPostType.PERIOD),
-  startsAt: z.date(),
-  endsAt: z.date(),
+  duration: durationSchema,
 });
 
 export const partnershipPostDataSchema = z.discriminatedUnion("type", [
