@@ -1074,6 +1074,7 @@ const messages = {
       maxSize: "Maksymalny rozmiar",
       errorInvalidType: "Niedozwolony typ pliku",
       errorFileTooBig: "Plik jest za duży. Maksymalny rozmiar",
+      errorReadingFile: "Wystąpił błąd podczas odczytu pliku",
     },
     EventPage: {
       EventDetails: {

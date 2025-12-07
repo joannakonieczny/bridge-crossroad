@@ -36,11 +36,11 @@ export type IFileUploaderProps = {
   id?: string;
   isRequired?: boolean;
   onElementProps?: FormControlProps;
-  value?: string; // URL lub base64 pliku
+  value?: string; // URL or base64 of the file
   onChange?: (file: File | null, preview: string | null) => void;
   onError?: (error: string) => void;
   genericFileType?: "image" | "any";
-  acceptedFormats?: string; // opcjonalne, nadpisuje genericFileType
+  acceptedFormats?: string; // optional, overrides genericFileType
   maxSizeMB?: number;
   onElementWrapperProps?: StackProps;
 };
@@ -114,6 +114,12 @@ export default function FileUploader(props: IFileUploaderProps) {
         const result = reader.result as string;
         setPreview(result);
         props.onChange?.(file, result);
+      };
+      reader.onerror = () => {
+        const errorMsg = t("errorReadingFile");
+        setValidationError(errorMsg);
+        props.onError?.(errorMsg);
+        props.onChange?.(null, null);
       };
       reader.readAsDataURL(file);
     } else {

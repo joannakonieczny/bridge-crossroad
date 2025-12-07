@@ -53,8 +53,12 @@ export function useImageUpload(p: UploadImageParams) {
     const promise = uploadImageMutation.mutateAsync(selectedImage);
     toast.promise(promise, p.text.toast);
 
-    const uploadedPath = await promise.catch(() => undefined);
-    return uploadedPath;
+    try {
+      const uploadedPath = await promise;
+      return uploadedPath;
+    } catch {
+      return undefined;
+    }
   };
 
   const resetImage = () => {
@@ -64,9 +68,10 @@ export function useImageUpload(p: UploadImageParams) {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleImageChange = (file: File | null, _preview: string | null) => {
-    setSelectedImage(file);
     if (!file) {
       resetImage();
+    } else {
+      setSelectedImage(file);
     }
   };
 
