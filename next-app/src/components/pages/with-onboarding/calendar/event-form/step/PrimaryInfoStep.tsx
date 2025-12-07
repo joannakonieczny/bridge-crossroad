@@ -140,10 +140,10 @@ export function PrimaryInfoStep() {
       {!selectedGroup && (
         <Stack>
           <Text fontSize="sm" textColor={"gray.500"}>
-            Pamiętaj o wybraniu grupy do której należy wydarzenie!
+            {t("primaryInfoStep.groupWarning.selectGroup")}
           </Text>
           <Text fontSize="sm" textColor={"gray.500"}>
-            Bez tego nie możemy dodać organizatora.
+            {t("primaryInfoStep.groupWarning.organizerNote")}
           </Text>
         </Stack>
       )}

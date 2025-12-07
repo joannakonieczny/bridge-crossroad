@@ -1,3 +1,5 @@
+"use client";
+
 import type { FieldPath, UseFormReturn } from "react-hook-form";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import { EventType } from "@/club-preset/event-type";

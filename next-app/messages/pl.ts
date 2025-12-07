@@ -636,6 +636,10 @@ const eventForm = {
     eventStartPlaceholder: "Początek wydarzenia",
     eventEndPlaceholder: "Koniec wydarzenia",
     eventTypePlaceholder: "Typ wydarzenia",
+    groupWarning: {
+      selectGroup: "Pamiętaj o wybraniu grupy do której należy wydarzenie!",
+      organizerNote: "Bez tego nie możemy dodać organizatora.",
+    },
     image: {
       label: "Zdjęcie wydarzenia (opcjonalnie)",
       additionalLabel: "Pamiętaj, że zawsze możesz je później zmienić.",

@@ -1,3 +1,5 @@
+"use client";
+
 import type { FormControlProps, StackProps } from "@chakra-ui/react";
 import {
   FormControl,
