@@ -68,9 +68,9 @@ export const createNewGroup = fullAuthAction
   });
 
 export const getGroupData = withinOwnGroupAction.action(
-  async ({ ctx: { groupId } }) => {
+  async ({ ctx: { groupId, userId } }) => {
     const res = await getGroupOverview(groupId);
-    return sanitizeGroupsFullInfoPopulated(res);
+    return sanitizeGroupsFullInfoPopulated(res, { userId });
   }
 );
 

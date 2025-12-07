@@ -340,7 +340,6 @@ const groupsPage = {
     },
     adminBox: {
       heading: "Kod dołączenia",
-      noData: "Brak danych",
       copyButton: "Kopiuj",
     },
   },
