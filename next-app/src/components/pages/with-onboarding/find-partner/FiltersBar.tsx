@@ -27,27 +27,40 @@ export default function FiltersBar() {
 
   const [biddingSystem, setBiddingSystem] = React.useState<string>("");
 
-  const [filters, setFilters] = useQueryStates(
-    {
-      activity: parseAsString.withDefault("active"),
-      groupId: parseAsString,
-      frequency: parseAsString.withDefault("any"),
-      experience: parseAsString.withDefault("any"),
-      trainingGroup: parseAsString,
-    },
-    { history: "replace" }
-  );
-
   const groupsQuery = useJoinedGroupsQuery();
 
   const groupsArr = Array.isArray(groupsQuery.data) ? groupsQuery.data : [];
   const mainGroupId = groupsArr.find((g) => g?.isMain === true)?.id;
 
+  const [filters, setFilters] = useQueryStates(
+    {
+      activity: parseAsString,
+      groupId: parseAsString,
+      frequency: parseAsString,
+      experience: parseAsString,
+      trainingGroup: parseAsString,
+    },
+    { history: "replace" }
+  );
+
   useEffect(() => {
-    if (filters.groupId && mainGroupId) {
-      setFilters({ groupId: String(mainGroupId) });
+    const desiredDefaults = {
+      activity: "active",
+      groupId: mainGroupId,
+      frequency: "any",
+      experience: "any",
+    };
+
+    const missing = Object.fromEntries(
+      Object.entries(desiredDefaults).filter(
+        ([key, value]) => !filters[key as keyof typeof filters] && value
+      )
+    );
+
+    if (Object.keys(missing).length > 0) {
+      setFilters(missing);
     }
-  }, [filters.groupId, mainGroupId, setFilters]);
+  }, [filters, mainGroupId, setFilters]);
 
   return (
     <Box bg="bg" p={4} borderRadius="md">
@@ -58,7 +71,7 @@ export default function FiltersBar() {
         templateColumns={{ lg: "150px 160px 160px 170px 180px auto" }}
       >
         <SelectInput
-          value={filters.activity}
+          value={filters.activity || ""}
           onChange={(e) => setFilters({ activity: e.target.value || "active" })}
           options={[
             { value: "active", label: t("activity.active") },
@@ -68,7 +81,7 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={filters.groupId ?? ""}
+          value={filters.groupId || ""}
           onChange={(e) => setFilters({ groupId: e.target.value || null })}
           placeholder={t("placeholders.group")}
           emptyValueLabel={t("allGroups")}
@@ -80,7 +93,7 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={filters.frequency}
+          value={filters.frequency || ""}
           onChange={(e) => setFilters({ frequency: e.target.value || "any" })}
           placeholder={t("placeholders.frequency")}
           options={[
@@ -98,7 +111,7 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={filters.experience}
+          value={filters.experience || ""}
           onChange={(e) => setFilters({ experience: e.target.value || "any" })}
           placeholder={t("placeholders.experience")}
           options={[
@@ -116,7 +129,7 @@ export default function FiltersBar() {
         />
 
         <SelectInput
-          value={filters.trainingGroup ?? ""}
+          value={filters.trainingGroup || ""}
           onChange={(e) =>
             setFilters({ trainingGroup: e.target.value || null })
           }
@@ -165,7 +178,7 @@ export default function FiltersBar() {
           <AccordionPanel px={0} pt={3}>
             <VStack spacing={3} align="stretch">
               <SelectInput
-                value={filters.activity}
+                value={filters.activity || ""}
                 onChange={(e) =>
                   setFilters({ activity: e.target.value || "active" })
                 }
@@ -191,7 +204,7 @@ export default function FiltersBar() {
               />
 
               <SelectInput
-                value={filters.frequency}
+                value={filters.frequency || ""}
                 onChange={(e) =>
                   setFilters({ frequency: e.target.value || "any" })
                 }
@@ -211,7 +224,7 @@ export default function FiltersBar() {
               />
 
               <SelectInput
-                value={filters.experience}
+                value={filters.experience || ""}
                 onChange={(e) =>
                   setFilters({ experience: e.target.value || "any" })
                 }
