@@ -158,6 +158,7 @@ export default function FiltersBar() {
               experience: "any",
               trainingGroup: null,
             });
+            setBiddingSystem("");
           }}
         >
           {t("button.clear")}

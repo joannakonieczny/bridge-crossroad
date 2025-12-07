@@ -43,7 +43,7 @@ export const QUERY_KEYS = {
       limit: number;
       status: PartnershipPostStatus;
       type: PartnershipPostType;
-      onboardingKey: string;
+      onboardingData: unknown;
     }>
   ) => [
     "partnershipPosts",
@@ -52,7 +52,8 @@ export const QUERY_KEYS = {
     p.limit,
     p.status,
     p.type,
-    p.onboardingKey,
+    p.onboardingData ? JSON.stringify(p.onboardingData) : undefined,
+    ,
   ],
 } as const;
 

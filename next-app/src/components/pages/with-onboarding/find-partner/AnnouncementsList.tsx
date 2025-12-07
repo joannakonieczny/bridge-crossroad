@@ -12,7 +12,7 @@ import {
   SkeletonText,
   Td,
 } from "@chakra-ui/react";
-import Annoucement from "./Annoucement";
+import Announcement from "./Announcement";
 import { usePartnershipPostsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
 import { useQueryStates, parseAsInteger, parseAsString } from "nuqs";
@@ -40,9 +40,9 @@ const experienceMap: Record<string, ExperienceRange<number>> = {
   "2": { min: 2, max: 3 },
   "3": { min: 3, max: 4 },
   "4": { min: 4, max: 5 },
-  "5+": { max: 5 },
-  "10+": { max: 10 },
-  "15+": { max: 15 },
+  "5+": { min: 5 },
+  "10+": { min: 10 },
+  "15+": { min: 15 },
 } as const;
 
 export default function AnnoucementsList() {
@@ -181,7 +181,7 @@ export default function AnnoucementsList() {
         </Thead>
         <Tbody>
           {posts.map((p) => (
-            <Annoucement
+            <Announcement
               key={p.id}
               a={{
                 id: p.id,

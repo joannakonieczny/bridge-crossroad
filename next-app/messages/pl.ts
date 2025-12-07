@@ -771,7 +771,7 @@ const findPartner = {
     },
     frequencyOptions: {
       any: "Dowolna",
-      SINGLE: "Pojedyńcza",
+      SINGLE: "Pojedyncza",
       PERIOD: "Okresowa",
     },
     experienceOptions: {

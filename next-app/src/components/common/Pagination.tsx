@@ -1,8 +1,13 @@
-"use client"
+"use client";
 
 import React from "react";
 import { Box, HStack, Button, Text } from "@chakra-ui/react";
-import { FaAngleLeft, FaAngleRight, FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
+import {
+  FaAngleLeft,
+  FaAngleRight,
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight,
+} from "react-icons/fa";
 
 type PaginationProps = {
   current: number;
@@ -104,7 +109,7 @@ export default function Pagination({
           size={size}
           variant="ghost"
           onClick={handleNext}
-          isDisabled={current >= (totalPages)}
+          isDisabled={current >= totalPages}
           aria-label={nextLabel}
         >
           <FaAngleRight />
@@ -114,7 +119,7 @@ export default function Pagination({
           size={size}
           variant="ghost"
           onClick={handleLast}
-          isDisabled={current >= (totalPages ?? 1)}
+          isDisabled={totalPages === undefined || current >= totalPages}
           aria-label="last"
         >
           <FaAngleDoubleRight />
