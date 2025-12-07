@@ -39,7 +39,6 @@ import type {
   MutationOrQuerryError,
 } from "@/lib/tanstack-action/types";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
-import { QUERY_KEYS } from "@/lib/queries";
 import FormInput from "@/components/common/form/FormInput";
 import SelectInput from "@/components/common/form/SelectInput";
 import { useQueryStates, parseAsString } from "nuqs";
@@ -65,7 +64,7 @@ export default function PartnershipForm() {
     handleSubmit: handleFormSubmit,
     control: formControl,
     watch,
-    setError: setFormError,
+    reset,
   } = useForm({
     resolver: zodResolver(withEmptyToUndefined(addPartnershipPostSchema)),
     defaultValues: {
@@ -87,19 +86,11 @@ export default function PartnershipForm() {
     action: createPartnershipPost,
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.partnershipPosts({}),
+        queryKey: ["partnershipPosts", data.groupId],
       });
       setFilters({ groupId: data.groupId });
       onClose();
-    },
-    onError: (err) => {
-      const hasNameError = Boolean(err?.validationErrors?.name);
-      if (hasNameError) {
-        setFormError("name", {
-          type: "server",
-          message: err.validationErrors?.name?._errors?.[0],
-        });
-      }
+      reset();
     },
   });
 
