@@ -22,11 +22,19 @@ import {
   Stepper,
   useSteps,
   useToast,
+  Stack,
 } from "@chakra-ui/react";
 import { Divider } from "@chakra-ui/react";
 import { PrimaryInfoStep } from "./step/PrimaryInfoStep";
 import { DetailedInfoStep } from "./step/DetailedInfoStep/DetailedInfoStep";
 import { SummaryStep } from "./step/SummaryStep";
+import { SteeringButtons } from "./components/SteeringButtons";
+import {
+  useValidatePrimaryInfoStep,
+  useValidateDetailedInfoStep,
+} from "./hooks";
+import FileUploader from "@/components/common/form/FileUploader/FileUploader";
+import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { createEvent } from "@/services/events/api";
 import type {
@@ -42,6 +50,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import { EventType } from "@/club-preset/event-type";
 import { withEmptyToUndefined } from "@/schemas/common";
+import dayjs from "dayjs";
 
 type EventFormProps = {
   isOpen: boolean;
@@ -61,10 +70,10 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       organizer: "",
       duration: {
         startsAt: new Date(),
-        endsAt: new Date(),
+        endsAt: dayjs().add(1, "hour").toDate(),
       },
       additionalDescription: "",
-      imageUrl: undefined, //TODO add image upload in future
+      imageUrl: "",
       data: {
         type: EventType.OTHER,
       },
@@ -75,28 +84,52 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
+  const onCloseWithReset = () => {
+    form.reset();
+    resetImage();
+    setActiveStep(0);
+    onClose();
+  };
+
+  const {
+    selectedImage,
+    uploadImage,
+    resetImage,
+    handleImageChange,
+    isUploading,
+    isError: isUploadError,
+  } = useImageUpload({
+    text: {
+      toast: {
+        loading: { title: t("imageToast.loading") },
+        success: { title: t("imageToast.success") },
+        error: { title: t("imageToast.error") },
+      },
+    },
+  });
+
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: 3,
   });
 
+  const validatePrimaryInfoStep = useValidatePrimaryInfoStep(form);
+  const validateDetailedInfoStep = useValidateDetailedInfoStep(form);
+
   const steps = [
     {
       title: t("steps.primary"),
-      content: <PrimaryInfoStep setNextStep={() => setActiveStep(1)} />,
+      content: PrimaryInfoStep,
+      validate: validatePrimaryInfoStep,
     },
     {
       title: t("steps.detailed"),
-      content: (
-        <DetailedInfoStep
-          setNextStep={() => setActiveStep(2)}
-          setPrevStep={() => setActiveStep(0)}
-        />
-      ),
+      content: DetailedInfoStep,
+      validate: validateDetailedInfoStep,
     },
     {
       title: t("steps.summary"),
-      content: <SummaryStep setPrevStep={() => setActiveStep(1)} />,
+      content: SummaryStep,
     },
   ];
 
@@ -109,14 +142,19 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
           d.duration.endsAt
         ),
       });
-      form.reset();
-      setActiveStep(0);
-      onClose();
+      onCloseWithReset();
     },
   });
 
-  function handleWithToast(data: ActionInput<typeof createEvent>) {
-    const promise = createEventAction.mutateAsync(data);
+  async function handleWithToast(data: ActionInput<typeof createEvent>) {
+    const uploadedPath = await uploadImage();
+
+    // Check upload error
+    if (selectedImage && !uploadedPath) return;
+
+    const eventData = { ...data, imageUrl: uploadedPath, groupId: data.group };
+
+    const promise = createEventAction.mutateAsync(eventData);
     toast.promise(promise, {
       loading: { title: t("toast.loading") },
       success: { title: t("toast.success") },
@@ -129,11 +167,14 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     });
   }
 
+  const StepComponent = steps[activeStep].content;
+  const isLastStep = activeStep === steps.length - 1;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isOpen={isOpen} onClose={onCloseWithReset} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Dodaj wydarzenie</ModalHeader>
+        <ModalHeader>{t("header")}</ModalHeader>
         <ModalCloseButton />
         <Divider />
         <ModalBody>
@@ -160,7 +201,55 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                   ))}
                 </Stepper>
               </Box>
-              <Box mt={8}>{steps[activeStep].content}</Box>
+              <Stack my={8} spacing={6}>
+                <StepComponent />
+                <FileUploader
+                  genericFileType="image"
+                  onChange={handleImageChange}
+                  isUploadError={isUploadError}
+                  text={{
+                    label: t("primaryInfoStep.image.label"),
+                    additionalLabel: t("primaryInfoStep.image.additionalLabel"),
+                    placeholder: t("primaryInfoStep.image.placeholder"),
+                    errorUpload: t("primaryInfoStep.image.errorUpload"),
+                  }}
+                  onElementWrapperProps={
+                    activeStep === 1 ? { h: 0, overflow: "hidden" } : {}
+                  }
+                />
+              </Stack>
+              <SteeringButtons
+                prevButton={
+                  activeStep > 0
+                    ? {
+                        text: t("buttons.prev"),
+                        onClick: () => setActiveStep(activeStep - 1),
+                      }
+                    : undefined
+                }
+                nextButton={{
+                  text: isLastStep ? t("buttons.submit") : t("buttons.next"),
+                  onClick: !isLastStep
+                    ? async () => {
+                        const currentStepValidate = steps[activeStep].validate;
+                        const isValid = currentStepValidate
+                          ? await currentStepValidate()
+                          : true;
+
+                        if (isValid) {
+                          setActiveStep(activeStep + 1);
+                        }
+                      }
+                    : async () => {
+                        form.handleSubmit((d) =>
+                          handleWithToast({ ...d, groupId: d.group })
+                        )();
+                      },
+                  onElementProps: {
+                    isLoading: isLastStep ? isUploading : false,
+                  },
+                }}
+              />
             </form>
           </FormProvider>
         </ModalBody>
