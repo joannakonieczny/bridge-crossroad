@@ -6,6 +6,7 @@ import type {
 } from "@/schemas/model/group/group-types";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeFileUrl } from "./common";
+import type { UserIdType } from "@/schemas/model/user/user-types";
 
 export function sanitizeGroup(
   group: IGroupDTO | IGroupDTOWithPopulatedMembersAdmins
@@ -19,8 +20,13 @@ export function sanitizeGroup(
   };
 }
 
+type MappersType = {
+  userId: UserIdType;
+};
+
 export function sanitizeGroupsFullInfoPopulated(
-  group: IGroupDTOWithPopulatedMembersAdmins
+  group: IGroupDTOWithPopulatedMembersAdmins,
+  mappers: MappersType
 ): GroupFullType {
   return {
     ...sanitizeGroup(group),
@@ -29,5 +35,11 @@ export function sanitizeGroupsFullInfoPopulated(
     updatedAt: group.updatedAt,
     members: group.members.map(sanitizeMinUserInfo),
     admins: group.admins.map(sanitizeMinUserInfo),
+    isMember: group.members.some(
+      (member) => member._id.toString() === mappers.userId
+    ),
+    isAdmin: group.admins.some(
+      (admin) => admin._id.toString() === mappers.userId
+    ),
   };
 }
