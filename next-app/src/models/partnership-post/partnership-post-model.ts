@@ -44,8 +44,16 @@ const PeriodPartnershipPostDataSchema =
   basePartnershipPostDataSchema.discriminator(
     PartnershipPostType.PERIOD,
     new Schema({
-      startsAt: { type: Date, required: true },
-      endsAt: { type: Date, required: true },
+      duration: {
+        type: new Schema(
+          {
+            startsAt: { type: Date, required: true },
+            endsAt: { type: Date, required: true },
+          },
+          { _id: false }
+        ),
+        required: true,
+      },
     })
   );
 

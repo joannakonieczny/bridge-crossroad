@@ -22,8 +22,10 @@ export type ISinglePartnershipPostData = {
 
 export type IPeriodPartnershipPostData = {
   type: PartnershipPostType.PERIOD;
-  startsAt: Date;
-  endsAt: Date;
+  duration: {
+    startsAt: Date;
+    endsAt: Date;
+  };
 };
 
 export type IPartnershipPostData =

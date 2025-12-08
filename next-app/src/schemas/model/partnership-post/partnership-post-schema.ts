@@ -1,5 +1,9 @@
 import z from "zod";
-import { idPropSchema, withTimeStampsSchema } from "@/schemas/common";
+import {
+  durationSchema,
+  idPropSchema,
+  withTimeStampsSchema,
+} from "@/schemas/common";
 import type { TKey } from "@/lib/typed-translations";
 import {
   BiddingSystem,
@@ -10,7 +14,9 @@ import { PartnershipPostValidationConstants as c } from "./partnership-post-cons
 
 // fields
 export const nameSchema = z
-  .string()
+  .string({
+    message: "validation.model.partnershipPost.name.required" satisfies TKey,
+  })
   .min(c.name.min, "validation.model.partnershipPost.name.min" satisfies TKey)
   .max(c.name.max, "validation.model.partnershipPost.name.max" satisfies TKey);
 
@@ -30,8 +36,7 @@ export const singleDataSchema = z.object({
 
 export const periodDataSchema = z.object({
   type: z.literal(PartnershipPostType.PERIOD),
-  startsAt: z.date(),
-  endsAt: z.date(),
+  duration: durationSchema,
 });
 
 export const partnershipPostDataSchema = z.discriminatedUnion("type", [

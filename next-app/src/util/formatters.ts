@@ -1,4 +1,4 @@
-import type { DurationType } from "@/schemas/model/event/event-types";
+import type { DurationType } from "@/schemas/common";
 import dayjs from "dayjs";
 import "dayjs/locale/pl";
 

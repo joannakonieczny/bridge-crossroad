@@ -476,9 +476,6 @@ const eventModelValidation = {
     max: `URL obrazka nie może być dłuższy niż ${EVENT.imageUrl.max} znaków`,
     required: "Podaj poprawny adres URL",
   },
-  duration: {
-    invalidRange: "Data rozpoczęcia musi być wcześniejsza niż data zakończenia",
-  },
   playingPair: {
     firstSecondDistinct: "Obaj zawodnicy pary muszą być różni",
   },
@@ -735,6 +732,35 @@ const chatPage = {
 };
 
 const findPartner = {
+  PartnershipForm: {
+    addButton: "Dodaj ogłoszenie",
+    modalHeader: "Nowe ogłoszenie poszukiwania partnera",
+    groupLabel: "Grupa",
+    groupPlaceholder: "Wybierz grupę",
+    nameLabel: "Nazwa",
+    descriptionLabel: "Opis",
+    biddingSystemLabel: "System licytacji",
+    typeLabel: "Typ ogłoszenia",
+    single: "Jednorazowe",
+    period: "Okresowe",
+    timeWindowStartLabel: "Wyświetl wydarzenia od",
+    timeWindowEndLabel: "Wyświetl wydarzenia do",
+    eventIdLabel: "Wybierz powiązane wydarzenie",
+    eventPlaceholder: "-- Wybierz wydarzenie --",
+    startsAtLabel: "Od",
+    endsAtLabel: "Do",
+    cancelButton: "Anuluj",
+    createButton: "Utwórz ogłoszenie",
+    toast: {
+      loading: "Tworzenie ogłoszenia...",
+      success: "Ogłoszenie utworzone",
+      error: "Błąd podczas tworzenia",
+      frequency: {
+        SINGLE: "Pojedyncza",
+        PERIOD: "Okresowa",
+      },
+    },
+  },
   Announcement: {
     toast: {
       add: {
@@ -900,6 +926,7 @@ const messages = {
       chatMessage: chatMessageModelValidation,
       partnershipPost: {
         name: {
+          required: "Podaj nazwę ogłoszenia",
           min: `Min. ${PARTNERSHIP_POST.name.min} znaki`,
           max: `Max. ${PARTNERSHIP_POST.name.max} znaków`,
         },
@@ -918,6 +945,11 @@ const messages = {
         register: registerPageValidation,
       },
       onboarding: onboardingPageValidation,
+    },
+    common: {
+      duration: {
+        invalid: "Data zakończenia musi być późniejsza niż data rozpoczęcia",
+      },
     },
   },
   api: {
