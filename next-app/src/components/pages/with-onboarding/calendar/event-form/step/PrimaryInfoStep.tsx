@@ -10,7 +10,6 @@ import {
 } from "@/lib/typed-translations";
 import SelectInput from "@/components/common/form/SelectInput";
 import dayjs from "dayjs";
-import { SteeringButtons } from "../components/SteeringButtons";
 import {
   useGroupQuery,
   useJoinedGroupsAsAdminQuery,
@@ -21,12 +20,7 @@ import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/
 import { getPersonLabel } from "@/util/formatters";
 import { useEffect } from "react";
 
-export type StepProps = {
-  setNextStep?: () => void;
-  setPrevStep?: () => void;
-};
-
-export function PrimaryInfoStep({ setNextStep }: StepProps) {
+export function PrimaryInfoStep() {
   const form = useFormContext<AddEventSchemaType>();
 
   const t = useTranslations("pages.EventFormPage");
@@ -45,19 +39,6 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ownInfoQ.data?.id]);
-
-  const handleNextStep = async () => {
-    const ok = await form.trigger([
-      "title",
-      "description",
-      "group",
-      "organizer",
-      "data.type",
-      "duration.startsAt",
-      "duration.endsAt",
-    ]);
-    if (ok) setNextStep?.();
-  };
 
   function RenderFormInput(p: {
     name: "title" | "description";
@@ -156,6 +137,16 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
         placeholder={t("primaryInfoStep.descriptionPlaceholder")}
         type="text"
       />
+      {!selectedGroup && (
+        <Stack>
+          <Text fontSize="sm" textColor={"gray.500"}>
+            {t("primaryInfoStep.groupWarning.selectGroup")}
+          </Text>
+          <Text fontSize="sm" textColor={"gray.500"}>
+            {t("primaryInfoStep.groupWarning.organizerNote")}
+          </Text>
+        </Stack>
+      )}
       <RenderSelectInput
         name="group"
         placeholder={t("primaryInfoStep.groupPlaceholder")}
@@ -165,21 +156,27 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
         }))}
         isLoading={groupsQ.isLoading}
       />
-      <RenderSelectInput
-        name="organizer"
-        placeholder={t("primaryInfoStep.organizerPlaceholder")}
-        options={(peopleQ.data?.members ?? []).map((member) => ({
-          value: member.id,
-          label: getPersonLabel(member),
-        }))}
-        isLoading={
-          !!!selectedGroup ? false : peopleQ.isLoading || ownInfoQ.isLoading
-        }
-        isDisabled={!!!selectedGroup}
-      />
+      <Stack>
+        <Text color="gray.500" fontSize="sm">
+          {t("primaryInfoStep.organizerPlaceholder")}
+        </Text>
+        <RenderSelectInput
+          name="organizer"
+          placeholder={t("primaryInfoStep.organizerPlaceholder")}
+          options={(peopleQ.data?.members ?? []).map((member) => ({
+            value: member.id,
+            label: getPersonLabel(member),
+          }))}
+          isLoading={
+            !!!selectedGroup ? false : peopleQ.isLoading || ownInfoQ.isLoading
+          }
+          isDisabled={!!!selectedGroup}
+        />
+      </Stack>
+
       <HStack spacing={4}>
         <VStack flex={1}>
-          <Text color="gray.500" alignSelf="start">
+          <Text color="gray.500" alignSelf="start" fontSize="sm">
             {t("primaryInfoStep.eventStartPlaceholder")}
           </Text>
           <RenderDateTimeInput
@@ -188,7 +185,7 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
           />
         </VStack>
         <VStack flex={1}>
-          <Text color="gray.500" alignSelf="start">
+          <Text color="gray.500" alignSelf="start" fontSize="sm">
             {t("primaryInfoStep.eventEndPlaceholder")}
           </Text>
           <RenderDateTimeInput
@@ -197,29 +194,18 @@ export function PrimaryInfoStep({ setNextStep }: StepProps) {
           />
         </VStack>
       </HStack>
-      <Text color="gray.500" alignSelf="start">
-        {t("primaryInfoStep.eventTypePlaceholder")}
-      </Text>
-      <RenderSelectInput
-        name="data.type"
-        options={Object.values(EventType).map((type) => ({
-          value: type,
-          label: tEvents(type),
-        }))}
-      />
-      <SteeringButtons
-        nextButton={{
-          text: t("buttons.next"),
-          onClick: () => handleNextStep(),
-          onElementProps: {
-            disabled:
-              groupsQ.isLoading ||
-              peopleQ.isLoading ||
-              ownInfoQ.isLoading ||
-              !selectedGroup,
-          },
-        }}
-      />
+      <Stack>
+        <Text color="gray.500" alignSelf="start" fontSize="sm">
+          {t("primaryInfoStep.eventTypePlaceholder")}
+        </Text>
+        <RenderSelectInput
+          name="data.type"
+          options={Object.values(EventType).map((type) => ({
+            value: type,
+            label: tEvents(type),
+          }))}
+        />
+      </Stack>
     </Stack>
   );
 }

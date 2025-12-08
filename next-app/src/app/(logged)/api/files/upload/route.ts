@@ -6,13 +6,8 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import { config } from "@/util/envConfigLoader";
 import { fileTypeFromBuffer } from "file-type";
-import {
-  ALLOWED_EXT,
-  ALLOWED_MIME,
-  checkGroupAccess,
-  extractUserId,
-  MAX_SIZE,
-} from "@/util/api/files-common";
+import { checkGroupAccess, extractUserId } from "@/util/api/files-common";
+import { ALLOWED_EXT, ALLOWED_MIME, MAX_SIZE } from "@/util/constants";
 import { s3 } from "@/util/api/s3-client";
 
 export async function POST(req: NextRequest) {
