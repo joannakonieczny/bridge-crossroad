@@ -1,3 +1,5 @@
+"use client";
+
 import { Image, Skeleton, Box } from "@chakra-ui/react";
 import { useState } from "react";
 import type { ElementType, SVGProps } from "react";
@@ -14,16 +16,7 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
 
   const FallbackComponent = () => (
     <Box
-      w={imageProps.w}
-      h={imageProps.h}
-      maxW={imageProps.maxW}
-      maxH={imageProps.maxH}
-      borderTopRadius={imageProps.borderTopRadius}
-      borderRadius={imageProps.borderRadius}
-      boxShadow={imageProps.boxShadow}
-      objectFit={imageProps.objectFit}
-      cursor={imageProps.cursor}
-      onClick={imageProps.onClick}
+      {...imageProps}
       overflow="hidden"
       display="flex"
       alignItems="center"
@@ -34,11 +27,16 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
   );
 
   return (
-    <Skeleton isLoaded={!loading} w={imageProps.w} h={imageProps.h}>
+    <Skeleton
+      isLoaded={!loading}
+      w={imageProps.w}
+      h={imageProps.h}
+      maxW={imageProps.maxW}
+      maxH={imageProps.maxH}
+    >
       {imageProps.src ? (
         <Image
           {...imageProps}
-          alt={imageProps.alt}
           onLoad={() => setLoading(false)}
           onError={() => setLoading(false)}
           fallback={<FallbackComponent />}

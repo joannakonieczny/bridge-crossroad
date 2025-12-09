@@ -88,8 +88,8 @@ export default function EventBanner({
                 <GenericImage
                   fallback={LandscapePlaceholder}
                   imageProps={{
-                    src: event?.imageUrl || undefined,
-                    alt: "Event Image",
+                    src: event?.imageUrl,
+                    alt: event?.title || "Event Image",
                     maxH: { base: "calc(100vh - 48px)", md: "90vh" },
                     maxW: { base: "calc(100vw - 32px)", md: "90vw" },
                     objectFit: "contain",
