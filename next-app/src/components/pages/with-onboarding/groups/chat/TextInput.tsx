@@ -4,7 +4,6 @@ import {
   Stack,
   IconButton,
   ButtonGroup,
-  Textarea,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -18,6 +17,7 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
+import type { KeyboardEvent } from "react";
 import { GrFormAttachment } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
 import { BsFillCursorFill } from "react-icons/bs";
@@ -36,6 +36,7 @@ import { useRef } from "react";
 import { withEmptyToUndefined } from "@/schemas/common";
 import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
+import FormInput from "@/components/common/form/FormInput";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 
@@ -155,7 +156,16 @@ export function TextInput({ groupId }: TextInputProps) {
                   color={isUploadError ? "red.500" : "gray.600"}
                   ml={preview ? 0 : 2}
                 >
-                  {fileName}
+                  {isUploadError ? (
+                    <>
+                      <Text as="b" display="inline" fontSize="sm">
+                        {fileName}
+                      </Text>
+                      {` - ${t("attachFileModal.fileErrorUpload")}`}
+                    </>
+                  ) : (
+                    fileName
+                  )}
                 </Text>
               </Stack>
               <IconButton
@@ -168,30 +178,29 @@ export function TextInput({ groupId }: TextInputProps) {
               />
             </Stack>
           )}
-          <Stack direction="row" spacing="0" padding="0.5rem">
+          <Stack direction="row" spacing="1" padding="0.5rem">
             <Controller
               control={control}
               name="message"
-              render={({ field }) => (
-                <Textarea
-                  {...field}
-                  ringColor="border.200"
+              render={({ field, fieldState }) => (
+                <FormInput
+                  type="textarea"
                   placeholder={t("sendMessagePlaceholder")}
-                  borderRightRadius={0}
-                  style={{ overflow: "hidden" }}
-                  resize="vertical"
-                  ref={ref}
-                  onInput={autoResize}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSubmit(onSubmit)();
-                    }
-                  }}
-                  rows={1}
-                  borderColor={isUploadError ? "red.500" : undefined}
-                  _focus={{
-                    borderColor: isUploadError ? "red.600" : undefined,
+                  value={field.value}
+                  onChange={field.onChange}
+                  isInvalid={isUploadError || !!fieldState.error}
+                  inputProps={{
+                    style: { overflow: "hidden" },
+                    resize: "vertical",
+                    ref: ref,
+                    onInput: autoResize,
+                    onKeyDown: (e: KeyboardEvent<HTMLTextAreaElement>) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit(onSubmit)();
+                      }
+                    },
+                    rows: 1,
                   }}
                 />
               )}

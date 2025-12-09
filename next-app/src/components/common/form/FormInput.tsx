@@ -18,6 +18,7 @@ export type IFormInputProps = {
   onElementProps?: FormControlProps;
   value?: string; //YYYY-MM-DDTHH:mm for datetime-local input
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  inputProps?: Record<string, unknown>;
 };
 
 export default function FormInput(props: IFormInputProps) {
@@ -45,6 +46,8 @@ export default function FormInput(props: IFormInputProps) {
           onChange={props.onChange}
           focusBorderColor="accent.500"
           _focus={{ borderColor: "accent.500" }}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...(props.inputProps as any)}
         />
       ) : props.type === "datetime" ? (
         <Input
@@ -54,6 +57,8 @@ export default function FormInput(props: IFormInputProps) {
           value={props.value ?? ""}
           onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...(props.inputProps as any)}
         />
       ) : (
         <Input
@@ -63,6 +68,8 @@ export default function FormInput(props: IFormInputProps) {
           value={props.value ?? ""}
           onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...(props.inputProps as any)}
         />
       )}
     </FormControl>
