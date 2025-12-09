@@ -5,7 +5,6 @@ import {
   Grid,
   Card,
   CardFooter,
-  Image,
   Box,
   IconButton,
   Menu,
@@ -19,7 +18,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
 import type { GroupBasicType } from "@/schemas/model/group/group-types";
-import { STATIC } from "@/club-preset/static";
+import { GenericImage } from "@/components/common/GenericImage";
+import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 
 type GroupsGridProps = {
   groups?: GroupBasicType[];
@@ -66,12 +66,15 @@ export default function GroupsGrid({
             position="relative"
           >
             <Box w="100%" h="13rem" overflow="hidden" position="relative">
-              <Image
-                src={group.imageUrl ?? STATIC.groupImagePlaceholder}
-                w="100%"
-                h="100%"
-                objectFit="cover"
-                alt={group.name ?? t("imageAlt")}
+              <GenericImage
+                fallback={LandscapePlaceholder}
+                imageProps={{
+                  src: group.imageUrl,
+                  w: "100%",
+                  h: "100%",
+                  objectFit: "cover",
+                  alt: group.name ?? t("imageAlt"),
+                }}
               />
             </Box>
             <CardFooter>

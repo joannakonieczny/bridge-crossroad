@@ -6,7 +6,6 @@ import {
   VStack,
   HStack,
   Badge,
-  Image,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -19,8 +18,6 @@ import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types
 import { getDurationLabel } from "@/util/formatters";
 import { GenericImage } from "@/components/common/GenericImage";
 import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
-
-const mockedImageUrl = "https://picsum.photos/id/237/200/300";
 
 export default function EventBanner({
   event,
@@ -52,7 +49,7 @@ export default function EventBanner({
           <GenericImage
             fallback={LandscapePlaceholder}
             imageProps={{
-              src: event?.imageUrl || undefined,
+              src: event?.imageUrl,
               alt: "Event Image",
               borderTopRadius: "md",
               w: "100%",

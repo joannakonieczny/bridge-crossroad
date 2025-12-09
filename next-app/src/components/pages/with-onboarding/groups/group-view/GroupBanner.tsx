@@ -11,6 +11,8 @@ import {
 import { useTranslations } from "@/lib/typed-translations";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
 import { STATIC } from "@/club-preset/static";
+import { GenericImage } from "@/components/common/GenericImage";
+import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 
 type IGroupBannerProps = {
   group?: GroupFullType;
@@ -107,13 +109,16 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
             height="100%"
             flex="0 0 1rem"
           />
-          <Box width="100%" height="100%" flex="1 1 auto">
-            <Image
-              src={group?.imageUrl ?? STATIC.groupImagePlaceholder}
-              alt={title}
-              objectFit="cover"
-              w="100%"
-              h="100%"
+          <Box width="100%" height="100%" flex="1 1 auto" position="relative">
+            <GenericImage
+              fallback={LandscapePlaceholder}
+              imageProps={{
+                src: group?.imageUrl,
+                alt: title,
+                objectFit: "cover",
+                w: "100%",
+                h: "100%",
+              }}
             />
           </Box>
         </Flex>

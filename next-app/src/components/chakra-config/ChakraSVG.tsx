@@ -11,7 +11,12 @@ export function ChakraSVG(props: ChakraSVGProps) {
   const { onRawSVGElement, svg: SVG, ...rest } = props;
   return (
     <Box {...rest}>
-      <SVG width="100%" height="100%" {...onRawSVGElement} />
+      <SVG
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid slice"
+        {...onRawSVGElement}
+      />
     </Box>
   );
 }

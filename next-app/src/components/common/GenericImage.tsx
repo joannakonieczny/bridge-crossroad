@@ -13,7 +13,7 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
   const [loading, setLoading] = useState(() => !!imageProps.src);
 
   return (
-    <Skeleton isLoaded={!loading}>
+    <Skeleton isLoaded={!loading} w={imageProps.w} h={imageProps.h}>
       {imageProps.src ? (
         <Image
           {...imageProps}
@@ -32,12 +32,12 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
           objectFit={imageProps.objectFit}
           cursor={imageProps.cursor}
           onClick={imageProps.onClick}
-          overflowY="hidden"
+          overflow="hidden"
           display="flex"
           alignItems="center"
           justifyContent="center"
         >
-          <ChakraSVG svg={fallback} w="100%" />
+          <ChakraSVG svg={fallback} w="100%" h="100%" />
         </Box>
       )}
     </Skeleton>
