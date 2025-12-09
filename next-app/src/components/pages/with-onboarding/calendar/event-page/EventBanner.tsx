@@ -17,6 +17,8 @@ import {
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getDurationLabel } from "@/util/formatters";
+import { GenericImage } from "@/components/common/GenericImage";
+import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 
 const mockedImageUrl = "https://picsum.photos/id/237/200/300";
 
@@ -47,17 +49,20 @@ export default function EventBanner({
         />
       ) : (
         <>
-          <Image
-            src={event?.imageUrl || mockedImageUrl}
-            alt={"Event Image"}
-            borderTopRadius="md"
-            w="100%"
-            maxW="100%"
-            h={{ base: "160px", md: "220px" }}
-            objectFit="cover"
-            mb={4}
-            cursor="zoom-in"
-            onClick={onOpen}
+          <GenericImage
+            fallback={LandscapePlaceholder}
+            imageProps={{
+              src: event?.imageUrl || undefined,
+              alt: "Event Image",
+              borderTopRadius: "md",
+              w: "100%",
+              maxW: "100%",
+              h: { base: "160px", md: "220px" },
+              objectFit: "cover",
+              mb: 4,
+              cursor: "zoom-in",
+              onClick: onOpen,
+            }}
           />
 
           <Modal isOpen={isOpen} onClose={onClose} isCentered size="full">
@@ -83,15 +88,18 @@ export default function EventBanner({
                 justifyContent="center"
                 p={0}
               >
-                <Image
-                  src={event?.imageUrl || mockedImageUrl}
-                  alt={"Event Image"}
-                  maxH={{ base: "calc(100vh - 48px)", md: "90vh" }}
-                  maxW={{ base: "calc(100vw - 32px)", md: "90vw" }}
-                  objectFit="contain"
-                  borderRadius="md"
-                  boxShadow="lg"
-                  onClick={(e) => e.stopPropagation()}
+                <GenericImage
+                  fallback={LandscapePlaceholder}
+                  imageProps={{
+                    src: event?.imageUrl || undefined,
+                    alt: "Event Image",
+                    maxH: { base: "calc(100vh - 48px)", md: "90vh" },
+                    maxW: { base: "calc(100vw - 32px)", md: "90vw" },
+                    objectFit: "contain",
+                    borderRadius: "md",
+                    boxShadow: "lg",
+                    onClick: (e) => e.stopPropagation(),
+                  }}
                 />
               </ModalBody>
             </ModalContent>

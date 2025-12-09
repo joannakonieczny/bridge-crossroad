@@ -1,9 +1,10 @@
 "use client";
 import React from "react";
-import { Card, Image, Box, Button, Text } from "@chakra-ui/react";
+import { Card, Box, Button, Text } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
-import { STATIC } from "@/club-preset/static";
 import { useTranslations } from "@/lib/typed-translations";
+import { GenericImage } from "./GenericImage";
+import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 
 type SidebarCardProps = {
   title?: string;
@@ -13,7 +14,7 @@ type SidebarCardProps = {
 
 export default function SidebarCard({
   title,
-  imageUrl = STATIC.eventSidebarImagePlaceholder,
+  imageUrl,
   href,
 }: SidebarCardProps) {
   const t = useTranslations("components.SidebarCard");
@@ -27,7 +28,16 @@ export default function SidebarCard({
       bg="white"
     >
       <Box>
-        <Image src={imageUrl} alt={title} w="100%" h="9rem" objectFit="cover" />
+        <GenericImage
+          fallback={LandscapePlaceholder}
+          imageProps={{
+            src: imageUrl,
+            alt: title,
+            w: "100%",
+            h: "9rem",
+            objectFit: "cover",
+          }}
+        />
       </Box>
       <Box p={3}>
         <Text fontWeight="semibold" fontSize="sm" mb={3}>
