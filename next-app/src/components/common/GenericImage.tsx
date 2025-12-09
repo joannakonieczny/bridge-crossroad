@@ -12,6 +12,27 @@ export type GenericImageProps = {
 export function GenericImage({ fallback, imageProps }: GenericImageProps) {
   const [loading, setLoading] = useState(() => !!imageProps.src);
 
+  const FallbackComponent = () => (
+    <Box
+      w={imageProps.w}
+      h={imageProps.h}
+      maxW={imageProps.maxW}
+      maxH={imageProps.maxH}
+      borderTopRadius={imageProps.borderTopRadius}
+      borderRadius={imageProps.borderRadius}
+      boxShadow={imageProps.boxShadow}
+      objectFit={imageProps.objectFit}
+      cursor={imageProps.cursor}
+      onClick={imageProps.onClick}
+      overflow="hidden"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <ChakraSVG svg={fallback} w="100%" h="100%" />
+    </Box>
+  );
+
   return (
     <Skeleton isLoaded={!loading} w={imageProps.w} h={imageProps.h}>
       {imageProps.src ? (
@@ -20,26 +41,10 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
           alt={imageProps.alt}
           onLoad={() => setLoading(false)}
           onError={() => setLoading(false)}
+          fallback={<FallbackComponent />}
         />
       ) : (
-        <Box
-          w={imageProps.w}
-          h={imageProps.h}
-          maxW={imageProps.maxW}
-          maxH={imageProps.maxH}
-          borderTopRadius={imageProps.borderTopRadius}
-          borderRadius={imageProps.borderRadius}
-          boxShadow={imageProps.boxShadow}
-          objectFit={imageProps.objectFit}
-          cursor={imageProps.cursor}
-          onClick={imageProps.onClick}
-          overflow="hidden"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <ChakraSVG svg={fallback} w="100%" h="100%" />
-        </Box>
+        <FallbackComponent />
       )}
     </Skeleton>
   );
