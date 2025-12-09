@@ -729,6 +729,25 @@ const chatPage = {
   error: {
     loadFailed: "Nie udało się załadować wiadomości",
   },
+  attachFileModal: {
+    header: "Dołącz plik",
+    fileLabel: "Wybierz plik",
+    fileAdditionalLabel: "(opcjonalnie)",
+    filePlaceholder: "Przeciągnij plik lub kliknij aby wybrać",
+    fileErrorUpload: "Błąd podczas przesyłania pliku",
+    submitButton: "Wyślij",
+    closeButton: "Zatwierdź",
+  },
+  fileUploadToast: {
+    loading: "Przesyłanie pliku...",
+    success: "Plik przesłany",
+    error: "Błąd przesyłania pliku",
+  },
+  sendMessageToast: {
+    loading: "Wysyłanie wiadomości...",
+    success: "Wiadomość wysłana",
+    errorDefault: "Nie udało się wysłać wiadomości",
+  },
 };
 
 const findPartner = {
