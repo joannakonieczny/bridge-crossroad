@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const addModifyChatMessageSchema = z.object({
   message: messageSchema,
+  fileUrl: z.string().max(1024).optional(),
 });
 
 export const getMessagesForGroupSchema = z.object({

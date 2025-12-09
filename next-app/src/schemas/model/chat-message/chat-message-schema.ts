@@ -20,6 +20,7 @@ export const chatMessageSchema = z
     groupId: idPropSchema,
     senderId: idPropSchema,
     message: messageSchema,
+    fileUrl: z.string().max(1024).optional(),
   })
   .merge(withTimeStampsSchema);
 
