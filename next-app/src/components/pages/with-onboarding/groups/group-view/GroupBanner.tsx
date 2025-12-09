@@ -1,16 +1,8 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import {
-  Box,
-  Flex,
-  Skeleton,
-  SkeletonText,
-  Image,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, Flex, Skeleton, SkeletonText, Stack } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
-import { STATIC } from "@/club-preset/static";
 import { GenericImage } from "@/components/common/GenericImage";
 import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 

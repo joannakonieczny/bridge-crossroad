@@ -1,8 +1,8 @@
 import { Image, Skeleton, Box } from "@chakra-ui/react";
 import { useState } from "react";
-import { ElementType, SVGProps } from "react";
+import type { ElementType, SVGProps } from "react";
 import { ChakraSVG } from "../chakra-config/ChakraSVG";
-import { ImageProps } from "@chakra-ui/react";
+import type { ImageProps } from "@chakra-ui/react";
 
 export type GenericImageProps = {
   fallback: ElementType<SVGProps<SVGSVGElement>>;
@@ -17,6 +17,7 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
       {imageProps.src ? (
         <Image
           {...imageProps}
+          alt={imageProps.alt}
           onLoad={() => setLoading(false)}
           onError={() => setLoading(false)}
         />

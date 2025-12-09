@@ -6,7 +6,6 @@ import { config } from "@/util/envConfigLoader";
 const { MONGODB_URI, MONGODB_DB_NAME } = config;
 
 declare global {
-  // eslint-disable-next-line no-var
   var mongo: {
     conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
