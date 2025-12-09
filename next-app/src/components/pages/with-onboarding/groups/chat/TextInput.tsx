@@ -15,10 +15,12 @@ import {
   Button,
   useDisclosure,
   useToast,
+  Image,
+  Text,
 } from "@chakra-ui/react";
 import { GrFormAttachment } from "react-icons/gr";
+import { MdDelete } from "react-icons/md";
 import { BsFillCursorFill } from "react-icons/bs";
-import { TbCards } from "react-icons/tb";
 import {
   useTranslations,
   useTranslationsWithFallback,
@@ -51,6 +53,8 @@ export function TextInput({ groupId }: TextInputProps) {
 
   const {
     selectedImage,
+    preview,
+    fileName,
     uploadImage,
     resetImage,
     handleImageChange,
@@ -123,54 +127,93 @@ export function TextInput({ groupId }: TextInputProps) {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack width="100%" direction="row" spacing="0" padding="0.5rem">
-          <Controller
-            control={control}
-            name="message"
-            render={({ field }) => (
-              <Textarea
-                {...field}
-                ringColor="border.200"
-                placeholder={t("sendMessagePlaceholder")}
-                borderRightRadius={0}
-                style={{ overflow: "hidden" }}
-                resize="vertical"
-                ref={ref}
-                onInput={autoResize}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(onSubmit)();
-                  }
-                }}
-                rows={1}
+        <Stack width="100%" spacing="0">
+          {fileName && (
+            <Stack
+              direction="row"
+              align="center"
+              justify="space-between"
+              px="0.5rem"
+              py="0.25rem"
+              bg="gray.50"
+              borderBottom="1px solid"
+              borderColor="gray.200"
+            >
+              <Stack direction="row" align="center" spacing={2}>
+                {preview && (
+                  <Image
+                    src={preview}
+                    alt="Preview"
+                    width="40px"
+                    height="40px"
+                    objectFit="cover"
+                    borderRadius="4px"
+                  />
+                )}
+                <Text
+                  fontSize="sm"
+                  color={isUploadError ? "red.500" : "gray.600"}
+                  ml={preview ? 0 : 2}
+                >
+                  {fileName}
+                </Text>
+              </Stack>
+              <IconButton
+                aria-label="Remove file"
+                icon={<MdDelete />}
+                size="sm"
+                variant="ghost"
+                colorScheme="red"
+                onClick={resetImage}
               />
-            )}
-          />
-          <ButtonGroup isAttached variant="outline">
-            <IconButton
-              aria-label="Insert Card"
-              backgroundColor="border.200"
-              borderLeftRadius={0}
-              icon={<TbCards />}
-              type="button"
+            </Stack>
+          )}
+          <Stack direction="row" spacing="0" padding="0.5rem">
+            <Controller
+              control={control}
+              name="message"
+              render={({ field }) => (
+                <Textarea
+                  {...field}
+                  ringColor="border.200"
+                  placeholder={t("sendMessagePlaceholder")}
+                  borderRightRadius={0}
+                  style={{ overflow: "hidden" }}
+                  resize="vertical"
+                  ref={ref}
+                  onInput={autoResize}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(onSubmit)();
+                    }
+                  }}
+                  rows={1}
+                  borderColor={isUploadError ? "red.500" : undefined}
+                  _focus={{
+                    borderColor: isUploadError ? "red.600" : undefined,
+                  }}
+                />
+              )}
             />
-            <IconButton
-              aria-label="Attach File"
-              backgroundColor="border.200"
-              icon={<GrFormAttachment />}
-              type="button"
-              onClick={onOpen}
-            />
-            <IconButton
-              aria-label="Send Message"
-              backgroundColor="accent.500"
-              color="bg"
-              icon={<BsFillCursorFill />}
-              type="submit"
-              isLoading={sendMessageMutation.isPending || isUploading}
-            />
-          </ButtonGroup>
+            <ButtonGroup isAttached variant="outline">
+              <IconButton
+                aria-label="Attach File"
+                backgroundColor="border.200"
+                icon={<GrFormAttachment />}
+                type="button"
+                onClick={onOpen}
+              />
+              <IconButton
+                aria-label="Send Message"
+                backgroundColor="accent.500"
+                color="bg"
+                icon={<BsFillCursorFill />}
+                type="submit"
+                isLoading={sendMessageMutation.isPending || isUploading}
+              />
+            </ButtonGroup>
+          </Stack>
         </Stack>
       </form>
 
@@ -184,10 +227,9 @@ export function TextInput({ groupId }: TextInputProps) {
               genericFileType="any"
               onChange={handleImageChange}
               isUploadError={isUploadError}
+              value={preview ?? undefined}
+              fileName={fileName ?? undefined}
               text={{
-                label: t("attachFileModal.fileLabel"),
-                additionalLabel: t("attachFileModal.fileAdditionalLabel"),
-                placeholder: t("attachFileModal.filePlaceholder"),
                 errorUpload: t("attachFileModal.fileErrorUpload"),
               }}
             />

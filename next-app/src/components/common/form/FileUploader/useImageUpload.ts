@@ -21,6 +21,8 @@ type UploadImageParams = {
 export function useImageUpload(p: UploadImageParams) {
   const toast = useToast();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const uploadImageMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -65,20 +67,25 @@ export function useImageUpload(p: UploadImageParams) {
 
   const resetImage = () => {
     setSelectedImage(null);
+    setPreview(null);
+    setFileName(null);
     uploadImageMutation.reset();
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleImageChange = (file: File | null, _preview: string | null) => {
+  const handleImageChange = (file: File | null, previewUrl: string | null) => {
     if (!file) {
       resetImage();
     } else {
       setSelectedImage(file);
+      setPreview(previewUrl);
+      setFileName(file.name);
     }
   };
 
   return {
     selectedImage,
+    preview,
+    fileName,
     handleImageChange,
     uploadImage,
     resetImage,

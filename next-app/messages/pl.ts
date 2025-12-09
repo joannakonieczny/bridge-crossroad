@@ -731,10 +731,8 @@ const chatPage = {
   },
   attachFileModal: {
     header: "Dołącz plik",
-    fileLabel: "Wybierz plik",
-    fileAdditionalLabel: "(opcjonalnie)",
-    filePlaceholder: "Przeciągnij plik lub kliknij aby wybrać",
-    fileErrorUpload: "Błąd podczas przesyłania pliku",
+    fileErrorUpload:
+      "Nie udało się przesłać pliku, spróbuj ponownie lub usuń go aby wysłać samą wiadomość.",
     submitButton: "Wyślij",
     closeButton: "Zatwierdź",
   },
