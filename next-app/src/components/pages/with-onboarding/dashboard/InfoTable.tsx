@@ -15,27 +15,25 @@ export default function InfoTable() {
   ];
 
   return (
-    <Flex justify="start">
+    <Flex justify="start" width="100%">
       <Box
         borderRadius="md"
         overflow="hidden"
         border="1px solid"
         borderColor="border.200"
-        width="800px"
-        height="284px"
-        mx="auto"
+        width="100%"
+        // opcjonalnie: ogranicz maksymalną szerokość, jeśli chcesz limitować rozrost na bardzo szerokich ekranach
+        // maxW="800px"
       >
-        <Flex justify="center" mt="12px">
+        <Flex justify="center" mt="12px" width="100%">
           <Box
             borderRadius="md"
             overflow="hidden"
             border="1px solid"
             borderColor="border.200"
-            width="780px"
-            height="260px"
-            mx="auto"
+            width="100%"
           >
-            <Table variant="simple" width="100%" align="center">
+            <Table variant="simple" width="100%" size="sm">
               <Tbody>
                 {rows.map((row, index) => (
                   <Tr

@@ -30,7 +30,7 @@ export default function SidebarCard({
         <Image src={imageUrl} alt={title} w="100%" h="9rem" objectFit="cover" />
       </Box>
       <Box p={3}>
-        <Text fontWeight="semibold" fontSize="sm" mb={3}>
+        <Text fontWeight="semibold" fontSize="sm" mb={3} whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
           {title}
         </Text>
         <Button

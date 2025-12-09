@@ -4,21 +4,18 @@ import { Box, HStack, IconButton, Text, Flex } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
-// mock
-const contests = [
-  { name: "Turniej 1", date: "1 stycznia" },
-  { name: "Turniej 2", date: "2 lutego" },
-  { name: "Turniej 3", date: "3 marca" },
-  { name: "Turniej 4", date: "4 kwietnia" },
-  { name: "Turniej 5", date: "5 maja" },
-];
+import SidebarCard from "@/components/common/SidebarCard";
+import { useRecentEventsQuery } from "@/lib/queries";
+import { ROUTES } from "@/routes";
 
 const ITEMS_PER_PAGE = 2;
 
-export default function CarouselList() {
+export default function UpcomingEvents() {
   const [startIndex, setStartIndex] = useState(0);
   const t = useTranslations("pages.DashboardPage.headings");
+
+  const eventsQ = useRecentEventsQuery(6);
+  const events = eventsQ.data ?? [];
 
   const showPrev = () => {
     setStartIndex((prev) => Math.max(prev - ITEMS_PER_PAGE, 0));
@@ -26,11 +23,11 @@ export default function CarouselList() {
 
   const showNext = () => {
     setStartIndex((prev) =>
-      Math.min(prev + ITEMS_PER_PAGE, contests.length - ITEMS_PER_PAGE)
+      Math.min(prev + ITEMS_PER_PAGE, Math.max(0, events.length - ITEMS_PER_PAGE))
     );
   };
 
-  const visibleItems = contests.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const visibleItems = events.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <Flex direction="column" width="100%">
@@ -46,17 +43,13 @@ export default function CarouselList() {
         />
 
         <HStack spacing={8} width="100%">
-          {visibleItems.map((contest, i) => (
-            <Box
-              key={i}
-              border="1px solid"
-              borderColor="border.300"
-              borderRadius="md"
-              p={4}
-              width="100%"
-            >
-              <Text fontWeight="bold">{contest.name}</Text>
-              <Text color="border.500">{contest.date}</Text>
+          {visibleItems.map((event) => (
+            <Box key={event.id} width="100%">
+              <SidebarCard
+                title={event.title}
+                imageUrl={event.imageUrl}
+                href={ROUTES.calendar.eventDetails(event.id)}
+              />
             </Box>
           ))}
         </HStack>
@@ -65,7 +58,7 @@ export default function CarouselList() {
           icon={<FaChevronRight />}
           aria-label="Next"
           onClick={showNext}
-          isDisabled={startIndex + ITEMS_PER_PAGE >= contests.length}
+          isDisabled={events.length <= ITEMS_PER_PAGE || startIndex + ITEMS_PER_PAGE >= events.length}
         />
       </HStack>
     </Flex>
