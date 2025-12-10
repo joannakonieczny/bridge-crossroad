@@ -14,9 +14,11 @@ export default function ProfileBanner() {
   const displayName = [first, last].filter(Boolean).join(" ") || "—";
   const description = u?.nickname ?? "";
 
+  const profileSize = { base: "5rem", md: "7.25rem" };
+
   return (
     <HStack width="100%">
-      {loading ? <SkeletonCircle size="7.25rem" /> : <ProfilePicture size="7.25rem" />}
+      {loading ? <SkeletonCircle size={profileSize} /> : <ProfilePicture size={profileSize} />}
 
       <VStack align="start" width="100%">
         {loading ? (

@@ -1,40 +1,42 @@
 "use client";
 
-import { Box, HStack, IconButton, Text, Flex } from "@chakra-ui/react";
+import { Box, HStack, IconButton, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import SidebarCard from "@/components/common/SidebarCard";
 import { useRecentEventsQuery } from "@/lib/queries";
 import { ROUTES } from "@/routes";
-
-const ITEMS_PER_PAGE = 2;
+import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 
 export default function UpcomingEvents() {
   const [startIndex, setStartIndex] = useState(0);
   const t = useTranslations("pages.DashboardPage.headings");
+  const itemsPerPage = useBreakpointValue({ base: 1, md: 1, lg: 2 }) ?? 1;
 
   const eventsQ = useRecentEventsQuery(6);
   const events = eventsQ.data ?? [];
 
   const showPrev = () => {
-    setStartIndex((prev) => Math.max(prev - ITEMS_PER_PAGE, 0));
+    setStartIndex((prev) => Math.max(prev - itemsPerPage, 0));
   };
 
   const showNext = () => {
     setStartIndex((prev) =>
-      Math.min(prev + ITEMS_PER_PAGE, Math.max(0, events.length - ITEMS_PER_PAGE))
+      Math.min(prev + itemsPerPage, Math.max(0, events.length - itemsPerPage))
     );
   };
 
-  const visibleItems = events.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const visibleItems = events.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <Flex direction="column" width="100%">
-      <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>
-        {t("upcomingEvents")}
-      </Text>
-      <HStack align="center" spacing={4} width="100%">
+      <ResponsiveHeading
+        text={t("upcomingEvents")}
+        fontSize="xl"
+        mb={4}
+      />
+      <HStack align="center" spacing={4} width="100%" display="flex" justifyContent="space-between">
         <IconButton
           icon={<FaChevronLeft />}
           aria-label="Previous"
@@ -42,7 +44,7 @@ export default function UpcomingEvents() {
           isDisabled={startIndex === 0}
         />
 
-        <HStack spacing={8} width="100%">
+        <HStack spacing={8}>
           {visibleItems.map((event) => (
             <Box key={event.id} width="100%">
               <SidebarCard
@@ -58,7 +60,7 @@ export default function UpcomingEvents() {
           icon={<FaChevronRight />}
           aria-label="Next"
           onClick={showNext}
-          isDisabled={events.length <= ITEMS_PER_PAGE || startIndex + ITEMS_PER_PAGE >= events.length}
+          isDisabled={events.length <= itemsPerPage || startIndex + itemsPerPage >= events.length}
         />
       </HStack>
     </Flex>

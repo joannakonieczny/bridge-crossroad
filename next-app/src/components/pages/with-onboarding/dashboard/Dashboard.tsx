@@ -1,4 +1,6 @@
-import { Box, Flex, Grid, VStack } from "@chakra-ui/react";
+"use client";
+
+import { Box, Flex, Grid, VStack, useBreakpointValue } from "@chakra-ui/react";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
 import SplashArtSVG from "@/assets/dashboard/splash-art.svg";
 import InfoTable from "./InfoTable";
@@ -8,6 +10,8 @@ import UpcomingEvents from "./UpcomingEvents";
 import Footer from "@/components/common/footer/Footer";
 
 export default function Dashboard() {
+  const showArt = useBreakpointValue({ base: false, md: false, lg: true }) ?? false;
+
   return (
     <Flex
       minHeight="100vh"
@@ -34,12 +38,14 @@ export default function Dashboard() {
           </VStack>
 
           <VStack align="end" width="100%" spacing="2rem">
-            <ChakraSVG
-              svg={SplashArtSVG}
-              width="100%"
-              height={"42rem"}
-              aria-label="Splash Art Left"
-            />
+            {showArt && (
+              <ChakraSVG
+                svg={SplashArtSVG}
+                width="100%"
+                height={"42rem"}
+                aria-label="Splash Art Left"
+              />
+            )}
             <UpcomingEvents />
           </VStack>
         </Grid>
