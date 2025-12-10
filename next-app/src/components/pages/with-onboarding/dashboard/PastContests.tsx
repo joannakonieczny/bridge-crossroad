@@ -31,7 +31,7 @@ export default function PastContests() {
     .map((ev) => {
       const title = ev.title;
       const date = getDurationLabel(ev.duration) || "—";
-      return { id: (ev as any).id ?? Math.random().toString(), title, date };
+      return { id: ev.id ?? Math.random().toString(), title, date };
     })
     .slice(0, 4);
 

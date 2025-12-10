@@ -1,12 +1,12 @@
 "use client";
 
-import { Flex, Icon, type SystemStyleObject } from "@chakra-ui/react";
+import { Flex, Icon } from "@chakra-ui/react";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 
 export type IProfilePictureProps = {
-  size: string | { base?: string; md?: string; lg?: string; xl?: string }; // size of the icon, responsive
-  imageUrl?: string; // URL of the image to display, if any
+  size: string | { base?: string; md?: string; lg?: string; xl?: string };
+  imageUrl?: string; 
 };
 
 export default function ProfilePicture(props: IProfilePictureProps) {
@@ -26,7 +26,7 @@ export default function ProfilePicture(props: IProfilePictureProps) {
           style={{ borderRadius: "50%" }}
         />
       ) : (
-        <Icon as={FaUserCircle} boxSize={props.size as any} color="border.300" />
+        <Icon as={FaUserCircle} boxSize={props.size} color="border.300" />
       )}
     </Flex>
   );
