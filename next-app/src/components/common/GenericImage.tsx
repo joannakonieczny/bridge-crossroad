@@ -17,6 +17,7 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
   const FallbackComponent = () => (
     <Box
       {...imageProps}
+      bg="border.100"
       overflow="hidden"
       display="flex"
       alignItems="center"
