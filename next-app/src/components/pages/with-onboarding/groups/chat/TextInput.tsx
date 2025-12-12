@@ -17,7 +17,6 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import type { KeyboardEvent } from "react";
 import { GrFormAttachment } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
 import { BsFillCursorFill } from "react-icons/bs";
@@ -107,7 +106,7 @@ export function TextInput({ groupId }: TextInputProps) {
 
     const uploadedPath = await uploadImage();
 
-    // check upload error
+    // If file upload failed, don't proceed with message submission
     if (selectedImage && !uploadedPath) return;
     setValue("fileUrl", uploadedPath);
     data.fileUrl = uploadedPath;
@@ -194,7 +193,7 @@ export function TextInput({ groupId }: TextInputProps) {
                     resize: "vertical",
                     ref: ref,
                     onInput: autoResize,
-                    onKeyDown: (e: KeyboardEvent<HTMLTextAreaElement>) => {
+                    onKeyDown: (e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                         handleSubmit(onSubmit)();

@@ -453,10 +453,6 @@ const groupModelValidation = {
     length: `Kod zaproszenia musi składać się z ${GROUP.invitationCode.length} znaków`,
     regex: "Kod zaproszenia może zawierać tylko wielkie litery i cyfry",
   },
-  imageUrl: {
-    max: `URL obrazka nie może być dłuższy niż ${GROUP.imageUrl.max} znaków`,
-    required: "Podaj poprawny adres URL",
-  },
 };
 
 const eventModelValidation = {
@@ -471,10 +467,6 @@ const eventModelValidation = {
   },
   location: {
     max: `Lokalizacja nie może być dłuższa niż ${EVENT.location.max} znaków`,
-  },
-  imageUrl: {
-    max: `URL obrazka nie może być dłuższy niż ${EVENT.imageUrl.max} znaków`,
-    required: "Podaj poprawny adres URL",
   },
   playingPair: {
     firstSecondDistinct: "Obaj zawodnicy pary muszą być różni",

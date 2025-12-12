@@ -24,6 +24,7 @@ import {
   ALLOWED_EXT,
 } from "@/util/constants";
 import { useTranslations } from "@/lib/typed-translations";
+import { isImageUrl } from "@/util/helpers";
 
 export type IFileUploaderProps = {
   text?: {
@@ -85,10 +86,9 @@ export default function FileUploader(props: IFileUploaderProps) {
     setPreview(props.value ?? null);
     setFileName(props.fileName ?? null);
     if (props.value || props.fileName) {
-      const isImg =
-        props.value?.startsWith("data:image") ||
-        props.fileName?.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i);
-      setIsImage(!!isImg);
+      setIsImage(
+        props.value?.startsWith("data:image") || isImageUrl(props.value)
+      );
     }
   }, [props.value, props.fileName]);
 

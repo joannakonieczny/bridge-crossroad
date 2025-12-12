@@ -1,6 +1,10 @@
 import z from "zod";
 import { ChatMessageValidationConstants } from "./chat-message-const";
-import { idPropSchema, withTimeStampsSchema } from "@/schemas/common";
+import {
+  filePathSchema,
+  idPropSchema,
+  withTimeStampsSchema,
+} from "@/schemas/common";
 import type { TKey } from "@/lib/typed-translations";
 
 export const messageSchema = z
@@ -20,7 +24,7 @@ export const chatMessageSchema = z
     groupId: idPropSchema,
     senderId: idPropSchema,
     message: messageSchema,
-    fileUrl: z.string().max(1024).optional(),
+    fileUrl: filePathSchema.optional(),
   })
   .merge(withTimeStampsSchema);
 

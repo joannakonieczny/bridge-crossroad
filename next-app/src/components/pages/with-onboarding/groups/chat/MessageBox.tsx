@@ -5,6 +5,7 @@ import { getDateLabel, getPersonLabel } from "@/util/formatters";
 import { Box, Text, Flex, Image } from "@chakra-ui/react";
 import { FiDownload } from "react-icons/fi";
 import { useState } from "react";
+import { isImageUrl } from "@/util/helpers";
 
 type IMessageBoxProps = {
   message: MessageWithPopulatedSenderType;
@@ -17,9 +18,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
   const content = message.message;
   const fileUrl = message.fileUrl;
   const [showDate, setShowDate] = useState(false);
-  const isImage = fileUrl
-    ? /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileUrl)
-    : false;
+  const isImage = isImageUrl(fileUrl);
   const fileExt = (() => {
     if (!fileUrl) return "";
     const lastDot = fileUrl.lastIndexOf(".");
@@ -107,6 +106,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
                   href={fileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Download file: ${fileExt}`}
                   display="inline-flex"
                   alignItems="center"
                   gap={2}
