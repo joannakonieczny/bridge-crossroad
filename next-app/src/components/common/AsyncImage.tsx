@@ -6,7 +6,7 @@ import { ChakraSVG } from "../chakra-config/ChakraSVG";
 import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 import type { ImageProps } from "@chakra-ui/react";
 
-export function GenericImage(imageProps: ImageProps) {
+export function AsyncImage(imageProps: ImageProps) {
   const [loading, setLoading] = useState(() => !!imageProps.src);
 
   const FallbackComponent = () => (

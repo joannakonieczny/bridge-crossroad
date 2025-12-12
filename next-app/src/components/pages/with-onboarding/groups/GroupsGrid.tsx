@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
 import type { GroupBasicType } from "@/schemas/model/group/group-types";
-import { GenericImage } from "@/components/common/GenericImage";
+import { AsyncImage } from "@/components/common/AsyncImage";
 
 type GroupsGridProps = {
   groups?: GroupBasicType[];
@@ -65,7 +65,7 @@ export default function GroupsGrid({
             position="relative"
           >
             <Box w="100%" h="13rem" overflow="hidden" position="relative">
-              <GenericImage src={group.imageUrl} w="100%" h="100%" />
+              <AsyncImage src={group.imageUrl} w="100%" h="100%" />
             </Box>
             <CardFooter>
               <ResponsiveText

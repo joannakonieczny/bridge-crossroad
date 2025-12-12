@@ -16,7 +16,7 @@ import {
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getDurationLabel } from "@/util/formatters";
-import { GenericImage } from "@/components/common/GenericImage";
+import { AsyncImage } from "@/components/common/AsyncImage";
 
 export default function EventBanner({
   event,
@@ -45,7 +45,7 @@ export default function EventBanner({
         />
       ) : (
         <>
-          <GenericImage
+          <AsyncImage
             src={event?.imageUrl}
             borderTopRadius="md"
             w="100%"
@@ -79,7 +79,7 @@ export default function EventBanner({
                 justifyContent="center"
                 p={0}
               >
-                <GenericImage
+                <AsyncImage
                   src={event?.imageUrl}
                   alt={event?.title || "Event Image"}
                   maxH={{ base: "calc(100vh - 48px)", md: "90vh" }}
