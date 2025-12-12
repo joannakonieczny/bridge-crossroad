@@ -6,7 +6,6 @@ import {
   VStack,
   HStack,
   Badge,
-  Image,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -17,8 +16,7 @@ import {
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getDurationLabel } from "@/util/formatters";
-
-const mockedImageUrl = "https://picsum.photos/id/237/200/300";
+import { AsyncImage } from "@/components/common/AsyncImage";
 
 export default function EventBanner({
   event,
@@ -47,14 +45,12 @@ export default function EventBanner({
         />
       ) : (
         <>
-          <Image
-            src={event?.imageUrl || mockedImageUrl}
-            alt={"Event Image"}
+          <AsyncImage
+            src={event?.imageUrl}
             borderTopRadius="md"
             w="100%"
             maxW="100%"
             h={{ base: "160px", md: "220px" }}
-            objectFit="cover"
             mb={4}
             cursor="zoom-in"
             onClick={onOpen}
@@ -83,9 +79,9 @@ export default function EventBanner({
                 justifyContent="center"
                 p={0}
               >
-                <Image
-                  src={event?.imageUrl || mockedImageUrl}
-                  alt={"Event Image"}
+                <AsyncImage
+                  src={event?.imageUrl}
+                  alt={event?.title || "Event Image"}
                   maxH={{ base: "calc(100vh - 48px)", md: "90vh" }}
                   maxW={{ base: "calc(100vw - 32px)", md: "90vw" }}
                   objectFit="contain"
