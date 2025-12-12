@@ -2,16 +2,11 @@
 
 import { Image, Skeleton, Box } from "@chakra-ui/react";
 import { useState } from "react";
-import type { ElementType, SVGProps } from "react";
 import { ChakraSVG } from "../chakra-config/ChakraSVG";
+import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 import type { ImageProps } from "@chakra-ui/react";
 
-export type GenericImageProps = {
-  fallback: ElementType<SVGProps<SVGSVGElement>>;
-  imageProps: ImageProps;
-};
-
-export function GenericImage({ fallback, imageProps }: GenericImageProps) {
+export function GenericImage(imageProps: ImageProps) {
   const [loading, setLoading] = useState(() => !!imageProps.src);
 
   const FallbackComponent = () => (
@@ -23,7 +18,7 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
       alignItems="center"
       justifyContent="center"
     >
-      <ChakraSVG svg={fallback} w="100%" h="100%" />
+      <ChakraSVG svg={LandscapePlaceholder} w="100%" h="100%" />
     </Box>
   );
 
@@ -37,7 +32,9 @@ export function GenericImage({ fallback, imageProps }: GenericImageProps) {
     >
       {imageProps.src ? (
         <Image
+          objectFit="cover"
           {...imageProps}
+          alt={imageProps.alt || "Image"}
           onLoad={() => setLoading(false)}
           onError={() => setLoading(false)}
           fallback={<FallbackComponent />}

@@ -4,7 +4,6 @@ import { Box, Flex, Skeleton, SkeletonText, Stack } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
 import { GenericImage } from "@/components/common/GenericImage";
-import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 
 type IGroupBannerProps = {
   group?: GroupFullType;
@@ -102,16 +101,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
             flex="0 0 1rem"
           />
           <Box width="100%" height="100%" flex="1 1 auto" position="relative">
-            <GenericImage
-              fallback={LandscapePlaceholder}
-              imageProps={{
-                src: group?.imageUrl,
-                alt: title,
-                objectFit: "cover",
-                w: "100%",
-                h: "100%",
-              }}
-            />
+            <GenericImage src={group?.imageUrl} w="100%" h="100%" />
           </Box>
         </Flex>
         <Flex direction="column" flex="1" pl={{ base: 0, md: "1.5rem" }}>

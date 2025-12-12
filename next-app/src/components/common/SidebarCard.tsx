@@ -4,7 +4,6 @@ import { Card, Box, Button, Text } from "@chakra-ui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
 import { GenericImage } from "./GenericImage";
-import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
 
 type SidebarCardProps = {
   title?: string;
@@ -28,16 +27,7 @@ export default function SidebarCard({
       bg="white"
     >
       <Box>
-        <GenericImage
-          fallback={LandscapePlaceholder}
-          imageProps={{
-            src: imageUrl,
-            alt: title,
-            w: "100%",
-            h: "9rem",
-            objectFit: "cover",
-          }}
-        />
+        <GenericImage src={imageUrl} alt={title} w="100%" h="9rem" />
       </Box>
       <Box p={3}>
         <Text fontWeight="semibold" fontSize="sm" mb={3}>
