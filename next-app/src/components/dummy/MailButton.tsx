@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { sendEmailAction } from "@/services/mailer/api"; // Twój server action
+import { sendEmailAction } from "@/services/mailer/api";
 
 export default function SendEmailButton() {
   const [loading, setLoading] = useState(false);
