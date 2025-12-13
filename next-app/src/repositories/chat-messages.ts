@@ -27,6 +27,7 @@ type PostMessageProps = {
   groupId: GroupIdType;
   senderId: UserIdType;
   message: MessageType;
+  fileUrl?: string;
 };
 
 export async function postMessage(
@@ -38,6 +39,7 @@ export async function postMessage(
     groupId: p.groupId,
     senderId: p.senderId,
     message: p.message,
+    fileUrl: p.fileUrl,
   });
 
   const saved = await doc.save();
@@ -48,6 +50,7 @@ export async function postMessage(
 type ModifyMessageProps = {
   messageId: ChatMessageIdType;
   newMessage: MessageType;
+  fileUrl?: string;
 };
 
 export async function modifyMessage(
@@ -57,7 +60,7 @@ export async function modifyMessage(
 
   const updated = await ChatMessage.findOneAndUpdate(
     { _id: p.messageId },
-    { $set: { message: p.newMessage } },
+    { $set: { message: p.newMessage, fileUrl: p.fileUrl } },
     { new: true, runValidators: true }
   ).lean<IChatMessageDTO>();
 

@@ -15,6 +15,7 @@ const ChatMessageModel = new Schema<IChatMessageDTO>(
     },
     senderId: { type: UserId, required: true, ref: UserTableName },
     message: { type: String, required: true, trim: true },
+    fileUrl: { type: String, required: false, trim: true },
   },
   {
     timestamps: true,

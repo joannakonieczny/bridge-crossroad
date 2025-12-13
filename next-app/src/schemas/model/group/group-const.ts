@@ -12,7 +12,4 @@ export const GroupValidationConstants = {
     length: 8,
     regex: /^[A-Z0-9]{8}$/,
   },
-  imageUrl: {
-    max: 1024,
-  },
 };

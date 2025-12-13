@@ -48,7 +48,6 @@ const Group = new Schema<IGroupDTO>(
     imageUrl: {
       type: String,
       required: false,
-      maxlength: c.imageUrl.max,
     },
     invitationCode: {
       type: String,

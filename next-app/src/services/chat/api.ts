@@ -25,6 +25,7 @@ export const postNewMessage = withinOwnGroupAction
       groupId,
       senderId: userId,
       message: parsedInput.message,
+      fileUrl: parsedInput.fileUrl,
     });
     return sanitizeChatMessage(res);
   });
@@ -35,6 +36,7 @@ export const modifyExistingMessage = withinOwnChatMessageAction
     const res = await modifyMessage({
       messageId: ctx.chatMessageId,
       newMessage: parsedInput.message,
+      fileUrl: parsedInput.fileUrl,
     });
     return sanitizeChatMessage(res);
   });

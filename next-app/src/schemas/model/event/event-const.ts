@@ -11,9 +11,6 @@ export const EventValidationConstants = {
   location: {
     max: 512,
   },
-  imageUrl: {
-    max: 1024,
-  },
   // team related
   team: {
     members: {

@@ -24,6 +24,8 @@ export const durationSchema = z
     path: ["endsAt"],
   });
 
+export const filePathSchema = z.string().min(1).max(1024);
+
 export type DurationType = z.infer<typeof durationSchema>;
 
 export const emptyStringToUndefinedOnObject = (value: unknown) => {

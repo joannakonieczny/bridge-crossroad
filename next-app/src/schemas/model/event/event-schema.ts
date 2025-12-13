@@ -1,14 +1,13 @@
 import { z } from "zod";
 import { EventValidationConstants } from "./event-const";
 import type { TKey } from "@/lib/typed-translations";
-import { durationSchema, idPropSchema } from "@/schemas/common";
+import { durationSchema, filePathSchema, idPropSchema } from "@/schemas/common";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 
 const {
   title,
   description,
   location,
-  imageUrl,
   team,
   additionalDescription,
   opponentTeamName,
@@ -31,12 +30,6 @@ export const descriptionSchema = z
 export const locationSchema = z
   .string()
   .max(location.max, "validation.model.event.location.max" satisfies TKey);
-
-export const imageUrlSchema = z
-  .string({
-    message: "validation.model.event.imageUrl.required" satisfies TKey,
-  })
-  .max(imageUrl.max, "validation.model.event.imageUrl.max" satisfies TKey);
 
 export const playingPairSchema = z
   .object({
@@ -168,7 +161,7 @@ export const eventSchema = z.object({
   duration: durationSchema,
   additionalDescription: additionalDescriptionSchema.optional(),
   data: dataSchema,
-  imageUrl: imageUrlSchema.optional(),
+  imageUrl: filePathSchema.optional(),
 });
 
 export const havingEventId = z.object({ eventId: idPropSchema });
