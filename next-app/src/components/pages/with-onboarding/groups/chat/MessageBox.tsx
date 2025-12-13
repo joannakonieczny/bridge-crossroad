@@ -2,10 +2,11 @@
 
 import type { MessageWithPopulatedSenderType } from "@/schemas/model/chat-message/chat-message-types";
 import { getDateLabel, getPersonLabel } from "@/util/formatters";
-import { Box, Text, Flex, Image } from "@chakra-ui/react";
+import { Box, Text, Flex } from "@chakra-ui/react";
 import { FiDownload } from "react-icons/fi";
 import { useState } from "react";
 import { isImageUrl } from "@/util/helpers";
+import { AsyncImage } from "@/components/common/AsyncImage";
 
 type IMessageBoxProps = {
   message: MessageWithPopulatedSenderType;
@@ -87,7 +88,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
               )}
 
               {isImage && fileUrl && (
-                <Image
+                <AsyncImage
                   src={fileUrl}
                   alt="Attached image"
                   maxW="300px"
