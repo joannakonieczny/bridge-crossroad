@@ -1,14 +1,8 @@
 "use server";
 
-import { z } from "zod";
 import { sendEmail } from "@/repositories/mailer";
 import { fullAuthAction } from "../action-lib";
-
-const sendEmailSchema = z.object({
-  email: z.string().email(),
-  title: z.string().min(1),
-  body: z.string().min(1),
-});
+import { sendEmailSchema } from "@/schemas/pages/mailer/send-email-schema";
 
 export const sendEmailAction = fullAuthAction
   .inputSchema(sendEmailSchema)
@@ -18,7 +12,7 @@ export const sendEmailAction = fullAuthAction
       subject: parsedInput.title,
       body: parsedInput.body,
     }).catch((err) => {
-      console.error("Send email failed", err);
+      console.error("Gmail SMTP send failed", err);
     });
 
     return { success: true };
