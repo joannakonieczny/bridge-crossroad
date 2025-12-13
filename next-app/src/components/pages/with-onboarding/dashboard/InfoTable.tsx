@@ -2,6 +2,7 @@
 
 import { Box, Table, Tbody, Tr, Td, Flex } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
 
 export default function InfoTable() {
   // mock
@@ -15,27 +16,23 @@ export default function InfoTable() {
   ];
 
   return (
-    <Flex justify="start">
+    <Flex justify="start" width="100%" px={{ base: 2, md: 0 }}>
       <Box
         borderRadius="md"
         overflow="hidden"
         border="1px solid"
         borderColor="border.200"
-        width="800px"
-        height="284px"
-        mx="auto"
+        width="100%"
       >
-        <Flex justify="center" mt="12px">
+        <Flex justify="center" width="100%">
           <Box
             borderRadius="md"
             overflow="hidden"
             border="1px solid"
             borderColor="border.200"
-            width="780px"
-            height="260px"
-            mx="auto"
+            width="100%"
           >
-            <Table variant="simple" width="100%" align="center">
+            <Table variant="simple" width="100%" size="sm">
               <Tbody>
                 {rows.map((row, index) => (
                   <Tr
@@ -44,14 +41,18 @@ export default function InfoTable() {
                   >
                     <Td
                       fontWeight="semibold"
-                      fontSize="sm"
                       width="50%"
                       height="52px"
+                      px={{ base: 2, md: 4 }}
                     >
-                      {row.label}
+                      <ResponsiveText fontSize="md" fontWeight="semibold">
+                        {row.label}
+                      </ResponsiveText>
                     </Td>
                     <Td width="50%" height="52px">
-                      {row.value}
+                      <ResponsiveText fontSize="md">
+                        {row.value}
+                      </ResponsiveText>
                     </Td>
                   </Tr>
                 ))}
