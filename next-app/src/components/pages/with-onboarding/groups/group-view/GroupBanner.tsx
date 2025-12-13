@@ -1,16 +1,9 @@
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import {
-  Box,
-  Flex,
-  Skeleton,
-  SkeletonText,
-  Image,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, Flex, Skeleton, SkeletonText, Stack } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
-import { STATIC } from "@/club-preset/static";
+import { AsyncImage } from "@/components/common/AsyncImage";
 
 type IGroupBannerProps = {
   group?: GroupFullType;
@@ -107,14 +100,8 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
             height="100%"
             flex="0 0 1rem"
           />
-          <Box width="100%" height="100%" flex="1 1 auto">
-            <Image
-              src={group?.imageUrl ?? STATIC.groupImagePlaceholder}
-              alt={title}
-              objectFit="cover"
-              w="100%"
-              h="100%"
-            />
+          <Box width="100%" height="100%" flex="1 1 auto" position="relative">
+            <AsyncImage src={group?.imageUrl} w="100%" h="100%" />
           </Box>
         </Flex>
         <Flex direction="column" flex="1" pl={{ base: 0, md: "1.5rem" }}>
