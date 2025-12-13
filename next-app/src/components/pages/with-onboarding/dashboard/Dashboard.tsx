@@ -43,7 +43,7 @@ export default function Dashboard() {
                 svg={SplashArtSVG}
                 width="100%"
                 height={"42rem"}
-                aria-label="Splash Art Left"
+                aria-label="Splash Art Right"
               />
             )}
             <UpcomingEvents />

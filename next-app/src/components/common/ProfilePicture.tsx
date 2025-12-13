@@ -1,11 +1,11 @@
 "use client";
 
-import { Flex, Icon } from "@chakra-ui/react";
+import { Flex, Icon, type ResponsiveValue } from "@chakra-ui/react";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 
 export type IProfilePictureProps = {
-  size: string | { base?: string; md?: string; lg?: string; xl?: string };
+  size: string | ResponsiveValue<string>;
   imageUrl?: string; 
 };
 

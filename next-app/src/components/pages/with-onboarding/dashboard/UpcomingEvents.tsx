@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, IconButton, Flex, useBreakpointValue } from "@chakra-ui/react";
+import { Box, HStack, IconButton, Flex, useBreakpointValue, Skeleton } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -15,6 +15,7 @@ export default function UpcomingEvents() {
   const itemsPerPage = useBreakpointValue({ base: 1, md: 1, lg: 2 }) ?? 1;
 
   const eventsQ = useRecentEventsQuery(6);
+  const loading = eventsQ.isLoading;
   const events = eventsQ.data ?? [];
 
   const showPrev = () => {
@@ -36,31 +37,39 @@ export default function UpcomingEvents() {
         fontSize="xl"
         mb={4}
       />
-      <HStack align="center" spacing={4} width="100%" display="flex" justifyContent="space-between">
+      <HStack align="center" spacing={4} width="100%" justifyContent="space-between">
         <IconButton
           icon={<FaChevronLeft />}
           aria-label="Previous"
           onClick={showPrev}
-          isDisabled={startIndex === 0}
+          isDisabled={startIndex === 0 || loading}
         />
 
         <HStack spacing={8}>
-          {visibleItems.map((event) => (
-            <Box key={event.id} width="100%">
-              <SidebarCard
-                title={event.title}
-                imageUrl={event.imageUrl}
-                href={ROUTES.calendar.eventDetails(event.id)}
-              />
-            </Box>
-          ))}
-        </HStack>
+          {loading ? (
+            Array.from({ length: itemsPerPage }).map((_, idx) => (
+              <Box key={idx} width="100%">
+                <Skeleton height="12rem" borderRadius="md" />
+              </Box>
+            ))
+          ) : (
+            visibleItems.map((event) => (
+              <Box key={event.id} width="100%">
+                <SidebarCard
+                  title={event.title}
+                  imageUrl={event.imageUrl}
+                  href={ROUTES.calendar.eventDetails(event.id)}
+                />
+              </Box>
+            ))
+          )}
+         </HStack>
 
         <IconButton
           icon={<FaChevronRight />}
           aria-label="Next"
           onClick={showNext}
-          isDisabled={events.length <= itemsPerPage || startIndex + itemsPerPage >= events.length}
+          isDisabled={loading || events.length <= itemsPerPage || startIndex + itemsPerPage >= events.length}
         />
       </HStack>
     </Flex>
