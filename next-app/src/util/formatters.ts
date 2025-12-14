@@ -17,7 +17,7 @@ export function getPersonLabel(person?: Person) {
 }
 
 export function getDurationLabel(duration?: DurationType) {
-  if (!duration) return "";
+  if (!duration) return "-";
   const s = dayjs(duration.startsAt);
   const e = dayjs(duration.endsAt);
   const now = dayjs();
@@ -37,7 +37,7 @@ export function getDurationLabel(duration?: DurationType) {
 }
 
 export function getDateLabel(d?: Date) {
-  if (!d) return "";
+  if (!d) return "-";
   const day = dayjs(d);
   const showYear = day.year() !== dayjs().year() ? " YYYY" : "";
   return day.format(`ddd, D MMM${showYear}`);

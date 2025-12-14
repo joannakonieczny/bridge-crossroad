@@ -4,6 +4,7 @@ import { Box, Flex, Skeleton, SkeletonText, Stack } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
 import { AsyncImage } from "@/components/common/AsyncImage";
+import { getPersonLabel, getDateLabel } from "@/util/formatters";
 
 type IGroupBannerProps = {
   group?: GroupFullType;
@@ -61,14 +62,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
   const description = group?.description ?? t("fallback.description");
   const adminNames =
     group?.admins && group.admins.length > 0
-      ? group.admins
-          .map(
-            (a) =>
-              `${a.name.firstName} ${a.name.lastName}${
-                a.nickname ? ` (${a.nickname})` : ""
-              }`
-          )
-          .join(", ")
+      ? group.admins.map((a) => getPersonLabel(a)).join(", ")
       : "-";
   const membersCount = group?.members?.length ?? 0;
 
@@ -132,11 +126,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
                 text={t("createdAt.title")}
                 showBar={false}
               />
-              <ResponsiveText>
-                {group?.createdAt
-                  ? new Date(group.createdAt).toLocaleDateString()
-                  : "-"}
-              </ResponsiveText>
+              <ResponsiveText>{getDateLabel(group?.createdAt)}</ResponsiveText>
             </Flex>
             <Flex direction="column">
               <ResponsiveHeading
@@ -154,8 +144,6 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
         </Flex>
       </Flex>
       <Flex direction="column">
-        {" "}
-        {/* description */}
         <ResponsiveHeading
           barOrientation="horizontal"
           fontSize="md"
