@@ -405,6 +405,33 @@ const groupsPage = {
       title: "Opis grupy",
     },
   },
+
+  AddRemoveAdminModal: {
+    add: {
+      header: "Dodaj nowegoadministratora",
+      toast: {
+        loading: "Dodawanie administratora...",
+        success: "Administrator został dodany!",
+        errorDefault: "Wystąpił błąd podczas dodawania administratora",
+      },
+    },
+    remove: {
+      header: "Usuń istniejącego administratora",
+      toast: {
+        loading: "Usuwanie administratora...",
+        success: "Użytkownik został usunięty jako administrator!",
+        errorDefault: "Wystąpił błąd podczas usuwania administratora",
+      },
+    },
+    form: {
+      userSelect: {
+        placeholder: "Wybierz użytkownika",
+        required: "Wybierz użytkownika z grupy",
+      },
+      submitButton: "Dodaj",
+      cancelButton: "Anuluj",
+    },
+  },
 };
 
 const calendarPage = {

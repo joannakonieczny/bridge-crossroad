@@ -1,7 +1,7 @@
 "use server";
 
 import {
-  addAdminToGroup,
+  addAdminToGroup as addAdminToGroupRepo,
   addUserToGroup,
   getGroupOverview,
   getUserWithGroupsData,
@@ -13,7 +13,11 @@ import {
 } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
-import { fullAuthAction, withinOwnGroupAction } from "../action-lib";
+import {
+  fullAuthAction,
+  withinOwnGroupAction,
+  withinOwnGroupAsAdminAction,
+} from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createGroup, getGroupByInviteCode } from "@/repositories/groups";
 import {
@@ -21,6 +25,8 @@ import {
   sanitizeGroupsFullInfoPopulated,
 } from "@/sanitizers/server-only/group-sanitize";
 import { havingInvitationCode } from "@/schemas/model/group/group-schema";
+import z from "zod";
+import { idPropSchema } from "@/schemas/common";
 
 export const getJoinedGroupsInfo = fullAuthAction.action(
   async ({ ctx: { userId } }) => {
@@ -50,7 +56,7 @@ export const createNewGroup = fullAuthAction
         userId,
         session,
       });
-      const group = await addAdminToGroup({
+      const group = await addAdminToGroupRepo({
         groupId: groupCreated._id.toString(),
         userId,
         session,
@@ -94,4 +100,16 @@ export const addUserToGroupByInvitationCode = fullAuthAction
       userId,
     });
     return true;
+  });
+
+export const addAdminToGroup = withinOwnGroupAsAdminAction
+  .inputSchema(async (s) =>
+    s.merge(z.object({ userIdToPromote: idPropSchema }))
+  )
+  .action(async ({ ctx: { groupId }, parsedInput: { userIdToPromote } }) => {
+    const updatedGroup = await addAdminToGroupRepo({
+      groupId,
+      userId: userIdToPromote,
+    });
+    return sanitizeGroup(updatedGroup);
   });

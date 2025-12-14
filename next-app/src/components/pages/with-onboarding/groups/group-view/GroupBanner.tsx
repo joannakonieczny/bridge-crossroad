@@ -12,7 +12,7 @@ import {
   WrapItem,
   Tag,
 } from "@chakra-ui/react";
-import GroupAdminMenu from "./GroupAdminMenu";
+import GroupAdminMenu from "./admin-tools/GroupAdminMenu";
 import { useTranslations } from "@/lib/typed-translations";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
 import { AsyncImage } from "@/components/common/AsyncImage";
@@ -95,7 +95,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
               text={group.name || t("fallback.name")}
               showBar={false}
             />
-            {group.isAdmin && <GroupAdminMenu />}
+            {group.isAdmin && <GroupAdminMenu group={group} />}
           </Flex>
 
           <Text color="muted" mt={2} noOfLines={3}>
