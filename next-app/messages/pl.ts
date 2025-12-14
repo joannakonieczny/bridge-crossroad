@@ -453,10 +453,6 @@ const groupModelValidation = {
     length: `Kod zaproszenia musi składać się z ${GROUP.invitationCode.length} znaków`,
     regex: "Kod zaproszenia może zawierać tylko wielkie litery i cyfry",
   },
-  imageUrl: {
-    max: `URL obrazka nie może być dłuższy niż ${GROUP.imageUrl.max} znaków`,
-    required: "Podaj poprawny adres URL",
-  },
 };
 
 const eventModelValidation = {
@@ -471,10 +467,6 @@ const eventModelValidation = {
   },
   location: {
     max: `Lokalizacja nie może być dłuższa niż ${EVENT.location.max} znaków`,
-  },
-  imageUrl: {
-    max: `URL obrazka nie może być dłuższy niż ${EVENT.imageUrl.max} znaków`,
-    required: "Podaj poprawny adres URL",
   },
   playingPair: {
     firstSecondDistinct: "Obaj zawodnicy pary muszą być różni",
@@ -728,6 +720,23 @@ const chatPage = {
   noMessages: "Brak wiadomości",
   error: {
     loadFailed: "Nie udało się załadować wiadomości",
+  },
+  attachFileModal: {
+    header: "Dołącz plik",
+    fileErrorUpload:
+      "Nie udało się przesłać pliku, spróbuj ponownie lub usuń go aby wysłać samą wiadomość.",
+    submitButton: "Wyślij",
+    closeButton: "Zatwierdź",
+  },
+  fileUploadToast: {
+    loading: "Przesyłanie pliku...",
+    success: "Plik przesłany",
+    error: "Błąd przesyłania pliku",
+  },
+  sendMessageToast: {
+    loading: "Wysyłanie wiadomości...",
+    success: "Wiadomość wysłana",
+    errorDefault: "Nie udało się wysłać wiadomości",
   },
 };
 

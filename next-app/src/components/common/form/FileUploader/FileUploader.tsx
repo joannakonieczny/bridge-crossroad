@@ -14,7 +14,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import type { ChangeEvent } from "react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import {
   ALLOWED_MIME_TYPE_IMAGE,
@@ -24,6 +24,7 @@ import {
   ALLOWED_EXT,
 } from "@/util/constants";
 import { useTranslations } from "@/lib/typed-translations";
+import { isImageUrl } from "@/util/helpers";
 
 export type IFileUploaderProps = {
   text?: {
@@ -39,6 +40,7 @@ export type IFileUploaderProps = {
   isRequired?: boolean;
   onElementProps?: FormControlProps;
   value?: string; // URL or base64 of the file
+  fileName?: string; // Name of the file
   onChange?: (file: File | null, preview: string | null) => void;
   onError?: (error: string) => void;
   genericFileType?: "image" | "any";
@@ -72,10 +74,23 @@ export default function FileUploader(props: IFileUploaderProps) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(props.value ?? null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(
+    props.fileName ?? null
+  );
   const [isImage, setIsImage] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Synchronize internal state with external props
+  useEffect(() => {
+    setPreview(props.value ?? null);
+    setFileName(props.fileName ?? null);
+    if (props.value || props.fileName) {
+      setIsImage(
+        props.value?.startsWith("data:image") || isImageUrl(props.value)
+      );
+    }
+  }, [props.value, props.fileName]);
 
   const processFile = (file: File) => {
     setValidationError(null);
