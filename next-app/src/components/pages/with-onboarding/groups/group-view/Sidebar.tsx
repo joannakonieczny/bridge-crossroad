@@ -14,13 +14,7 @@ import {
   IconButton,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import {
-  FiArrowLeft,
-  FiUser,
-  FiMessageCircle,
-  FiFolder,
-  FiGrid,
-} from "react-icons/fi";
+import { FiArrowLeft, FiUser, FiMessageCircle, FiFolder } from "react-icons/fi";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
@@ -57,13 +51,8 @@ export default function Sidebar({ groupId }: ISidebarProps) {
     },
     {
       icon: FiFolder,
-      pagePath: ROUTES.groups.materials(groupId),
-      text: t("nav.materials"),
-    },
-    {
-      icon: FiGrid,
-      pagePath: ROUTES.groups.hands(groupId),
-      text: t("nav.hands"),
+      pagePath: ROUTES.groups.files(groupId),
+      text: t("nav.files"),
     },
   ];
 

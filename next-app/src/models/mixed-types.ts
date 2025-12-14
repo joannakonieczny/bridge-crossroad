@@ -47,6 +47,11 @@ export type IChatMessageDTOWithPopulatedSender = Overwrite<
   }
 >;
 
+export type IChatMessageDTOWithPopulatedSenderWithoutMessage = Omit<
+  IChatMessageDTOWithPopulatedSender,
+  "message"
+>;
+
 export type ITournamentPairsDataPopulated = Overwrite<
   ITournamentPairsData,
   {

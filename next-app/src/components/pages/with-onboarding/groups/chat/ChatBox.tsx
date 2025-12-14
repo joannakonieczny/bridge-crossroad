@@ -5,6 +5,7 @@ import type { GroupIdType } from "@/schemas/model/group/group-types";
 import MessageBox from "./MessageBox";
 import { useTranslations } from "@/lib/typed-translations";
 import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-query";
+import { QUERY_KEYS } from "@/lib/queries";
 import { getMessagesForGroup } from "@/services/chat/api";
 import { useMemo, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -18,7 +19,7 @@ export function ChatBox({ groupId }: ChatBoxProps) {
   const queryClient = useQueryClient();
 
   const messagesQuery = useActionInfiniteQuery({
-    queryKey: ["chat-messages", groupId],
+    queryKey: QUERY_KEYS.chatMessages(groupId),
     action: async (pageParam) => {
       return await getMessagesForGroup({
         groupId,
@@ -37,7 +38,7 @@ export function ChatBox({ groupId }: ChatBoxProps) {
   useEffect(() => {
     const id = setInterval(() => {
       queryClient.invalidateQueries({
-        queryKey: ["chat-messages", groupId],
+        queryKey: QUERY_KEYS.chatMessages(groupId),
         refetchType: "active",
       });
     }, 8000);
@@ -48,7 +49,7 @@ export function ChatBox({ groupId }: ChatBoxProps) {
   useEffect(() => {
     const id = setInterval(() => {
       queryClient.invalidateQueries({
-        queryKey: ["chat-messages", groupId],
+        queryKey: QUERY_KEYS.chatMessages(groupId),
         refetchType: "all",
       });
     }, 60000);

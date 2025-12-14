@@ -16,3 +16,8 @@ export type MessageWithPopulatedSenderType = Omit<
     isGroupAdmin?: boolean;
   };
 };
+
+export type MessageWithPopulatedSenderTypeWithoutMessage = Omit<
+  MessageWithPopulatedSenderType,
+  "message"
+>;

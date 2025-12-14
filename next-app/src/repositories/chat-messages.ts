@@ -5,7 +5,10 @@ import dbConnect from "@/util/connect-mongo";
 import { check } from "./common";
 import { UserTableName } from "@/models/user/user-types";
 import type { IChatMessageDTO } from "@/models/chat-message/chat-message-types";
-import type { IChatMessageDTOWithPopulatedSender } from "@/models/mixed-types";
+import type {
+  IChatMessageDTOWithPopulatedSender,
+  IChatMessageDTOWithPopulatedSenderWithoutMessage,
+} from "@/models/mixed-types";
 import type {
   ChatMessageIdType,
   MessageType,
@@ -119,6 +122,60 @@ export async function getMessagesForGroupWithPopulatedSender(
   // Determine nextCursor as a Date when there's another page.
   // - undefined => no next page
   // - null => there's a next page but last item has no createdAt (unlikely)
+  const nextCursor: Date | null = (() => {
+    if (!hasNext) return null;
+    const last = page[page.length - 1];
+    if (!last || !last.createdAt) return null;
+    return last.createdAt instanceof Date
+      ? last.createdAt
+      : new Date(last.createdAt as unknown as string);
+  })();
+
+  return {
+    messages: page,
+    nextCursor: nextCursor,
+    prevCursor: params.cursor || null,
+    limit: limit,
+  };
+}
+
+export async function getFileMessagesForGroupWithPopulatedSender(
+  params: GetMessagesParams & { fileNameRegex?: RegExp | string }
+) {
+  await dbConnect();
+
+  const limit = Math.max(1, Math.min(params.limit ?? 20, 200));
+
+  const query: Record<string, unknown> = { groupId: params.groupId };
+  // ensure fileUrl exists
+  const fileExistCondition = { fileUrl: { $exists: true, $ne: null } };
+
+  if (params.fileNameRegex) {
+    const regex =
+      params.fileNameRegex instanceof RegExp
+        ? params.fileNameRegex
+        : new RegExp(String(params.fileNameRegex));
+    // use $and to combine existence check with regex match
+    query.$and = [fileExistCondition, { fileUrl: { $regex: regex } }];
+  } else {
+    Object.assign(query, fileExistCondition);
+  }
+  if (params.cursor) {
+    // only messages older than the cursor (createdAt < cursor)
+    query.createdAt = { $lt: params.cursor };
+  }
+
+  // fetch limit + 1 to detect if there's a next page
+  const docs = await ChatMessage.find(query)
+    .select("-message")
+    .sort({ createdAt: -1 })
+    .limit(limit + 1)
+    .populate({ path: "senderId", model: UserTableName })
+    .lean<IChatMessageDTOWithPopulatedSenderWithoutMessage[]>();
+
+  const hasNext = docs.length > limit;
+  const page = hasNext ? docs.slice(0, limit) : docs;
+
   const nextCursor: Date | null = (() => {
     if (!hasNext) return null;
     const last = page[page.length - 1];

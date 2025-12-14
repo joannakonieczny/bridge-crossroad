@@ -36,6 +36,13 @@ export const QUERY_KEYS = {
   ],
   eventDetail: (id: EventIdType) => ["event", id],
   latestEvents: (limit: number) => ["event", "latest", limit],
+  chatMessages: (groupId: GroupIdType) => ["chat", groupId, "messages"],
+  chatMessagesFiles: (groupId: GroupIdType, fileType: string) => [
+    "chat-files",
+    groupId,
+    "files",
+    fileType,
+  ],
   partnershipPosts: (
     p: Partial<{
       page: number;

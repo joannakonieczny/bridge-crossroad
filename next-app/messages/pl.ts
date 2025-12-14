@@ -316,8 +316,7 @@ const groupsPage = {
     nav: {
       about: "O grupie",
       chat: "Czat",
-      materials: "Materiały",
-      hands: "Rozdania",
+      files: "Materiały",
     },
     members: {
       single: "1 członek",
@@ -357,6 +356,34 @@ const groupsPage = {
     },
   },
 
+  GroupFiles: {
+    filter: {
+      label: "Filtr:",
+      options: {
+        images: "Zdjęcia",
+        otherFiles: "Inne pliki",
+      },
+      refreshButton: "Odśwież",
+    },
+    sections: {
+      images: {
+        loadMore: "Załaduj więcej zdjęć",
+        noFiles: "Na tej grupie nie wysłano jeszcze żadnych zdjęć.",
+        viewer: {
+          close: "Zamknij",
+        },
+      },
+      otherFiles: {
+        loadMore: "Załaduj więcej plików",
+        noFiles: "Na tej grupie nie wysłano jeszcze żadnych plików.",
+        downloadButton: "Pobierz",
+      },
+    },
+    error: {
+      loadFailed: "Nie udało się załadować materiałów.",
+    },
+  },
+
   GroupBanner: {
     fallback: {
       name: "Brak nazwy",
@@ -382,9 +409,7 @@ const groupsPage = {
 const calendarPage = {
   Sidebar: {
     addEvent: "Dodaj wydarzenie",
-    seeMore: "Zobacz więcej",
   },
-  showUpcomingEventsButton: "Zobacz nadchodzące wydarzenia",
 };
 
 const userModelValidation = {
@@ -713,9 +738,6 @@ const usefulTools = {
 
 const chatPage = {
   sendMessagePlaceholder: "Napisz wiadomość...",
-  header: {
-    title: "Czat grupowy",
-  },
   loadMore: "Załaduj więcej",
   noMessages: "Brak wiadomości",
   error: {
