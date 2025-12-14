@@ -712,9 +712,6 @@ const usefulTools = {
 
 const chatPage = {
   sendMessagePlaceholder: "Napisz wiadomość...",
-  header: {
-    title: "Czat grupowy",
-  },
   loadMore: "Załaduj więcej",
   noMessages: "Brak wiadomości",
   error: {
