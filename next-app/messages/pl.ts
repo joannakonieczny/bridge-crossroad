@@ -316,8 +316,7 @@ const groupsPage = {
     nav: {
       about: "O grupie",
       chat: "Czat",
-      materials: "Materiały",
-      hands: "Rozdania",
+      files: "Materiały",
     },
     members: {
       single: "1 członek",

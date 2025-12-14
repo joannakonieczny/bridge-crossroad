@@ -28,15 +28,13 @@ export const ROUTES = {
   dashboard: "/dashboard",
   calendar: {
     index: "/calendar",
-    upcoming_events: "/calendar/upcoming-events",
     eventDetails: (id: EventIdType) => `/calendar/${id}`,
   },
   groups: {
     index: "/groups",
     groupDetails: (id: GroupIdType) => `/groups/${id}`,
     chat: (id: GroupIdType) => `/groups/${id}/chat`,
-    materials: (id: GroupIdType) => `/groups/${id}/materials`,
-    hands: (id: GroupIdType) => `/groups/${id}/hands`,
+    files: (id: GroupIdType) => `/groups/${id}/files`,
   },
   find_partner: "/find-partner",
   tools: "/tools",
