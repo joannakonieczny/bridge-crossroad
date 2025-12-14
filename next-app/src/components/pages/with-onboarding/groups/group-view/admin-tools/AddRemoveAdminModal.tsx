@@ -23,7 +23,10 @@ import {
 } from "@/lib/typed-translations";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
-import { promoteMemberToAdmin } from "@/services/groups/api";
+import {
+  promoteMemberToAdmin,
+  demoteAdminToMember,
+} from "@/services/groups/api";
 import SelectInput from "@/components/common/form/SelectInput";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { z } from "zod";
@@ -45,11 +48,29 @@ const addAdminSchema = z.object({
   }),
 });
 
-type FormValues = z.infer<typeof addAdminSchema>;
+const removeAdminSchema = z.object({
+  userIdToDemote: z.string({
+    message: "pages.GroupsPage.AddRemoveAdminModal.form.userSelect.required",
+  }),
+});
+
+type AddFormValues = z.infer<typeof addAdminSchema>;
+type RemoveFormValues = z.infer<typeof removeAdminSchema>;
+
+type AdminActionInput =
+  | {
+      mode: "add";
+      values: AddFormValues;
+    }
+  | {
+      mode: "remove";
+      values: RemoveFormValues;
+    };
 
 export default function AddRemoveAdminModal({
   isOpen,
   onClose,
+  mode,
   group,
 }: AddRemoveAdminModalProps) {
   const t = useTranslations("pages.GroupsPage.AddRemoveAdminModal");
@@ -57,16 +78,31 @@ export default function AddRemoveAdminModal({
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { control, handleSubmit, reset } = useForm<FormValues>({
-    resolver: zodResolver(withEmptyToUndefined(addAdminSchema)),
+  const isAddMode = mode === "add";
+
+  const { control, handleSubmit, reset } = useForm({
+    resolver: zodResolver(
+      withEmptyToUndefined(isAddMode ? addAdminSchema : removeAdminSchema)
+    ),
   });
 
-  const adminCandidates = group.members.filter(
-    (m) => !group.admins.some((a) => a.id === m.id)
-  );
+  const userOptions = isAddMode
+    ? group.members.filter((m) => !group.admins.some((a) => a.id === m.id))
+    : group.admins;
 
-  const addAdminAction = useActionMutation({
-    action: promoteMemberToAdmin,
+  const adminAction = useActionMutation({
+    action: ({ mode, values }: AdminActionInput) => {
+      if (mode === "add") {
+        return promoteMemberToAdmin({
+          groupId: group.id,
+          userIdToPromote: values.userIdToPromote,
+        });
+      }
+      return demoteAdminToMember({
+        groupId: group.id,
+        userIdToDemote: values.userIdToDemote,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
       reset();
@@ -74,19 +110,26 @@ export default function AddRemoveAdminModal({
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    const promise = addAdminAction.mutateAsync({
-      groupId: group.id,
-      userIdToPromote: values.userIdToPromote,
-    });
+  const onSubmit = (values: AddFormValues | RemoveFormValues) => {
+    const promise = isAddMode
+      ? adminAction.mutateAsync({
+          mode: "add",
+          values: values as AddFormValues,
+        })
+      : adminAction.mutateAsync({
+          mode: "remove",
+          values: values as RemoveFormValues,
+        });
+
     toast.promise(promise, {
-      loading: { title: t("add.toast.loading") },
-      success: { title: t("add.toast.success") },
-      error: (err: MutationOrQuerryError<typeof addAdminAction>) => {
+      loading: { title: t(`${mode}.toast.loading`) },
+      success: { title: t(`${mode}.toast.success`) },
+      error: (err: MutationOrQuerryError<typeof adminAction>) => {
         const errKey = getMessageKeyFromError(err, {
           generalErrorKey:
-            "pages.GroupsPage.AddRemoveAdminModal.add.toast.errorDefault" satisfies TKey,
+            `pages.GroupsPage.AddRemoveAdminModal.${mode}.toast.errorDefault` as TKey,
         });
+
         return { title: tValidation(errKey) };
       },
     });
@@ -96,18 +139,18 @@ export default function AddRemoveAdminModal({
     <Modal isOpen={isOpen} onClose={onClose} size="md">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t("add.header")}</ModalHeader>
+        <ModalHeader>{t(`${mode}.header`)}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4} mt={2}>
               <Controller
                 control={control}
-                name="userIdToPromote"
+                name={isAddMode ? "userIdToPromote" : "userIdToDemote"}
                 render={({ field, fieldState: { error } }) => (
                   <SelectInput
                     emptyValueLabel={t("form.userSelect.placeholder")}
-                    options={adminCandidates.map((m) => ({
+                    options={userOptions.map((m) => ({
                       label: getPersonLabel(m),
                       value: m.id,
                     }))}
@@ -123,7 +166,7 @@ export default function AddRemoveAdminModal({
                 text={t("form.submitButton")}
                 type="submit"
                 onElementProps={{
-                  isLoading: addAdminAction.isPending,
+                  isLoading: adminAction.isPending,
                 }}
               />
             </Stack>
