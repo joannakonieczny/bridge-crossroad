@@ -53,7 +53,7 @@ export const listPartnershipPosts = withinOwnGroupAction
       const [validPosts, expiredPosts] = partition(allPosts, (post) => {
         if (post.status !== PartnershipPostStatus.ACTIVE) return true; //only look at active posts (not PARTNER_FOUND)
         if (post.data.type === PartnershipPostType.PERIOD) {
-          if (post.data.endsAt >= new Date()) return true; //keep in posts
+          if (post.data.duration.endsAt >= new Date()) return true; //keep in posts
         } else {
           const event = post.data.eventId;
           if (event.duration.endsAt >= new Date()) return true; //keep in posts
@@ -160,7 +160,7 @@ export const modifyPartnershipPostStatus = withinOwnPartnershipPostAction
 
     const postData = currentPost.data;
     if (postData.type === PartnershipPostType.PERIOD) {
-      isExpired = postData.endsAt < now;
+      isExpired = postData.duration.endsAt < now;
     } else if (postData.type === PartnershipPostType.SINGLE) {
       const event = await getEvent({ eventId: postData.eventId.toString() });
       isExpired = event.duration.endsAt < now;

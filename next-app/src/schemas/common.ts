@@ -1,3 +1,4 @@
+import type { TKey } from "@/lib/typed-translations";
 import { z } from "zod";
 
 export function isProbablyEmail(value: string) {
@@ -12,6 +13,18 @@ export const withTimeStampsSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
+
+export const durationSchema = z
+  .object({
+    startsAt: z.date(),
+    endsAt: z.date(),
+  })
+  .refine((d) => d.startsAt < d.endsAt, {
+    message: "validation.common.duration.invalid" satisfies TKey,
+    path: ["endsAt"],
+  });
+
+export type DurationType = z.infer<typeof durationSchema>;
 
 export const emptyStringToUndefinedOnObject = (value: unknown) => {
   function transform(input: unknown): unknown {

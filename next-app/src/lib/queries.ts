@@ -13,12 +13,17 @@ import {
   getEvent,
   getLatestEventsForUser,
 } from "@/services/events/api";
+import { listPartnershipPosts } from "@/services/find-partner/api";
+import type { PartnershipPostStatus } from "@/club-preset/partnership-post";
+import type { PartnershipPostType } from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type { EventIdType } from "@/schemas/model/event/event-types";
 import type {
   ActionError,
+  ActionInput,
   TActionQueryOptionsHelper,
 } from "./tanstack-action/types";
+import type { Overwrite } from "./types-helpers";
 
 export const QUERY_KEYS = {
   userInfo: ["user", "info"],
@@ -30,7 +35,26 @@ export const QUERY_KEYS = {
     `${dayjs(start).format("DD/MM/YYYY")}|${dayjs(end).format("DD/MM/YYYY")}`,
   ],
   eventDetail: (id: EventIdType) => ["event", id],
-  latestEvents: (limit: number) => ["events", "latest", limit],
+  latestEvents: (limit: number) => ["event", "latest", limit],
+  partnershipPosts: (
+    p: Partial<{
+      page: number;
+      groupId: GroupIdType;
+      limit: number;
+      status: PartnershipPostStatus;
+      type: PartnershipPostType;
+      onboardingData: unknown;
+    }>
+  ) => [
+    "partnershipPosts",
+    p.groupId,
+    p.page,
+    p.limit,
+    p.status,
+    p.type,
+    p.onboardingData ? JSON.stringify(p.onboardingData) : undefined,
+    ,
+  ],
 } as const;
 
 function useOnErrorToast(template: string, toastId: string) {
@@ -96,7 +120,7 @@ export function useGroupQuery(
   return useActionQuery({
     queryKey: QUERY_KEYS.groupDetail(groupId || ""),
     action: () => getGroupData({ groupId: groupId || "" }),
-    enabled: groupId ? true : false,
+    enabled: !!groupId,
     onError: e,
     ...props,
   });
@@ -126,7 +150,30 @@ export function useEventQuery(
   return useActionQuery({
     queryKey: QUERY_KEYS.eventDetail(eventId || ""),
     action: () => getEvent({ eventId: eventId || "" }),
-    enabled: eventId ? true : false,
+    enabled: !!eventId,
+    onError: e,
+    ...props,
+  });
+}
+
+export function usePartnershipPostsQuery(
+  input: Overwrite<
+    ActionInput<typeof listPartnershipPosts>,
+    {
+      groupId?: GroupIdType;
+    }
+  >,
+  props?: TActionQueryOptionsHelper<typeof listPartnershipPosts>
+) {
+  const e = useOnErrorToast(
+    "ogłoszeń o partnera do gry",
+    "listPartnershipPosts"
+  );
+  return useActionQuery({
+    queryKey: QUERY_KEYS.partnershipPosts(input),
+    action: () =>
+      listPartnershipPosts({ ...input, groupId: input.groupId || "" }),
+    enabled: !!input.groupId,
     onError: e,
     ...props,
   });

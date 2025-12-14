@@ -8,7 +8,6 @@ export type TitleType = z.infer<typeof s.titleSchema>;
 export type DescriptionType = z.infer<typeof s.descriptionSchema>;
 export type LocationType = z.infer<typeof s.locationSchema>;
 export type ImageUrlType = z.infer<typeof s.imageUrlSchema>;
-export type DurationType = z.infer<typeof s.durationSchema>;
 export type AdditionalDescriptionType = z.infer<
   typeof s.additionalDescriptionSchema
 >;

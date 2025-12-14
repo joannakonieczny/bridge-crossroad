@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { idPropSchema } from "@/schemas/common";
+import { idPropSchemaM, durationSchema, idPropSchema } from "@/schemas/common";
+
 import {
   additionalDescriptionSchema,
   descriptionSchema,
-  durationSchema,
   havingEventId,
   imageUrlSchema,
   leagueMeetingDataSchema,
@@ -15,13 +15,16 @@ import {
   trainingDataSchema,
 } from "@/schemas/model/event/event-schema";
 import { EventType, TournamentType } from "@/club-preset/event-type";
+import type { TKey } from "@/lib/typed-translations";
 
 export const addEventSchema = z.object({
   title: titleSchema,
   description: descriptionSchema.optional(),
   location: locationSchema.optional(),
-  group: idPropSchema,
-  organizer: idPropSchema,
+  group: idPropSchemaM("validation.model.event.group.required" satisfies TKey),
+  organizer: idPropSchemaM(
+    "validation.model.event.organizer.required" satisfies TKey
+  ),
   duration: durationSchema,
   additionalDescription: additionalDescriptionSchema.optional(),
   imageUrl: imageUrlSchema.optional(),
