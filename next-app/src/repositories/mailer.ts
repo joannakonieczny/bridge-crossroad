@@ -17,15 +17,10 @@ type SendEmailInput = {
   body: string;
 };
 
-export const sendEmail = async ({
-  to,
-  subject,
-  body,
-}: SendEmailInput): Promise<void> => {
-  await transporter.sendMail({
+export const sendEmail = async ({ to, subject, body }: SendEmailInput) =>
+  transporter.sendMail({
     from: config.GMAIL_FROM_EMAIL,
     to,
     subject,
     html: body,
   });
-};
