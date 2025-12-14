@@ -13,4 +13,5 @@ export type IChatMessageDTO = {
   groupId: typeof GroupId;
   senderId: typeof UserId;
   message: string;
+  fileUrl?: string;
 } & Timestamps;

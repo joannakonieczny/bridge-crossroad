@@ -1,11 +1,14 @@
 import { z } from "zod";
-import { idPropSchemaM, durationSchema, idPropSchema } from "@/schemas/common";
-
+import {
+  idPropSchemaM,
+  durationSchema,
+  idPropSchema,
+  filePathSchema,
+} from "@/schemas/common";
 import {
   additionalDescriptionSchema,
   descriptionSchema,
   havingEventId,
-  imageUrlSchema,
   leagueMeetingDataSchema,
   locationSchema,
   otherDataSchema,
@@ -27,7 +30,7 @@ export const addEventSchema = z.object({
   ),
   duration: durationSchema,
   additionalDescription: additionalDescriptionSchema.optional(),
-  imageUrl: imageUrlSchema.optional(),
+  imageUrl: filePathSchema.optional(),
   data: z.discriminatedUnion("type", [
     z.object({
       type: z.literal(EventType.TOURNAMENT_PAIRS),
@@ -53,7 +56,7 @@ export const modifyEventSchema = z
     organizer: idPropSchema,
     duration: durationSchema,
     additionalDescription: additionalDescriptionSchema.optional(),
-    imageUrl: imageUrlSchema.optional(),
+    imageUrl: filePathSchema.optional(),
     data: z.discriminatedUnion("type", [
       z.object({
         type: z.literal(EventType.TOURNAMENT_PAIRS),

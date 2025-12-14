@@ -6,7 +6,6 @@ import { check } from "./common";
 import type {
   DescriptionType,
   GroupIdType,
-  ImageUrlType,
   InvitationCodeType,
   NameType,
 } from "@/schemas/model/group/group-types";
@@ -41,7 +40,7 @@ export async function getMainGroup() {
 type CreateGroupData = {
   name: NameType;
   description?: DescriptionType;
-  imageUrl?: ImageUrlType;
+  imageUrl?: string;
 };
 
 export async function createGroup(data: CreateGroupData, isMain = false) {

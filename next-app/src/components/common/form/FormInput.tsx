@@ -1,4 +1,8 @@
-import type { FormControlProps } from "@chakra-ui/react";
+import type {
+  FormControlProps,
+  InputProps,
+  TextareaProps,
+} from "@chakra-ui/react";
 import {
   FormControl,
   FormErrorMessage,
@@ -8,17 +12,30 @@ import {
 import type { ChangeEventHandler } from "react";
 import PasswordInput from "./PasswordInput";
 
-export type IFormInputProps = {
+type CommonProps = {
   placeholder: string;
   errorMessage?: string;
   isInvalid?: boolean;
   id?: string;
   isRequired?: boolean;
-  type?: "password" | "text" | "email" | "number" | "textarea" | "datetime";
   onElementProps?: FormControlProps;
-  value?: string; //YYYY-MM-DDTHH:mm for datetime-local input
-  onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 };
+
+type TextareaInputProps = CommonProps & {
+  type: "textarea";
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
+  inputProps?: TextareaProps & React.RefAttributes<HTMLTextAreaElement>;
+};
+
+type StandardInputProps = CommonProps & {
+  type?: "password" | "text" | "email" | "number" | "datetime";
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  inputProps?: InputProps & React.RefAttributes<HTMLInputElement>;
+};
+
+export type IFormInputProps = TextareaInputProps | StandardInputProps;
 
 export default function FormInput(props: IFormInputProps) {
   return (
@@ -45,6 +62,7 @@ export default function FormInput(props: IFormInputProps) {
           onChange={props.onChange}
           focusBorderColor="accent.500"
           _focus={{ borderColor: "accent.500" }}
+          {...props.inputProps}
         />
       ) : props.type === "datetime" ? (
         <Input
@@ -54,6 +72,7 @@ export default function FormInput(props: IFormInputProps) {
           value={props.value ?? ""}
           onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
+          {...props.inputProps}
         />
       ) : (
         <Input
@@ -63,6 +82,7 @@ export default function FormInput(props: IFormInputProps) {
           value={props.value ?? ""}
           onChange={props.onChange}
           _focus={{ borderColor: "accent.500" }}
+          {...props.inputProps}
         />
       )}
     </FormControl>

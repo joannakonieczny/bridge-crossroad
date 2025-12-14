@@ -1,4 +1,7 @@
-export function partition<T>(array: T[], predicate: (item: T) => boolean): [T[], T[]] {
+export function partition<T>(
+  array: T[],
+  predicate: (item: T) => boolean
+): [T[], T[]] {
   const keep: T[] = [];
   const remove: T[] = [];
 
@@ -7,4 +10,8 @@ export function partition<T>(array: T[], predicate: (item: T) => boolean): [T[],
   }
 
   return [keep, remove];
+}
+
+export function isImageUrl(url: string | undefined): boolean {
+  return !!url && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url);
 }

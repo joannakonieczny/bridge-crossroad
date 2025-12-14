@@ -1,11 +1,14 @@
 import { z } from "zod";
 import { GroupValidationConstants } from "./group-const";
 import type { TKey } from "@/lib/typed-translations";
-import { idPropSchema, withTimeStampsSchema } from "@/schemas/common";
+import {
+  filePathSchema,
+  idPropSchema,
+  withTimeStampsSchema,
+} from "@/schemas/common";
 import { userSchemaBasic } from "../user/user-schema";
 
-const { name, description, invitationCode, imageUrl } =
-  GroupValidationConstants;
+const { name, description, invitationCode } = GroupValidationConstants;
 
 export const nameSchema = z
   .string({
@@ -34,12 +37,6 @@ export const invitationCodeSchema = z
     "validation.model.group.invitationCode.regex" satisfies TKey
   );
 
-export const imageUrlSchema = z
-  .string({
-    message: "validation.model.group.imageUrl.required" satisfies TKey,
-  })
-  .max(imageUrl.max, "validation.model.group.imageUrl.max" satisfies TKey);
-
 // additional
 export const havingGroupId = z.object({
   groupId: idPropSchema,
@@ -53,7 +50,7 @@ export const groupBasicSchema = z.object({
   id: idPropSchema,
   name: nameSchema,
   description: descriptionSchema.optional(),
-  imageUrl: imageUrlSchema.optional(),
+  imageUrl: filePathSchema.optional(),
   isMain: z.boolean(),
 });
 
