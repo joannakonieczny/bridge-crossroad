@@ -384,13 +384,13 @@ const groupsPage = {
       description: "Brak opisu",
     },
     admin: {
-      title: "Administrator",
+      title: "Administratorzy:",
     },
     createdAt: {
-      title: "Data założenia",
+      title: "Data założenia:",
     },
     membersCount: {
-      title: "Liczba członków",
+      title: "Liczba członków:",
       single: "1 członek",
       multiple: "{count} członków",
     },
