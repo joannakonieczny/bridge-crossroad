@@ -12,6 +12,7 @@ import {
   WrapItem,
   Tag,
 } from "@chakra-ui/react";
+import GroupAdminMenu from "./GroupAdminMenu";
 import { useTranslations } from "@/lib/typed-translations";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
 import { AsyncImage } from "@/components/common/AsyncImage";
@@ -20,6 +21,7 @@ import { getPersonLabel, getDateLabel } from "@/util/formatters";
 type IGroupBannerProps = {
   group?: GroupFullType;
   isLoading?: boolean;
+  isAdmin?: boolean;
 };
 
 /* ===================== LOADER ===================== */
@@ -63,6 +65,8 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
   const adminNames = group.admins.map((a) => getPersonLabel(a)) || [];
   const membersCount = group.members?.length ?? 0;
 
+  group.isAdmin = true;
+
   return (
     <Box bg="bg" borderRadius="xl" borderWidth="1px" p={{ base: 4, md: 6 }}>
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
@@ -85,11 +89,14 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
 
         {/* CONTENT */}
         <Flex direction="column" flex="1" minW={0}>
-          <ResponsiveHeading
-            fontSize="xl"
-            text={group.name || t("fallback.name")}
-            showBar={false}
-          />
+          <Flex justify="space-between" align="start">
+            <ResponsiveHeading
+              fontSize="xl"
+              text={group.name || t("fallback.name")}
+              showBar={false}
+            />
+            {group.isAdmin && <GroupAdminMenu />}
+          </Flex>
 
           <Text color="muted" mt={2} noOfLines={3}>
             {group.description || t("fallback.description")}

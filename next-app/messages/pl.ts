@@ -385,6 +385,13 @@ const groupsPage = {
     },
     admin: {
       title: "Administratorzy:",
+      menu: {
+        editGroup: "Edytuj grupę",
+        addAdmin: "Dodaj administratora",
+        removeAdmin: "Usuń administratora",
+        addMember: "Dodaj członka",
+      },
+      menuLabel: "Narzędzia administratora",
     },
     createdAt: {
       title: "Data założenia:",
