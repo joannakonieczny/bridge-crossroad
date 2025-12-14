@@ -5,7 +5,7 @@ import { getDateLabel, getPersonLabel } from "@/util/formatters";
 import { Box, Text, Flex } from "@chakra-ui/react";
 import { FiDownload } from "react-icons/fi";
 import { useState } from "react";
-import { isImageUrl } from "@/util/helpers";
+import { getFileExtension, isImageUrl } from "@/util/helpers";
 import { AsyncImage } from "@/components/common/AsyncImage";
 
 type IMessageBoxProps = {
@@ -20,14 +20,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
   const fileUrl = message.fileUrl;
   const [showDate, setShowDate] = useState(false);
   const isImage = isImageUrl(fileUrl);
-  const fileExt = (() => {
-    if (!fileUrl) return "";
-    const lastDot = fileUrl.lastIndexOf(".");
-    if (lastDot === -1) return fileUrl;
-    // take substring after last dot, strip query/hash
-    const after = fileUrl.slice(lastDot + 1).split(/[?#]/)[0];
-    return after || fileUrl;
-  })();
+  const fileExt = getFileExtension(fileUrl);
 
   const messageBoxColor = isSelf
     ? "accent.500"

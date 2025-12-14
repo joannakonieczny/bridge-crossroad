@@ -14,6 +14,9 @@ import {
   Radio,
   HStack,
   useDisclosure,
+  Tag,
+  TagLeftIcon,
+  TagLabel,
 } from "@chakra-ui/react";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-query";
@@ -21,9 +24,17 @@ import { getChatFilesForGroup } from "@/services/chat/api";
 import { useMemo as useMemoHook, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AsyncImage } from "@/components/common/AsyncImage";
-import { FiRefreshCw } from "react-icons/fi";
+import {
+  FiRefreshCw,
+  FiFile,
+  FiFileText,
+  FiArchive,
+  FiDownload,
+} from "react-icons/fi";
+import { AiFillFilePdf } from "react-icons/ai";
 import { getPersonLabel, getDateLabel } from "@/util/formatters";
 import { ImageViewer } from "./ImageViewer";
+import { getFileExtension } from "@/util/helpers";
 
 type GroupChatFilesClientProps = {
   groupId: GroupIdType;
@@ -142,26 +153,68 @@ export default function GroupChatFilesClient({
         </SimpleGrid>
       ) : (
         <Stack spacing={3}>
-          {allFiles.map((m) => (
-            <Flex
-              key={m.id}
-              align="center"
-              justify="space-between"
-              p={3}
-              borderRadius="md"
-              bg="gray.50"
-            >
-              <Box>
-                <Text fontWeight="medium">{m.fileUrl}</Text>
-                <Text fontSize="sm" color="muted">
-                  {getDateLabel(m.createdAt)}
-                </Text>
-              </Box>
-              <Link href={m.fileUrl} isExternal>
-                <Button size="sm">Otwórz</Button>
-              </Link>
-            </Flex>
-          ))}
+          {allFiles.map((m) => {
+            const fileExt = getFileExtension(m.fileUrl);
+            const { colorScheme, Icon } = (() => {
+              switch (fileExt) {
+                case "pdf":
+                  return {
+                    colorScheme: "red",
+                    Icon: AiFillFilePdf, // jednoznaczne PDF
+                  };
+                case "txt":
+                  return {
+                    colorScheme: "blue",
+                    Icon: FiFileText,
+                  };
+                case "zip":
+                  return {
+                    colorScheme: "gray",
+                    Icon: FiArchive,
+                  };
+                default:
+                  return {
+                    colorScheme: "purple",
+                    Icon: FiFile,
+                  };
+              }
+            })();
+
+            return (
+              <Flex
+                key={m.id}
+                align="center"
+                justify="space-between"
+                p={3}
+                borderRadius="md"
+                bg="gray.50"
+              >
+                <Flex align="center" gap={3}>
+                  <Tag size="lg" borderRadius="md" colorScheme={colorScheme}>
+                    <TagLeftIcon boxSize="14px" as={Icon} />
+                    <TagLabel>{fileExt}</TagLabel>
+                  </Tag>
+                  <Box>
+                    <Text fontWeight="medium">{getPersonLabel(m.sender)}</Text>
+                    <Text fontSize="sm" color="border.500">
+                      {getDateLabel(m.createdAt)}
+                    </Text>
+                  </Box>
+                </Flex>
+
+                <Button
+                  as="a"
+                  href={m.fileUrl}
+                  size="sm"
+                  leftIcon={<FiDownload />}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Pobierz
+                </Button>
+              </Flex>
+            );
+          })}
         </Stack>
       )}
 
