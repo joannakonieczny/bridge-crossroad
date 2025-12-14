@@ -13,6 +13,7 @@ import {
   RadioGroup,
   Radio,
   HStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-query";
@@ -21,6 +22,8 @@ import { useMemo as useMemoHook, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AsyncImage } from "@/components/common/AsyncImage";
 import { FiRefreshCw } from "react-icons/fi";
+import { getPersonLabel, getDateLabel } from "@/util/formatters";
+import { ImageViewer } from "./ImageViewer";
 
 type GroupChatFilesClientProps = {
   groupId: GroupIdType;
@@ -59,6 +62,18 @@ export default function GroupChatFilesClient({
     if (!filesQuery.data) return [];
     return filesQuery.data.pages.flatMap((p) => p.messages);
   }, [filesQuery.data]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+
+  const openImage = (id: string) => {
+    setSelectedId(id);
+    onOpen();
+  };
+
+  const selectedMessage = selectedId
+    ? allFiles.find((m) => m.id === selectedId)
+    : null;
 
   return (
     <Stack width="100%" p={4} spacing={4}>
@@ -104,9 +119,24 @@ export default function GroupChatFilesClient({
         <SimpleGrid columns={[2, 3, 4]} spacing={3}>
           {allFiles.map((m) => (
             <Box key={m.id} borderRadius="md" overflow="hidden" bg="gray.50">
-              <Link href={m.fileUrl} isExternal>
+              <Link
+                href={m.fileUrl}
+                isExternal
+                onClick={(e) => {
+                  e.preventDefault();
+                  openImage(m.id);
+                }}
+              >
                 <AsyncImage src={m.fileUrl} w="100%" h="160px" />
               </Link>
+              <Flex px={2} py={2} align="center" justify="space-between">
+                <Text fontSize="xs" color="border.500">
+                  {getPersonLabel(m.sender)}
+                </Text>
+                <Text fontSize="xs" color="border.500">
+                  {getDateLabel(m.createdAt)}
+                </Text>
+              </Flex>
             </Box>
           ))}
         </SimpleGrid>
@@ -124,7 +154,7 @@ export default function GroupChatFilesClient({
               <Box>
                 <Text fontWeight="medium">{m.fileUrl}</Text>
                 <Text fontSize="sm" color="muted">
-                  {new Date(m.createdAt).toLocaleString("pl-PL")}
+                  {getDateLabel(m.createdAt)}
                 </Text>
               </Box>
               <Link href={m.fileUrl} isExternal>
@@ -144,6 +174,16 @@ export default function GroupChatFilesClient({
             Załaduj więcej
           </Button>
         </Flex>
+      )}
+      {selectedMessage && (
+        <ImageViewer
+          isOpen={isOpen}
+          onClose={() => {
+            setSelectedId(null);
+            onClose();
+          }}
+          selectedMessage={selectedMessage}
+        />
       )}
     </Stack>
   );
