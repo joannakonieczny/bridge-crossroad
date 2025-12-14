@@ -13,6 +13,11 @@ const envSchema = z.object({
   AWS_REGION: z.string(),
   AWS_S3_BUCKET_NAME: z.string(),
   AWS_SESSION_TOKEN: z.string(),
+  GMAIL_SMTP_HOST: z.string(),
+  GMAIL_SMTP_PORT: z.coerce.number(),
+  GMAIL_SMTP_USER: z.string(),
+  GMAIL_SMTP_PASSWORD: z.string(),
+  GMAIL_FROM_EMAIL: z.string(),
 });
 export type EnvVariables = z.infer<typeof envSchema>;
 

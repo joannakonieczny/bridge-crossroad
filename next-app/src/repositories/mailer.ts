@@ -1,12 +1,13 @@
 import nodemailer from "nodemailer";
+import { config } from "../util/envConfigLoader";
 
 const transporter = nodemailer.createTransport({
-  host: process.env.GMAIL_SMTP_HOST!,
-  port: Number(process.env.GMAIL_SMTP_PORT!),
+  host: config.GMAIL_SMTP_HOST,
+  port: config.GMAIL_SMTP_PORT,
   secure: false, // STARTTLS
   auth: {
-    user: process.env.GMAIL_SMTP_USER!,
-    pass: process.env.GMAIL_SMTP_PASSWORD!,
+    user: config.GMAIL_SMTP_USER,
+    pass: config.GMAIL_SMTP_PASSWORD,
   },
 });
 
@@ -22,7 +23,7 @@ export const sendEmail = async ({
   body,
 }: SendEmailInput): Promise<void> => {
   await transporter.sendMail({
-    from: process.env.GMAIL_FROM_EMAIL!,
+    from: config.GMAIL_FROM_EMAIL,
     to,
     subject,
     html: body,
