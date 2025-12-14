@@ -33,6 +33,7 @@ import {
 } from "react-icons/fi";
 import { AiFillFilePdf } from "react-icons/ai";
 import { getPersonLabel, getDateLabel } from "@/util/formatters";
+import { useTranslations } from "@/lib/typed-translations";
 import { ImageViewer } from "./ImageViewer";
 import { getFileExtension } from "@/util/helpers";
 
@@ -44,6 +45,7 @@ export default function GroupChatFilesClient({
   groupId,
 }: GroupChatFilesClientProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("pages.GroupsPage.GroupFiles");
 
   const [fileType, setFileType] = React.useState<"image" | "other">("image");
 
@@ -89,15 +91,15 @@ export default function GroupChatFilesClient({
   return (
     <Stack width="100%" p={4} spacing={4}>
       <Flex gap={3} align="center">
-        <Text fontWeight="semibold">Filtr:</Text>
+        <Text fontWeight="semibold">{t("filter.label")}</Text>
         <RadioGroup
           value={fileType}
           onChange={(v) => setFileType(v as "image" | "other")}
           colorScheme="accent"
         >
           <HStack spacing={4}>
-            <Radio value="image">Zdjęcia</Radio>
-            <Radio value="other">Inne pliki</Radio>
+            <Radio value="image">{t("filter.options.images")}</Radio>
+            <Radio value="other">{t("filter.options.otherFiles")}</Radio>
           </HStack>
         </RadioGroup>
         <Button
@@ -110,7 +112,7 @@ export default function GroupChatFilesClient({
             })
           }
         >
-          Odśwież
+          {t("filter.refreshButton")}
         </Button>
       </Flex>
 
@@ -122,7 +124,11 @@ export default function GroupChatFilesClient({
 
       {!filesQuery.isLoading && allFiles.length === 0 && (
         <Flex justify="center" py={8}>
-          <Text>Brak plików.</Text>
+          <Text>
+            {fileType === "image"
+              ? t("sections.images.noFiles")
+              : t("sections.otherFiles.noFiles")}
+          </Text>
         </Flex>
       )}
 
@@ -210,7 +216,7 @@ export default function GroupChatFilesClient({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Pobierz
+                  {t("sections.otherFiles.downloadButton")}
                 </Button>
               </Flex>
             );
@@ -224,7 +230,9 @@ export default function GroupChatFilesClient({
             onClick={() => filesQuery.fetchNextPage()}
             isLoading={filesQuery.isFetchingNextPage}
           >
-            Załaduj więcej
+            {fileType === "image"
+              ? t("sections.images.loadMore")
+              : t("sections.otherFiles.loadMore")}
           </Button>
         </Flex>
       )}

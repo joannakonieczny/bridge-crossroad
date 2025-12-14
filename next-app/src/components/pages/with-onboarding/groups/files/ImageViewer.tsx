@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { AsyncImage } from "@/components/common/AsyncImage";
 import { getPersonLabel, getDateLabel } from "@/util/formatters";
+import { useTranslations } from "@/lib/typed-translations";
 import type { MessageWithPopulatedSenderTypeWithoutMessage } from "@/schemas/model/chat-message/chat-message-types";
 
 type ImageViewerProps = {
@@ -25,6 +26,9 @@ export function ImageViewer({
   onClose,
   selectedMessage,
 }: ImageViewerProps) {
+  const t = useTranslations(
+    "pages.GroupsPage.GroupFiles.sections.images.viewer"
+  );
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
       <ModalOverlay />
@@ -55,7 +59,7 @@ export function ImageViewer({
               getDateLabel(selectedMessage?.createdAt)}
           </Text>
           <Button onClick={onClose} colorScheme="accent">
-            Zamknij
+            {t("close")}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -356,6 +356,31 @@ const groupsPage = {
     },
   },
 
+  GroupFiles: {
+    filter: {
+      label: "Filtr:",
+      options: {
+        images: "Zdjęcia",
+        otherFiles: "Inne pliki",
+      },
+      refreshButton: "Odśwież",
+    },
+    sections: {
+      images: {
+        loadMore: "Załaduj więcej zdjęć",
+        noFiles: "Na tej grupie nie wysłano jeszcze żadnych zdjęć.",
+        viewer: {
+          close: "Zamknij",
+        },
+      },
+      otherFiles: {
+        loadMore: "Załaduj więcej plików",
+        noFiles: "Na tej grupie nie wysłano jeszcze żadnych plików.",
+        downloadButton: "Pobierz",
+      },
+    },
+  },
+
   GroupBanner: {
     fallback: {
       name: "Brak nazwy",
