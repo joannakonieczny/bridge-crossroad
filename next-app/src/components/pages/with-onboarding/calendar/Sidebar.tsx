@@ -8,7 +8,6 @@ import {
   useDisclosure,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
 import { useTranslations } from "@/lib/typed-translations";
@@ -19,8 +18,6 @@ import { ROUTES } from "@/routes";
 const EventsToDisplay = 4;
 
 export default function Sidebar() {
-  const router = useRouter();
-
   const t = useTranslations("pages.CalendarPage.Sidebar");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
@@ -62,16 +59,6 @@ export default function Sidebar() {
             href={ROUTES.calendar.eventDetails(event.id)}
           />
         ))}
-        <Button
-          w="100%"
-          size="sm"
-          color="bg"
-          bg="accent.500"
-          _hover={{ bg: "accent.600" }}
-          onClick={() => router.push(ROUTES.calendar.upcoming_events)}
-        >
-          {t("seeMore")}
-        </Button>
       </VStack>
       <EventForm isOpen={isOpen} onClose={onClose} />
     </Box>

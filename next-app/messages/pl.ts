@@ -406,9 +406,7 @@ const groupsPage = {
 const calendarPage = {
   Sidebar: {
     addEvent: "Dodaj wydarzenie",
-    seeMore: "Zobacz więcej",
   },
-  showUpcomingEventsButton: "Zobacz nadchodzące wydarzenia",
 };
 
 const userModelValidation = {
