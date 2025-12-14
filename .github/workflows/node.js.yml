@@ -38,6 +38,11 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY" >> .env
           echo "AWS_S3_BUCKET_NAME=AWS_S3_BUCKET_NAME" >> .env
           echo "AWS_SESSION_TOKEN=AWS_SESSION_TOKEN" >> .env
+          echo "GMAIL_SMTP_HOST=GMAIL_SMTP_HOST" >> .env
+          echo "GMAIL_SMTP_PORT=587" >> .env
+          echo "GMAIL_SMTP_USER=GMAIL_SMTP_USER" >> .env
+          echo "GMAIL_SMTP_PASSWORD=GMAIL_SMTP_PASSWORD" >> .env
+          echo "GMAIL_FROM_EMAIL=GMAIL_FROM_EMAIL" >> .env
         working-directory: next-app
       - name: Build
         run: npm run build
