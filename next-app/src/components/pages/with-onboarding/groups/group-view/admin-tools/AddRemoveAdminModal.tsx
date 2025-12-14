@@ -44,13 +44,15 @@ type AddRemoveAdminModalProps = {
 
 const addAdminSchema = z.object({
   userIdToPromote: z.string({
-    message: "pages.GroupsPage.AddRemoveAdminModal.form.userSelect.required",
+    message:
+      "pages.GroupsPage.AddRemoveAdminModal.form.userSelect.required" satisfies TKey,
   }),
 });
 
 const removeAdminSchema = z.object({
   userIdToDemote: z.string({
-    message: "pages.GroupsPage.AddRemoveAdminModal.form.userSelect.required",
+    message:
+      "pages.GroupsPage.AddRemoveAdminModal.form.userSelect.required" satisfies TKey,
   }),
 });
 
@@ -127,7 +129,7 @@ export default function AddRemoveAdminModal({
       error: (err: MutationOrQuerryError<typeof adminAction>) => {
         const errKey = getMessageKeyFromError(err, {
           generalErrorKey:
-            `pages.GroupsPage.AddRemoveAdminModal.${mode}.toast.errorDefault` as TKey,
+            `pages.GroupsPage.AddRemoveAdminModal.${mode}.toast.errorDefault` satisfies TKey,
         });
 
         return { title: tValidation(errKey) };
@@ -163,7 +165,7 @@ export default function AddRemoveAdminModal({
               />
 
               <FormMainButton
-                text={t("form.submitButton")}
+                text={t(`${mode}.submitButton`)}
                 type="submit"
                 onElementProps={{
                   isLoading: adminAction.isPending,

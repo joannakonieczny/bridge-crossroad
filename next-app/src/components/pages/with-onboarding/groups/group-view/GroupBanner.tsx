@@ -65,8 +65,6 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
   const adminNames = group.admins.map((a) => getPersonLabel(a)) || [];
   const membersCount = group.members?.length ?? 0;
 
-  group.isAdmin = true;
-
   return (
     <Box bg="bg" borderRadius="xl" borderWidth="1px" p={{ base: 4, md: 6 }}>
       <Flex direction={{ base: "column", md: "row" }} gap={6}>

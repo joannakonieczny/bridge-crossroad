@@ -20,7 +20,11 @@ import {
   withinOwnGroupAsAdminAction,
 } from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
-import { createGroup, getGroupByInviteCode } from "@/repositories/groups";
+import {
+  createGroup,
+  getById as getGroupById,
+  getGroupByInviteCode,
+} from "@/repositories/groups";
 import {
   sanitizeGroup,
   sanitizeGroupsFullInfoPopulated,
@@ -118,6 +122,12 @@ export const promoteMemberToAdmin = withinOwnGroupAsAdminAction
 export const demoteAdminToMember = withinOwnGroupAsAdminAction
   .inputSchema(async (s) => s.merge(z.object({ userIdToDemote: idPropSchema })))
   .action(async ({ ctx: { groupId }, parsedInput: { userIdToDemote } }) => {
+    const group = await getGroupById(groupId);
+    if (group.admins.length <= 1) {
+      return returnValidationErrors(z.object({}), {
+        _errors: ["api.groups.admin.demote.lastAdminError" satisfies TKey],
+      });
+    }
     const updatedGroup = await removeAdminFromGroup({
       groupId,
       userId: userIdToDemote,

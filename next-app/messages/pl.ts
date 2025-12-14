@@ -408,12 +408,13 @@ const groupsPage = {
 
   AddRemoveAdminModal: {
     add: {
-      header: "Dodaj nowegoadministratora",
+      header: "Dodaj nowego administratora",
       toast: {
         loading: "Dodawanie administratora...",
         success: "Administrator został dodany!",
         errorDefault: "Wystąpił błąd podczas dodawania administratora",
       },
+      submitButton: "Dodaj",
     },
     remove: {
       header: "Usuń istniejącego administratora",
@@ -422,13 +423,13 @@ const groupsPage = {
         success: "Użytkownik został usunięty jako administrator!",
         errorDefault: "Wystąpił błąd podczas usuwania administratora",
       },
+      submitButton: "Usuń",
     },
     form: {
       userSelect: {
         placeholder: "Wybierz użytkownika",
         required: "Wybierz użytkownika z grupy",
       },
-      submitButton: "Dodaj",
       cancelButton: "Anuluj",
     },
   },
@@ -1036,6 +1037,12 @@ const messages = {
       join: {
         alreadyMember: "Jesteś już członkiem tej grupy",
         invalidInvitationCode: "Nieprawidłowy kod zaproszenia",
+      },
+      admin: {
+        demote: {
+          lastAdminError:
+            "Nie można usunąć ostatniego administratora grupy. Musisz najpierw dodać innego administratora.",
+        },
       },
     },
   },
