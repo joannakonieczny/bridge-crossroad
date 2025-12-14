@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-query";
+import { QUERY_KEYS } from "@/lib/queries";
 import { getChatFilesForGroup } from "@/services/chat/api";
 import { useMemo as useMemoHook, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -48,7 +49,7 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
   const [fileType, setFileType] = React.useState<"image" | "other">("image");
 
   const filesQuery = useActionInfiniteQuery({
-    queryKey: ["chat-files", groupId, fileType],
+    queryKey: QUERY_KEYS.chatMessagesFiles(groupId, fileType),
     action: async (pageParam) => {
       return await getChatFilesForGroup({
         groupId,
@@ -65,7 +66,7 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
   useEffect(() => {
     // refresh on fileType change
     queryClient.invalidateQueries({
-      queryKey: ["chat-files", groupId, fileType],
+      queryKey: QUERY_KEYS.chatMessagesFiles(groupId, fileType),
     });
   }, [fileType, groupId, queryClient]);
 
@@ -106,7 +107,7 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
           leftIcon={<FiRefreshCw />}
           onClick={() =>
             queryClient.invalidateQueries({
-              queryKey: ["chat-files", groupId, fileType],
+              queryKey: QUERY_KEYS.chatMessagesFiles(groupId, fileType),
             })
           }
         >
