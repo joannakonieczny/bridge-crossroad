@@ -286,12 +286,6 @@ const groupsPage = {
 
   GroupsGrid: {
     noGroups: "Brak grup do wyświetlenia",
-    menu: {
-      open: "Otwórz",
-      edit: "Edytuj",
-      delete: "Usuń",
-    },
-    imageAlt: "obraz grupy",
   },
 
   Groups: {
