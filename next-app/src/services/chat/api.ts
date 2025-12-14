@@ -9,14 +9,20 @@ import {
   modifyMessage,
   postMessage,
   getMessagesForGroupWithPopulatedSender,
+  getFileMessagesForGroupWithPopulatedSender,
   deleteMessage,
 } from "@/repositories/chat-messages";
-import { sanitizeChatMessage } from "@/sanitizers/server-only/chat-message-sanitize";
+import {
+  sanitizeChatMessage,
+  sanitizeChatMessageWithPopulatedSenderWithoutMessage,
+} from "@/sanitizers/server-only/chat-message-sanitize";
 import { sanitizeChatMessageWithPopulatedSender } from "@/sanitizers/server-only/chat-message-sanitize";
 import {
   addModifyChatMessageSchema,
+  getChatFilesForGroupSchema,
   getMessagesForGroupSchema,
 } from "@/schemas/pages/with-onboarding/chat/chat-schema";
+import { ALLOWED_EXT_IMAGE } from "@/util/constants";
 
 export const postNewMessage = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(addModifyChatMessageSchema))
@@ -63,6 +69,42 @@ export const getMessagesForGroup = withinOwnGroupAction
     return {
       messages: res.messages.map((message) =>
         sanitizeChatMessageWithPopulatedSender(message, {
+          userId: ctx.userId,
+          adminsIds: group.admins.map(toString),
+        })
+      ),
+      nextCursor: res.nextCursor,
+      prevCursor: parsedInput.cursor ?? null,
+      limit: res.limit,
+    };
+  });
+
+export const getChatFilesForGroup = withinOwnGroupAction
+  .inputSchema(async (s) => s.merge(getChatFilesForGroupSchema))
+  .action(async ({ parsedInput, ctx }) => {
+    // build regex from allowed image extensions
+    const imagePattern = Array.from(ALLOWED_EXT_IMAGE)
+      .map((e) => e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      .join("|");
+
+    const fileNameRegex =
+      parsedInput.fileType === "image"
+        ? new RegExp(`\\.(?:${imagePattern})(\\?.*)?$`, "i") // ends with allowed image extensions
+        : new RegExp(`^(?!.*\\.(?:${imagePattern})(\\?.*)?$).+`, "i"); // does not end with allowed image extensions
+
+    const [res, group] = await Promise.all([
+      getFileMessagesForGroupWithPopulatedSender({
+        groupId: ctx.groupId,
+        limit: parsedInput.limit,
+        cursor: parsedInput.cursor,
+        fileNameRegex,
+      }),
+      getGroupById(ctx.groupId),
+    ]);
+
+    return {
+      messages: res.messages.map((message) =>
+        sanitizeChatMessageWithPopulatedSenderWithoutMessage(message, {
           userId: ctx.userId,
           adminsIds: group.admins.map(toString),
         })

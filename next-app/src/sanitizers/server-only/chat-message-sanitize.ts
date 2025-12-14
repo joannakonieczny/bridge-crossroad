@@ -2,8 +2,12 @@ import type { IChatMessageDTO } from "@/models/chat-message/chat-message-types";
 import type {
   ChatMessageSchemaType,
   MessageWithPopulatedSenderType,
+  MessageWithPopulatedSenderTypeWithoutMessage,
 } from "@/schemas/model/chat-message/chat-message-types";
-import type { IChatMessageDTOWithPopulatedSender } from "@/models/mixed-types";
+import type {
+  IChatMessageDTOWithPopulatedSender,
+  IChatMessageDTOWithPopulatedSenderWithoutMessage,
+} from "@/models/mixed-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import { sanitizeMinUserInfo } from "./user-sanitize";
 import { sanitizeFileUrl } from "./common";
@@ -25,10 +29,10 @@ type MappersType = {
   adminsIds: UserIdType[];
 };
 
-export function sanitizeChatMessageWithPopulatedSender(
-  m: IChatMessageDTOWithPopulatedSender,
+export function sanitizeChatMessageWithPopulatedSenderWithoutMessage(
+  m: IChatMessageDTOWithPopulatedSenderWithoutMessage,
   mappers?: MappersType
-): MessageWithPopulatedSenderType {
+): MessageWithPopulatedSenderTypeWithoutMessage {
   const enhancedSender = mappers
     ? {
         ...sanitizeMinUserInfo(m.senderId),
@@ -41,9 +45,18 @@ export function sanitizeChatMessageWithPopulatedSender(
     id: m._id.toString(),
     groupId: m.groupId.toString(),
     sender: enhancedSender,
-    message: m.message,
     fileUrl: sanitizeFileUrl(m.fileUrl),
     createdAt: m.createdAt,
     updatedAt: m.updatedAt,
+  };
+}
+
+export function sanitizeChatMessageWithPopulatedSender(
+  m: IChatMessageDTOWithPopulatedSender,
+  mappers?: MappersType
+): MessageWithPopulatedSenderType {
+  return {
+    ...sanitizeChatMessageWithPopulatedSenderWithoutMessage(m, mappers),
+    message: m.message,
   };
 }

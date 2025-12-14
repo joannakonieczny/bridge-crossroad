@@ -21,3 +21,7 @@ export const getMessagesForGroupSchema = z.object({
     }, z.date())
     .optional(),
 });
+
+export const getChatFilesForGroupSchema = getMessagesForGroupSchema.extend({
+  fileType: z.enum(["image", "other"]).default("other"),
+});
