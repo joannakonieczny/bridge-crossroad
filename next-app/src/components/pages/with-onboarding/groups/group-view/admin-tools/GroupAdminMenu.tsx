@@ -16,7 +16,7 @@ import {
 import { useTranslations } from "@/lib/typed-translations";
 import { useState } from "react";
 import { useDisclosure } from "@chakra-ui/react";
-import AddAdminModal from "./AddAdminModal";
+import AddAdminModal from "./AddRemoveAdminModal";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
 
 type GroupAdminMenuProps = {

@@ -23,7 +23,7 @@ import {
 } from "@/lib/typed-translations";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
-import { addAdminToGroup } from "@/services/groups/api";
+import { promoteMemberToAdmin } from "@/services/groups/api";
 import SelectInput from "@/components/common/form/SelectInput";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { z } from "zod";
@@ -32,7 +32,7 @@ import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import { withEmptyToUndefined } from "@/schemas/common";
 import { getPersonLabel } from "@/util/formatters";
 
-type AddAdminModalProps = {
+type AddRemoveAdminModalProps = {
   isOpen: boolean;
   onClose: () => void;
   mode: "add" | "remove";
@@ -47,11 +47,11 @@ const addAdminSchema = z.object({
 
 type FormValues = z.infer<typeof addAdminSchema>;
 
-export default function AddAdminModal({
+export default function AddRemoveAdminModal({
   isOpen,
   onClose,
   group,
-}: AddAdminModalProps) {
+}: AddRemoveAdminModalProps) {
   const t = useTranslations("pages.GroupsPage.AddRemoveAdminModal");
   const tValidation = useTranslationsWithFallback();
   const toast = useToast();
@@ -66,7 +66,7 @@ export default function AddAdminModal({
   );
 
   const addAdminAction = useActionMutation({
-    action: addAdminToGroup,
+    action: promoteMemberToAdmin,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
       reset();

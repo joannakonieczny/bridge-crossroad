@@ -69,6 +69,21 @@ export async function addAdminToGroup({
   }, session);
 }
 
+export async function removeAdminFromGroup({
+  groupId,
+  userId,
+}: UserAndGroupUpdate) {
+  await dbConnect();
+  const updatedGroup = await Group.findByIdAndUpdate(
+    groupId,
+    {
+      $pull: { admins: userId },
+    },
+    { new: true }
+  ).lean<IGroupDTO>();
+  return check(updatedGroup, "Failed to remove admin from group");
+}
+
 export async function getUserWithGroupsData(userId: UserIdType) {
   await dbConnect();
   // populate groups so user.groups contains full group objects instead of ids

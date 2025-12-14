@@ -1,10 +1,11 @@
 "use server";
 
 import {
-  addAdminToGroup as addAdminToGroupRepo,
+  addAdminToGroup,
   addUserToGroup,
   getGroupOverview,
   getUserWithGroupsData,
+  removeAdminFromGroup,
 } from "@/repositories/user-groups";
 import {
   executeWithinTransaction,
@@ -56,7 +57,7 @@ export const createNewGroup = fullAuthAction
         userId,
         session,
       });
-      const group = await addAdminToGroupRepo({
+      const group = await addAdminToGroup({
         groupId: groupCreated._id.toString(),
         userId,
         session,
@@ -102,14 +103,24 @@ export const addUserToGroupByInvitationCode = fullAuthAction
     return true;
   });
 
-export const addAdminToGroup = withinOwnGroupAsAdminAction
+export const promoteMemberToAdmin = withinOwnGroupAsAdminAction
   .inputSchema(async (s) =>
     s.merge(z.object({ userIdToPromote: idPropSchema }))
   )
   .action(async ({ ctx: { groupId }, parsedInput: { userIdToPromote } }) => {
-    const updatedGroup = await addAdminToGroupRepo({
+    const updatedGroup = await addAdminToGroup({
       groupId,
       userId: userIdToPromote,
+    });
+    return sanitizeGroup(updatedGroup);
+  });
+
+export const demoteAdminToMember = withinOwnGroupAsAdminAction
+  .inputSchema(async (s) => s.merge(z.object({ userIdToDemote: idPropSchema })))
+  .action(async ({ ctx: { groupId }, parsedInput: { userIdToDemote } }) => {
+    const updatedGroup = await removeAdminFromGroup({
+      groupId,
+      userId: userIdToDemote,
     });
     return sanitizeGroup(updatedGroup);
   });
