@@ -10,7 +10,8 @@ import UpcomingEvents from "./UpcomingEvents";
 import Footer from "@/components/common/footer/Footer";
 
 export default function Dashboard() {
-  const showArt = useBreakpointValue({ base: false, md: false, lg: true }) ?? false;
+  const showArt =
+    useBreakpointValue({ base: false, md: false, lg: true }) ?? false;
 
   return (
     <Flex
@@ -19,8 +20,8 @@ export default function Dashboard() {
       gap={{ base: "2rem", lg: "4rem" }}
       flexDirection="column"
     >
-      <Box 
-        flex="1" 
+      <Box
+        flex="1"
         width="100%"
         py={{ base: "2rem", md: "3rem" }}
         px={{ base: "1rem", md: "4rem", lg: "6rem", xl: "10rem" }}

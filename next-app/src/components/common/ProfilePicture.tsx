@@ -1,12 +1,13 @@
 "use client";
 
-import { Flex, Icon, type ResponsiveValue } from "@chakra-ui/react";
+import type { FlexProps } from "@chakra-ui/react";
+import { Flex, Icon } from "@chakra-ui/react";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 
 export type IProfilePictureProps = {
-  size: string | ResponsiveValue<string>;
-  imageUrl?: string; 
+  size: FlexProps["w"] | FlexProps["h"];
+  imageUrl?: string;
 };
 
 export default function ProfilePicture(props: IProfilePictureProps) {
