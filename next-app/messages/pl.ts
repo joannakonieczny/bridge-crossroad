@@ -379,6 +379,9 @@ const groupsPage = {
         downloadButton: "Pobierz",
       },
     },
+    error: {
+      loadFailed: "Nie udało się załadować materiałów.",
+    },
   },
 
   GroupBanner: {

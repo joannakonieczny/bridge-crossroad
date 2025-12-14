@@ -131,6 +131,12 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
         </Flex>
       )}
 
+      {filesQuery.isError && (
+        <Flex justify="center" align="center" py={4}>
+          <Text color="red.500">{t("error.loadFailed")}</Text>
+        </Flex>
+      )}
+
       {fileType === "image" ? (
         <SimpleGrid columns={[2, 3, 4]} spacing={3}>
           {allFiles.map((m) => (
