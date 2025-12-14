@@ -22,7 +22,7 @@ import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import { getChatFilesForGroup } from "@/services/chat/api";
-import { useMemo as useMemoHook, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AsyncImage } from "@/components/common/AsyncImage";
 import {
@@ -70,7 +70,7 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
     });
   }, [fileType, groupId, queryClient]);
 
-  const allFiles = useMemoHook(() => {
+  const allFiles = useMemo(() => {
     if (!filesQuery.data) return [];
     return filesQuery.data.pages.flatMap((p) => p.messages);
   }, [filesQuery.data]);
@@ -171,7 +171,7 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
                 case "pdf":
                   return {
                     colorScheme: "red",
-                    Icon: AiFillFilePdf, // jednoznaczne PDF
+                    Icon: AiFillFilePdf,
                   };
                 case "txt":
                   return {
