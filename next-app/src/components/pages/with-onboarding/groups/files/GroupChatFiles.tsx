@@ -37,13 +37,11 @@ import { useTranslations } from "@/lib/typed-translations";
 import { ImageViewer } from "./ImageViewer";
 import { getFileExtension } from "@/util/helpers";
 
-type GroupChatFilesClientProps = {
+type GroupChatFilesProps = {
   groupId: GroupIdType;
 };
 
-export default function GroupChatFilesClient({
-  groupId,
-}: GroupChatFilesClientProps) {
+export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
   const queryClient = useQueryClient();
   const t = useTranslations("pages.GroupsPage.GroupFiles");
 

@@ -1,5 +1,5 @@
 import type { GroupIdType } from "@/schemas/model/group/group-types";
-import GroupChatFilesClient from "@/components/pages/with-onboarding/groups/files/GroupChatFilesClient";
+import GroupChatFiles from "@/components/pages/with-onboarding/groups/files/GroupChatFiles";
 
 type GroupChatFilesPageProps = {
   params: Promise<{ id: GroupIdType }>;
@@ -10,5 +10,5 @@ export default async function GroupChatFilesPage(
 ) {
   const { id } = await props.params;
 
-  return <GroupChatFilesClient groupId={id} />;
+  return <GroupChatFiles groupId={id} />;
 }
