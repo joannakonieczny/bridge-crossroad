@@ -471,8 +471,12 @@ export async function getLatestEventsForUser({
   }
 
   // find the latest k events from user's groups, sorted by start date descending
+  const now = new Date();
   const events = check(
-    await Event.find({ group: { $in: groupIds } })
+    await Event.find({
+      group: { $in: groupIds },
+      "duration.endsAt": { $gte: now },
+    })
       .sort({ "duration.startsAt": -1 })
       .limit(limit)
       .lean<IEventDTO[]>(),
