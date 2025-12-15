@@ -168,6 +168,7 @@ export async function updateEvent({
       );
     }
 
+    // without type because we skipping it in the update
     const optionalsFromDataFiels = (() => {
       const d = changes.data;
       switch (d.type) {
@@ -183,12 +184,14 @@ export async function updateEvent({
             tournamentType: d.tournamentType,
             session: d.session.map((s) => ({
               opponentTeamName: s.opponentTeamName,
+              contestants: s.contestants,
             })),
           };
         }
         case EventType.TRAINING: {
           return {
             coach: d.coach,
+            topic: d.topic,
           };
         }
       }
@@ -199,7 +202,13 @@ export async function updateEvent({
       additionalDescription: changes.additionalDescription,
       location: changes.location,
       imageUrl: changes.imageUrl,
-      data: optionalsFromDataFiels,
+      data: {
+        type: existingEvent.data.type,
+        ...optionalsFromDataFiels,
+      },
+      duration: changes.duration,
+      title: changes.title,
+      organizer: changes.organizer,
     };
 
     const update = buildSetUnsetDeep(optionalsBase);
