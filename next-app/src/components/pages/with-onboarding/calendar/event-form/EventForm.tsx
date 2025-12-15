@@ -158,7 +158,7 @@ export default function EventForm({
   const steps = [
     {
       title: t("steps.primary"),
-      content: PrimaryInfoStep,
+      content: () => <PrimaryInfoStep isModifyMode={isModifyMode} />,
       validate: validatePrimaryInfoStep,
     },
     {
