@@ -48,32 +48,32 @@ export const addEventSchema = z.object({
   ]),
 });
 
-export const modifyEventSchema = z
-  .object({
-    title: titleSchema,
-    description: descriptionSchema.optional(),
-    location: locationSchema.optional(),
-    organizer: idPropSchema,
-    duration: durationSchema,
-    additionalDescription: additionalDescriptionSchema.optional(),
-    imageUrl: filePathSchema.optional(),
-    data: z.discriminatedUnion("type", [
-      z.object({
-        type: z.literal(EventType.TOURNAMENT_PAIRS),
-        arbiter: idPropSchema.optional(),
-        tournamentType: z.nativeEnum(TournamentType).optional(),
-      }),
-      z.object({
-        type: z.literal(EventType.TOURNAMENT_TEAMS),
-        arbiter: idPropSchema.optional(),
-        tournamentType: z.nativeEnum(TournamentType).optional(),
-      }),
-      leagueMeetingDataSchema,
-      trainingDataSchema,
-      otherDataSchema,
-    ]),
-  })
-  .partial();
+export const modifyEventSchema = z.object({
+  title: titleSchema,
+  description: descriptionSchema.optional(),
+  location: locationSchema.optional(),
+  organizer: idPropSchemaM(
+    "validation.model.event.organizer.required" satisfies TKey
+  ),
+  duration: durationSchema,
+  additionalDescription: additionalDescriptionSchema.optional(),
+  imageUrl: filePathSchema.optional(),
+  data: z.discriminatedUnion("type", [
+    z.object({
+      type: z.literal(EventType.TOURNAMENT_PAIRS),
+      arbiter: idPropSchema.optional(),
+      tournamentType: z.nativeEnum(TournamentType).optional(),
+    }),
+    z.object({
+      type: z.literal(EventType.TOURNAMENT_TEAMS),
+      arbiter: idPropSchema.optional(),
+      tournamentType: z.nativeEnum(TournamentType).optional(),
+    }),
+    leagueMeetingDataSchema,
+    trainingDataSchema,
+    otherDataSchema,
+  ]),
+});
 
 export const timeWindowSchema = z
   .object({

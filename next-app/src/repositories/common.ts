@@ -126,3 +126,52 @@ export function onDuplicateKey(error: unknown) {
 export type WithSession = {
   session?: mongoose.ClientSession;
 };
+
+export function buildSetUnsetDeep(obj: unknown, prefix = "") {
+  const $set: Record<string, unknown> = {};
+  const $unset: Record<string, ""> = {};
+
+  const process = (value: unknown, path: string) => {
+    if (value === undefined) {
+      $unset[path] = "";
+    } else if (value === null || value instanceof Date) {
+      // null i Date → traktujemy jako wartość
+      $set[path] = value;
+    } else if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        if (
+          item &&
+          typeof item === "object" &&
+          !Array.isArray(item) &&
+          !(item instanceof Date)
+        ) {
+          // Obiekt w tablicy → rekurencyjnie
+          const nested = buildSetUnsetDeep(item, `${path}.${index}`);
+          Object.assign($set, nested.$set);
+          Object.assign($unset, nested.$unset);
+        } else {
+          // Prymityw lub Date → ustawiamy całą tablicę
+          $set[path] = value;
+        }
+      });
+      if (value.length === 0) {
+        $set[path] = [];
+      }
+    } else if (typeof value === "object") {
+      // zwykły obiekt → rekurencyjnie
+      const nested = buildSetUnsetDeep(value, path);
+      Object.assign($set, nested.$set);
+      Object.assign($unset, nested.$unset);
+    } else {
+      // wartość prymitywna
+      $set[path] = value;
+    }
+  };
+
+  for (const [key, val] of Object.entries(obj as Record<string, unknown>)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    process(val, path);
+  }
+
+  return { $set, $unset };
+}

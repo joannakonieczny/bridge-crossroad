@@ -6,7 +6,12 @@ import Group from "@/models/group/group-model";
 import User from "@/models/user/user-model";
 import { UserTableName } from "@/models/user/user-types";
 import { GroupTableName } from "@/models/group/group-types";
-import { executeWithinTransaction, check, checkTrue } from "./common";
+import {
+  executeWithinTransaction,
+  check,
+  checkTrue,
+  buildSetUnsetDeep,
+} from "./common";
 import type { IUserDTO } from "@/models/user/user-types";
 import type { FilterQuery } from "mongoose";
 import type { IGroupDTO } from "@/models/group/group-types";
@@ -125,7 +130,7 @@ export async function removeEvent({
 type UpdateEventInput = {
   groupId: GroupIdType;
   eventId: EventIdType;
-  changes: Partial<ModifyEventSchemaType>;
+  changes: ModifyEventSchemaType;
 };
 
 export async function updateEvent({
@@ -163,12 +168,48 @@ export async function updateEvent({
       );
     }
 
+    const optionalsFromDataFiels = (() => {
+      const d = changes.data;
+      switch (d.type) {
+        case EventType.TOURNAMENT_TEAMS:
+        case EventType.TOURNAMENT_PAIRS: {
+          return {
+            tournamentType: d.tournamentType,
+            arbiter: d.arbiter,
+          };
+        }
+        case EventType.LEAGUE_MEETING: {
+          return {
+            tournamentType: d.tournamentType,
+            session: d.session.map((s) => ({
+              opponentTeamName: s.opponentTeamName,
+            })),
+          };
+        }
+        case EventType.TRAINING: {
+          return {
+            coach: d.coach,
+          };
+        }
+      }
+    })();
+
+    const optionalsBase = {
+      description: changes.description,
+      additionalDescription: changes.additionalDescription,
+      location: changes.location,
+      imageUrl: changes.imageUrl,
+      data: optionalsFromDataFiels,
+    };
+
+    const update = buildSetUnsetDeep(optionalsBase);
+
     const updated = check(
-      await Event.findByIdAndUpdate(
-        eventId,
-        { $set: changes },
-        { new: true, session: s, runValidators: true }
-      ).lean<IEventDTO>(),
+      await Event.findByIdAndUpdate(eventId, update, {
+        new: true,
+        session: s,
+        runValidators: true,
+      }).lean<IEventDTO>(),
       `Failed to update event with id: ${eventId}`
     );
 
