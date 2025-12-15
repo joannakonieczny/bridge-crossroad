@@ -81,7 +81,7 @@ export const createNewGroup = fullAuthAction
 
 export const modifyGroupData = withinOwnGroupAsAdminAction
   .inputSchema(async (s) => s.merge(createModifyGroupFormSchema))
-  .action(({ parsedInput: groupData, ctx: { groupId } }) =>
+  .action(async ({ parsedInput: groupData, ctx: { groupId } }) =>
     modifyGroup({ ...groupData, id: groupId })
       .then((updatedGroup) => sanitizeGroup(updatedGroup))
       .catch((err) => {

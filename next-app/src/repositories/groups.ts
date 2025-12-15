@@ -63,12 +63,28 @@ export async function createGroup(data: CreateGroupData, isMain = false) {
 
 export async function modifyGroup(data: CreateGroupData & { id: GroupIdType }) {
   await dbConnect();
-  const updatedGroup = await Group.findByIdAndUpdate(
-    data.id,
-    { $set: data },
-    {
-      new: true,
-    }
-  ).lean<IGroupDTO>();
+
+  const update = {
+    $set: Object.fromEntries(
+      Object.entries({
+        name: data.name,
+        description: data.description,
+        imageUrl: data.imageUrl,
+      }).filter(([, value]) => value !== undefined)
+    ),
+
+    $unset: Object.fromEntries(
+      Object.entries({
+        description: data.description,
+        imageUrl: data.imageUrl,
+      })
+        .filter(([, value]) => value === undefined)
+        .map(([key]) => [key, ""])
+    ),
+  };
+
+  const updatedGroup = await Group.findByIdAndUpdate(data.id, update, {
+    new: true,
+  }).lean<IGroupDTO>();
   return check(updatedGroup, "Failed to update group");
 }
