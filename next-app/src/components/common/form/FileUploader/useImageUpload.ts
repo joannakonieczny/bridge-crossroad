@@ -16,14 +16,13 @@ type UploadImageParams = {
       error: { title: string };
     };
   };
-  previewUrl?: string;
 };
 
 export function useImageUpload(p: UploadImageParams) {
   const toast = useToast();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(p.previewUrl || null);
-  const [fileName, setFileName] = useState<string | null>(p.previewUrl || null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const uploadImageMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -93,7 +92,7 @@ export function useImageUpload(p: UploadImageParams) {
   const setInitialPreview = (url: string) => {
     setSelectedImage(null);
     setPreview(url);
-    setFileName(null);
+    setFileName(url);
   };
 
   return {

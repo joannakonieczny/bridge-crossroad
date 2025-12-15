@@ -66,13 +66,12 @@ export function CreateModifyGroupModal({
   const queryClient = useQueryClient();
   const isModifyMode = mode === "modify";
 
-  console.log("Initial data:", initialData);
-
   const {
     selectedImage,
     uploadImage,
     resetImage,
     handleImageChange,
+    setInitialPreview,
     isUploading,
     isError: isUploadError,
     preview,
@@ -85,7 +84,6 @@ export function CreateModifyGroupModal({
         error: { title: t("imageToast.error") },
       },
     },
-    previewUrl: initialData?.imageUrl,
   });
 
   const { handleSubmit, control, setError, reset, setValue } = useForm({
@@ -96,7 +94,18 @@ export function CreateModifyGroupModal({
   useEffect(() => {
     if (isModifyMode && initialData) {
       reset(initialData);
+      // Set initial image preview if exists
+      if (initialData.imageUrl) {
+        setInitialPreview(initialData.imageUrl);
+      } else {
+        resetImage();
+      }
+    } else if (!isModifyMode) {
+      // Reset for create mode
+      reset({ name: "", description: "", imageUrl: "" });
+      resetImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModifyMode, initialData, reset]);
 
   const groupAction = useActionMutation({
@@ -119,9 +128,7 @@ export function CreateModifyGroupModal({
   });
 
   const onSubmit = async (data: CreateGroupFormType) => {
-    console.log("Submitting data:", data);
     const uploadedPath = await uploadImage();
-    console.log("Uploaded path:", uploadedPath, selectedImage);
 
     // check upload error
     if (selectedImage && !uploadedPath) return;
@@ -130,8 +137,6 @@ export function CreateModifyGroupModal({
       setValue("imageUrl", uploadedPath);
       data.imageUrl = uploadedPath;
     }
-
-    console.log("Submitting data2:", data);
 
     const promise =
       isModifyMode && groupId
