@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
-import { AddGroupModal } from "./AddGroupModal";
+import { CreateModifyGroupModal } from "./CreateModifyGroupModal";
 import { useState } from "react";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { addUserToGroupByInvitationCode } from "@/services/groups/api";
@@ -56,7 +56,7 @@ export default function Groups() {
   return (
     <>
       {/* Modal grupy */}
-      <AddGroupModal
+      <CreateModifyGroupModal
         isOpen={modalControl.isOpen}
         onClose={modalControl.onClose}
       />

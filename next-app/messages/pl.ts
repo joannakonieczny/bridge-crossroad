@@ -249,8 +249,25 @@ const landingPage = {
 };
 
 const groupsPage = {
-  AddGroupModal: {
-    header: "Dodaj grupę",
+  AddModifyGroupModal: {
+    create: {
+      header: "Dodaj nową grupę",
+      toast: {
+        loading: "Tworzenie grupy...",
+        success: "Utworzono grupę!",
+        errorDefault: "Wystąpił błąd podczas tworzenia grupy",
+      },
+      submitButton: "Utwórz",
+    },
+    modify: {
+      header: "Zmodyfikuj dane grupy",
+      toast: {
+        loading: "Modyfikowanie danych grupy...",
+        success: "Zmieniono dane grupy!",
+        errorDefault: "Wystąpił błąd podczas modyfikowania danych grupy",
+      },
+      submitButton: "Zmodyfikuj",
+    },
     form: {
       name: {
         placeholder: "Nazwa grupy",
@@ -267,20 +284,11 @@ const groupsPage = {
           "Nie udało się przesłać zdjęcia, spróbuj ponownie lub usuń je.",
       },
     },
-    submitButton: "Utwórz",
     cancelButton: "Anuluj",
     imageToast: {
       loading: "Przesyłanie zdjęcia...",
       success: "Zdjęcie zostało przesłane!",
       error: "Nie udało się przesłać zdjęcia",
-    },
-    toast: {
-      loading: "Tworzenie grupy...",
-      success: "Utworzono grupę!",
-      errorDefault: "Wystąpił błąd podczas tworzenia grupy",
-      errorNameExists: "Grupa o takiej nazwie już istnieje",
-      errorInvalidData: "Nieprawidłowe dane. Sprawdź pola formularza",
-      errorUnknown: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później",
     },
   },
 
@@ -389,7 +397,6 @@ const groupsPage = {
         editGroup: "Edytuj grupę",
         addAdmin: "Dodaj administratora",
         removeAdmin: "Usuń administratora",
-        addMember: "Dodaj członka",
       },
       menuLabel: "Narzędzia administratora",
     },
