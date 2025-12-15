@@ -657,21 +657,32 @@ const onboardingPageValidation = {
 };
 
 const eventForm = {
-  header: "Dodaj wydarzenie",
+  create: {
+    toast: {
+      loading: "Trwa dodawanie wydarzenia...",
+      success: "Wydarzenie zostało dodane!",
+      errorDefault: "Wystąpił błąd podczas dodawania wydarzenia",
+    },
+    header: "Dodaj wydarzenie",
+    submitButton: "Dodaj wydarzenie",
+  },
+  modify: {
+    toast: {
+      loading: "Trwa modyfikowanie wydarzenia...",
+      success: "Wydarzenie zostało zmodyfikowane!",
+      errorDefault: "Wystąpił błąd podczas modyfikowania wydarzenia",
+    },
+    header: "Modyfikuj wydarzenie",
+    submitButton: "Zapisz zmiany",
+  },
   buttons: {
     prev: "Cofnij",
     next: "Dalej",
-    submit: "Dodaj wydarzenie",
   },
   imageToast: {
     loading: "Przesyłanie zdjęcia...",
     success: "Zdjęcie zostało przesłane!",
     error: "Nie udało się przesłać zdjęcia",
-  },
-  toast: {
-    loading: "Trwa dodawanie wydarzenia...",
-    success: "Wydarzenie zostało dodane!",
-    errorDefault: "Wystąpił błąd podczas dodawania wydarzenia",
   },
   steps: {
     primary: "Podstawowe informacje",

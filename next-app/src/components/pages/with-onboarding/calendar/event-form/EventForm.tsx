@@ -36,37 +36,58 @@ import {
 import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
-import { createEvent } from "@/services/events/api";
-import type {
-  ActionInput,
-  MutationOrQuerryError,
-} from "@/lib/tanstack-action/types";
+import { createEvent, updateEvent } from "@/services/events/api";
+import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 import { useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/queries";
 import { EventType } from "@/club-preset/event-type";
 import { withEmptyToUndefined } from "@/schemas/common";
 import dayjs from "dayjs";
+import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
+import { useEffect } from "react";
 
 type EventFormProps = {
   isOpen: boolean;
   onClose: () => void;
+  mode?: "create" | "modify";
+  eventId?: string;
+  groupId?: string;
+  initialData?: AddEventSchemaType;
 };
 
-export default function EventForm({ isOpen, onClose }: EventFormProps) {
+type EventActionInput =
+  | {
+      mode: "create";
+      data: AddEventSchemaType & { groupId: string };
+    }
+  | {
+      mode: "modify";
+      data: { eventId: string; groupId: string; changes: AddEventSchemaType };
+    };
+
+export default function EventForm({
+  isOpen,
+  onClose,
+  mode = "create",
+  eventId,
+  groupId,
+  initialData,
+}: EventFormProps) {
+  const isModifyMode = mode === "modify";
+
   const form = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: zodResolver(withEmptyToUndefined(addEventSchema)),
-    defaultValues: {
+    defaultValues: initialData || {
       title: "",
       description: "",
       location: "",
-      group: "",
+      group: groupId || "",
       organizer: "",
       duration: {
         startsAt: new Date(),
@@ -96,8 +117,11 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     uploadImage,
     resetImage,
     handleImageChange,
+    setInitialPreview,
     isUploading,
     isError: isUploadError,
+    preview,
+    fileName,
   } = useImageUpload({
     text: {
       toast: {
@@ -107,6 +131,21 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
       },
     },
   });
+
+  useEffect(() => {
+    if (isModifyMode && initialData) {
+      form.reset(initialData);
+      if (initialData.imageUrl) {
+        setInitialPreview(initialData.imageUrl);
+      } else {
+        resetImage();
+      }
+    } else if (!isModifyMode) {
+      form.reset();
+      resetImage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModifyMode, initialData, form.reset]);
 
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
@@ -133,34 +172,59 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     },
   ];
 
-  const createEventAction = useActionMutation({
-    action: createEvent,
-    onSuccess: (d) => {
+  const eventAction = useActionMutation({
+    action: ({ mode, data }: EventActionInput) => {
+      if (mode === "create") {
+        return createEvent(data);
+      }
+      return updateEvent(data);
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.calendarEvents(
-          d.duration.startsAt,
-          d.duration.endsAt
-        ),
+        queryKey: ["event"],
       });
       onCloseWithReset();
     },
   });
 
-  async function handleWithToast(data: ActionInput<typeof createEvent>) {
+  async function handleWithToast(data: AddEventSchemaType) {
     const uploadedPath = await uploadImage();
 
     // Check upload error
     if (selectedImage && !uploadedPath) return;
 
-    const eventData = { ...data, imageUrl: uploadedPath, groupId: data.group };
+    const eventData =
+      selectedImage && uploadedPath
+        ? { ...data, imageUrl: uploadedPath }
+        : data;
 
-    const promise = createEventAction.mutateAsync(eventData);
+    const promise =
+      isModifyMode && eventId && groupId
+        ? eventAction.mutateAsync({
+            mode: "modify",
+            data: { eventId, groupId, changes: eventData },
+          })
+        : eventAction.mutateAsync({
+            mode: "create",
+            data: { ...eventData, groupId: data.group },
+          });
+
     toast.promise(promise, {
-      loading: { title: t("toast.loading") },
-      success: { title: t("toast.success") },
-      error: (err: MutationOrQuerryError<typeof createEvent>) => {
+      loading: {
+        title: isModifyMode
+          ? t("modify.toast.loading")
+          : t("create.toast.loading"),
+      },
+      success: {
+        title: isModifyMode
+          ? t("modify.toast.success")
+          : t("create.toast.success"),
+      },
+      error: (err: MutationOrQuerryError<typeof eventAction>) => {
         const errKey = getMessageKeyFromError(err, {
-          fallbackKey: "pages.EventFormPage.toast.errorDefault",
+          fallbackKey: isModifyMode
+            ? "pages.EventFormPage.modify.toast.errorDefault"
+            : "pages.EventFormPage.create.toast.errorDefault",
         });
         return { title: tValidation(errKey) };
       },
@@ -174,16 +238,14 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
     <Modal isOpen={isOpen} onClose={onCloseWithReset} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t("header")}</ModalHeader>
+        <ModalHeader>
+          {isModifyMode ? t("modify.header") : t("create.header")}
+        </ModalHeader>
         <ModalCloseButton />
         <Divider />
         <ModalBody>
           <FormProvider {...form}>
-            <form
-              onSubmit={form.handleSubmit((d) =>
-                handleWithToast({ ...d, groupId: d.group })
-              )}
-            >
+            <form onSubmit={form.handleSubmit((d) => handleWithToast(d))}>
               <FormLabel htmlFor="title">{steps[activeStep].title}</FormLabel>
               <Box position="relative">
                 <Stepper size="lg" index={activeStep} colorScheme="accent">
@@ -207,6 +269,8 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                   genericFileType="image"
                   onChange={handleImageChange}
                   isUploadError={isUploadError}
+                  value={preview || undefined}
+                  fileName={fileName || undefined}
                   text={{
                     label: t("primaryInfoStep.image.label"),
                     additionalLabel: t("primaryInfoStep.image.additionalLabel"),
@@ -228,7 +292,11 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                     : undefined
                 }
                 nextButton={{
-                  text: isLastStep ? t("buttons.submit") : t("buttons.next"),
+                  text: isLastStep
+                    ? isModifyMode
+                      ? t("modify.submitButton")
+                      : t("create.submitButton")
+                    : t("buttons.next"),
                   onClick: !isLastStep
                     ? async () => {
                         const currentStepValidate = steps[activeStep].validate;
@@ -241,9 +309,7 @@ export default function EventForm({ isOpen, onClose }: EventFormProps) {
                         }
                       }
                     : async () => {
-                        form.handleSubmit((d) =>
-                          handleWithToast({ ...d, groupId: d.group })
-                        )();
+                        form.handleSubmit((d) => handleWithToast(d))();
                       },
                   onElementProps: {
                     isLoading: isLastStep ? isUploading : false,
