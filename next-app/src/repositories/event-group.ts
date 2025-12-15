@@ -6,20 +6,17 @@ import Group from "@/models/group/group-model";
 import User from "@/models/user/user-model";
 import { UserTableName } from "@/models/user/user-types";
 import { GroupTableName } from "@/models/group/group-types";
-import {
-  executeWithinTransaction,
-  check,
-  checkTrue,
-  buildSetUnsetDeep,
-} from "./common";
+import { executeWithinTransaction, check, checkTrue } from "./common";
 import type { IUserDTO } from "@/models/user/user-types";
 import type { FilterQuery } from "mongoose";
 import type { IGroupDTO } from "@/models/group/group-types";
 import type { WithSession } from "./common";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
 import type {
+  ILeagueMeetingData,
   ITournamentPairsData,
   ITournamentTeamsData,
+  ITrainingData,
 } from "@/models/event/event-types";
 import type {
   EventIdType,
@@ -168,19 +165,37 @@ export async function updateEvent({
       );
     }
 
+    checkTrue(
+      changes.data.type === existingEvent.data.type,
+      "Event type cannot be changed"
+    );
+
     // without type because we skipping it in the update
     const optionalsFromDataFiels = (() => {
       const d = changes.data;
       switch (d.type) {
-        case EventType.TOURNAMENT_TEAMS:
-        case EventType.TOURNAMENT_PAIRS: {
+        case EventType.TOURNAMENT_TEAMS: {
+          const e = existingEvent.data as ITournamentTeamsData;
           return {
+            type: e.type,
+            teams: e.teams,
+            tournamentType: d.tournamentType,
+            arbiter: d.arbiter,
+          };
+        }
+        case EventType.TOURNAMENT_PAIRS: {
+          const e = existingEvent.data as ITournamentPairsData;
+          return {
+            type: e.type,
+            contestantsPairs: e.contestantsPairs,
             tournamentType: d.tournamentType,
             arbiter: d.arbiter,
           };
         }
         case EventType.LEAGUE_MEETING: {
+          const e = existingEvent.data as ILeagueMeetingData;
           return {
+            type: e.type,
             tournamentType: d.tournamentType,
             session: d.session.map((s) => ({
               opponentTeamName: s.opponentTeamName,
@@ -189,9 +204,16 @@ export async function updateEvent({
           };
         }
         case EventType.TRAINING: {
+          const e = existingEvent.data as ITrainingData;
           return {
+            type: e.type,
             coach: d.coach,
             topic: d.topic,
+          };
+        }
+        case EventType.OTHER: {
+          return {
+            ...existingEvent.data,
           };
         }
       }
@@ -202,23 +224,33 @@ export async function updateEvent({
       additionalDescription: changes.additionalDescription,
       location: changes.location,
       imageUrl: changes.imageUrl,
-      data: {
-        type: existingEvent.data.type,
-        ...optionalsFromDataFiels,
-      },
+      data: optionalsFromDataFiels,
       duration: changes.duration,
       title: changes.title,
       organizer: changes.organizer,
     };
 
-    const update = buildSetUnsetDeep(optionalsBase);
-
     const updated = check(
-      await Event.findByIdAndUpdate(eventId, update, {
-        new: true,
-        session: s,
-        runValidators: true,
-      }).lean<IEventDTO>(),
+      await Event.findByIdAndUpdate(
+        eventId,
+        {
+          $set: Object.fromEntries(
+            Object.entries(optionalsBase).filter(
+              ([, value]) => value !== undefined
+            )
+          ),
+          $unset: Object.fromEntries(
+            Object.entries(optionalsBase)
+              .filter(([, value]) => value === undefined)
+              .map(([key]) => [key, ""])
+          ),
+        },
+        {
+          new: true,
+          session: s,
+          runValidators: true,
+        }
+      ).lean<IEventDTO>(),
       `Failed to update event with id: ${eventId}`
     );
 
