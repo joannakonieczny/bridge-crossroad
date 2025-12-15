@@ -75,9 +75,6 @@ export default function GroupAdminMenu({ group }: GroupAdminMenuProps) {
           >
             {t("admin.menu.removeAdmin")}
           </MenuItem>
-          <MenuItem icon={<Icon as={FiUserPlus} color="green.500" />}>
-            {t("admin.menu.addMember")}
-          </MenuItem>
         </MenuList>
       </Menu>
 

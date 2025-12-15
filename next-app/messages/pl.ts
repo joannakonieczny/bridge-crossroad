@@ -397,7 +397,6 @@ const groupsPage = {
         editGroup: "Edytuj grupę",
         addAdmin: "Dodaj administratora",
         removeAdmin: "Usuń administratora",
-        addMember: "Dodaj członka",
       },
       menuLabel: "Narzędzia administratora",
     },
