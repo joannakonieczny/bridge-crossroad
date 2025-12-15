@@ -11,6 +11,7 @@ import {
   Wrap,
   WrapItem,
   Tag,
+  HStack,
 } from "@chakra-ui/react";
 import GroupAdminMenu from "./admin-tools/GroupAdminMenu";
 import { useTranslations } from "@/lib/typed-translations";
@@ -70,7 +71,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
         {/* IMAGE */}
         <Flex
-          w={{ base: "100%", md: "14rem" }}
+          w={{ base: "100%", md: "10rem", lg: "14rem" }}
           h="12rem"
           borderRadius="lg"
           overflow="hidden"
@@ -87,14 +88,11 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
 
         {/* CONTENT */}
         <Flex direction="column" flex="1" minW={0}>
-          <Flex justify="space-between" align="start">
-            <ResponsiveHeading
-              fontSize="xl"
-              text={group.name || t("fallback.name")}
-              showBar={false}
-            />
-            {group.isAdmin && <GroupAdminMenu group={group} />}
-          </Flex>
+          <ResponsiveHeading
+            fontSize="xl"
+            text={group.name || t("fallback.name")}
+            showBar={false}
+          />
 
           <Text color="muted" mt={2} noOfLines={3}>
             {group.description || t("fallback.description")}
@@ -146,6 +144,9 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
           </Box>
         </Flex>
       </Flex>
+      <HStack pt="1rem">
+        {group.isAdmin && <GroupAdminMenu group={group} />}
+      </HStack>
     </Box>
   );
 }
