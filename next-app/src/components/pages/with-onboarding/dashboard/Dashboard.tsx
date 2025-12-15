@@ -26,30 +26,41 @@ export default function Dashboard() {
         py={{ base: "2rem", md: "3rem" }}
         px={{ base: "1rem", md: "4rem", lg: "6rem", xl: "10rem" }}
       >
-        <Grid
-          templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
-          gap={{ base: "2rem", lg: "4rem" }}
-          alignItems="start"
-          width="100%"
-        >
-          <VStack align="start" width="100%" spacing="2rem">
-            <ProfileBanner />
-            <InfoTable />
-            <PastContests />
-          </VStack>
+        <VStack spacing={{ base: "2rem", lg: "4rem" }} width="100%">
+          {/* Górna sekcja: ProfileBanner + InfoTable | SVG */}
+          <Grid
+            templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+            gap={{ base: "2rem", lg: "4rem" }}
+            alignItems="stretch"
+            width="100%"
+          >
+            <VStack align="start" width="100%" spacing="2rem">
+              <ProfileBanner />
+              <InfoTable />
+            </VStack>
 
-          <VStack align="end" width="100%" spacing="2rem">
             {showArt && (
-              <ChakraSVG
-                svg={SplashArtSVG}
-                width="100%"
-                height={"42rem"}
-                aria-label="Splash Art Right"
-              />
+              <Box height="100%">
+                <ChakraSVG
+                  svg={SplashArtSVG}
+                  height="100%"
+                  aria-label="Splash Art Right"
+                />
+              </Box>
             )}
+          </Grid>
+
+          {/* Dolna sekcja: PastContests | UpcomingEvents */}
+          <Grid
+            templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+            gap={{ base: "2rem", lg: "4rem" }}
+            alignItems="start"
+            width="100%"
+          >
+            <PastContests />
             <UpcomingEvents />
-          </VStack>
-        </Grid>
+          </Grid>
+        </VStack>
       </Box>
       <Footer />
     </Flex>

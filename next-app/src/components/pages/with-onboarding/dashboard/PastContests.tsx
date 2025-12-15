@@ -47,7 +47,7 @@ export default function PastContests() {
     .slice(0, MAX_ITEMS);
 
   return (
-    <VStack mt="5" width="100%" align="start">
+    <VStack width="100%" align="start">
       <ResponsiveHeading
         text={t("headings.lastTournaments")}
         fontSize="xl"
