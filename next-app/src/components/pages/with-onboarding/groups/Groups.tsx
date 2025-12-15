@@ -8,6 +8,7 @@ import {
   Input,
   useToast,
   useDisclosure,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
@@ -79,7 +80,7 @@ export default function Groups() {
             justify={{ base: "stretch", md: "space-between" }}
             align={{ base: "stretch", md: "center" }}
             width="100%"
-            backgroundColor="bg"
+            backgroundColor={useColorModeValue("bg", "neutral.100")}
             padding="0.5rem"
             mb={4}
           >

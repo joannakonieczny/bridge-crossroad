@@ -9,6 +9,7 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useJoinedGroupsQuery } from "@/lib/queries";
 import { useQueryStates, parseAsString } from "nuqs";
@@ -63,7 +64,7 @@ export default function FiltersBar() {
   }, [filters, mainGroupId, setFilters]);
 
   return (
-    <Box bg="bg" p={4} borderRadius="md">
+    <Box bg={useColorModeValue("bg", "neutral.100")} p={4} borderRadius="md">
       <Grid
         gap={3}
         alignItems="center"

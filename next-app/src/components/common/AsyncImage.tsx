@@ -1,13 +1,15 @@
 "use client";
 
-import { Image, Skeleton, Box } from "@chakra-ui/react";
+import { Image, Skeleton, Box, useColorModeValue } from "@chakra-ui/react";
 import { useState } from "react";
 import { ChakraSVG } from "../chakra-config/ChakraSVG";
 import LandscapePlaceholder from "@/assets/fallbacks/landscape-placeholder.svg";
+import LandscapePlaceholderDark from "@/assets/fallbacks/landscape-placeholder-dark.svg";
 import type { ImageProps } from "@chakra-ui/react";
 
 export function AsyncImage(imageProps: ImageProps) {
   const [loading, setLoading] = useState(() => !!imageProps.src);
+  const placeholderSvg = useColorModeValue(LandscapePlaceholder, LandscapePlaceholderDark);
 
   const FallbackComponent = () => (
     <Box
@@ -18,7 +20,7 @@ export function AsyncImage(imageProps: ImageProps) {
       alignItems="center"
       justifyContent="center"
     >
-      <ChakraSVG svg={LandscapePlaceholder} w="100%" h="100%" />
+      <ChakraSVG svg={placeholderSvg} w="100%" h="100%" />
     </Box>
   );
 

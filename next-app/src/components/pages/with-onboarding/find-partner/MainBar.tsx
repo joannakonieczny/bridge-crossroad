@@ -1,5 +1,5 @@
 import React, { type ChangeEvent, useState } from "react";
-import { Box, HStack } from "@chakra-ui/react";
+import { Box, HStack, useColorModeValue } from "@chakra-ui/react";
 import SearchInput from "@/components/common/SearchInput";
 import { useTranslations } from "@/lib/typed-translations";
 import PartnershipForm from "@/components/pages/with-onboarding/find-partner/PartnershipForm";
@@ -9,7 +9,7 @@ export default function MainBar() {
   const [query, setQuery] = useState(""); //Still mocked
 
   return (
-    <Box bg="bg" p={4} borderRadius="md">
+    <Box bg={useColorModeValue("bg", "neutral.100")} p={4} borderRadius="md">
       <HStack spacing={4}>
         <Box flex={1}>
           <SearchInput

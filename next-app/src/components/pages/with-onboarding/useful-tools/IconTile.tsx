@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Text, Button, Icon, VStack, Link } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Icon, VStack, Link, useColorModeValue } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import { FaGreaterThan } from "react-icons/fa";
 import type { IconType } from "react-icons";
@@ -30,7 +30,7 @@ export function Tile({
       w="full"
       maxW={{ base: "full", md: "70rem" }}
       mx="auto"
-      bg="bg"
+      bg={useColorModeValue("bg", "neutral.100")}
     >
       <Flex
         direction={{ base: "column", md: "row" }}
