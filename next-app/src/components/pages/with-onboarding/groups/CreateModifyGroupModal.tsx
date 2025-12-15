@@ -22,7 +22,7 @@ import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import FormMainButton from "@/components/common/form/FormMainButton";
 import { createModifyGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
-import { createNewGroup } from "@/services/groups/api";
+import { createNewGroup, modifyGroupData } from "@/services/groups/api";
 import {
   useTranslations,
   useTranslationsWithFallback,
@@ -32,18 +32,39 @@ import { QUERY_KEYS } from "@/lib/queries";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
 import type { CreateGroupFormType } from "@/schemas/pages/with-onboarding/groups/groups-types";
 import { withEmptyToUndefined } from "@/schemas/common";
+import { useEffect } from "react";
 
-type AddGroupModalProps = {
+type CreateModifyGroupModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  mode?: "create" | "modify";
+  groupId?: string;
+  initialData?: CreateGroupFormType;
 };
 
-export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
+type GroupActionInput =
+  | {
+      mode: "create";
+      data: CreateGroupFormType;
+    }
+  | {
+      mode: "modify";
+      data: CreateGroupFormType & { groupId: string };
+    };
+
+export function CreateModifyGroupModal({
+  isOpen,
+  onClose,
+  mode = "create",
+  groupId,
+  initialData,
+}: CreateModifyGroupModalProps) {
   const toast = useToast();
-  const t = useTranslations("pages.GroupsPage.AddGroupModal");
+  const t = useTranslations("pages.GroupsPage.AddModifyGroupModal");
   const tValidation = useTranslationsWithFallback();
 
   const queryClient = useQueryClient();
+  const isModifyMode = mode === "modify";
 
   const {
     selectedImage,
@@ -64,15 +85,26 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
 
   const { handleSubmit, control, setError, reset, setValue } = useForm({
     resolver: zodResolver(withEmptyToUndefined(createModifyGroupFormSchema)),
-    defaultValues: {
+    defaultValues: initialData || {
       name: "",
       description: "",
       imageUrl: "",
     },
   });
 
-  const createGroupAction = useActionMutation({
-    action: createNewGroup,
+  useEffect(() => {
+    if (isModifyMode && initialData) {
+      reset(initialData);
+    }
+  }, [isModifyMode, initialData, reset]);
+
+  const groupAction = useActionMutation({
+    action: ({ mode, data }: GroupActionInput) => {
+      if (mode === "create") {
+        return createNewGroup(data);
+      }
+      return modifyGroupData(data);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.joinedGroups });
       reset();
@@ -90,16 +122,39 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
 
     // check upload error
     if (selectedImage && !uploadedPath) return;
-    setValue("imageUrl", uploadedPath);
-    data.imageUrl = uploadedPath;
 
-    const promise = createGroupAction.mutateAsync(data);
+    if (uploadedPath) {
+      setValue("imageUrl", uploadedPath);
+      data.imageUrl = uploadedPath;
+    }
+
+    const promise =
+      isModifyMode && groupId
+        ? groupAction.mutateAsync({
+            mode: "modify",
+            data: { ...data, groupId },
+          })
+        : groupAction.mutateAsync({
+            mode: "create",
+            data,
+          });
+
     toast.promise(promise, {
-      loading: { title: t("toast.loading") },
-      success: { title: t("toast.success") },
-      error: (err: MutationOrQuerryError<typeof createGroupAction>) => {
+      loading: {
+        title: isModifyMode
+          ? t("modify.toast.loading")
+          : t("create.toast.loading"),
+      },
+      success: {
+        title: isModifyMode
+          ? t("modify.toast.success")
+          : t("create.toast.success"),
+      },
+      error: (err: MutationOrQuerryError<typeof groupAction>) => {
         const errKey = getMessageKeyFromError(err, {
-          generalErrorKey: "pages.GroupsPage.AddGroupModal.toast.errorDefault",
+          generalErrorKey: isModifyMode
+            ? "pages.GroupsPage.AddModifyGroupModal.modify.toast.errorDefault"
+            : "pages.GroupsPage.AddModifyGroupModal.create.toast.errorDefault",
         });
         return { title: tValidation(errKey) };
       },
@@ -110,7 +165,9 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t("header")}</ModalHeader>
+        <ModalHeader>
+          {isModifyMode ? t("modify.header") : t("create.header")}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -160,10 +217,14 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
               />
 
               <FormMainButton
-                text={t("submitButton")}
+                text={
+                  isModifyMode
+                    ? t("modify.submitButton")
+                    : t("create.submitButton")
+                }
                 type="submit"
                 onElementProps={{
-                  isLoading: isUploading,
+                  isLoading: isUploading || groupAction.isPending,
                 }}
               />
             </Stack>
