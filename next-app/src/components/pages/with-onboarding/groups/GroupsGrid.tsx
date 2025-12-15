@@ -1,19 +1,7 @@
 "use client";
 
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import {
-  Grid,
-  Card,
-  CardFooter,
-  Box,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Skeleton,
-} from "@chakra-ui/react";
-import { FiMoreVertical } from "react-icons/fi";
+import { Grid, Card, CardFooter, Box, Skeleton } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "@/lib/typed-translations";
 import { ROUTES } from "@/routes";
@@ -77,27 +65,6 @@ export default function GroupsGrid({
                 {group.name}
               </ResponsiveText>
             </CardFooter>
-            <Box
-              position="absolute"
-              bottom="4"
-              right="4"
-              className="menu-button"
-            >
-              <Menu placement="top-end">
-                <MenuButton
-                  as={IconButton}
-                  aria-label="Opcje"
-                  icon={<FiMoreVertical />}
-                  variant="ghost"
-                  size="sm"
-                />
-                <MenuList>
-                  <MenuItem>{t("menu.open")}</MenuItem>
-                  <MenuItem>{t("menu.edit")}</MenuItem>
-                  <MenuItem>{t("menu.delete")}</MenuItem>
-                </MenuList>
-              </Menu>
-            </Box>
           </Card>
         ))
       ) : (

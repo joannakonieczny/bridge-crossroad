@@ -5,6 +5,7 @@ import {
   addUserToGroup,
   getGroupOverview,
   getUserWithGroupsData,
+  removeAdminFromGroup,
 } from "@/repositories/user-groups";
 import {
   executeWithinTransaction,
@@ -13,14 +14,24 @@ import {
 } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
-import { fullAuthAction, withinOwnGroupAction } from "../action-lib";
+import {
+  fullAuthAction,
+  withinOwnGroupAction,
+  withinOwnGroupAsAdminAction,
+} from "../action-lib";
 import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
-import { createGroup, getGroupByInviteCode } from "@/repositories/groups";
+import {
+  createGroup,
+  getById as getGroupById,
+  getGroupByInviteCode,
+} from "@/repositories/groups";
 import {
   sanitizeGroup,
   sanitizeGroupsFullInfoPopulated,
 } from "@/sanitizers/server-only/group-sanitize";
 import { havingInvitationCode } from "@/schemas/model/group/group-schema";
+import z from "zod";
+import { idPropSchema } from "@/schemas/common";
 
 export const getJoinedGroupsInfo = fullAuthAction.action(
   async ({ ctx: { userId } }) => {
@@ -94,4 +105,32 @@ export const addUserToGroupByInvitationCode = fullAuthAction
       userId,
     });
     return true;
+  });
+
+export const promoteMemberToAdmin = withinOwnGroupAsAdminAction
+  .inputSchema(async (s) =>
+    s.merge(z.object({ userIdToPromote: idPropSchema }))
+  )
+  .action(async ({ ctx: { groupId }, parsedInput: { userIdToPromote } }) => {
+    const updatedGroup = await addAdminToGroup({
+      groupId,
+      userId: userIdToPromote,
+    });
+    return sanitizeGroup(updatedGroup);
+  });
+
+export const demoteAdminToMember = withinOwnGroupAsAdminAction
+  .inputSchema(async (s) => s.merge(z.object({ userIdToDemote: idPropSchema })))
+  .action(async ({ ctx: { groupId }, parsedInput: { userIdToDemote } }) => {
+    const group = await getGroupById(groupId);
+    if (group.admins.length <= 1) {
+      return returnValidationErrors(z.object({}), {
+        _errors: ["api.groups.admin.demote.lastAdminError" satisfies TKey],
+      });
+    }
+    const updatedGroup = await removeAdminFromGroup({
+      groupId,
+      userId: userIdToDemote,
+    });
+    return sanitizeGroup(updatedGroup);
   });

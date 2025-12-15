@@ -286,12 +286,6 @@ const groupsPage = {
 
   GroupsGrid: {
     noGroups: "Brak grup do wyświetlenia",
-    menu: {
-      open: "Otwórz",
-      edit: "Edytuj",
-      delete: "Usuń",
-    },
-    imageAlt: "obraz grupy",
   },
 
   Groups: {
@@ -390,18 +384,53 @@ const groupsPage = {
       description: "Brak opisu",
     },
     admin: {
-      title: "Administrator",
+      title: "Administratorzy:",
+      menu: {
+        editGroup: "Edytuj grupę",
+        addAdmin: "Dodaj administratora",
+        removeAdmin: "Usuń administratora",
+        addMember: "Dodaj członka",
+      },
+      menuLabel: "Narzędzia administratora",
     },
     createdAt: {
-      title: "Data założenia",
+      title: "Data założenia:",
     },
     membersCount: {
-      title: "Liczba członków",
+      title: "Liczba członków:",
       single: "1 członek",
       multiple: "{count} członków",
     },
     description: {
       title: "Opis grupy",
+    },
+  },
+
+  AddRemoveAdminModal: {
+    add: {
+      header: "Dodaj nowego administratora",
+      toast: {
+        loading: "Dodawanie administratora...",
+        success: "Administrator został dodany!",
+        errorDefault: "Wystąpił błąd podczas dodawania administratora",
+      },
+      submitButton: "Dodaj",
+    },
+    remove: {
+      header: "Usuń istniejącego administratora",
+      toast: {
+        loading: "Usuwanie administratora...",
+        success: "Użytkownik został usunięty jako administrator!",
+        errorDefault: "Wystąpił błąd podczas usuwania administratora",
+      },
+      submitButton: "Usuń",
+    },
+    form: {
+      userSelect: {
+        placeholder: "Wybierz użytkownika",
+        required: "Wybierz użytkownika z grupy",
+      },
+      cancelButton: "Anuluj",
     },
   },
 };
@@ -1008,6 +1037,12 @@ const messages = {
       join: {
         alreadyMember: "Jesteś już członkiem tej grupy",
         invalidInvitationCode: "Nieprawidłowy kod zaproszenia",
+      },
+      admin: {
+        demote: {
+          lastAdminError:
+            "Nie można usunąć ostatniego administratora grupy. Musisz najpierw dodać innego administratora.",
+        },
       },
     },
   },
