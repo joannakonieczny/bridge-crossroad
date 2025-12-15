@@ -19,6 +19,7 @@ import {
 } from "@/schemas/model/event/event-schema";
 import { EventType, TournamentType } from "@/club-preset/event-type";
 import type { TKey } from "@/lib/typed-translations";
+import { desanitizeFileUrl } from "@/util/helpers";
 
 export const addEventSchema = z.object({
   title: titleSchema,
@@ -57,7 +58,7 @@ export const modifyEventSchema = z.object({
   ),
   duration: durationSchema,
   additionalDescription: additionalDescriptionSchema.optional(),
-  imageUrl: filePathSchema.optional(),
+  imageUrl: filePathSchema.optional().transform(desanitizeFileUrl),
   data: z.discriminatedUnion("type", [
     z.object({
       type: z.literal(EventType.TOURNAMENT_PAIRS),
