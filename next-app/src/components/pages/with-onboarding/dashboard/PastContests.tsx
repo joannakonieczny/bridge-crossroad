@@ -1,6 +1,14 @@
 "use client";
 
-import { Box, Text, List, ListItem, ListIcon, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  List,
+  ListItem,
+  ListIcon,
+  VStack,
+  Flex,
+  Skeleton,
+} from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import {
   PiClubBold,
@@ -8,61 +16,88 @@ import {
   PiSpadeBold,
   PiDiamondBold,
 } from "react-icons/pi";
+import { useEventsForUserQuery } from "@/lib/queries";
+import dayjs from "dayjs";
+import { getDurationLabel } from "@/util/formatters";
+import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
+import { EventType } from "@/club-preset/event-type";
+
+const ICONS = [PiSpadeBold, PiHeartBold, PiDiamondBold, PiClubBold];
+const ALLOWED_TYPES = [EventType.TOURNAMENT_PAIRS, EventType.TOURNAMENT_TEAMS];
+const MAX_ITEMS = 4;
 
 export default function PastContests() {
   const t = useTranslations("pages.DashboardPage");
 
-  const contests = [
-    { name: "III Turnej Czwartkowy - semestr letni", date: "13 Maja 2021" },
-    {
-      name: "Akademickie Mistrzostwa Małopolski - turniej drużynowy",
-      date: "10 Kwietnia 2021",
-    },
-    {
-      name: "Akademickie Mistrzostwa Małopolski - turniej par",
-      date: "8 Kwietnia 2021",
-    },
-    { name: "II Turnej Czwartkowy - semestr zimowy", date: "17 Grudnia 2020" },
-  ];
+  const end = new Date();
+  const start = dayjs().subtract(1, "month").toDate();
+
+  const eventsQ = useEventsForUserQuery({ start, end });
+  const loading = eventsQ.isLoading;
+  const raw = eventsQ.data?.events ?? [];
+
+  const filtered = raw
+    .filter((ev) => ALLOWED_TYPES.includes(ev.data.type))
+    .map((ev) => {
+      const title = ev.title;
+      const date = getDurationLabel(ev.duration) || "—";
+      return { id: ev.id, title, date };
+    })
+    .slice(0, MAX_ITEMS);
+
   return (
-    <VStack mt="5" width="100%" align="start">
-      <Text fontSize="24px" lineHeight="24px" fontWeight="bold" mb={4}>
-        {t("headings.lastTournaments")}
-      </Text>
-      <Box ms="5">
+    <VStack width="100%" align="start">
+      <ResponsiveHeading
+        text={t("headings.lastTournaments")}
+        fontSize="xl"
+        mb={4}
+        w="100%"
+        px={{ base: 3, md: 0 }}
+      />
+      <Box ms="5" width="100%">
         <List spacing={3}>
-          <ListItem fontSize="lg">
-            <ListIcon as={PiSpadeBold} color="accent.500" />
-            {contests[0].name}
-            <Text ms="10" mt="1" color="border.500">
-              {" "}
-              {contests[0].date}{" "}
-            </Text>
-          </ListItem>
-          <ListItem fontSize="lg">
-            <ListIcon as={PiHeartBold} color="accent.500" />
-            {contests[1].name}
-            <Text ms="10" mt="1" color="border.500">
-              {" "}
-              {contests[1].date}{" "}
-            </Text>
-          </ListItem>
-          <ListItem fontSize="lg">
-            <ListIcon as={PiDiamondBold} color="accent.500" />
-            {contests[2].name}
-            <Text ms="10" mt="1" color="border.500">
-              {" "}
-              {contests[2].date}{" "}
-            </Text>
-          </ListItem>
-          <ListItem fontSize="lg">
-            <ListIcon as={PiClubBold} color="accent.500" />
-            {contests[3].name}
-            <Text ms="10" mt="1" color="border.500">
-              {" "}
-              {contests[3].date}{" "}
-            </Text>
-          </ListItem>
+          {loading
+            ? Array.from({ length: MAX_ITEMS }).map((_, idx) => (
+                <ListItem key={idx} fontSize="lg">
+                  <Flex direction="column">
+                    <Skeleton height="1.5rem" width="80%" borderRadius="4px" />
+                    <Skeleton
+                      height="1rem"
+                      width="60%"
+                      borderRadius="4px"
+                      mt={2}
+                    />
+                  </Flex>
+                </ListItem>
+              ))
+            : filtered.map((c, idx) => (
+                <ListItem key={c.id} fontSize="lg">
+                  <Flex direction="column">
+                    <ResponsiveText
+                      as="p"
+                      fontSize="lg"
+                      w="100%"
+                      px={{ base: 3, md: 0 }}
+                    >
+                      <ListIcon
+                        as={ICONS[idx % ICONS.length]}
+                        color="accent.500"
+                      />
+                      {c.title}
+                    </ResponsiveText>
+                    <ResponsiveText
+                      as="span"
+                      fontSize="sm"
+                      color="border.500"
+                      mt="1"
+                      ml={{ base: 3, md: 10 }}
+                    >
+                      {c.date}
+                    </ResponsiveText>
+                  </Flex>
+                </ListItem>
+              ))}
         </List>
       </Box>
     </VStack>
