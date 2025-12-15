@@ -12,7 +12,7 @@ export function AsyncImage(imageProps: ImageProps) {
   const FallbackComponent = () => (
     <Box
       {...imageProps}
-      bg="border.100"
+      bg="neutral.100"
       overflow="hidden"
       display="flex"
       alignItems="center"

@@ -149,7 +149,7 @@ export default function Navbar() {
                   <MenuList
                     minWidth="240px"
                     bg="bg"
-                    borderColor="border.200"
+                    borderColor="neutral.200"
                     boxShadow="md"
                   >
                     <MenuItem icon={<FaRegUser size="1rem" />}>

@@ -86,7 +86,7 @@ export default function Pagination({
             return (
               <React.Fragment key={`page-frag-${page}`}>
                 {needEllipsis && (
-                  <Text key={`ellipsis-${page}`} px={2} color="border.500">
+                  <Text key={`ellipsis-${page}`} px={2} color="neutral.500">
                     …
                   </Text>
                 )}

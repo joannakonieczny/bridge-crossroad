@@ -26,7 +26,7 @@ export default function EventPage() {
     <Flex
       align="stretch"
       height="calc(100vh - 5rem)"
-      bgColor={"border.50"}
+      bgColor={"neutral.50"}
       overflowY="auto"
     >
       <Box maxW="920px" w="100%" mx="auto">

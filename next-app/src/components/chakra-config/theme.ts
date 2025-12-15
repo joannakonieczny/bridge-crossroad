@@ -34,7 +34,7 @@ export const theme = extendTheme({
         800: { default: "yellow.800" },
         900: { default: "yellow.900" },
       },
-      border: {
+      neutral: {
         50: { default: "gray.50" },
         100: { default: "gray.100" },
         200: { default: "gray.200" },

@@ -52,7 +52,7 @@ export function Tile({
           <Box
             h="100%"
             flex={1}
-            bg={isPrimaryVariant ? "border.500" : "secondary.500"}
+            bg={isPrimaryVariant ? "neutral.500" : "secondary.500"}
             display="flex"
             alignItems="center"
             justifyContent="center"

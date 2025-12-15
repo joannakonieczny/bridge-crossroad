@@ -69,7 +69,7 @@ export default function Groups() {
         flexDirection="column"
         overflowY="visible"
         minHeight="calc(100vh - 5rem)"
-        backgroundColor="border.50"
+        backgroundColor="neutral.50"
       >
         <Box width="100%">
           {/* Górny pasek */}

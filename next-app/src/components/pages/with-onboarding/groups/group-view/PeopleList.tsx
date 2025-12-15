@@ -36,7 +36,7 @@ function MobileMemberCard({ fullName, nickname }: MobileMemberCardProps) {
       <Text fontWeight="bold" fontSize="sm">
         {fullName}
       </Text>
-      <Text fontSize="sm" color="border.500">
+      <Text fontSize="sm" color="neutral.500">
         {nickname}
       </Text>
     </Box>
@@ -95,7 +95,7 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
     <Flex
       flex={1}
       direction={"column"}
-      backgroundColor={"border.50"}
+      backgroundColor={"neutral.50"}
       padding={{ base: "1rem", md: "2rem" }}
     >
       <Flex

@@ -35,7 +35,7 @@ function PairInline({
   return (
     <>
       <ResponsiveText as="span">{getPersonLabel(first)}</ResponsiveText>
-      <ResponsiveText as="span" mx={1} color="border.400">
+      <ResponsiveText as="span" mx={1} color="neutral.400">
         /
       </ResponsiveText>
       <ResponsiveText as="span">{getPersonLabel(second)}</ResponsiveText>
@@ -226,8 +226,8 @@ export default function EventSpecificData({
                             whiteSpace="nowrap"
                             bg={
                               (pairIdx * 2) % 2 === 1
-                                ? "border.50"
-                                : "border.100"
+                                ? "neutral.50"
+                                : "neutral.100"
                             }
                           >
                             {t("half.first")}
@@ -274,8 +274,8 @@ export default function EventSpecificData({
                             whiteSpace="nowrap"
                             bg={
                               (pairIdx * 2 + 1) % 2 === 1
-                                ? "border.50"
-                                : "border.100"
+                                ? "neutral.50"
+                                : "neutral.100"
                             }
                           >
                             {t("half.second")}
@@ -327,7 +327,7 @@ export default function EventSpecificData({
                       key={`match-${pairIdx}`}
                       p={3}
                       borderWidth={1}
-                      borderColor="border.100"
+                      borderColor="neutral.100"
                       borderRadius="md"
                       bg="bg"
                     >
@@ -365,7 +365,7 @@ export default function EventSpecificData({
                           </ResponsiveText>
                         </Box>
                         <Box p={2} borderRadius="sm">
-                          <ResponsiveText fontSize="xs" color="border.500">
+                          <ResponsiveText fontSize="xs" color="neutral.500">
                             {t("league.table.half")}
                           </ResponsiveText>
                           <ResponsiveText>
@@ -373,7 +373,7 @@ export default function EventSpecificData({
                           </ResponsiveText>
                         </Box>
                         <Box>
-                          <ResponsiveText fontSize="xs" color="border.500">
+                          <ResponsiveText fontSize="xs" color="neutral.500">
                             {t("league.table.opponent")}
                           </ResponsiveText>
                           <ResponsiveText>
@@ -383,7 +383,7 @@ export default function EventSpecificData({
                       </SimpleGrid>
 
                       <Box mb={2}>
-                        <ResponsiveText fontSize="xs" color="border.500">
+                        <ResponsiveText fontSize="xs" color="neutral.500">
                           {t("pairs")}
                         </ResponsiveText>
                         <Box
@@ -398,7 +398,7 @@ export default function EventSpecificData({
                               second={sFirst?.contestants.firstPair.second}
                             />
                           </Box>
-                          <ResponsiveText as="span" mx={2} color="border.400">
+                          <ResponsiveText as="span" mx={2} color="neutral.400">
                             -
                           </ResponsiveText>
                           <Box ml={2}>
@@ -451,11 +451,11 @@ export default function EventSpecificData({
                               borderRadius="sm"
                               bg={
                                 (pairIdx * 2 + 1) % 2 === 1
-                                  ? "border.50"
-                                  : "border.100"
+                                  ? "neutral.50"
+                                  : "neutral.100"
                               }
                             >
-                              <ResponsiveText fontSize="xs" color="border.500">
+                              <ResponsiveText fontSize="xs" color="neutral.500">
                                 {t("league.table.half")}
                               </ResponsiveText>
                               <ResponsiveText>
@@ -463,7 +463,7 @@ export default function EventSpecificData({
                               </ResponsiveText>
                             </Box>
                             <Box>
-                              <ResponsiveText fontSize="xs" color="border.500">
+                              <ResponsiveText fontSize="xs" color="neutral.500">
                                 {t("league.table.opponent")}
                               </ResponsiveText>
                               <ResponsiveText>
@@ -473,7 +473,7 @@ export default function EventSpecificData({
                           </SimpleGrid>
 
                           <Box>
-                            <ResponsiveText fontSize="xs" color="border.500">
+                            <ResponsiveText fontSize="xs" color="neutral.500">
                               {t("pairs")}
                             </ResponsiveText>
                             <Box
@@ -491,7 +491,7 @@ export default function EventSpecificData({
                               <ResponsiveText
                                 as="span"
                                 mx={2}
-                                color="border.400"
+                                color="neutral.400"
                               >
                                 -
                               </ResponsiveText>

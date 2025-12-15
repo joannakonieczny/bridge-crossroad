@@ -61,7 +61,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
       w={{ base: "100%", md: "17rem" }}
       p={{ base: 3, md: 4 }}
       borderBottom={{ base: "1px solid", md: "none" }}
-      borderColor={{ base: "border.200", md: "transparent" }}
+      borderColor={{ base: "neutral.200", md: "transparent" }}
     >
       <Flex
         display={{ base: "flex", md: "none" }}
@@ -86,7 +86,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
             <Text fontWeight="bold" isTruncated>
               {groupName}
             </Text>
-            <Text fontSize="sm" color="border.500">
+            <Text fontSize="sm" color="neutral.500">
               {membersCount === 1
                 ? t("members.single")
                 : t("members.multiple", { count: membersCount })}
@@ -145,7 +145,7 @@ export default function Sidebar({ groupId }: ISidebarProps) {
           ) : (
             <>
               <Text fontWeight="bold">{groupName}</Text>
-              <Text fontSize="sm" color="border.500">
+              <Text fontSize="sm" color="neutral.500">
                 {membersCount === 1
                   ? t("members.single")
                   : t("members.multiple", { count: membersCount })}

@@ -26,13 +26,13 @@ export default function MessageBox({ message }: IMessageBoxProps) {
     ? "accent.500"
     : isAdmin
     ? "secondary.200"
-    : "border.100";
+    : "neutral.100";
 
   const messageBoxHoverColor = isSelf
     ? "accent.600"
     : isAdmin
     ? "secondary.300"
-    : "border.200";
+    : "neutral.200";
 
   const messageFontColor = isSelf ? "bg" : "fonts.default";
 
@@ -40,7 +40,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
     <Flex direction="column" alignItems={isSelf ? "flex-end" : "flex-start"}>
       <Text
         fontSize="xs"
-        color="border.500"
+        color="neutral.500"
         marginBottom="0.25rem"
         textAlign={isSelf ? "right" : "left"}
       >
@@ -108,7 +108,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
                   py={2}
                   bg="gray.50"
                   border="1px solid"
-                  borderColor="border.200"
+                  borderColor="neutral.200"
                   borderRadius="md"
                   textDecoration="none"
                 >
@@ -127,7 +127,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
           {showDate && (
             <Text
               fontSize="xs"
-              color="border.500"
+              color="neutral.500"
               marginTop="0.25rem"
               textAlign={isSelf ? "right" : "left"}
             >

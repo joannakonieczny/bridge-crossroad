@@ -13,7 +13,7 @@ export default function FindPartnerPage() {
       direction="column"
       py="2rem"
       px="1.25rem"
-      bgColor="border.50"
+      bgColor="neutral.50"
       width="100%"
       minHeight="calc(100vh - 5rem)"
     >

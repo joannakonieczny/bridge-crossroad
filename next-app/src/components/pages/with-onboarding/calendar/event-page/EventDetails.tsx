@@ -43,7 +43,7 @@ export default function EventDetails({
                 </ResponsiveText>
               )}
               {event?.additionalDescription && (
-                <ResponsiveText color="border.500" fontSize="sm" mt={2}>
+                <ResponsiveText color="neutral.500" fontSize="sm" mt={2}>
                   {event.additionalDescription}
                 </ResponsiveText>
               )}
@@ -91,7 +91,7 @@ export default function EventDetails({
                       ))
                     ) : (
                       <ListItem>
-                        <ResponsiveText color="border.500">
+                        <ResponsiveText color="neutral.500">
                           {t("noParticipants")}
                         </ResponsiveText>
                       </ListItem>
