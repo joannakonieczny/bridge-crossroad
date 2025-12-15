@@ -44,6 +44,7 @@ import NavbarTab from "./NavbarTab";
 import NavbarDrawerItem from "./NavbarDrawerItem";
 import NavbarDrawerMenuItem from "./NavbarDrawerMenuItem";
 import { logout } from "@/services/auth/api";
+import { color } from "framer-motion";
 
 const navbarTabs = [
   ROUTES.dashboard,
@@ -102,7 +103,7 @@ export default function Navbar() {
             alignItems="center"
             defaultIndex={defaultIndex}
           >
-            <TabList gap={8} color="accent.500">
+            <TabList gap={8} color={colorMode === "dark" ? "white" : "accent.500"}>
               <NavbarTab href={ROUTES.dashboard}>
                 {t("tabs.dashboard")}
               </NavbarTab>
@@ -120,7 +121,7 @@ export default function Navbar() {
             <TabIndicator
               mt="-1.5px"
               height="2px"
-              bg="fonts"
+              bg={colorMode === "dark" ? "blue.500" : "fonts"}
               borderRadius="1px"
             />
           </Tabs>

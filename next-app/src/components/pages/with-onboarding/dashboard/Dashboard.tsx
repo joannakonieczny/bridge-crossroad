@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Grid, VStack, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Grid, VStack, useBreakpointValue, useColorMode } from "@chakra-ui/react";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
 import SplashArtSVG from "@/assets/dashboard/splash-art.svg";
 import InfoTable from "./InfoTable";
@@ -12,6 +12,7 @@ import Footer from "@/components/common/footer/Footer";
 export default function Dashboard() {
   const showArt =
     useBreakpointValue({ base: false, md: false, lg: true }) ?? false;
+  const { colorMode } = useColorMode();
 
   return (
     <Flex
@@ -55,6 +56,7 @@ export default function Dashboard() {
                   aria-label="Splash Art Right"
                   display="flex"
                   alignItems="flex-end"
+                  filter={colorMode === "dark" ? "invert(1)" : "none"}
                 />
               </Box>
             )}
