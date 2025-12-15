@@ -60,3 +60,15 @@ export async function createGroup(data: CreateGroupData, isMain = false) {
   const newGroup = (await new Group(groupData).save()) as IGroupDTO | null;
   return check(newGroup, "Failed to create group");
 }
+
+export async function modifyGroup(data: CreateGroupData & { id: GroupIdType }) {
+  await dbConnect();
+  const updatedGroup = await Group.findByIdAndUpdate(
+    data.id,
+    { $set: data },
+    {
+      new: true,
+    }
+  ).lean<IGroupDTO>();
+  return check(updatedGroup, "Failed to update group");
+}

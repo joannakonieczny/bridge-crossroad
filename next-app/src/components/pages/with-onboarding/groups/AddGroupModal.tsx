@@ -21,7 +21,7 @@ import FormInput from "@/components/common/form/FormInput";
 import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import FormMainButton from "@/components/common/form/FormMainButton";
-import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
+import { createModifyGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import { createNewGroup } from "@/services/groups/api";
 import {
   useTranslations,
@@ -63,7 +63,7 @@ export function AddGroupModal({ isOpen, onClose }: AddGroupModalProps) {
   });
 
   const { handleSubmit, control, setError, reset, setValue } = useForm({
-    resolver: zodResolver(withEmptyToUndefined(createGroupFormSchema)),
+    resolver: zodResolver(withEmptyToUndefined(createModifyGroupFormSchema)),
     defaultValues: {
       name: "",
       description: "",

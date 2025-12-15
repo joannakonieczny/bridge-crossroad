@@ -6,7 +6,7 @@ import {
 } from "@/schemas/model/group/group-schema";
 import { filePathSchema } from "@/schemas/common";
 
-export const createGroupFormSchema = z.object({
+export const createModifyGroupFormSchema = z.object({
   name: nameSchema,
   description: descriptionSchema.optional(),
   imageUrl: filePathSchema.optional(),

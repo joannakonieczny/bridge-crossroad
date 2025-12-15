@@ -18,7 +18,7 @@ import {
 import { useTranslations } from "@/lib/typed-translations";
 import { useState } from "react";
 import { useDisclosure } from "@chakra-ui/react";
-import AddAdminModal from "./AddRemoveAdminModal";
+import AddRemoveAdminModal from "./AddRemoveAdminModal";
 import type { GroupFullType } from "@/schemas/model/group/group-types";
 
 type GroupAdminMenuProps = {
@@ -73,7 +73,7 @@ export default function GroupAdminMenu({ group }: GroupAdminMenuProps) {
         </MenuList>
       </Menu>
 
-      <AddAdminModal
+      <AddRemoveAdminModal
         isOpen={isOpen}
         onClose={onClose}
         mode={modalMode}

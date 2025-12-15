@@ -19,11 +19,12 @@ import {
   withinOwnGroupAction,
   withinOwnGroupAsAdminAction,
 } from "../action-lib";
-import { createGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
+import { createModifyGroupFormSchema } from "@/schemas/pages/with-onboarding/groups/groups-schema";
 import {
   createGroup,
   getById as getGroupById,
   getGroupByInviteCode,
+  modifyGroup,
 } from "@/repositories/groups";
 import {
   sanitizeGroup,
@@ -52,7 +53,7 @@ export const getJoinedGroupsInfoAsAdmin = fullAuthAction.action(
 );
 
 export const createNewGroup = fullAuthAction
-  .inputSchema(createGroupFormSchema)
+  .inputSchema(createModifyGroupFormSchema)
   .action(async ({ parsedInput: createGroupData, ctx: { userId } }) => {
     return executeWithinTransaction(async (session) => {
       const groupCreated = await createGroup(createGroupData);
@@ -70,12 +71,19 @@ export const createNewGroup = fullAuthAction
     }).catch((err) => {
       onDuplicateKey(err)
         .on("name", () =>
-          returnValidationErrors(createGroupFormSchema, {
+          returnValidationErrors(createModifyGroupFormSchema, {
             name: { _errors: ["api.groups.create.nameExists" satisfies TKey] },
           })
         )
         .handle();
     });
+  });
+
+export const modifyGroupData = withinOwnGroupAsAdminAction
+  .inputSchema(async (s) => s.merge(createModifyGroupFormSchema))
+  .action(async ({ parsedInput: groupData, ctx: { groupId } }) => {
+    const updatedGroup = await modifyGroup({ ...groupData, id: groupId });
+    return sanitizeGroup(updatedGroup);
   });
 
 export const getGroupData = withinOwnGroupAction.action(
