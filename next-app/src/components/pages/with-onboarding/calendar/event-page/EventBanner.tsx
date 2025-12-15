@@ -12,6 +12,7 @@ import {
   ModalBody,
   useDisclosure,
   Skeleton,
+  Button,
 } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
@@ -120,6 +121,11 @@ export default function EventBanner({
             </>
           )}
         </HStack>
+        {event?.isAdmin && (
+          <Button mt="1rem" colorScheme="accent" variant="outline">
+            Zmodyfikuj dane o wydarzeniu
+          </Button>
+        )}
       </VStack>
     </Box>
   );
