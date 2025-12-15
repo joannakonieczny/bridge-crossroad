@@ -66,6 +66,8 @@ export function CreateModifyGroupModal({
   const queryClient = useQueryClient();
   const isModifyMode = mode === "modify";
 
+  console.log("Initial data:", initialData);
+
   const {
     selectedImage,
     uploadImage,
@@ -73,6 +75,8 @@ export function CreateModifyGroupModal({
     handleImageChange,
     isUploading,
     isError: isUploadError,
+    preview,
+    fileName,
   } = useImageUpload({
     text: {
       toast: {
@@ -81,15 +85,12 @@ export function CreateModifyGroupModal({
         error: { title: t("imageToast.error") },
       },
     },
+    previewUrl: initialData?.imageUrl,
   });
 
   const { handleSubmit, control, setError, reset, setValue } = useForm({
     resolver: zodResolver(withEmptyToUndefined(createModifyGroupFormSchema)),
-    defaultValues: initialData || {
-      name: "",
-      description: "",
-      imageUrl: "",
-    },
+    defaultValues: initialData,
   });
 
   useEffect(() => {
@@ -118,15 +119,19 @@ export function CreateModifyGroupModal({
   });
 
   const onSubmit = async (data: CreateGroupFormType) => {
+    console.log("Submitting data:", data);
     const uploadedPath = await uploadImage();
+    console.log("Uploaded path:", uploadedPath, selectedImage);
 
     // check upload error
     if (selectedImage && !uploadedPath) return;
 
-    if (uploadedPath) {
+    if (selectedImage && uploadedPath) {
       setValue("imageUrl", uploadedPath);
       data.imageUrl = uploadedPath;
     }
+
+    console.log("Submitting data2:", data);
 
     const promise =
       isModifyMode && groupId
@@ -208,6 +213,8 @@ export function CreateModifyGroupModal({
                 genericFileType="image"
                 onChange={handleImageChange}
                 isUploadError={isUploadError}
+                value={preview || undefined}
+                fileName={fileName || undefined}
                 text={{
                   label: t("form.image.label"),
                   additionalLabel: t("form.image.additionalLabel"),

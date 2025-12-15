@@ -16,13 +16,14 @@ type UploadImageParams = {
       error: { title: string };
     };
   };
+  previewUrl?: string;
 };
 
 export function useImageUpload(p: UploadImageParams) {
   const toast = useToast();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(p.previewUrl || null);
+  const [fileName, setFileName] = useState<string | null>(p.previewUrl || null);
 
   const uploadImageMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -73,13 +74,26 @@ export function useImageUpload(p: UploadImageParams) {
   };
 
   const handleImageChange = (file: File | null, previewUrl: string | null) => {
-    if (!file) {
+    if (!file && !previewUrl) {
+      // No file and no preview - reset everything
       resetImage();
+    } else if (!file && previewUrl) {
+      // Preview mode - showing existing image URL without file
+      setSelectedImage(null);
+      setPreview(previewUrl);
+      setFileName(null);
     } else {
+      // New file selected
       setSelectedImage(file);
       setPreview(previewUrl);
-      setFileName(file.name);
+      setFileName(file?.name || null);
     }
+  };
+
+  const setInitialPreview = (url: string) => {
+    setSelectedImage(null);
+    setPreview(url);
+    setFileName(null);
   };
 
   return {
@@ -89,6 +103,7 @@ export function useImageUpload(p: UploadImageParams) {
     handleImageChange,
     uploadImage,
     resetImage,
+    setInitialPreview,
     isUploading: uploadImageMutation.isPending,
     isError: uploadImageMutation.isError,
     uploadImageMutation,
