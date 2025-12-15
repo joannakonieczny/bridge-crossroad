@@ -24,12 +24,12 @@ export default function Dashboard() {
         flex="1"
         width="100%"
         py={{ base: "2rem", md: "3rem" }}
-        px={{ base: "1rem", md: "4rem", lg: "6rem", xl: "10rem" }}
+        px={{ base: "1rem", md: "2rem", lg: "2rem", xl: "6rem" }}
       >
         <VStack spacing={{ base: "2rem", lg: "4rem" }} width="100%">
           {/* Górna sekcja: ProfileBanner + InfoTable | SVG */}
           <Grid
-            templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+            templateColumns={{ base: "1fr", lg: "2fr 1fr" }}
             gap={{ base: "2rem", lg: "4rem" }}
             alignItems="stretch"
             width="100%"
@@ -40,11 +40,21 @@ export default function Dashboard() {
             </VStack>
 
             {showArt && (
-              <Box height="100%">
+              <Box
+                width="100%"
+                height="100%"
+                maxHeight="412px"
+                display="flex"
+                alignItems="flex-end"
+                overflow={"hidden"}
+              >
                 <ChakraSVG
                   svg={SplashArtSVG}
-                  height="100%"
+                  width="100%"
+                  overflow={"hidden"}
                   aria-label="Splash Art Right"
+                  display="flex"
+                  alignItems="flex-end"
                 />
               </Box>
             )}
@@ -52,13 +62,13 @@ export default function Dashboard() {
 
           {/* Dolna sekcja: PastContests | UpcomingEvents */}
           <Grid
-            templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+            templateColumns={{ base: "1fr", lg: "2fr 1fr" }}
             gap={{ base: "2rem", lg: "4rem" }}
             alignItems="start"
             width="100%"
           >
-            <PastContests />
             <UpcomingEvents />
+            <PastContests />
           </Grid>
         </VStack>
       </Box>
