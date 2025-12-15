@@ -81,10 +81,21 @@ export const createNewGroup = fullAuthAction
 
 export const modifyGroupData = withinOwnGroupAsAdminAction
   .inputSchema(async (s) => s.merge(createModifyGroupFormSchema))
-  .action(async ({ parsedInput: groupData, ctx: { groupId } }) => {
-    const updatedGroup = await modifyGroup({ ...groupData, id: groupId });
-    return sanitizeGroup(updatedGroup);
-  });
+  .action(({ parsedInput: groupData, ctx: { groupId } }) =>
+    modifyGroup({ ...groupData, id: groupId })
+      .then((updatedGroup) => sanitizeGroup(updatedGroup))
+      .catch((err) => {
+        onDuplicateKey(err)
+          .on("name", () =>
+            returnValidationErrors(createModifyGroupFormSchema, {
+              name: {
+                _errors: ["api.groups.create.nameExists" satisfies TKey],
+              },
+            })
+          )
+          .handle();
+      })
+  );
 
 export const getGroupData = withinOwnGroupAction.action(
   async ({ ctx: { groupId, userId } }) => {
