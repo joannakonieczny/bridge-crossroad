@@ -14,7 +14,10 @@ import {
 } from "@/repositories/common";
 import { getUserData } from "@/repositories/onboarding";
 import { sendEmail } from "@/repositories/mailer";
-import { promotedToAdminTemplate } from "@/email-templates/pl/email-templates";
+import {
+  promotedToAdminTemplate,
+  demotedFromAdminTemplate,
+} from "@/email-templates/pl/email-templates";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
 import {
@@ -171,16 +174,44 @@ export const promoteMemberToAdmin = withinOwnGroupAsAdminAction
 
 export const demoteAdminToMember = withinOwnGroupAsAdminAction
   .inputSchema(async (s) => s.merge(z.object({ userIdToDemote: idPropSchema })))
-  .action(async ({ ctx: { groupId }, parsedInput: { userIdToDemote } }) => {
-    const group = await getGroupById(groupId);
-    if (group.admins.length <= 1) {
-      return returnValidationErrors(z.object({}), {
-        _errors: ["api.groups.admin.demote.lastAdminError" satisfies TKey],
+  .action(
+    async ({ ctx: { groupId }, parsedInput: { userIdToDemote } }) => {
+      const group = await getGroupById(groupId);
+      if (group.admins.length <= 1) {
+        return returnValidationErrors(z.object({}), {
+          _errors: ["api.groups.admin.demote.lastAdminError" satisfies TKey],
+        });
+      }
+      const updatedGroup = await removeAdminFromGroup({
+        groupId,
+        userId: userIdToDemote,
       });
+      return sanitizeGroup(updatedGroup);
+    },
+    {
+      onSuccess: async (d) => {
+        if (!d.ctx?.groupId || !d.parsedInput.userIdToDemote || !d.ctx.userId)
+          return;
+        const [demotedUser, demotingUser, group] = await Promise.all([
+          getUserData(d.parsedInput.userIdToDemote),
+          getUserData(d.ctx.userId),
+          getGroupById(d.ctx.groupId),
+        ]);
+
+        await sendEmail({
+          userEmail: demotedUser.email,
+          ...demotedFromAdminTemplate({
+            groupName: group.name,
+            person: {
+              firstName: demotedUser.name.firstName,
+              nickname: demotedUser.nickname,
+            },
+            demotedBy: {
+              firstName: demotingUser.name.firstName,
+              nickname: demotingUser.nickname,
+            },
+          }),
+        });
+      },
     }
-    const updatedGroup = await removeAdminFromGroup({
-      groupId,
-      userId: userIdToDemote,
-    });
-    return sanitizeGroup(updatedGroup);
-  });
+  );

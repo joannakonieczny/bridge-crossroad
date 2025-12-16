@@ -329,6 +329,38 @@ export const promotedToAdminTemplate = ({
   return { subject, body };
 };
 
+export const demotedFromAdminTemplate = ({
+  groupName,
+  person,
+  demotedBy,
+}: {
+  groupName: string;
+  person: Person;
+  demotedBy: Person;
+}): TemplateReturnType => {
+  const subject = `Utrata praw administratora w grupie: ${groupName}`;
+  const body = emailWrapper({
+    person,
+    title: subject,
+    content: `
+      <p>
+        Administrator <strong>${getPersonLabel(
+          demotedBy
+        )}</strong> odebrał Ci uprawnienia administratora w grupie <strong>${groupName}</strong>.
+      </p>
+      <p>
+        Nadal pozostajesz członkiem grupy i możesz brać udział we wszystkich wydarzeniach, 
+        ale nie masz już uprawnień do zarządzania grupą.
+      </p>
+      <p>
+        W razie pytań skontaktuj się z administratorami grupy.
+      </p>
+    `,
+  });
+
+  return { subject, body };
+};
+
 export const findPartnerPlayerAgreenTemplate = ({
   playerName,
   playerEmail,
