@@ -209,44 +209,47 @@ export const enrollToEventTournament = withinOwnGroupAction
             teamWithIds.members.map((memberId) => getUserData(memberId))
           );
           Promise.all(
-            teamMembers.map((member) => {
-              sendEmail({
-                userEmail: member.email,
-                ...tournamentRegistrationTemplate({
-                  partner: {
-                    firstName: partner.name.firstName,
-                    nickname: partner.nickname,
-                  },
-                  person: {
-                    firstName: member.name.firstName,
-                    nickname: member.nickname,
-                  },
-                  tournamentEvent: {
-                    title: eventPopulated.title,
-                    description: eventPopulated.description,
-                    location: eventPopulated.location,
-                    additionalDescription: eventPopulated.additionalDescription,
-                    tournamentType: eventData.tournamentType,
-                    duration: eventPopulated.duration,
-                    organizer: {
-                      firstName: eventPopulated.organizer.name.firstName,
-                      nickname: eventPopulated.organizer.nickname,
+            teamMembers
+              .filter((member) => member._id.toString() !== partnerId)
+              .map((member) => {
+                sendEmail({
+                  userEmail: member.email,
+                  ...tournamentRegistrationTemplate({
+                    partner: {
+                      firstName: partner.name.firstName,
+                      nickname: partner.nickname,
                     },
-                    group: {
-                      name: eventPopulated.group.name,
+                    person: {
+                      firstName: member.name.firstName,
+                      nickname: member.nickname,
                     },
-                    typeOfEvent: EventType.TOURNAMENT_TEAMS,
-                    team: {
-                      name: teamWithIds.name,
-                      members: teamMembers.map((m) => ({
-                        firstName: m.name.firstName,
-                        nickname: m.nickname,
-                      })),
+                    tournamentEvent: {
+                      title: eventPopulated.title,
+                      description: eventPopulated.description,
+                      location: eventPopulated.location,
+                      additionalDescription:
+                        eventPopulated.additionalDescription,
+                      tournamentType: eventData.tournamentType,
+                      duration: eventPopulated.duration,
+                      organizer: {
+                        firstName: eventPopulated.organizer.name.firstName,
+                        nickname: eventPopulated.organizer.nickname,
+                      },
+                      group: {
+                        name: eventPopulated.group.name,
+                      },
+                      typeOfEvent: EventType.TOURNAMENT_TEAMS,
+                      team: {
+                        name: teamWithIds.name,
+                        members: teamMembers.map((m) => ({
+                          firstName: m.name.firstName,
+                          nickname: m.nickname,
+                        })),
+                      },
                     },
-                  },
-                }),
-              });
-            })
+                  }),
+                });
+              })
           );
         } else if (eventData.type === EventType.TOURNAMENT_PAIRS) {
           const pair = d.parsedInput.pair;

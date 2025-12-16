@@ -26,7 +26,7 @@ export const newlyCreatedAccountTemplate = ({
 
       <p>
         Twoje konto zostało pomyślnie utworzone. 
-        Pamiętaj, aby ukończyć konfiguracje konta, 
+        Pamiętaj, aby ukończyć konfigurację konta, 
         bez tego nie możemy aktywować twojego profilu i nie będziesz mógł korzystać z pełnej funkcjonalności platformy.
       </p>
 
@@ -289,7 +289,7 @@ export const partnershipInterestNotificationTemplate = ({
       </p>
       <p><strong>Nazwa ogłoszenia:</strong> ${postName}</p>
       <p>
-        Zaloguj się do Bridge Crossroad, aby zobaczyć szczegóły swojego ogłoszenia..
+        Zaloguj się do Bridge Crossroad, aby zobaczyć szczegóły swojego ogłoszenia.
       </p>
     `,
   });
