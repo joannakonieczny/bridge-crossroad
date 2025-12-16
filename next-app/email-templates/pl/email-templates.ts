@@ -361,6 +361,43 @@ export const demotedFromAdminTemplate = ({
   return { subject, body };
 };
 
+export const onboardingCompletedTemplate = ({
+  person,
+  groupName,
+}: {
+  person: Person;
+  groupName: string;
+}): TemplateReturnType => {
+  const subject = "Gratulacje! Twoje konto zostało w pełni aktywowane";
+  const body = emailWrapper({
+    person,
+    title: subject,
+    content: `
+      <p>
+        Gratulacje! Pomyślnie ukończyłeś proces konfiguracji konta w <strong>Bridge Crossroad</strong>.
+      </p>
+      <p>
+        Zostałeś dodany do grupy głównej: <strong>${groupName}</strong>.
+      </p>
+      <p>
+        Od teraz możesz korzystać z pełnego potencjału aplikacji:
+      </p>
+      <ul>
+        <li>Przeglądać i zapisywać się na wydarzenia</li>
+        <li>Szukać partnerów do gry</li>
+        <li>Dołączać do turniejów i rozgrywek</li>
+        <li>Komunikować się z innymi członkami społeczności</li>
+        <li>Tworzyć własne wydarzenia i zarządzać nimi</li>
+      </ul>
+      <p>
+        Zaloguj się do Bridge Crossroad i rozpocznij swoją przygodę z brydżem!
+      </p>
+    `,
+  });
+
+  return { subject, body };
+};
+
 export const findPartnerPlayerAgreenTemplate = ({
   playerName,
   playerEmail,
