@@ -42,7 +42,10 @@ import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
 import { getUserData } from "@/repositories/onboarding";
 import { sendEmail } from "@/repositories/mailer";
-import { tournamentRegistrationTemplate } from "@/email-templates/pl/email-templates";
+import {
+  tournamentRegistrationTemplate,
+  tournamentUnregistrationTemplate,
+} from "@/email-templates/pl/email-templates";
 
 export const createEvent = withinOwnGroupAsAdminAction
   .inputSchema(async (s) => s.merge(addEventSchema))
@@ -287,33 +290,147 @@ export const enrollToEventTournament = withinOwnGroupAction
 
 export const unenrollFromEventTournament = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(havingEventId))
-  .action(async ({ parsedInput: { eventId }, ctx: { userId } }) => {
-    const event = await getEventRepository({ eventId });
-    const eventType = event.data.type;
+  .action(
+    async ({ parsedInput: { eventId }, ctx: { userId } }) => {
+      const event = await getEventRepository({ eventId });
+      const eventType = event.data.type;
 
-    switch (eventType) {
-      case EventType.TOURNAMENT_PAIRS: {
-        const res = await removePairFromTournamentEvent({
-          eventId,
-          userId,
-        });
-        return sanitizeEvent(res.event);
+      switch (eventType) {
+        case EventType.TOURNAMENT_PAIRS: {
+          const res = await removePairFromTournamentEvent({
+            eventId,
+            userId,
+          });
+          return sanitizeEvent(res.event);
+        }
+        case EventType.TOURNAMENT_TEAMS: {
+          const res = await removeTeamFromTournamentEvent({
+            eventId,
+            userId,
+          });
+          return sanitizeEvent(res.event);
+        }
+        default: {
+          returnValidationErrors(havingEventId, {
+            eventId: {
+              _errors: [
+                "validation.model.event.data.type.unsupportedTournamentType" satisfies TKey,
+              ],
+            },
+          });
+        }
       }
-      case EventType.TOURNAMENT_TEAMS: {
-        const res = await removeTeamFromTournamentEvent({
-          eventId,
-          userId,
-        });
-        return sanitizeEvent(res.event);
-      }
-      default: {
-        returnValidationErrors(havingEventId, {
-          eventId: {
-            _errors: [
-              "validation.model.event.data.type.unsupportedTournamentType" satisfies TKey,
-            ],
-          },
-        });
-      }
+    },
+    {
+      onSuccess: async (d) => {
+        const partnerId = d.ctx?.userId; // the user who unenrolled the pair/team
+        if (!d.data || !partnerId) return;
+
+        const [eventPopulated, partner] = await Promise.all([
+          getEventRepository({ eventId: d.data.id }),
+          getUserData(partnerId),
+        ]);
+        const eventData = eventPopulated.data;
+
+        if (eventData.type === EventType.TOURNAMENT_TEAMS) {
+          const removedTeam = eventData.teams.find((team) =>
+            team.members.some((member) => member._id.toString() === partnerId)
+          );
+          if (!removedTeam) return;
+
+          const teamMembers = await Promise.all(
+            removedTeam.members.map((member) =>
+              getUserData(member._id.toString())
+            )
+          );
+
+          Promise.all(
+            teamMembers
+              .filter((member) => member._id.toString() !== partnerId)
+              .map((member) => {
+                sendEmail({
+                  userEmail: member.email,
+                  ...tournamentUnregistrationTemplate({
+                    partner: {
+                      firstName: partner.name.firstName,
+                      nickname: partner.nickname,
+                    },
+                    person: {
+                      firstName: member.name.firstName,
+                      nickname: member.nickname,
+                    },
+                    tournamentEvent: {
+                      title: eventPopulated.title,
+                      description: eventPopulated.description,
+                      location: eventPopulated.location,
+                      additionalDescription:
+                        eventPopulated.additionalDescription,
+                      tournamentType: eventData.tournamentType,
+                      duration: eventPopulated.duration,
+                      organizer: {
+                        firstName: eventPopulated.organizer.name.firstName,
+                        nickname: eventPopulated.organizer.nickname,
+                      },
+                      group: {
+                        name: eventPopulated.group.name,
+                      },
+                      typeOfEvent: EventType.TOURNAMENT_TEAMS,
+                      team: {
+                        name: removedTeam.name,
+                        members: teamMembers.map((m) => ({
+                          firstName: m.name.firstName,
+                          nickname: m.nickname,
+                        })),
+                      },
+                    },
+                  }),
+                });
+              })
+          );
+        } else if (eventData.type === EventType.TOURNAMENT_PAIRS) {
+          const removedPair = eventData.contestantsPairs.find(
+            (pair) =>
+              pair.first._id.toString() === partnerId ||
+              pair.second._id.toString() === partnerId
+          );
+          if (!removedPair) return;
+
+          const secondFromPairId =
+            removedPair.first._id.toString() === partnerId
+              ? removedPair.second._id.toString()
+              : removedPair.first._id.toString();
+          const secondFromPair = await getUserData(secondFromPairId);
+
+          sendEmail({
+            userEmail: secondFromPair.email,
+            ...tournamentUnregistrationTemplate({
+              partner: {
+                firstName: partner.name.firstName,
+                nickname: partner.nickname,
+              },
+              person: {
+                firstName: secondFromPair.name.firstName,
+                nickname: secondFromPair.nickname,
+              },
+              tournamentEvent: {
+                title: eventPopulated.title,
+                description: eventPopulated.description,
+                location: eventPopulated.location,
+                additionalDescription: eventPopulated.additionalDescription,
+                tournamentType: eventData.tournamentType,
+                duration: eventPopulated.duration,
+                organizer: {
+                  firstName: eventPopulated.organizer.name.firstName,
+                  nickname: eventPopulated.organizer.nickname,
+                },
+                group: {
+                  name: eventPopulated.group.name,
+                },
+                typeOfEvent: EventType.TOURNAMENT_PAIRS,
+              },
+            }),
+          });
+        }
+      },
     }
-  });
+  );

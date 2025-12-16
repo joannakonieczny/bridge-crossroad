@@ -192,6 +192,82 @@ export const tournamentRegistrationTemplate = ({
   return { subject, body };
 };
 
+export const tournamentUnregistrationTemplate = ({
+  partner,
+  person,
+  tournamentEvent,
+}: TournamentRegistrationEmailParams): { subject: string; body: string } => {
+  const subject = `Wyrejestrowanie z turnieju: ${tournamentEvent.title} w grupie ${tournamentEvent.group.name}`;
+
+  const body = emailWrapper({
+    person,
+    title: `Wyrejestrowanie z turnieju: ${tournamentEvent.title} w grupie ${tournamentEvent.group.name}`,
+    content: `
+      <p>
+        Twój partner <strong>${getPersonLabel(
+          partner
+        )}</strong> wyrejestrował Cię z turnieju ${
+      tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS
+        ? "drużynowego"
+        : ""
+    } w grupie <strong>${tournamentEvent.group.name}</strong>.
+      </p>
+
+      <p><strong>Szczegóły turnieju:</strong></p>
+
+      <p><strong>Tytuł:</strong> ${tournamentEvent.title}</p>
+      ${
+        tournamentEvent.description
+          ? `<p><strong>Opis:</strong><br />${tournamentEvent.description}</p>`
+          : ""
+      }
+      ${
+        tournamentEvent.additionalDescription
+          ? `<p><strong>Dodatkowy opis:</strong><br />${tournamentEvent.additionalDescription}</p>`
+          : ""
+      }
+      ${
+        tournamentEvent.location
+          ? `<p><strong>Lokalizacja:</strong> ${tournamentEvent.location}</p>`
+          : ""
+      }
+      <p><strong>Typ turnieju:</strong> ${
+        tournamentEvent.typeOfEvent === EventType.TOURNAMENT_PAIRS
+          ? "Turniej par"
+          : "Turniej drużynowy"
+      }</p>
+      <p><strong>Czas trwania:</strong> ${getDurationLabel(
+        tournamentEvent.duration
+      )}</p>
+      <p><strong>Organizator:</strong> ${getPersonLabel(
+        tournamentEvent.organizer
+      )}</p>
+      <p><strong>Grupa:</strong> ${tournamentEvent.group.name}</p>
+
+      ${
+        tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS &&
+        tournamentEvent.team
+          ? `<p><strong>Nazwa Twojej drużyny: ${
+              tournamentEvent.team.name
+            }</strong></p>
+             <ul>
+               ${tournamentEvent.team.members
+                 .map((m) => `<li>${getPersonLabel(m)}</li>`)
+                 .join("")}
+             </ul>`
+          : ""
+      }
+
+      <p>
+        Pamiętaj, że po wyrejestrowaniu z turnieju Twoja deklaracja obecności na wydarzeniu nie została wycofana. 
+        Jeśli nadal chcesz wziąć udział w wydarzeniu, skontaktuj się z partnerem lub ponownie zarejestruj się na niego.
+      </p>
+    `,
+  });
+
+  return { subject, body };
+};
+
 export const findPartnerPlayerAgreenTemplate = ({
   playerName,
   playerEmail,
