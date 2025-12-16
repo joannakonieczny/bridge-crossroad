@@ -211,5 +211,9 @@ export function sanitizeEventPopulated(
     isAttending: userId
       ? event.attendees.some((a) => a._id.toString() === userId)
       : undefined,
+    isAdmin: userId
+      ? event.group.admins.some((a) => a.toString() === userId)
+      : undefined,
+    isOrganizer: userId ? event.organizer._id.toString() === userId : undefined,
   };
 }
