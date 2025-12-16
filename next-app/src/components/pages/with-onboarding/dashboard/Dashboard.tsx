@@ -20,6 +20,7 @@ export default function Dashboard() {
       width="100%"
       gap={{ base: "2rem", lg: "4rem" }}
       flexDirection="column"
+      bgColor="bg"
     >
       <Box
         flex="1"

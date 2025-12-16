@@ -82,7 +82,7 @@ export default function Navbar() {
   return (
     <Flex
       as="nav"
-      bg="bg"
+      bg={colorMode === "dark" ? "neutral.100" : "bg"}
       p={4}
       boxShadow="sm"
       alignItems="center"

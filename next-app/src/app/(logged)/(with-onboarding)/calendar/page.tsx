@@ -13,7 +13,7 @@ const Calendar = dynamic(
 
 export default function CalendarPage() {
   return (
-    <Flex align="stretch" minH="calc(100vh - 5rem)">
+    <Flex align="stretch" minH="calc(100vh - 5rem)" bgColor="bg">
       <Box flex="1" p={4}>
         <Calendar />
       </Box>

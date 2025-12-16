@@ -7,6 +7,7 @@ import {
   Button,
   useDisclosure,
   useBreakpointValue,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
@@ -30,7 +31,7 @@ export default function Sidebar() {
     <Box
       w="16.5rem"
       minH="calc(100vh - 5rem)"
-      bg="bg"
+      bg={useColorModeValue("neutral.50", "neutral.100")}
       flex="0 0 16.5rem"
       p={4}
       overflowY="auto"
