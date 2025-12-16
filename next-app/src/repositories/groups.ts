@@ -85,6 +85,7 @@ export async function modifyGroup(data: CreateGroupData & { id: GroupIdType }) {
 
   const updatedGroup = await Group.findByIdAndUpdate(data.id, update, {
     new: true,
+    runValidators: true,
   }).lean<IGroupDTO>();
   return check(updatedGroup, "Failed to update group");
 }

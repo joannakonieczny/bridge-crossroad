@@ -20,7 +20,13 @@ import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/
 import { getPersonLabel } from "@/util/formatters";
 import { useEffect } from "react";
 
-export function PrimaryInfoStep() {
+type PrimaryInfoStepProps = {
+  isModifyMode?: boolean;
+};
+
+export function PrimaryInfoStep({
+  isModifyMode = false,
+}: PrimaryInfoStepProps) {
   const form = useFormContext<AddEventSchemaType>();
 
   const t = useTranslations("pages.EventFormPage");
@@ -155,6 +161,7 @@ export function PrimaryInfoStep() {
           label: group.name,
         }))}
         isLoading={groupsQ.isLoading}
+        isDisabled={isModifyMode}
       />
       <Stack>
         <Text color="gray.500" fontSize="sm">
@@ -204,6 +211,7 @@ export function PrimaryInfoStep() {
             value: type,
             label: tEvents(type),
           }))}
+          isDisabled={isModifyMode}
         />
       </Stack>
     </Stack>
