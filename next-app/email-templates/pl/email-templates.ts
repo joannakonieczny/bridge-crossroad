@@ -268,6 +268,35 @@ export const tournamentUnregistrationTemplate = ({
   return { subject, body };
 };
 
+export const partnershipInterestNotificationTemplate = ({
+  interestedPlayer,
+  postName,
+  person,
+}: {
+  interestedPlayer: Person;
+  postName: string;
+  person: Person;
+}): TemplateReturnType => {
+  const subject = `Nowe zainteresowanie Twoim ogłoszeniem: ${postName}`;
+  const body = emailWrapper({
+    person,
+    title: subject,
+    content: `
+      <p>
+        Gracz <strong>${getPersonLabel(
+          interestedPlayer
+        )}</strong> wyraził zainteresowanie Twoim ogłoszeniem o poszukiwaniu partnera.
+      </p>
+      <p><strong>Nazwa ogłoszenia:</strong> ${postName}</p>
+      <p>
+        Zaloguj się do Bridge Crossroad, aby zobaczyć szczegóły swojego ogłoszenia..
+      </p>
+    `,
+  });
+
+  return { subject, body };
+};
+
 export const findPartnerPlayerAgreenTemplate = ({
   playerName,
   playerEmail,
