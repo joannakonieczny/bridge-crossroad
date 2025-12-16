@@ -1083,6 +1083,7 @@ const messages = {
           },
         },
       },
+      modifyButton: "Zmodyfikuj dane o wydarzeniu",
       EventEnrollment: {
         heading: "Zapis na wydarzenie",
         participantsCount: {

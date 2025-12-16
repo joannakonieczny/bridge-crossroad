@@ -21,6 +21,7 @@ import { AsyncImage } from "@/components/common/AsyncImage";
 import EventForm from "../event-form/EventForm";
 import type { AddEventSchemaType } from "@/schemas/pages/with-onboarding/events/events-types";
 import { EventType } from "@/club-preset/event-type";
+import { useTranslations } from "@/lib/typed-translations";
 
 function convertEventToFormData(
   event: EventSchemaTypePopulated
@@ -109,6 +110,7 @@ export default function EventBanner({
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure();
+  const t = useTranslations("pages.EventPage");
 
   return (
     <Box
@@ -211,7 +213,7 @@ export default function EventBanner({
               variant="outline"
               onClick={onEditOpen}
             >
-              Zmodyfikuj dane o wydarzeniu
+              {t("modifyButton")}
             </Button>
             {event && (
               <EventForm
