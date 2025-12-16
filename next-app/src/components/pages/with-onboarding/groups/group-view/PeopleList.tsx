@@ -20,7 +20,6 @@ import SearchInput from "@/components/common/SearchInput";
 import UserTableRow from "./UserTableRow";
 import { useTranslations } from "@/lib/typed-translations";
 import type { UserTypeBasic } from "@/schemas/model/user/user-types";
-import { color } from "framer-motion";
 
 type PeopleListProps = {
   members?: UserTypeBasic[];
@@ -95,7 +94,7 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
     ].some((field) => field?.toLowerCase().includes(query));
   });
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
 
   return (
     <Flex

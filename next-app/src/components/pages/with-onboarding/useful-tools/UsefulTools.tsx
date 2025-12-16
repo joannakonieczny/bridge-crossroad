@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, VStack, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, VStack } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import { useTranslations } from "@/lib/typed-translations";
 import { tools } from "@/club-preset/useful-tools";

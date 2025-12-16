@@ -10,7 +10,7 @@ interface NavbarTabProps {
 
 export default function NavbarTab({ href, children }: NavbarTabProps) {
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
 
   return (
     <Tab

@@ -18,7 +18,6 @@ import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getDurationLabel } from "@/util/formatters";
 import { AsyncImage } from "@/components/common/AsyncImage";
-import { color } from "framer-motion";
 
 export default function EventBanner({
   event,

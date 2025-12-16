@@ -44,7 +44,6 @@ import NavbarTab from "./NavbarTab";
 import NavbarDrawerItem from "./NavbarDrawerItem";
 import NavbarDrawerMenuItem from "./NavbarDrawerMenuItem";
 import { logout } from "@/services/auth/api";
-import { color } from "framer-motion";
 
 const navbarTabs = [
   ROUTES.dashboard,
