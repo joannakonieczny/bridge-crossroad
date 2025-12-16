@@ -66,37 +66,6 @@ export const forgetPasswordTemplate = ({
   return { subject, body };
 };
 
-export const findPartnerNewInterestedTemplate = ({
-  playerName,
-  playerEmail,
-  playerLevel,
-  person,
-}: {
-  playerName: string;
-  playerEmail: string;
-  playerLevel: string;
-  person: Person;
-}): TemplateReturnType => {
-  const subject = "Nowe zainteresowanie";
-  const body = emailWrapper({
-    person,
-    title: subject,
-    content: `
-      <p>
-        Gracz <strong>${playerName}</strong> wyraził zainteresowanie
-        zagraniem z Tobą.
-      </p>
-      <p>Dane gracza:</p>
-      <ul>
-        <li>Email: ${playerEmail}</li>
-        <li>Poziom: ${playerLevel}</li>
-      </ul>
-    `,
-  });
-
-  return { subject, body };
-};
-
 type TournamentEvent = {
   title: string;
   description?: string;
@@ -392,37 +361,6 @@ export const onboardingCompletedTemplate = ({
       <p>
         Zaloguj się do Bridge Crossroad i rozpocznij swoją przygodę z brydżem!
       </p>
-    `,
-  });
-
-  return { subject, body };
-};
-
-export const findPartnerPlayerAgreenTemplate = ({
-  playerName,
-  playerEmail,
-  acceptanceDate,
-  person,
-}: {
-  playerName: string;
-  playerEmail: string;
-  acceptanceDate: string;
-  person: Person;
-}): TemplateReturnType => {
-  const subject = "Partnerstwo zaakceptowane";
-  const body = emailWrapper({
-    person,
-    title: subject,
-    content: `
-      <p>
-        Świetna wiadomość! Gracz <strong>${playerName}</strong>
-        zaakceptował prośbę o partnerstwo.
-      </p>
-      <p>Dane gracza:</p>
-      <ul>
-        <li>Email: ${playerEmail}</li>
-        <li>Data akceptacji: ${acceptanceDate}</li>
-      </ul>
     `,
   });
 
