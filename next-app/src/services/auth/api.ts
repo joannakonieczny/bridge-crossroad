@@ -9,6 +9,8 @@ import { returnValidationErrors } from "next-safe-action";
 import { isProbablyEmail } from "@/schemas/common";
 import { onRepoError, onDuplicateKey } from "@/repositories/common";
 import type { TKey } from "@/lib/typed-translations";
+import { newlyCreatedAccountTemplate } from "@/email-templates/pl/email-templates";
+import { sendEmail } from "@/repositories/mailer";
 
 export const login = action
   .inputSchema(loginFormSchema)
@@ -33,9 +35,8 @@ export const login = action
     await createSession(user._id.toString());
   });
 
-export const register = action
-  .inputSchema(registerFormSchema)
-  .action(async ({ parsedInput: formData }) => {
+export const register = action.inputSchema(registerFormSchema).action(
+  async ({ parsedInput: formData }) => {
     try {
       const user = await createNewUser(formData);
       await createSession(user._id.toString());
@@ -57,7 +58,21 @@ export const register = action
         )
         .handle();
     }
-  });
+  },
+  {
+    onSuccess: async (d) => {
+      sendEmail({
+        userEmail: d.parsedInput.email,
+        ...newlyCreatedAccountTemplate({
+          person: {
+            firstName: d.parsedInput.firstName,
+            nickname: d.parsedInput.nickname,
+          },
+        }),
+      });
+    },
+  }
+);
 
 export const logout = action.action(async () => {
   await deleteSession();
