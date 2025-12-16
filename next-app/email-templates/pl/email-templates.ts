@@ -297,6 +297,38 @@ export const partnershipInterestNotificationTemplate = ({
   return { subject, body };
 };
 
+export const promotedToAdminTemplate = ({
+  groupName,
+  person,
+  promotedBy,
+}: {
+  groupName: string;
+  person: Person;
+  promotedBy: Person;
+}): TemplateReturnType => {
+  const subject = `Awans na administratora w grupie: ${groupName}`;
+  const body = emailWrapper({
+    person,
+    title: subject,
+    content: `
+      <p>
+        Gratulacje! Zostałeś awansowany na <strong>administratora</strong> w grupie <strong>${groupName}</strong> przez <strong>${getPersonLabel(
+      promotedBy
+    )}</strong>.
+      </p>
+      <p>
+        Jako administrator grupy otrzymujesz dodatkowe uprawnienia do zarządzania grupą, 
+        organizowania wydarzeń oraz moderowania treści.
+      </p>
+      <p>
+        Zaloguj się do Bridge Crossroad, aby zarządzać swoją grupą.
+      </p>
+    `,
+  });
+
+  return { subject, body };
+};
+
 export const findPartnerPlayerAgreenTemplate = ({
   playerName,
   playerEmail,

@@ -12,6 +12,9 @@ import {
   onDuplicateKey,
   onRepoError,
 } from "@/repositories/common";
+import { getUserData } from "@/repositories/onboarding";
+import { sendEmail } from "@/repositories/mailer";
+import { promotedToAdminTemplate } from "@/email-templates/pl/email-templates";
 import { returnValidationErrors } from "next-safe-action";
 import type { TKey } from "@/lib/typed-translations";
 import {
@@ -130,13 +133,41 @@ export const promoteMemberToAdmin = withinOwnGroupAsAdminAction
   .inputSchema(async (s) =>
     s.merge(z.object({ userIdToPromote: idPropSchema }))
   )
-  .action(async ({ ctx: { groupId }, parsedInput: { userIdToPromote } }) => {
-    const updatedGroup = await addAdminToGroup({
-      groupId,
-      userId: userIdToPromote,
-    });
-    return sanitizeGroup(updatedGroup);
-  });
+  .action(
+    async ({ ctx: { groupId }, parsedInput: { userIdToPromote } }) => {
+      const updatedGroup = await addAdminToGroup({
+        groupId,
+        userId: userIdToPromote,
+      });
+      return sanitizeGroup(updatedGroup);
+    },
+    {
+      onSuccess: async (d) => {
+        if (!d.ctx?.groupId || !d.parsedInput.userIdToPromote || !d.ctx.userId)
+          return;
+        const [promotedUser, promotingUser, group] = await Promise.all([
+          getUserData(d.parsedInput.userIdToPromote),
+          getUserData(d.ctx.userId),
+          getGroupById(d.ctx.groupId),
+        ]);
+
+        await sendEmail({
+          userEmail: promotedUser.email,
+          ...promotedToAdminTemplate({
+            groupName: group.name,
+            person: {
+              firstName: promotedUser.name.firstName,
+              nickname: promotedUser.nickname,
+            },
+            promotedBy: {
+              firstName: promotingUser.name.firstName,
+              nickname: promotingUser.nickname,
+            },
+          }),
+        });
+      },
+    }
+  );
 
 export const demoteAdminToMember = withinOwnGroupAsAdminAction
   .inputSchema(async (s) => s.merge(z.object({ userIdToDemote: idPropSchema })))
