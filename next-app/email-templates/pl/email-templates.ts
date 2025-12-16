@@ -1,5 +1,9 @@
+import type { TournamentType } from "@/club-preset/event-type";
+import { EventType } from "@/club-preset/event-type";
 import type { Person } from "./common";
-import { emailWrapper } from "./common";
+import { emailWrapper, getPersonLabel } from "./common";
+import type { DurationType } from "@/schemas/common";
+import { getDurationLabel } from "@/util/formatters";
 
 type TemplateReturnType = {
   subject: string;
@@ -90,6 +94,101 @@ export const findPartnerNewInterestedTemplate = ({
     `,
   });
 
+  return { subject, body };
+};
+
+type TournamentEvent = {
+  title: string;
+  description?: string;
+  location?: string;
+  additionalDescription?: string;
+  tournamentType?: TournamentType;
+  duration: DurationType;
+  organizer: Person;
+  group: {
+    name: string;
+  };
+  typeOfEvent: EventType.TOURNAMENT_PAIRS | EventType.TOURNAMENT_TEAMS;
+  team?: {
+    name: string;
+    members: Person[];
+  };
+};
+
+type TournamentRegistrationEmailParams = {
+  partner: Person;
+  person: Person;
+  tournamentEvent: TournamentEvent;
+};
+
+export const tournamentRegistrationTemplate = ({
+  partner,
+  person,
+  tournamentEvent,
+}: TournamentRegistrationEmailParams): TemplateReturnType => {
+  const subject = `Zapis na turniej: ${tournamentEvent.title} przez partnera w grupie ${tournamentEvent.group.name}`;
+  const body = emailWrapper({
+    person,
+    title: `Zapis na turniej: ${tournamentEvent.title} przez partnera w grupie ${tournamentEvent.group.name}`,
+    content: `
+      <p>
+        Zostałeś właśnie zapisany na turniej ${
+          tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS
+            ? "drużynowy"
+            : ""
+        } przez partnera: <strong>${getPersonLabel(
+      partner
+    )}</strong> w grupie: <strong>${tournamentEvent.group.name}</strong>.
+      </p>
+      <p><strong>Szczegóły turnieju:</strong></p>
+      <p><strong>Tytuł:</strong> ${tournamentEvent.title}</p>
+      ${
+        tournamentEvent.description
+          ? `<p><strong>Opis:</strong><br />${tournamentEvent.description}</p>`
+          : ""
+      }
+      ${
+        tournamentEvent.additionalDescription
+          ? `<p><strong>Dodatkowy opis:</strong><br />${tournamentEvent.additionalDescription}</p>`
+          : ""
+      }
+      ${
+        tournamentEvent.location
+          ? `<p><strong>Lokalizacja:</strong> ${tournamentEvent.location}</p>`
+          : ""
+      }
+      <p><strong>Typ turnieju:</strong> ${
+        tournamentEvent.typeOfEvent === EventType.TOURNAMENT_PAIRS
+          ? "Turniej par"
+          : "Turniej drużynowy"
+      }</p>
+
+      <p><strong>Czas trwania:</strong> ${getDurationLabel(
+        tournamentEvent.duration
+      )}</p>
+      <p><strong>Organizator:</strong> ${getPersonLabel(
+        tournamentEvent.organizer
+      )}</p>
+      <p><strong>Grupa:</strong> ${tournamentEvent.group.name}</p>
+      ${
+        tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS &&
+        tournamentEvent.team
+          ? `<p><strong>Nazwa twojej drużyny: ${
+              tournamentEvent.team.name
+            }</strong></p>
+             <ul>
+               ${tournamentEvent.team.members
+                 .map((m) => `<li>${getPersonLabel(m)}</li>`)
+                 .join("")}
+             </ul>`
+          : ""
+      }
+      <p>
+        Ważne: samo zapisanie się na turniej nie oznacza potwierdzenia obecności. 
+        Aby inni uczestnicy widzieli, że będziesz na wydarzeniu, należy <strong>potwierdzić swoją obecność</strong>.
+      </p>
+    `,
+  });
   return { subject, body };
 };
 
