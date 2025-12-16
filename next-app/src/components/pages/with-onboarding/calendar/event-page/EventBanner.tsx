@@ -12,11 +12,13 @@ import {
   ModalBody,
   useDisclosure,
   Skeleton,
+  useColorMode,
 } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
 import { getDurationLabel } from "@/util/formatters";
 import { AsyncImage } from "@/components/common/AsyncImage";
+import { color } from "framer-motion";
 
 export default function EventBanner({
   event,
@@ -26,6 +28,7 @@ export default function EventBanner({
   loading?: boolean;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { colorMode } = useColorMode();
 
   return (
     <Box
@@ -33,7 +36,7 @@ export default function EventBanner({
       maxW="100%"
       overflowX="hidden"
       boxSizing="border-box"
-      bgColor="bg"
+      bgColor={colorMode === "light" ? "bg" : "neutral.100"}
       mt={4}
       px={{ base: 3, md: 0 }}
     >

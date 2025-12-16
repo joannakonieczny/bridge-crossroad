@@ -1,6 +1,8 @@
+"use client";
+
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import { Box, Flex, Button, Highlight, Link } from "@chakra-ui/react";
+import { Box, Flex, Button, Highlight, Link, useColorMode } from "@chakra-ui/react";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
 import Landing1SVG from "@/assets/landing-page/landing-page-1.svg";
 import { useTranslations } from "@/lib/typed-translations";
@@ -9,6 +11,8 @@ import { ROUTES } from "@/routes";
 export default function LandingPage1() {
   const t = useTranslations("pages.LandingPage.landingPage1");
 
+  const { colorMode } = useColorMode();
+
   return (
     <Box
       as="section"
@@ -16,6 +20,7 @@ export default function LandingPage1() {
       minHeight="100vh"
       position="relative"
       overflow="hidden"
+      bgColor={colorMode === "light" ? "white" : "neutral.50"}
     >
       <ChakraSVG
         svg={Landing1SVG}

@@ -12,6 +12,7 @@ import {
   useBreakpointValue,
   VStack,
   Text,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import MainHeading from "@/components/common/texts/MainHeading";
@@ -19,6 +20,7 @@ import SearchInput from "@/components/common/SearchInput";
 import UserTableRow from "./UserTableRow";
 import { useTranslations } from "@/lib/typed-translations";
 import type { UserTypeBasic } from "@/schemas/model/user/user-types";
+import { color } from "framer-motion";
 
 type PeopleListProps = {
   members?: UserTypeBasic[];
@@ -31,6 +33,8 @@ type MobileMemberCardProps = {
 };
 
 function MobileMemberCard({ fullName, nickname }: MobileMemberCardProps) {
+
+  
   return (
     <Box p={3} bg="bg" borderRadius="md" boxShadow="sm">
       <Text fontWeight="bold" fontSize="sm">
@@ -91,6 +95,8 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
     ].some((field) => field?.toLowerCase().includes(query));
   });
 
+  const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <Flex
       flex={1}
@@ -100,7 +106,7 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
     >
       <Flex
         flex={1}
-        backgroundColor="bg"
+        backgroundColor={colorMode === "light" ? "bg" : "neutral.100"}
         padding={{ base: "1rem", md: "2rem" }}
         direction="column"
         gap={6}

@@ -7,6 +7,7 @@ import {
   Spinner,
   Center,
   Stack,
+  useColorMode,
 } from "@chakra-ui/react";
 import {
   Table,
@@ -52,9 +53,12 @@ export default function EventSpecificData({
 }) {
   const t = useTranslations("components.EventPage.EventSpecificData");
   const tTournamentTypes = useTranslations("common.tournamentType");
+
+  const { colorMode } = useColorMode();
+
   if (loading || !eventData) {
     return (
-      <Box bgColor="bg" p={4}>
+      <Box bgColor={colorMode === "light" ? "bg" : "neutral.100"} p={4}>
         <Center py={6}>
           <Spinner />
         </Center>
@@ -65,7 +69,7 @@ export default function EventSpecificData({
   switch (eventData.type) {
     case EventType.TOURNAMENT_PAIRS: {
       return (
-        <Box bgColor="bg" p={4}>
+        <Box bgColor={colorMode === "light" ? "bg" : "neutral.100"} p={4}>
           <ResponsiveHeading
             text={t("tournamentHeading")}
             fontSize="sm"
@@ -111,7 +115,7 @@ export default function EventSpecificData({
 
     case EventType.TOURNAMENT_TEAMS: {
       return (
-        <Box bgColor="bg" p={4}>
+        <Box bgColor={colorMode === "light" ? "bg" : "neutral.100"} p={4}>
           <ResponsiveHeading
             text={t("tournamentHeading")}
             fontSize="sm"
@@ -161,7 +165,7 @@ export default function EventSpecificData({
 
     case EventType.LEAGUE_MEETING: {
       return (
-        <Box bgColor="bg" p={4}>
+        <Box bgColor={colorMode === "light" ? "bg" : "neutral.100"} p={4}>
           <ResponsiveHeading
             text={t("leagueHeading")}
             fontSize="sm"
@@ -519,7 +523,7 @@ export default function EventSpecificData({
 
     case EventType.TRAINING: {
       return (
-        <Box bgColor="bg" p={4}>
+        <Box bgColor={colorMode === "light" ? "bg" : "neutral.100"} p={4}>
           <ResponsiveHeading
             text={t("trainingHeading")}
             fontSize="sm"

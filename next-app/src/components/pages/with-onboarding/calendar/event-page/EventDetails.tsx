@@ -6,6 +6,7 @@ import {
   ListItem,
   SimpleGrid,
   Skeleton,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import { EventType } from "@/club-preset/event-type";
@@ -26,8 +27,10 @@ export default function EventDetails({
     event?.data.type === EventType.OTHER ||
     event?.data.type === EventType.TRAINING;
 
+  const { colorMode } = useColorMode();
+
   return (
-    <Box w="100%" bgColor="bg" p={4}>
+    <Box w="100%" bgColor={colorMode === "light" ? "bg" : "neutral.100"} p={4}>
       <VStack align="start" spacing={4}>
         <Box w="100%">
           {loading ? (

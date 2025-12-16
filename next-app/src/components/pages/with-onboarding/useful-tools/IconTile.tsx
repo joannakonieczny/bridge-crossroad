@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Text, Button, Icon, VStack, Link, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Icon, VStack, Link, useColorMode } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import { FaGreaterThan } from "react-icons/fa";
 import type { IconType } from "react-icons";
@@ -24,13 +24,15 @@ export function Tile({
   buttonText,
   isPrimaryVariant,
 }: TileProps) {
+  const { colorMode } = useColorMode();
+
   return (
     <Box
       minH={{ base: "auto", md: "13rem" }}
       w="full"
       maxW={{ base: "full", md: "70rem" }}
       mx="auto"
-      bg={useColorModeValue("bg", "neutral.100")}
+      bg={colorMode === "dark" ? "neutral.100" : "bg"}
     >
       <Flex
         direction={{ base: "column", md: "row" }}

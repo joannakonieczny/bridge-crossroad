@@ -106,7 +106,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
                   gap={2}
                   px={3}
                   py={2}
-                  bg="gray.50"
+                  bg={{ base: "gray.50", _dark: "neutral.100" }}
                   border="1px solid"
                   borderColor="neutral.200"
                   borderRadius="md"

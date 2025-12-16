@@ -149,20 +149,22 @@ export default function Navbar() {
                   />
                   <MenuList
                     minWidth="240px"
-                    bg="bg"
+                    bg={colorMode === "light" ? "bg" : "neutral.50"}
                     borderColor="neutral.200"
                     boxShadow="md"
                   >
-                    <MenuItem icon={<FaRegUser size="1rem" />}>
+                    <MenuItem bg={colorMode === "dark" ? "neutral.50" : undefined} _hover={colorMode === "dark" ? { bg: "neutral.200" } : undefined} icon={<FaRegUser size="1rem" />}>
                       {t("menu.profile")}
                     </MenuItem>
-                    <MenuItem icon={<FaRegQuestionCircle size="1rem" />}>
+                    <MenuItem bg={colorMode === "dark" ? "neutral.50" : undefined} _hover={colorMode === "dark" ? { bg: "neutral.200" } : undefined} icon={<FaRegQuestionCircle size="1rem" />}>
                       {t("menu.settings")}
                     </MenuItem>
-                    <MenuItem icon={<FaCog size="1rem" />}>
+                    <MenuItem bg={colorMode === "dark" ? "neutral.50" : undefined} _hover={colorMode === "dark" ? { bg: "neutral.200" } : undefined} icon={<FaCog size="1rem" />}>
                       {t("menu.aboutPage")}
                     </MenuItem>
                     <MenuItem
+                      bg={colorMode === "dark" ? "neutral.50" : undefined}
+                      _hover={colorMode === "dark" ? { bg: "neutral.200" } : undefined}
                       icon={<FaSignOutAlt size="1rem" />}
                       onClick={handleLogout}
                     >

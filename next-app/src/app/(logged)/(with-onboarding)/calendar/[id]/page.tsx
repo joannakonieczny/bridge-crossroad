@@ -45,7 +45,7 @@ export default function EventPage() {
             eventQ.data.data.type === EventType.TOURNAMENT_TEAMS && (
               <EventTeamsTournamentEnrollment event={eventQ.data} />
             )}
-          <EventSpecificData
+        <EventSpecificData
             eventData={eventQ.data?.data}
             loading={isLoading}
           />
