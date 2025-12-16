@@ -293,9 +293,21 @@ export const enrollToEventTournament = withinOwnGroupAction
 
 export const unenrollFromEventTournament = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(havingEventId))
+  .use(async ({ next, ctx, clientInput }) => {
+    const parseResult = havingEventId.safeParse(clientInput);
+    if (!parseResult.success) {
+      return returnValidationErrors(havingEventId, {
+        eventId: {
+          _errors: ["common.validation.invalidEventId"],
+        },
+      });
+    }
+    const { eventId } = parseResult.data;
+    const event = await getEventRepository({ eventId });
+    return next({ ctx: { ...ctx, event, eventId } });
+  })
   .action(
-    async ({ parsedInput: { eventId }, ctx: { userId } }) => {
-      const event = await getEventRepository({ eventId });
+    async ({ parsedInput: { eventId }, ctx: { userId, event } }) => {
       const eventType = event.data.type;
 
       switch (eventType) {
@@ -327,13 +339,11 @@ export const unenrollFromEventTournament = withinOwnGroupAction
     {
       onSuccess: async (d) => {
         const partnerId = d.ctx?.userId; // the user who unenrolled the pair/team
-        if (!d.data || !partnerId) return;
+        const eventBeforeRemoval = d.ctx?.event; // event before removal from ctx
+        if (!d.data || !partnerId || !eventBeforeRemoval) return;
 
-        const [eventPopulated, partner] = await Promise.all([
-          getEventRepository({ eventId: d.data.id }),
-          getUserData(partnerId),
-        ]);
-        const eventData = eventPopulated.data;
+        const partner = await getUserData(partnerId);
+        const eventData = eventBeforeRemoval.data;
 
         if (eventData.type === EventType.TOURNAMENT_TEAMS) {
           const removedTeam = eventData.teams.find((team) =>
@@ -363,19 +373,19 @@ export const unenrollFromEventTournament = withinOwnGroupAction
                       nickname: member.nickname,
                     },
                     tournamentEvent: {
-                      title: eventPopulated.title,
-                      description: eventPopulated.description,
-                      location: eventPopulated.location,
+                      title: eventBeforeRemoval.title,
+                      description: eventBeforeRemoval.description,
+                      location: eventBeforeRemoval.location,
                       additionalDescription:
-                        eventPopulated.additionalDescription,
+                        eventBeforeRemoval.additionalDescription,
                       tournamentType: eventData.tournamentType,
-                      duration: eventPopulated.duration,
+                      duration: eventBeforeRemoval.duration,
                       organizer: {
-                        firstName: eventPopulated.organizer.name.firstName,
-                        nickname: eventPopulated.organizer.nickname,
+                        firstName: eventBeforeRemoval.organizer.name.firstName,
+                        nickname: eventBeforeRemoval.organizer.nickname,
                       },
                       group: {
-                        name: eventPopulated.group.name,
+                        name: eventBeforeRemoval.group.name,
                       },
                       typeOfEvent: EventType.TOURNAMENT_TEAMS,
                       team: {
@@ -416,18 +426,18 @@ export const unenrollFromEventTournament = withinOwnGroupAction
                 nickname: secondFromPair.nickname,
               },
               tournamentEvent: {
-                title: eventPopulated.title,
-                description: eventPopulated.description,
-                location: eventPopulated.location,
-                additionalDescription: eventPopulated.additionalDescription,
+                title: eventBeforeRemoval.title,
+                description: eventBeforeRemoval.description,
+                location: eventBeforeRemoval.location,
+                additionalDescription: eventBeforeRemoval.additionalDescription,
                 tournamentType: eventData.tournamentType,
-                duration: eventPopulated.duration,
+                duration: eventBeforeRemoval.duration,
                 organizer: {
-                  firstName: eventPopulated.organizer.name.firstName,
-                  nickname: eventPopulated.organizer.nickname,
+                  firstName: eventBeforeRemoval.organizer.name.firstName,
+                  nickname: eventBeforeRemoval.organizer.nickname,
                 },
                 group: {
-                  name: eventPopulated.group.name,
+                  name: eventBeforeRemoval.group.name,
                 },
                 typeOfEvent: EventType.TOURNAMENT_PAIRS,
               },
