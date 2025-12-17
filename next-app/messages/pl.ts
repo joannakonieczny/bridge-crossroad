@@ -72,17 +72,18 @@ const forgotPasswordPage = {
     },
   },
   emailSentInfo: {
-    message: "Link resetujący hasło został wysłany na podany adres e-mail!",
+    message: "Nowe hasło zostało wysłane na podany adres e-mail!",
     instructions:
-      "Sprawdź swoją skrzynkę pocztową, użyj otrzymanego linka do zresetowania hasła, a następnie zaloguj się nowym hasłem.",
+      "Sprawdź swoją skrzynkę pocztową, użyj otrzymanego hasła do zalogowania, a następnie zmień je w ustawieniach konta.",
   },
   submitButtons: {
-    sendEmail: "Wyślij link resetujący",
+    sendEmail: "Wyślij nowe hasło",
     resendEmail: "Wyślij ponownie",
   },
   toast: {
-    success: "Link resetujący hasło został wysłany!",
-    resendSuccess: "Link resetujący został wysłany ponownie!",
+    loading: "Resetowanie hasła...",
+    success: "Nowe hasło zostało wysłane na Twój adres e-mail!",
+    resendSuccess: "Nowe hasło zostało wysłane ponownie!",
     errorDefault: "Wystąpił błąd podczas wysyłania emaila",
   },
 };
@@ -1075,6 +1076,9 @@ const messages = {
       },
       login: {
         invalidCredentials: "Nieprawidłowe dane logowania",
+      },
+      resetPassword: {
+        userNotFound: "Nie znaleziono użytkownika z podanym adresem e-mail",
       },
     },
     onboarding: {

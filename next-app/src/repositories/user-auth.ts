@@ -81,3 +81,30 @@ export async function findExisting(params: FindIfExistParams) {
 
   throw new RepositoryError("Invalid credentials");
 }
+
+export async function findUserByEmail(email: EmailType) {
+  await dbConnect();
+  const user = await User.findOne({ email }).lean<IUserDTO>();
+  if (!user) {
+    throw new RepositoryError("User not found");
+  }
+  return user;
+}
+
+export async function changePassword(
+  email: EmailType,
+  newPassword: PasswordTypeGeneric
+) {
+  await dbConnect();
+
+  const salt = await bcrypt.genSalt(hashingRounds);
+  const encodedPassword = await bcrypt.hash(newPassword, salt);
+
+  const updatedUser = await User.findOneAndUpdate(
+    { email },
+    { encodedPassword },
+    { new: true }
+  ).lean<IUserDTO>();
+
+  return check(updatedUser, "Failed to update password");
+}

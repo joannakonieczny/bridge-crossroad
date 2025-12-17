@@ -15,11 +15,23 @@ import { forgotPasswordFormSchema } from "@/schemas/pages/auth/forgot-password/f
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ROUTES } from "@/routes";
 import { withEmptyToUndefined } from "@/schemas/common";
+import { resetPassword } from "@/services/auth/api";
+import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
+import type {
+  ActionInput,
+  MutationOrQuerryError,
+} from "@/lib/tanstack-action/types";
+import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 
 export default function ForgotPasswordForm() {
   const t = useTranslations("pages.Auth.ForgotPasswordPage");
   const tValidation = useTranslationsWithFallback();
-  const { handleSubmit: handleFormSubmit, control: formControl } = useForm({
+  const {
+    handleSubmit: handleFormSubmit,
+    control: formControl,
+    setError: setFormError,
+    getValues,
+  } = useForm({
     resolver: zodResolver(withEmptyToUndefined(forgotPasswordFormSchema)),
     defaultValues: {
       email: "",
@@ -36,28 +48,43 @@ export default function ForgotPasswordForm() {
     }
   }, [countdown]);
 
-  function handleSubmit(data: { email: string }) {
-    // TODO: Zaimplementuj logikę wysyłania emaila resetującego hasło
-    console.log("Wysyłanie emaila do:", data.email);
+  const resetPasswordAction = useActionMutation({
+    action: resetPassword,
+    onSuccess: () => {
+      setEmailSent(true);
+      setCountdown(30);
+    },
+    onError: (err) => {
+      const hasValidationErrors = Boolean(err?.validationErrors);
+      if (hasValidationErrors) {
+        setFormError("email", { type: "server", message: undefined });
+      }
+    },
+  });
 
-    toast({
-      title: t("toast.success"),
-      status: "success",
-      duration: 5000,
+  function handleWithToast(data: ActionInput<typeof resetPassword>) {
+    const promise = resetPasswordAction.mutateAsync(data);
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.success") },
+      error: (err: MutationOrQuerryError<typeof resetPasswordAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
     });
-
-    setEmailSent(true);
-    setCountdown(30);
   }
 
   function handleResendEmail() {
-    // TODO: Zaimplementuj logikę ponownego wysyłania emaila
-    console.log("Ponowne wysyłanie emaila");
+    const email = getValues("email");
+    const promise = resetPasswordAction.mutateAsync({ email });
 
-    toast({
-      title: t("toast.resendSuccess"),
-      status: "success",
-      duration: 5000,
+    toast.promise(promise, {
+      loading: { title: t("toast.loading") },
+      success: { title: t("toast.resendSuccess") },
+      error: (err: MutationOrQuerryError<typeof resetPasswordAction>) => {
+        const errKey = getMessageKeyFromError(err);
+        return { title: tValidation(errKey) };
+      },
     });
 
     setCountdown(30);
@@ -65,7 +92,7 @@ export default function ForgotPasswordForm() {
 
   return (
     <FormLayout>
-      <form onSubmit={handleFormSubmit(handleSubmit)}>
+      <form onSubmit={handleFormSubmit(handleWithToast)}>
         <Stack spacing={4} mt={8}>
           <FormHeading
             title={t("title")}
