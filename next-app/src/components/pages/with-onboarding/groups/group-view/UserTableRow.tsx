@@ -30,7 +30,7 @@ export default function UserTableRow({
             {fullName}
           </Text>
           {nickname && (
-            <Text fontSize="sm" color="border.500" mt={2} fontStyle={"italic"}>
+            <Text fontSize="sm" color="neutral.500" mt={2} fontStyle={"italic"}>
               {nickname}
             </Text>
           )}
@@ -64,7 +64,7 @@ export default function UserTableRow({
             {cuebidsCode}
           </Link>
         ) : (
-          <Text color="border.400" fontSize={{ base: "xs", md: "sm" }}>
+          <Text color="neutral.400" fontSize={{ base: "xs", md: "sm" }}>
             {t("placeholder")}
           </Text>
         )}

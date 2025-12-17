@@ -11,6 +11,7 @@ import {
   Skeleton,
   SkeletonText,
   Td,
+  useColorMode,
 } from "@chakra-ui/react";
 import Announcement from "./Announcement";
 import { usePartnershipPostsQuery } from "@/lib/queries";
@@ -47,6 +48,7 @@ const experienceMap: Record<string, ExperienceRange<number>> = {
 
 export default function AnnoucementsList() {
   const t = useTranslations("pages.FindPartner.List");
+  const { colorMode } = useColorMode();
 
   const [filters] = useQueryStates({
     page: parseAsInteger.withDefault(1),
@@ -118,7 +120,7 @@ export default function AnnoucementsList() {
 
   function AnnouncementsSkeletonLoader() {
     return (
-      <Box bg="bg" p={4} borderRadius="md">
+      <Box bg={colorMode === "dark" ? "neutral.100" : "bg"} p={4} borderRadius="md">
         <Table variant="simple" size="md">
           <Thead>
             <Tr>
@@ -165,7 +167,7 @@ export default function AnnoucementsList() {
   const posts = postsQuery.data?.data || [];
 
   return (
-    <Box bg="bg" p={4} borderRadius="md">
+    <Box bg={colorMode === "dark" ? "neutral.100" : "bg"} p={4} borderRadius="md">
       <Table variant="simple" size="md">
         <Thead>
           <Tr>

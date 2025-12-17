@@ -1,10 +1,13 @@
-import { Box, HStack, Stack, Text } from "@chakra-ui/react";
+import { Box, HStack, Stack, Text, useColorMode } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import { baseConfig } from "@/club-preset/baseConfig";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
-import LogoSVG from "@/assets/common/logo-lightmode.svg";
+import LogoLightSVG from "@/assets/common/logo-lightmode.svg";
+import LogoDarkSVG from "@/assets/common/logo-darkmode.svg";
 
 export default function FormLayout({ children }: PropsWithChildren) {
+  const { colorMode } = useColorMode();
+  const LogoSVG = colorMode === "dark" ? LogoDarkSVG : LogoLightSVG;
   const [firstWord, secondWord] = baseConfig.appName.split(" ");
   return (
     <Stack mb={8}>

@@ -207,7 +207,7 @@ export function TextInput({ groupId }: TextInputProps) {
             <ButtonGroup isAttached variant="outline">
               <IconButton
                 aria-label="Attach File"
-                backgroundColor="border.200"
+                backgroundColor="neutral.200"
                 icon={<GrFormAttachment />}
                 type="button"
                 onClick={onOpen}

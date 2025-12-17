@@ -9,6 +9,7 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useJoinedGroupsQuery } from "@/lib/queries";
 import { useQueryStates, parseAsString } from "nuqs";
@@ -24,6 +25,7 @@ export default function FiltersBar() {
   const t = useTranslations("pages.FindPartner.FiltersBar");
   const tTrainingGroup = useTranslations("common.trainingGroup");
   const tBiddingSystem = useTranslations("common.biddingSystem");
+  const { colorMode } = useColorMode();
 
   const [biddingSystem, setBiddingSystem] = React.useState<string>("");
 
@@ -63,7 +65,7 @@ export default function FiltersBar() {
   }, [filters, mainGroupId, setFilters]);
 
   return (
-    <Box bg="bg" p={4} borderRadius="md">
+    <Box bg={colorMode === "dark" ? "neutral.100" : "bg"} p={4} borderRadius="md">
       <Grid
         gap={3}
         alignItems="center"

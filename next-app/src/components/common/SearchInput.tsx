@@ -23,7 +23,7 @@ export default function SearchInput({
         fontSize="md"
       />
       <InputRightElement pointerEvents="none">
-        <FaSearch color="border.500" />
+        <FaSearch color="neutral.500" />
       </InputRightElement>
     </InputGroup>
   );

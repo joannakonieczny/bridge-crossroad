@@ -10,6 +10,7 @@ import {
   Text,
   useDisclosure,
   Divider,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
@@ -190,6 +191,8 @@ export default function EventPairsTournamentEnrollment({
     });
   }
 
+  const { colorMode } = useColorMode();
+
   return (
     <>
       <ConfirmationModal
@@ -222,7 +225,7 @@ export default function EventPairsTournamentEnrollment({
         isLoading={unenrollMutation.isPending}
       />
 
-      <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
+      <Box bg={colorMode === "light" ? "bg" : "neutral.100"} borderRadius="md" boxShadow="sm" p={4} w="100%">
         {isUserEnrolled ? (
           <VStack align="start" spacing={4}>
             <ResponsiveHeading

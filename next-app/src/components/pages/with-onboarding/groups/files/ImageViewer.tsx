@@ -53,7 +53,7 @@ export function ImageViewer({
           alignItems="center"
           width="100%"
         >
-          <Text color="border.500">
+          <Text color="neutral.500">
             {getPersonLabel(selectedMessage?.sender) +
               " - " +
               getDateLabel(selectedMessage?.createdAt)}

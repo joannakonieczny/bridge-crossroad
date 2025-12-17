@@ -90,7 +90,7 @@ export function ChatBox({ groupId }: ChatBoxProps) {
 
       {!messagesQuery.isLoading && allMessages.length === 0 && (
         <Flex justify="center" align="center" py={4}>
-          <Text color="border.500">{t("noMessages")}</Text>
+          <Text color="neutral.500">{t("noMessages")}</Text>
         </Flex>
       )}
 

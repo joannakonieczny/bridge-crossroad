@@ -62,7 +62,7 @@ function SelectInput(p: ISelectInputProps) {
     <InputGroup>
       <SelectInputSolo {...p} isDisabled />
       <InputRightElement pointerEvents="none">
-        <Spinner size="sm" color="border.500" />
+        <Spinner size="sm" color="neutral.500" />
       </InputRightElement>
     </InputGroup>
   );

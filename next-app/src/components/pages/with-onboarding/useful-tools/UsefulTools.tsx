@@ -11,7 +11,7 @@ export default function UsefulTools() {
   const t = useTranslations("pages.UsefulTools");
 
   return (
-    <Box bg="border.50">
+    <Box bg="neutral.50">
       <Flex
         justify="center"
         w="full"

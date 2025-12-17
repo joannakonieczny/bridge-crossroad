@@ -7,6 +7,7 @@ import {
   Button,
   useDisclosure,
   useBreakpointValue,
+  useColorMode,
 } from "@chakra-ui/react";
 import SidebarCard from "@/components/common/SidebarCard";
 import { FiPlus } from "react-icons/fi";
@@ -21,6 +22,7 @@ export default function Sidebar() {
   const t = useTranslations("pages.CalendarPage.Sidebar");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isVisible = useBreakpointValue({ base: false, md: true }) ?? false;
+  const { colorMode } = useColorMode();
 
   const eventsQ = useRecentEventsQuery(EventsToDisplay);
 
@@ -30,10 +32,10 @@ export default function Sidebar() {
     <Box
       w="16.5rem"
       minH="calc(100vh - 5rem)"
-      bg="bg"
+      bg={colorMode === "dark" ? "neutral.100" : "neutral.50"}
       flex="0 0 16.5rem"
       p={4}
-      overflowY="auto"
+      overflowY="auto"  
       position="relative"
     >
       <Box mb={4} width="100%" pr={2}>

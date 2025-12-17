@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Icon, Highlight } from "@chakra-ui/react";
+import { Box, Flex, Icon, Highlight, useColorModeValue } from "@chakra-ui/react";
 import { FiUsers, FiUserPlus } from "react-icons/fi";
 import { BsCalendar } from "react-icons/bs";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
@@ -11,6 +11,7 @@ import { useTranslations } from "@/lib/typed-translations";
 
 export default function LandingPage2() {
   const t = useTranslations("pages.LandingPage.landingPage2");
+  const textColor = useColorModeValue(undefined, "black");
 
   return (
     <Box
@@ -46,12 +47,12 @@ export default function LandingPage2() {
           flex="1"
         >
           {/* Nagłówek */}
-          <ResponsiveHeading text={t("heading")} fontSize="3xl" />
+          <ResponsiveHeading text={t("heading")} fontSize="3xl" color={textColor} />
 
           {/* Element 1 */}
           <Flex gap={4} align="flex-start">
             <Icon as={BsCalendar} boxSize="3rem" color="accent.400" />
-            <ResponsiveText fontSize="lg">
+            <ResponsiveText fontSize="lg" color={textColor}>
               <Highlight
                 query={t("highlight1")}
                 styles={{ fontWeight: "bold", color: "accent.700" }}
@@ -64,7 +65,7 @@ export default function LandingPage2() {
           {/* Element 2 */}
           <Flex gap={4} align="flex-start">
             <Icon as={FiUserPlus} boxSize="3rem" color="accent.400" />
-            <ResponsiveText fontSize="lg">
+            <ResponsiveText fontSize="lg" color={textColor}>
               <Highlight
                 query={t("highlight2")}
                 styles={{ fontWeight: "bold", color: "accent.700" }}
@@ -77,7 +78,7 @@ export default function LandingPage2() {
           {/* Element 3 */}
           <Flex gap={4} align="flex-start">
             <Icon as={FiUsers} boxSize="3rem" color="accent.400" />
-            <ResponsiveText fontSize="lg">
+            <ResponsiveText fontSize="lg" color={textColor}>
               <Highlight
                 query={t("highlight3")}
                 styles={{ fontWeight: "bold", color: "accent.700" }}

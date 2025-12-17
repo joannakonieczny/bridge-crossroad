@@ -95,3 +95,46 @@
   overflow-wrap: anywhere !important;
   word-break: break-word !important;
 }
+
+/* Dark mode: white arrows for calendar navigation */
+:global(.chakra-ui-dark) .root :global(.fc-button-primary),
+:global([data-theme="dark"]) .root :global(.fc-button-primary) {
+  color: white !important;
+}
+
+:global(.chakra-ui-dark) .root :global(.fc-icon),
+:global([data-theme="dark"]) .root :global(.fc-icon) {
+  color: white !important;
+}
+
+/* Calendar borders - neutral.400 */
+.root :global(.fc-scrollgrid),
+.root :global(.fc-scrollgrid td),
+.root :global(.fc-scrollgrid th),
+.root :global(.fc-timegrid-slot),
+.root :global(.fc-timegrid-axis),
+.root :global(.fc-col-header-cell),
+.root :global(.fc-daygrid-day) {
+  border-color: var(--chakra-colors-neutral-400) !important;
+}
+
+/* Dark mode: past events secondary-700 */
+:global(.chakra-ui-dark) .root :global(.fc-event[style*="border-300"]),
+:global([data-theme="dark"]) .root :global(.fc-event[style*="border-300"]) {
+  background-color: var(--chakra-colors-secondary-700) !important;
+  border-color: var(--chakra-colors-secondary-700) !important;
+}
+
+/* Dark mode: no today highlight */
+:global(.chakra-ui-dark) .root :global(.fc-day-today),
+:global(.chakra-ui-dark) .root :global(.fc-col-header-cell.fc-day-today),
+:global(.chakra-ui-dark) .root :global(.fc-timegrid-col.fc-day-today),
+:global(.chakra-ui-dark) .root :global(.fc-daygrid-day.fc-day-today),
+:global(.chakra-ui-dark) .root :global(.fc-timegrid-col-header-cell.fc-day-today),
+:global([data-theme="dark"]) .root :global(.fc-day-today),
+:global([data-theme="dark"]) .root :global(.fc-col-header-cell.fc-day-today),
+:global([data-theme="dark"]) .root :global(.fc-timegrid-col.fc-day-today),
+:global([data-theme="dark"]) .root :global(.fc-daygrid-day.fc-day-today),
+:global([data-theme="dark"]) .root :global(.fc-timegrid-col-header-cell.fc-day-today) {
+  background: transparent !important;
+}

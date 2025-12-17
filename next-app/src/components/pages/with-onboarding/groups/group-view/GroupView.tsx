@@ -61,7 +61,7 @@ export default function GroupView(props: IGroupViewProps) {
   return (
     <Flex
       direction="column"
-      backgroundColor="border.50"
+      backgroundColor="neutral.50"
       width="100%"
       minHeight={minH}
       paddingY={py}

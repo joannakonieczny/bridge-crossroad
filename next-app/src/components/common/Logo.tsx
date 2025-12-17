@@ -1,11 +1,17 @@
-import { Flex, Heading } from "@chakra-ui/react";
+"use client";
+
+import { Flex, Heading, useColorMode } from "@chakra-ui/react";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
-import LogoSVG from "@/assets/common/logo-lightmode.svg";
+import LogoLightSVG from "@/assets/common/logo-lightmode.svg";
+import LogoDarkSVG from "@/assets/common/logo-darkmode.svg";
 import { ROUTES } from "@/routes";
 import { baseConfig } from "@/club-preset/baseConfig";
 import ChakraLink from "../chakra-config/ChakraLink";
 
 export default function Logo() {
+  const { colorMode } = useColorMode();
+  const LogoSVG = colorMode === "dark" ? LogoDarkSVG : LogoLightSVG;
+
   return (
     <ChakraLink
       href={ROUTES.landing_page}

@@ -21,7 +21,7 @@ export default function InfoTable() {
         borderRadius="md"
         overflow="hidden"
         border="1px solid"
-        borderColor="border.200"
+        borderColor="neutral.200"
         width="100%"
       >
         <Flex justify="center" width="100%">
@@ -29,7 +29,7 @@ export default function InfoTable() {
             borderRadius="md"
             overflow="hidden"
             border="1px solid"
-            borderColor="border.200"
+            borderColor="neutral.200"
             width="100%"
           >
             <Table variant="simple" width="100%" size="sm">
@@ -37,7 +37,7 @@ export default function InfoTable() {
                 {rows.map((row, index) => (
                   <Tr
                     key={row.label}
-                    bg={index % 2 === 0 ? "border.100" : "bg"}
+                    bg={index % 2 === 0 ? "neutral.100" : "bg"}
                   >
                     <Td
                       fontWeight="semibold"

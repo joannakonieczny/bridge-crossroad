@@ -27,7 +27,7 @@ export default function ProfilePicture(props: IProfilePictureProps) {
           style={{ borderRadius: "50%" }}
         />
       ) : (
-        <Icon as={FaUserCircle} boxSize={props.size} color="border.300" />
+        <Icon as={FaUserCircle} boxSize={props.size} color="neutral.300" />
       )}
     </Flex>
   );

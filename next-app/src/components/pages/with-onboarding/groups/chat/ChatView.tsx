@@ -12,7 +12,7 @@ type IChatViewProps = {
 export default function ChatView(props: IChatViewProps) {
   return (
     <Flex
-      backgroundColor="border.50"
+      backgroundColor="neutral.50"
       width="100%"
       h={{ base: "calc(100vh - 7rem)", md: "calc(100vh - 5rem)" }}
       paddingY={{ base: "1rem", md: "2rem" }}
