@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { emailSchema } from "@/schemas/model/user/user-schema";
+import {
+  emailSchema,
+  firstNameSchema,
+  lastNameSchema,
+  nicknameSchema,
+} from "@/schemas/model/user/user-schema";
 import type { TKey } from "@/lib/typed-translations";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
 
@@ -54,3 +59,9 @@ export const changePasswordSchema = z
     message: "validation.pages.user.repeatPassword.mismatch" satisfies TKey,
     path: ["repeatNewPassword"],
   });
+
+export const changeProfileSchema = z.object({
+  firstName: firstNameSchema,
+  lastName: lastNameSchema,
+  nickname: nicknameSchema.optional(),
+});

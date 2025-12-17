@@ -1,10 +1,15 @@
 "use server";
 
-import { updateUserEmail, updateUserPassword } from "@/repositories/user-auth";
+import {
+  updateUserEmail,
+  updateUserPassword,
+  updateUserProfile,
+} from "@/repositories/user-auth";
 import { fullAuthAction } from "@/services/action-lib";
 import {
   changeEmailSchema,
   changePasswordSchema,
+  changeProfileSchema,
 } from "@/schemas/pages/with-onboarding/user/user-change-schema";
 import { returnValidationErrors } from "next-safe-action";
 import { onDuplicateKey, onRepoError } from "@/repositories/common";
@@ -46,5 +51,26 @@ export const changePassword = fullAuthAction
           },
         })
       )
+    );
+  });
+
+export const changeProfile = fullAuthAction
+  .inputSchema(changeProfileSchema)
+  .action(async ({ parsedInput: formData, ctx }) => {
+    await updateUserProfile({
+      userId: ctx.userId,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      nickname: formData.nickname,
+    }).catch((err) =>
+      onDuplicateKey(err)
+        .on("nickname", () =>
+          returnValidationErrors(changeProfileSchema, {
+            nickname: {
+              _errors: ["api.user.changeProfile.nicknameExists" satisfies TKey],
+            },
+          })
+        )
+        .handle()
     );
   });

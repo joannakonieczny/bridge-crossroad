@@ -135,3 +135,39 @@ export async function updateUserPassword(params: UpdateUserPasswordParams) {
 
   return check(updatedUser, "Failed to update user password");
 }
+
+export type UpdateUserProfileParams = {
+  userId: UserIdType;
+  firstName: FirstNameType;
+  lastName: LastNameType;
+  nickname?: NicknameType;
+};
+
+export async function updateUserProfile(params: UpdateUserProfileParams) {
+  await dbConnect();
+
+  const update = {
+    $set: Object.fromEntries(
+      Object.entries({
+        "name.firstName": params.firstName,
+        "name.lastName": params.lastName,
+        nickname: params.nickname,
+      }).filter(([, value]) => value !== undefined)
+    ),
+
+    $unset: Object.fromEntries(
+      Object.entries({
+        nickname: params.nickname,
+      })
+        .filter(([, value]) => value === undefined)
+        .map(([key]) => [key, ""])
+    ),
+  };
+
+  const updatedUser = await User.findByIdAndUpdate(params.userId, update, {
+    new: true,
+    runValidators: true,
+  }).lean<IUserDTO>();
+
+  return check(updatedUser, "Failed to update user profile");
+}

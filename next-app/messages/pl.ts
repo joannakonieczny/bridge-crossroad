@@ -1067,6 +1067,9 @@ const messages = {
       changePassword: {
         invalidOldPassword: "Nieprawidłowe stare hasło",
       },
+      changeProfile: {
+        nicknameExists: "Nick jest już zajęty",
+      },
     },
     onboarding: {
       finalPage: {
