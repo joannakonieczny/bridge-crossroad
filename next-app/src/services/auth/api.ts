@@ -5,7 +5,7 @@ import {
   createNewUser,
   findExisting,
   findUserByEmail,
-  changePassword,
+  changePasswordToTemporary,
 } from "@/repositories/user-auth";
 import { action } from "@/services/action-lib";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
@@ -13,11 +13,17 @@ import { registerFormSchema } from "@/schemas/pages/auth/register/register-schem
 import { forgotPasswordFormSchema } from "@/schemas/pages/auth/forgot-password/forgot-password-schema";
 import { returnValidationErrors } from "next-safe-action";
 import { isProbablyEmail } from "@/schemas/common";
-import { onRepoError, onDuplicateKey } from "@/repositories/common";
+import {
+  onRepoError,
+  onDuplicateKey,
+  executeWithinTransaction,
+} from "@/repositories/common";
 import { sendEmail } from "@/repositories/mailer";
 import type { TKey } from "@/lib/typed-translations";
-import { newlyCreatedAccountTemplate } from "@/email-templates/pl/email-templates";
-import { sendEmail } from "@/repositories/mailer";
+import {
+  newlyCreatedAccountTemplate,
+  forgetPasswordTemplate,
+} from "@/email-templates/pl/email-templates";
 
 function generateRandomPassword(length: number = 12): string {
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -115,39 +121,32 @@ export const logout = action.action(async () => {
 export const resetPassword = action
   .inputSchema(forgotPasswordFormSchema)
   .action(async ({ parsedInput: formData }) => {
-    try {
-      // Znajdź użytkownika po email
-      const user = await findUserByEmail(formData.email);
-
-      // Wygeneruj losowe hasło
-      const newPassword = generateRandomPassword(12);
-
-      // Zmień hasło użytkownika
-      await changePassword(formData.email, newPassword);
-
-      // Wyślij email z nowym hasłem
-      const emailBody = `
-        <h2>Resetowanie hasła - Bridge Crossroad</h2>
-        <p>Twoje nowe tymczasowe hasło to:</p>
-        <p style="font-size: 18px; font-weight: bold; color: #2563eb; padding: 10px; background-color: #f3f4f6; border-radius: 4px;">${newPassword}</p>
-        <p>Zalecamy zmianę tego hasła po zalogowaniu w ustawieniach konta.</p>
-        <p>Jeśli nie prosiłeś o zmianę hasła, skontaktuj się z nami natychmiast.</p>
-      `;
-
-      await sendEmail({
-        to: formData.email,
-        subject: "Resetowanie hasła - Bridge Crossroad",
-        body: emailBody,
-      });
-
-      return { success: true };
-    } catch (error) {
-      return onRepoError(error, () =>
+    const user = await findUserByEmail(formData.email).catch((error) =>
+      onRepoError(error, () =>
         returnValidationErrors(forgotPasswordFormSchema, {
           email: {
             _errors: ["api.auth.resetPassword.userNotFound" satisfies TKey],
           },
         })
-      );
-    }
+      )
+    );
+    const newPassword = generateRandomPassword(12);
+
+    return executeWithinTransaction(async (session) => {
+      await changePasswordToTemporary({
+        userId: user._id.toString(),
+        newPassword,
+        session,
+      });
+      await sendEmail({
+        userEmail: formData.email,
+        ...forgetPasswordTemplate({
+          temporaryPassword: newPassword,
+          person: {
+            firstName: user.name.firstName,
+            nickname: user.nickname,
+          },
+        }),
+      });
+    });
   });

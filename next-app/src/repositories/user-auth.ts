@@ -3,7 +3,7 @@
 import User from "@/models/user/user-model";
 import dbConnect from "@/util/connect-mongo";
 import bcrypt from "bcryptjs";
-import { check, RepositoryError } from "./common";
+import { check, RepositoryError, type WithSession } from "./common";
 import type { IUserDTO } from "@/models/user/user-types";
 import type {
   EmailType,
@@ -11,6 +11,7 @@ import type {
   LastNameType,
   NicknameType,
   PasswordTypeGeneric,
+  UserIdType,
 } from "@/schemas/model/user/user-types";
 
 export type CreateUserParams = {
@@ -91,19 +92,23 @@ export async function findUserByEmail(email: EmailType) {
   return user;
 }
 
-export async function changePassword(
-  email: EmailType,
-  newPassword: PasswordTypeGeneric
-) {
+export async function changePasswordToTemporary({
+  userId,
+  newPassword,
+  session,
+}: {
+  userId: UserIdType;
+  newPassword: PasswordTypeGeneric;
+} & WithSession) {
   await dbConnect();
 
   const salt = await bcrypt.genSalt(hashingRounds);
   const encodedPassword = await bcrypt.hash(newPassword, salt);
 
   const updatedUser = await User.findOneAndUpdate(
-    { email },
+    { _id: userId },
     { encodedPassword },
-    { new: true }
+    { new: true, session }
   ).lean<IUserDTO>();
 
   return check(updatedUser, "Failed to update password");
