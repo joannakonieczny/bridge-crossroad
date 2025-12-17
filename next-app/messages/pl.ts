@@ -60,6 +60,33 @@ const loginPage = {
   },
 };
 
+const forgotPasswordPage = {
+  title: "Resetuj hasło",
+  backToLogin: {
+    text: "Pamiętasz, posiadasz nowe hasło?",
+    link: "Wróć do logowania",
+  },
+  form: {
+    emailField: {
+      placeholder: "Adres e-mail",
+    },
+  },
+  emailSentInfo: {
+    message: "Link resetujący hasło został wysłany na podany adres e-mail!",
+    instructions:
+      "Sprawdź swoją skrzynkę pocztową, użyj otrzymanego linka do zresetowania hasła, a następnie zaloguj się nowym hasłem.",
+  },
+  submitButtons: {
+    sendEmail: "Wyślij link resetujący",
+    resendEmail: "Wyślij ponownie",
+  },
+  toast: {
+    success: "Link resetujący hasło został wysłany!",
+    resendSuccess: "Link resetujący został wysłany ponownie!",
+    errorDefault: "Wystąpił błąd podczas wysyłania emaila",
+  },
+};
+
 const registerPage = {
   title: "Zarejestruj się",
   hasAccount: {
@@ -1078,6 +1105,7 @@ const messages = {
     Auth: {
       LoginPage: loginPage,
       RegisterPage: registerPage,
+      ForgotPasswordPage: forgotPasswordPage,
     },
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,
