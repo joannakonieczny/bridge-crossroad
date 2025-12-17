@@ -154,7 +154,7 @@ export const promoteMemberToAdmin = withinOwnGroupAsAdminAction
           getGroupById(d.ctx.groupId),
         ]);
 
-        await sendEmail({
+        sendEmail({
           userEmail: promotedUser.email,
           ...promotedToAdminTemplate({
             groupName: group.name,
@@ -198,7 +198,7 @@ export const demoteAdminToMember = withinOwnGroupAsAdminAction
           getGroupById(d.ctx.groupId),
         ]);
 
-        await sendEmail({
+        sendEmail({
           userEmail: demotedUser.email,
           ...demotedFromAdminTemplate({
             groupName: group.name,

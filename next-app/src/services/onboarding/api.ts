@@ -40,7 +40,7 @@ export const completeOnboardingAndJoinMainGroup = authAction
           getMainGroup(),
         ]);
 
-        await sendEmail({
+        sendEmail({
           userEmail: user.email,
           ...onboardingCompletedTemplate({
             person: {

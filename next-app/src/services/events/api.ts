@@ -208,7 +208,7 @@ export const enrollToEventTournament = withinOwnGroupAction
           const teamMembers = await Promise.all(
             teamWithIds.members.map((memberId) => getUserData(memberId))
           );
-          Promise.all(
+          Promise.allSettled(
             teamMembers
               .filter((member) => member._id.toString() !== partnerId)
               .map((member) => {
@@ -357,7 +357,7 @@ export const unenrollFromEventTournament = withinOwnGroupAction
             )
           );
 
-          Promise.all(
+          Promise.allSettled(
             teamMembers
               .filter((member) => member._id.toString() !== partnerId)
               .map((member) => {
