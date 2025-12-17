@@ -63,7 +63,7 @@ const loginPage = {
 const forgotPasswordPage = {
   title: "Resetuj hasło",
   backToLogin: {
-    text: "Pamiętasz, posiadasz nowe hasło?",
+    text: "Pamiętasz nowe hasło?",
     link: "Wróć do logowania",
   },
   form: {

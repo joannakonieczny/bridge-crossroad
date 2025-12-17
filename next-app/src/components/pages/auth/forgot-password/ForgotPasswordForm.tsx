@@ -57,7 +57,10 @@ export default function ForgotPasswordForm() {
     onError: (err) => {
       const hasValidationErrors = Boolean(err?.validationErrors);
       if (hasValidationErrors) {
-        setFormError("email", { type: "server", message: undefined });
+        setFormError("email", {
+          type: "server",
+          message: err?.validationErrors?.email?._errors?.[0],
+        });
       }
     },
   });
