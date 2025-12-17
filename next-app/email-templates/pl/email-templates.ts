@@ -4,6 +4,7 @@ import type { Person } from "./common";
 import { emailWrapper, getPersonLabel } from "./common";
 import type { DurationType } from "@/schemas/common";
 import { getDurationLabel } from "@/util/formatters";
+import { e } from "../helpers";
 
 type TemplateReturnType = {
   subject: string;
@@ -58,7 +59,7 @@ export const forgetPasswordTemplate = ({
     content: `
       <p>Otrzymaliśmy prośbę o resetowanie hasła do Twojego konta.</p>
       <p>Twoje tymczasowe hasło:</p>
-      <p><strong>${temporaryPassword}</strong></p>
+      <p><strong>${e(temporaryPassword)}</strong></p>
       <p>Zaloguj się, a później zmień hasło w ustawieniach konta.</p>
     `,
   });
@@ -95,35 +96,45 @@ export const tournamentRegistrationTemplate = ({
   person,
   tournamentEvent,
 }: TournamentRegistrationEmailParams): TemplateReturnType => {
-  const subject = `Zapis na turniej: ${tournamentEvent.title} przez partnera w grupie ${tournamentEvent.group.name}`;
+  const subject = `Zapis na turniej: ${e(
+    tournamentEvent.title
+  )} przez partnera w grupie ${e(tournamentEvent.group.name)}`;
   const body = emailWrapper({
     person,
-    title: `Zapis na turniej: ${tournamentEvent.title} przez partnera w grupie ${tournamentEvent.group.name}`,
+    title: `Zapis na turniej: ${e(
+      tournamentEvent.title
+    )} przez partnera w grupie ${e(tournamentEvent.group.name)}`,
     content: `
       <p>
         Zostałeś właśnie zapisany na turniej ${
           tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS
             ? "drużynowy"
             : ""
-        } przez partnera: <strong>${getPersonLabel(
-      partner
-    )}</strong> w grupie: <strong>${tournamentEvent.group.name}</strong>.
+        } przez partnera: <strong>${e(
+      getPersonLabel(partner)
+    )}</strong> w grupie: <strong>${e(tournamentEvent.group.name)}</strong>.
       </p>
       <p><strong>Szczegóły turnieju:</strong></p>
-      <p><strong>Tytuł:</strong> ${tournamentEvent.title}</p>
+      <p><strong>Tytuł:</strong> ${e(tournamentEvent.title)}</p>
       ${
         tournamentEvent.description
-          ? `<p><strong>Opis:</strong><br />${tournamentEvent.description}</p>`
+          ? `<p><strong>Opis:</strong><br />${e(
+              tournamentEvent.description
+            )}</p>`
           : ""
       }
       ${
         tournamentEvent.additionalDescription
-          ? `<p><strong>Dodatkowy opis:</strong><br />${tournamentEvent.additionalDescription}</p>`
+          ? `<p><strong>Dodatkowy opis:</strong><br />${e(
+              tournamentEvent.additionalDescription
+            )}</p>`
           : ""
       }
       ${
         tournamentEvent.location
-          ? `<p><strong>Lokalizacja:</strong> ${tournamentEvent.location}</p>`
+          ? `<p><strong>Lokalizacja:</strong> ${e(
+              tournamentEvent.location
+            )}</p>`
           : ""
       }
       <p><strong>Typ turnieju:</strong> ${
@@ -132,22 +143,22 @@ export const tournamentRegistrationTemplate = ({
           : "Turniej drużynowy"
       }</p>
 
-      <p><strong>Czas trwania:</strong> ${getDurationLabel(
-        tournamentEvent.duration
+      <p><strong>Czas trwania:</strong> ${e(
+        getDurationLabel(tournamentEvent.duration)
       )}</p>
-      <p><strong>Organizator:</strong> ${getPersonLabel(
-        tournamentEvent.organizer
+      <p><strong>Organizator:</strong> ${e(
+        getPersonLabel(tournamentEvent.organizer)
       )}</p>
-      <p><strong>Grupa:</strong> ${tournamentEvent.group.name}</p>
+      <p><strong>Grupa:</strong> ${e(tournamentEvent.group.name)}</p>
       ${
         tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS &&
         tournamentEvent.team
-          ? `<p><strong>Nazwa twojej drużyny: ${
+          ? `<p><strong>Nazwa twojej drużyny: ${e(
               tournamentEvent.team.name
-            }</strong></p>
+            )}</strong></p>
              <ul>
                ${tournamentEvent.team.members
-                 .map((m) => `<li>${getPersonLabel(m)}</li>`)
+                 .map((m) => `<li>${e(getPersonLabel(m))}</li>`)
                  .join("")}
              </ul>`
           : ""
@@ -166,38 +177,48 @@ export const tournamentUnregistrationTemplate = ({
   person,
   tournamentEvent,
 }: TournamentRegistrationEmailParams): { subject: string; body: string } => {
-  const subject = `Wyrejestrowanie z turnieju: ${tournamentEvent.title} w grupie ${tournamentEvent.group.name}`;
+  const subject = `Wyrejestrowanie z turnieju: ${e(
+    tournamentEvent.title
+  )} w grupie ${e(tournamentEvent.group.name)}`;
 
   const body = emailWrapper({
     person,
-    title: `Wyrejestrowanie z turnieju: ${tournamentEvent.title} w grupie ${tournamentEvent.group.name}`,
+    title: `Wyrejestrowanie z turnieju: ${e(
+      tournamentEvent.title
+    )} w grupie ${e(tournamentEvent.group.name)}`,
     content: `
       <p>
-        Twój partner <strong>${getPersonLabel(
-          partner
+        Twój partner <strong>${e(
+          getPersonLabel(partner)
         )}</strong> wyrejestrował Cię z turnieju ${
       tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS
         ? "drużynowego"
         : ""
-    } w grupie <strong>${tournamentEvent.group.name}</strong>.
+    } w grupie <strong>${e(tournamentEvent.group.name)}</strong>.
       </p>
 
       <p><strong>Szczegóły turnieju:</strong></p>
 
-      <p><strong>Tytuł:</strong> ${tournamentEvent.title}</p>
+      <p><strong>Tytuł:</strong> ${e(tournamentEvent.title)}</p>
       ${
         tournamentEvent.description
-          ? `<p><strong>Opis:</strong><br />${tournamentEvent.description}</p>`
+          ? `<p><strong>Opis:</strong><br />${e(
+              tournamentEvent.description
+            )}</p>`
           : ""
       }
       ${
         tournamentEvent.additionalDescription
-          ? `<p><strong>Dodatkowy opis:</strong><br />${tournamentEvent.additionalDescription}</p>`
+          ? `<p><strong>Dodatkowy opis:</strong><br />${e(
+              tournamentEvent.additionalDescription
+            )}</p>`
           : ""
       }
       ${
         tournamentEvent.location
-          ? `<p><strong>Lokalizacja:</strong> ${tournamentEvent.location}</p>`
+          ? `<p><strong>Lokalizacja:</strong> ${e(
+              tournamentEvent.location
+            )}</p>`
           : ""
       }
       <p><strong>Typ turnieju:</strong> ${
@@ -205,23 +226,23 @@ export const tournamentUnregistrationTemplate = ({
           ? "Turniej par"
           : "Turniej drużynowy"
       }</p>
-      <p><strong>Czas trwania:</strong> ${getDurationLabel(
-        tournamentEvent.duration
+      <p><strong>Czas trwania:</strong> ${e(
+        getDurationLabel(tournamentEvent.duration)
       )}</p>
-      <p><strong>Organizator:</strong> ${getPersonLabel(
-        tournamentEvent.organizer
+      <p><strong>Organizator:</strong> ${e(
+        getPersonLabel(tournamentEvent.organizer)
       )}</p>
-      <p><strong>Grupa:</strong> ${tournamentEvent.group.name}</p>
+      <p><strong>Grupa:</strong> ${e(tournamentEvent.group.name)}</p>
 
       ${
         tournamentEvent.typeOfEvent === EventType.TOURNAMENT_TEAMS &&
         tournamentEvent.team
-          ? `<p><strong>Nazwa Twojej drużyny: ${
+          ? `<p><strong>Nazwa Twojej drużyny: ${e(
               tournamentEvent.team.name
-            }</strong></p>
+            )}</strong></p>
              <ul>
                ${tournamentEvent.team.members
-                 .map((m) => `<li>${getPersonLabel(m)}</li>`)
+                 .map((m) => `<li>${e(getPersonLabel(m))}</li>`)
                  .join("")}
              </ul>`
           : ""
@@ -246,17 +267,17 @@ export const partnershipInterestNotificationTemplate = ({
   postName: string;
   person: Person;
 }): TemplateReturnType => {
-  const subject = `Nowe zainteresowanie Twoim ogłoszeniem: ${postName}`;
+  const subject = `Nowe zainteresowanie Twoim ogłoszeniem: ${e(postName)}`;
   const body = emailWrapper({
     person,
     title: subject,
     content: `
       <p>
-        Gracz <strong>${getPersonLabel(
-          interestedPlayer
+        Gracz <strong>${e(
+          getPersonLabel(interestedPlayer)
         )}</strong> wyraził zainteresowanie Twoim ogłoszeniem o poszukiwaniu partnera.
       </p>
-      <p><strong>Nazwa ogłoszenia:</strong> ${postName}</p>
+      <p><strong>Nazwa ogłoszenia:</strong> ${e(postName)}</p>
       <p>
         Zaloguj się do Bridge Crossroad, aby zobaczyć szczegóły swojego ogłoszenia.
       </p>
@@ -275,15 +296,15 @@ export const promotedToAdminTemplate = ({
   person: Person;
   promotedBy: Person;
 }): TemplateReturnType => {
-  const subject = `Awans na administratora w grupie: ${groupName}`;
+  const subject = `Awans na administratora w grupie: ${e(groupName)}`;
   const body = emailWrapper({
     person,
     title: subject,
     content: `
       <p>
-        Gratulacje! Zostałeś awansowany na <strong>administratora</strong> w grupie <strong>${groupName}</strong> przez <strong>${getPersonLabel(
-      promotedBy
-    )}</strong>.
+        Gratulacje! Zostałeś awansowany na <strong>administratora</strong> w grupie <strong>${e(
+          groupName
+        )}</strong> przez <strong>${e(getPersonLabel(promotedBy))}</strong>.
       </p>
       <p>
         Jako administrator grupy otrzymujesz dodatkowe uprawnienia do zarządzania grupą, 
@@ -307,15 +328,17 @@ export const demotedFromAdminTemplate = ({
   person: Person;
   demotedBy: Person;
 }): TemplateReturnType => {
-  const subject = `Utrata praw administratora w grupie: ${groupName}`;
+  const subject = `Utrata praw administratora w grupie: ${e(groupName)}`;
   const body = emailWrapper({
     person,
     title: subject,
     content: `
       <p>
-        Administrator <strong>${getPersonLabel(
-          demotedBy
-        )}</strong> odebrał Ci uprawnienia administratora w grupie <strong>${groupName}</strong>.
+        Administrator <strong>${e(
+          getPersonLabel(demotedBy)
+        )}</strong> odebrał Ci uprawnienia administratora w grupie <strong>${e(
+      groupName
+    )}</strong>.
       </p>
       <p>
         Nadal pozostajesz członkiem grupy i możesz brać udział we wszystkich wydarzeniach, 
@@ -346,7 +369,7 @@ export const onboardingCompletedTemplate = ({
         Gratulacje! Pomyślnie ukończyłeś proces konfiguracji konta w <strong>Bridge Crossroad</strong>.
       </p>
       <p>
-        Zostałeś dodany do grupy głównej: <strong>${groupName}</strong>.
+        Zostałeś dodany do grupy głównej: <strong>${e(groupName)}</strong>.
       </p>
       <p>
         Od teraz możesz korzystać z pełnego potencjału aplikacji:
