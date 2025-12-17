@@ -1103,6 +1103,107 @@ const messages = {
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,
     LandingPage: landingPage,
+    UserProfilePage: {
+      heading: "Mój profil",
+      sections: {
+        profile: "Dane osobowe",
+        email: "Adres e-mail",
+        password: "Hasło",
+        onboarding: "Informacje brydżowe",
+      },
+      ChangeEmailForm: {
+        header: "Zmień adres e-mail",
+        form: {
+          currentEmail: {
+            placeholder: "Aktualny adres e-mail",
+          },
+          newEmail: {
+            placeholder: "Nowy adres e-mail",
+          },
+        },
+        submitButton: "Zmień e-mail",
+        toast: {
+          loading: "Zmiana adresu e-mail...",
+          success: "Adres e-mail został zmieniony!",
+          errorDefault: "Wystąpił błąd podczas zmiany adresu e-mail",
+        },
+      },
+      ChangePasswordForm: {
+        header: "Zmień hasło",
+        form: {
+          oldPassword: {
+            placeholder: "Aktualne hasło",
+          },
+          newPassword: {
+            placeholder: "Nowe hasło",
+          },
+          repeatNewPassword: {
+            placeholder: "Powtórz nowe hasło",
+          },
+        },
+        submitButton: "Zmień hasło",
+        toast: {
+          loading: "Zmiana hasła...",
+          success: "Hasło zostało zmienione!",
+          errorDefault: "Wystąpił błąd podczas zmiany hasła",
+        },
+      },
+      ChangeProfileForm: {
+        header: "Zmień dane osobowe",
+        form: {
+          firstName: {
+            placeholder: "Imię",
+          },
+          lastName: {
+            placeholder: "Nazwisko",
+          },
+          nickname: {
+            placeholder: "Nick (opcjonalnie)",
+          },
+        },
+        submitButton: "Zapisz zmiany",
+        toast: {
+          loading: "Zapisywanie zmian...",
+          success: "Dane zostały zaktualizowane!",
+          errorDefault: "Wystąpił błąd podczas aktualizacji danych",
+        },
+      },
+      ChangeOnboardingForm: {
+        header: "Zmień informacje brydżowe",
+        form: {
+          academy: {
+            placeholder: "Akademia",
+          },
+          yearOfBirth: {
+            placeholder: "Rok urodzenia",
+          },
+          startPlayingDate: {
+            placeholder: "Data rozpoczęcia gry",
+          },
+          trainingGroup: {
+            placeholder: "Grupa treningowa",
+          },
+          hasRefereeLicense: {
+            placeholder: "Posiadam licencję sędziowską",
+          },
+          cezarId: {
+            placeholder: "ID CEZAR (opcjonalnie)",
+          },
+          bboId: {
+            placeholder: "ID BBO (opcjonalnie)",
+          },
+          cuebidsId: {
+            placeholder: "ID Cuebids (opcjonalnie)",
+          },
+        },
+        submitButton: "Zapisz zmiany",
+        toast: {
+          loading: "Zapisywanie zmian...",
+          success: "Informacje zostały zaktualizowane!",
+          errorDefault: "Wystąpił błąd podczas aktualizacji informacji",
+        },
+      },
+    },
     EventPage: {
       page: {
         backLink: "Wróć do kalendarza",
