@@ -11,6 +11,7 @@ import type {
   LastNameType,
   NicknameType,
   PasswordTypeGeneric,
+  UserIdType,
 } from "@/schemas/model/user/user-types";
 
 export type CreateUserParams = {
@@ -83,7 +84,7 @@ export async function findExisting(params: FindIfExistParams) {
 }
 
 export type UpdateUserEmailParams = {
-  userId: string;
+  userId: UserIdType;
   newEmail: EmailType;
 };
 
@@ -100,4 +101,37 @@ export async function updateUserEmail(params: UpdateUserEmailParams) {
   ).lean<IUserDTO>();
 
   return check(updatedUser, "Failed to update user email");
+}
+
+export type UpdateUserPasswordParams = {
+  userId: UserIdType;
+  oldPassword: PasswordTypeGeneric;
+  newPassword: PasswordTypeGeneric;
+};
+
+export async function updateUserPassword(params: UpdateUserPasswordParams) {
+  await dbConnect();
+
+  const user = await User.findById(params.userId).lean<IUserDTO>();
+  if (!user) throw new RepositoryError("User not found");
+
+  const isPasswordValid = await bcrypt.compare(
+    params.oldPassword,
+    user.encodedPassword
+  );
+
+  if (!isPasswordValid) {
+    throw new RepositoryError("Invalid password");
+  }
+
+  const salt = await bcrypt.genSalt(hashingRounds);
+  const encodedPassword = await bcrypt.hash(params.newPassword, salt);
+
+  const updatedUser = await User.findByIdAndUpdate(
+    params.userId,
+    { encodedPassword },
+    { new: true }
+  ).lean<IUserDTO>();
+
+  return check(updatedUser, "Failed to update user password");
 }

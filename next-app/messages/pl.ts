@@ -630,6 +630,25 @@ const registerPageValidation = {
   },
 };
 
+const userPageValidation = {
+  password: {
+    required: "Podaj hasło",
+    min: `Hasło musi mieć co najmniej ${USER.password.min} znaków`,
+    max: `Hasło nie może być dłuższe niż ${USER.password.max} znaków`,
+    noUpperCase: "Hasło musi zawierać wielkie litery",
+    noLowerCase: "Hasło musi zawierać małe litery",
+    noDigit: "Hasło musi zawierać cyfry",
+    noSpecialChar: "Hasło musi zawierać znaki specjalne",
+  },
+  repeatPassword: {
+    required: "Powtórz hasło",
+    mismatch: "Hasła nie pasują do siebie",
+  },
+  oldPassword: {
+    required: "Podaj aktualne hasło",
+  },
+};
+
 const onboardingPageValidation = {
   firstPage: {
     academy: {
@@ -1022,6 +1041,7 @@ const messages = {
         login: loginPageValidation,
         register: registerPageValidation,
       },
+      user: userPageValidation,
       onboarding: onboardingPageValidation,
     },
     common: {
@@ -1043,6 +1063,9 @@ const messages = {
     user: {
       changeEmail: {
         emailExists: "Konto z tym adresem e-mail już istnieje",
+      },
+      changePassword: {
+        invalidOldPassword: "Nieprawidłowe stare hasło",
       },
     },
     onboarding: {

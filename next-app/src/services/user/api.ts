@@ -1,10 +1,13 @@
 "use server";
 
-import { updateUserEmail } from "@/repositories/user-auth";
+import { updateUserEmail, updateUserPassword } from "@/repositories/user-auth";
 import { fullAuthAction } from "@/services/action-lib";
-import { changeEmailSchema } from "@/schemas/pages/with-onboarding/user/user-change-schema";
+import {
+  changeEmailSchema,
+  changePasswordSchema,
+} from "@/schemas/pages/with-onboarding/user/user-change-schema";
 import { returnValidationErrors } from "next-safe-action";
-import { onDuplicateKey } from "@/repositories/common";
+import { onDuplicateKey, onRepoError } from "@/repositories/common";
 import type { TKey } from "@/lib/typed-translations";
 
 export const changeEmail = fullAuthAction
@@ -23,5 +26,25 @@ export const changeEmail = fullAuthAction
           })
         )
         .handle()
+    );
+  });
+
+export const changePassword = fullAuthAction
+  .inputSchema(changePasswordSchema)
+  .action(async ({ parsedInput: formData, ctx }) => {
+    await updateUserPassword({
+      userId: ctx.userId,
+      oldPassword: formData.oldPassword,
+      newPassword: formData.newPassword,
+    }).catch((err) =>
+      onRepoError(err, () =>
+        returnValidationErrors(changePasswordSchema, {
+          oldPassword: {
+            _errors: [
+              "api.user.changePassword.invalidOldPassword" satisfies TKey,
+            ],
+          },
+        })
+      )
     );
   });
