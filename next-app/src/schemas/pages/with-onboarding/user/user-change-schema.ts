@@ -7,6 +7,11 @@ import {
 } from "@/schemas/model/user/user-schema";
 import type { TKey } from "@/lib/typed-translations";
 import { UserValidationConstants } from "@/schemas/model/user/user-const";
+import {
+  onboardingFirstPageSchema,
+  onboardingSecondPageSchema,
+  onboardingThirdPageSchema,
+} from "@/schemas/pages/onboarding/onboarding-schema";
 
 export const changeEmailSchema = z.object({
   newEmail: emailSchema,
@@ -65,3 +70,7 @@ export const changeProfileSchema = z.object({
   lastName: lastNameSchema,
   nickname: nicknameSchema.optional(),
 });
+
+export const changeOnboardingDataSchema = onboardingFirstPageSchema
+  .merge(onboardingSecondPageSchema)
+  .merge(onboardingThirdPageSchema);

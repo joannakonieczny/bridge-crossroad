@@ -5,11 +5,14 @@ import {
   updateUserPassword,
   updateUserProfile,
 } from "@/repositories/user-auth";
+import { addOnboardingData } from "@/repositories/onboarding";
+import { sanitizeUser } from "@/sanitizers/server-only/user-sanitize";
 import { fullAuthAction } from "@/services/action-lib";
 import {
   changeEmailSchema,
   changePasswordSchema,
   changeProfileSchema,
+  changeOnboardingDataSchema,
 } from "@/schemas/pages/with-onboarding/user/user-change-schema";
 import { returnValidationErrors } from "next-safe-action";
 import { onDuplicateKey, onRepoError } from "@/repositories/common";
@@ -73,4 +76,11 @@ export const changeProfile = fullAuthAction
         )
         .handle()
     );
+  });
+
+export const changeOnboardingData = fullAuthAction
+  .inputSchema(changeOnboardingDataSchema)
+  .action(async ({ parsedInput: onboardingData, ctx: { userId } }) => {
+    const updated = await addOnboardingData(userId, onboardingData);
+    return sanitizeUser(updated);
   });
