@@ -1040,6 +1040,11 @@ const messages = {
         invalidCredentials: "Nieprawidłowe dane logowania",
       },
     },
+    user: {
+      changeEmail: {
+        emailExists: "Konto z tym adresem e-mail już istnieje",
+      },
+    },
     onboarding: {
       finalPage: {
         inviteCode: {

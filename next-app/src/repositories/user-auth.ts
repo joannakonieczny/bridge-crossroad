@@ -81,3 +81,23 @@ export async function findExisting(params: FindIfExistParams) {
 
   throw new RepositoryError("Invalid credentials");
 }
+
+export type UpdateUserEmailParams = {
+  userId: string;
+  newEmail: EmailType;
+};
+
+export async function updateUserEmail(params: UpdateUserEmailParams) {
+  await dbConnect();
+
+  const updatedUser = await User.findByIdAndUpdate(
+    params.userId,
+    { email: params.newEmail },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).lean<IUserDTO>();
+
+  return check(updatedUser, "Failed to update user email");
+}
