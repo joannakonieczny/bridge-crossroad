@@ -69,7 +69,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
   const membersCount = group.members?.length ?? 0;
 
   return (
-    <Box bg={colorMode === "dark" ? "neutral.100" : "white"} borderRadius="xl" borderWidth="1px" p={{ base: 4, md: 6 }}>
+    <Box bg={colorMode === "dark" ? "neutral.100" : "bg"} borderRadius="xl" borderWidth="1px" p={{ base: 4, md: 6 }}>
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
         {/* IMAGE */}
         <Flex
