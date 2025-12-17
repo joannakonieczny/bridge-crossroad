@@ -134,28 +134,26 @@ export default function ForgotPasswordForm() {
             </>
           ) : (
             <>
-              <Stack spacing={4} py={4}>
-                <Text fontSize="md" textAlign="center" color="gray.700">
+              <Stack py={4}>
+                <Text fontSize="sm" color="border.700">
                   {t("emailSentInfo.message")}
                 </Text>
-                <Text fontSize="sm" textAlign="center" color="gray.600">
+                <Text fontSize="sm" color="border.500">
                   {t("emailSentInfo.instructions")}
                 </Text>
               </Stack>
 
-              <Stack spacing={3} pt={4}>
-                <Button
-                  colorScheme="blue"
-                  size="lg"
-                  width="100%"
-                  onClick={handleResendEmail}
-                  isDisabled={countdown > 0}
-                >
-                  {countdown > 0
-                    ? `${t("submitButtons.resendEmail")} (${countdown}s)`
-                    : t("submitButtons.resendEmail")}
-                </Button>
-              </Stack>
+              <Button
+                colorScheme="accent"
+                size="lg"
+                width="100%"
+                onClick={handleResendEmail}
+                isDisabled={countdown > 0}
+              >
+                {countdown > 0
+                  ? `${t("submitButtons.resendEmail")} (${countdown}s)`
+                  : t("submitButtons.resendEmail")}
+              </Button>
             </>
           )}
         </Stack>
