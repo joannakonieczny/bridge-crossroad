@@ -12,9 +12,14 @@ import { useTranslations } from "@/lib/typed-translations";
 type IMessageBoxProps = {
   message: MessageWithPopulatedSenderType;
   onEdit?: (message: MessageWithPopulatedSenderType) => void;
+  isBeingEdited?: boolean;
 };
 
-export default function MessageBox({ message, onEdit }: IMessageBoxProps) {
+export default function MessageBox({
+  message,
+  onEdit,
+  isBeingEdited,
+}: IMessageBoxProps) {
   const t = useTranslations("pages.ChatPage");
   const isSelf = !!message.sender?.isCurrentUser;
   const isAdmin = !!message.sender?.isGroupAdmin;
@@ -25,13 +30,17 @@ export default function MessageBox({ message, onEdit }: IMessageBoxProps) {
   const isImage = isImageUrl(fileUrl);
   const fileExt = getFileExtension(fileUrl);
 
-  const messageBoxColor = isSelf
+  const messageBoxColor = isBeingEdited
+    ? "accent.300"
+    : isSelf
     ? "accent.500"
     : isAdmin
     ? "secondary.200"
     : "border.100";
 
-  const messageBoxHoverColor = isSelf
+  const messageBoxHoverColor = isBeingEdited
+    ? "accent.400"
+    : isSelf
     ? "accent.600"
     : isAdmin
     ? "secondary.300"

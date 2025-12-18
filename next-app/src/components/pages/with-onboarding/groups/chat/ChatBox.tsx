@@ -14,9 +14,14 @@ import { useQueryClient } from "@tanstack/react-query";
 type ChatBoxProps = {
   groupId: GroupIdType;
   onEditMessage?: (message: MessageWithPopulatedSenderType) => void;
+  editingMessageId?: string;
 };
 
-export function ChatBox({ groupId, onEditMessage }: ChatBoxProps) {
+export function ChatBox({
+  groupId,
+  onEditMessage,
+  editingMessageId,
+}: ChatBoxProps) {
   const t = useTranslations("pages.ChatPage");
   const queryClient = useQueryClient();
 
@@ -73,7 +78,12 @@ export function ChatBox({ groupId, onEditMessage }: ChatBoxProps) {
       sx={{ display: "flex", flexDirection: "column-reverse" }}
     >
       {allMessages.map((msg) => (
-        <MessageBox key={msg.id} message={msg} onEdit={onEditMessage} />
+        <MessageBox
+          key={msg.id}
+          message={msg}
+          onEdit={onEditMessage}
+          isBeingEdited={msg.id === editingMessageId}
+        />
       ))}
 
       {messagesQuery.hasNextPage && (

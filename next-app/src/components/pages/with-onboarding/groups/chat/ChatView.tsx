@@ -35,7 +35,11 @@ export default function ChatView(props: IChatViewProps) {
       direction="column"
       alignContent="center"
     >
-      <ChatBox groupId={props.groupId} onEditMessage={handleEditMessage} />
+      <ChatBox
+        groupId={props.groupId}
+        onEditMessage={handleEditMessage}
+        editingMessageId={editingMessage?.id}
+      />
       <Box>
         <Divider flexShrink={0} />
         <TextInput
