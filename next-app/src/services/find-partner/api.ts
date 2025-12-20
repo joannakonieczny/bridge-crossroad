@@ -33,6 +33,9 @@ import {
 import { partition } from "@/util/helpers";
 import { RepositoryError } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
+import { getUserData } from "@/repositories/onboarding";
+import { sendEmail } from "@/repositories/mailer";
+import { partnershipInterestNotificationTemplate } from "@/email-templates/pl/email-templates";
 
 export const listPartnershipPosts = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(listPartnershipPostsSchema))
@@ -116,13 +119,49 @@ export const createPartnershipPost = withinOwnGroupAction
 
 export const addInterested = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(havingPartnershipPostId))
-  .action(async ({ parsedInput: { partnershipPostId }, ctx: { userId } }) => {
-    const res = await addInterestedUser({
-      partnershipPostId,
-      interestedUserId: userId,
-    });
-    return sanitizePartnershipPost(res);
-  });
+  .action(
+    async ({ parsedInput: { partnershipPostId }, ctx: { userId } }) => {
+      const res = await addInterestedUser({
+        partnershipPostId,
+        interestedUserId: userId,
+      });
+      return sanitizePartnershipPost(res);
+    },
+    {
+      onSuccess: async (d) => {
+        const interestedUserId = d.ctx?.userId;
+        if (!d.data || !interestedUserId) return;
+
+        const partnershipPost = await getPartnershipPost({
+          partnershipPostId: d.data.id,
+        });
+        const postOwnerId = partnershipPost.ownerId.toString();
+
+        // Don't send email if the interested user is the post owner
+        if (postOwnerId === interestedUserId) return;
+
+        const [postOwner, interestedUser] = await Promise.all([
+          getUserData(postOwnerId),
+          getUserData(interestedUserId),
+        ]);
+
+        sendEmail({
+          userEmail: postOwner.email,
+          ...partnershipInterestNotificationTemplate({
+            interestedPlayer: {
+              firstName: interestedUser.name.firstName,
+              nickname: interestedUser.nickname,
+            },
+            postName: partnershipPost.name,
+            person: {
+              firstName: postOwner.name.firstName,
+              nickname: postOwner.nickname,
+            },
+          }),
+        });
+      },
+    }
+  );
 
 export const removeInterested = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(havingPartnershipPostId))
