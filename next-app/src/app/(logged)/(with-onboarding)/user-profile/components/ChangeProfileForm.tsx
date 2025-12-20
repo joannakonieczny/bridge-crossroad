@@ -17,6 +17,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import type { z } from "zod";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 type ChangeProfileFormData = z.infer<typeof changeProfileSchema>;
 
@@ -36,15 +37,14 @@ export function ChangeProfileForm({ user }: ChangeProfileFormProps) {
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
-  const { handleSubmit, control, setError, reset } =
-    useForm<ChangeProfileFormData>({
-      resolver: zodResolver(changeProfileSchema),
-      defaultValues: {
-        firstName: user.name.firstName,
-        lastName: user.name.lastName,
-        nickname: user.nickname || "",
-      },
-    });
+  const { handleSubmit, control, setError, reset } = useForm({
+    resolver: zodResolver(withEmptyToUndefined(changeProfileSchema)),
+    defaultValues: {
+      firstName: user.name.firstName,
+      lastName: user.name.lastName,
+      nickname: user.nickname || "",
+    },
+  });
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changeProfile,
