@@ -813,6 +813,7 @@ const findPartner = {
   PartnershipForm: {
     addButton: "Dodaj ogłoszenie",
     modalHeader: "Nowe ogłoszenie poszukiwania partnera",
+    modalHeaderModify: "Edytuj ogłoszenie",
     groupLabel: "Grupa",
     groupPlaceholder: "Wybierz grupę",
     nameLabel: "Nazwa",
@@ -829,10 +830,16 @@ const findPartner = {
     endsAtLabel: "Do",
     cancelButton: "Anuluj",
     createButton: "Utwórz ogłoszenie",
+    modifyButton: "Zapisz zmiany",
     toast: {
       loading: "Tworzenie ogłoszenia...",
       success: "Ogłoszenie utworzone",
       error: "Błąd podczas tworzenia",
+      modify: {
+        loading: "Modyfikowanie ogłoszenia...",
+        success: "Ogłoszenie zmodyfikowane pomyślnie",
+        error: "Błąd podczas modyfikowania",
+      },
       frequency: {
         SINGLE: "Pojedyncza",
         PERIOD: "Okresowa",

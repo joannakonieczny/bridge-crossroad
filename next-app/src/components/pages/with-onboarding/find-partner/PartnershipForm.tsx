@@ -181,26 +181,30 @@ export default function PartnershipForm({
     },
   });
 
-  function handleWithToast(data: AddPartnershipPostSchemaType) {
+  function handleWithToast(
+    data: AddPartnershipPostSchemaType | Partial<AddPartnershipPostSchemaType>
+  ) {
     const promise =
       isModifyMode && partnershipPostId
         ? partnershipAction.mutateAsync({
             mode: "modify",
-            data: { ...data, partnershipPostId, groupId: data.groupId },
+            data: { ...data, partnershipPostId, groupId: data.groupId || selectedGroupId },
           })
         : partnershipAction.mutateAsync({
             mode: "create",
-            data: { ...data, groupId: data.groupId },
+            data: { ...data, groupId: data.groupId || selectedGroupId } as ActionInput<typeof createPartnershipPost>,
           });
 
     toast.promise(promise, {
       loading: {
         title: isModifyMode
-          ? t("toast.modify.loading") || "Modyfikowanie ogłoszenia..."
-          : t("toast.loading") || "Tworzenie ogłoszenia...",
+          ? t("toast.modify.loading")
+          : t("toast.loading"),
       },
       success: {
-        title: isModifyMode ? t("toast.modify.success") : t("toast.success"),
+        title: isModifyMode
+          ? t("toast.modify.success")
+          : t("toast.success"),
       },
       error: (err: MutationOrQuerryError<typeof partnershipAction>) => {
         const errKey = getMessageKeyFromError(err);
@@ -221,7 +225,7 @@ export default function PartnershipForm({
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            {isModifyMode ? t("modalHeader.modify") || t("modalHeader") : t("modalHeader")}
+            {isModifyMode ? t("modalHeaderModify") : t("modalHeader")}
           </ModalHeader>
           <ModalCloseButton />
           <Divider />
@@ -433,9 +437,7 @@ export default function PartnershipForm({
                   type="submit"
                   isLoading={partnershipAction.isPending}
                 >
-                  {isModifyMode
-                    ? t("modifyButton") || t("createButton")
-                    : t("createButton")}
+                  {isModifyMode ? t("modifyButton") : t("createButton")}
                 </Button>
               </ModalFooter>
             </form>
