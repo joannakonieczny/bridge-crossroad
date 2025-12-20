@@ -31,7 +31,7 @@ export default function UserProfilePage() {
   const t = useTranslations("pages.UserProfilePage");
   const { data: user, isLoading } = useUserInfoQuery();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const isDesktop = useBreakpointValue({ base: false, md: true }) ?? false;
+  const isDesktop = useBreakpointValue({ base: false, md: true });
 
   const [activeSection, setActiveSection] = useState<SectionId>("profile");
 
