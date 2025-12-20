@@ -3,6 +3,7 @@
 import {
   listPartnershipPostsInGroup,
   addPartnershipPost,
+  modifyPartnershipPost as modifyPartnershipPostRepo,
   removePartnershipPost,
   addInterestedUser,
   removeInterestedUser,
@@ -17,6 +18,7 @@ import {
 } from "../action-lib";
 import {
   addPartnershipPostSchema,
+  modifyPartnershipPostSchema,
   listPartnershipPostsSchema,
   modifyPartnershipPostStatusSchema,
 } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
@@ -109,6 +111,28 @@ export const createPartnershipPost = withinOwnGroupAction
     const res = await addPartnershipPost({
       groupId,
       ownerId: userId,
+      post: postData,
+    });
+    return sanitizePartnershipPost(res);
+  });
+
+export const modifyPartnershipPost = withinOwnPartnershipPostAction
+  .inputSchema(async (s) => s.merge(modifyPartnershipPostSchema))
+  .action(async ({ parsedInput: postData, ctx: { partnershipPostId, groupId } }) => {
+    // Verify eventId if it's being updated and is within group
+    if (postData.data?.type === PartnershipPostType.SINGLE && postData.data.eventId) {
+      const { eventId } = postData.data;
+
+      const group = await getGroupById(groupId);
+      if (!group.events.find((event) => event.toString() === eventId)) {
+        throw new RepositoryError(
+          `Provided eventId '${eventId}' does not belong to group '${groupId}'`
+        );
+      }
+    }
+
+    const res = await modifyPartnershipPostRepo({
+      partnershipPostId,
       post: postData,
     });
     return sanitizePartnershipPost(res);
