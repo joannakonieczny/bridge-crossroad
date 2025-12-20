@@ -16,6 +16,8 @@ import {
   useToast,
   Image,
   Text,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 import { GrFormAttachment } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
@@ -27,29 +29,38 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
-import { postNewMessage } from "@/services/chat/api";
+import { postNewMessage, modifyExistingMessage } from "@/services/chat/api";
 import { addModifyChatMessageSchema } from "@/schemas/pages/with-onboarding/chat/chat-schema";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
+import type { MessageWithPopulatedSenderType } from "@/schemas/model/chat-message/chat-message-types";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { withEmptyToUndefined } from "@/schemas/common";
 import FileUploader from "@/components/common/form/FileUploader/FileUploader";
 import { useImageUpload } from "@/components/common/form/FileUploader/useImageUpload";
 import FormInput from "@/components/common/form/FormInput";
 import { getMessageKeyFromError } from "@/lib/tanstack-action/helpers";
 import type { MutationOrQuerryError } from "@/lib/tanstack-action/types";
+import { isImageUrl } from "@/util/helpers";
 
 type TextInputProps = {
   groupId: GroupIdType;
+  editingMessage?: MessageWithPopulatedSenderType | null;
+  onCancelEdit?: () => void;
 };
 
-export function TextInput({ groupId }: TextInputProps) {
+export function TextInput({
+  groupId,
+  editingMessage,
+  onCancelEdit,
+}: TextInputProps) {
   const t = useTranslations("pages.ChatPage");
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
   const ref = useRef<HTMLTextAreaElement>(null);
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const isEditMode = !!editingMessage;
 
   const {
     selectedImage,
@@ -60,6 +71,7 @@ export function TextInput({ groupId }: TextInputProps) {
     handleImageChange,
     isUploading,
     isError: isUploadError,
+    setInitialPreview,
   } = useImageUpload({
     text: {
       toast: {
@@ -86,6 +98,32 @@ export function TextInput({ groupId }: TextInputProps) {
     },
   });
 
+  // Effect to handle edit mode initialization
+  useEffect(() => {
+    if (isEditMode && editingMessage) {
+      reset({
+        message: editingMessage.message || "",
+        fileUrl: editingMessage.fileUrl || "",
+      });
+      if (editingMessage.fileUrl) {
+        setInitialPreview(editingMessage.fileUrl);
+      } else {
+        resetImage();
+      }
+      // Focus textarea
+      setTimeout(() => {
+        if (ref.current) {
+          ref.current.focus();
+          autoResize();
+        }
+      }, 0);
+    } else if (!isEditMode) {
+      reset({ message: "", fileUrl: "" });
+      resetImage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode, editingMessage]);
+
   const sendMessageMutation = useActionMutation({
     action: (data: { message: string; fileUrl?: string }) =>
       postNewMessage({ groupId, message: data.message, fileUrl: data.fileUrl }),
@@ -101,6 +139,31 @@ export function TextInput({ groupId }: TextInputProps) {
     },
   });
 
+  const editMessageMutation = useActionMutation({
+    action: (data: {
+      chatMessageId: string;
+      message: string;
+      fileUrl?: string;
+    }) =>
+      modifyExistingMessage({
+        groupId,
+        chatMessageId: data.chatMessageId,
+        message: data.message,
+        fileUrl: data.fileUrl,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chat-messages", groupId] });
+      reset();
+      resetImage();
+      onCancelEdit?.();
+      requestAnimationFrame(() => {
+        if (ref.current) {
+          ref.current.style.height = "auto";
+        }
+      });
+    },
+  });
+
   const onSubmit = async (data: { message: string; fileUrl?: string }) => {
     if (!data.message.trim() && !selectedImage) return;
 
@@ -111,16 +174,49 @@ export function TextInput({ groupId }: TextInputProps) {
     setValue("fileUrl", uploadedPath);
     data.fileUrl = uploadedPath;
 
-    const promise = sendMessageMutation.mutateAsync(data);
-    toast.promise(promise, {
-      loading: { title: t("sendMessageToast.loading") },
-      success: { title: t("sendMessageToast.success") },
-      error: (err: MutationOrQuerryError<typeof sendMessageMutation>) => {
-        const errKey = getMessageKeyFromError(err, {
-          generalErrorKey: "pages.ChatPage.sendMessageToast.errorDefault",
-        });
-        return { title: tValidation(errKey) };
-      },
+    if (isEditMode && editingMessage) {
+      const promise = editMessageMutation.mutateAsync({
+        chatMessageId: editingMessage.id,
+        message: data.message,
+        fileUrl: data.fileUrl,
+      });
+      toast.promise(promise, {
+        loading: {
+          title: tValidation("pages.ChatPage.editMessageToast.loading"),
+        },
+        success: {
+          title: tValidation("pages.ChatPage.editMessageToast.success"),
+        },
+        error: (err: MutationOrQuerryError<typeof editMessageMutation>) => {
+          const errKey = getMessageKeyFromError(err, {
+            generalErrorKey: "pages.ChatPage.editMessageToast.errorDefault",
+          });
+          return { title: tValidation(errKey) };
+        },
+      });
+    } else {
+      const promise = sendMessageMutation.mutateAsync(data);
+      toast.promise(promise, {
+        loading: { title: t("sendMessageToast.loading") },
+        success: { title: t("sendMessageToast.success") },
+        error: (err: MutationOrQuerryError<typeof sendMessageMutation>) => {
+          const errKey = getMessageKeyFromError(err, {
+            generalErrorKey: "pages.ChatPage.sendMessageToast.errorDefault",
+          });
+          return { title: tValidation(errKey) };
+        },
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    reset();
+    resetImage();
+    onCancelEdit?.();
+    requestAnimationFrame(() => {
+      if (ref.current) {
+        ref.current.style.height = "auto";
+      }
     });
   };
 
@@ -128,6 +224,29 @@ export function TextInput({ groupId }: TextInputProps) {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack width="100%" spacing="0">
+          {isEditMode && (
+            <Box
+              px="0.5rem"
+              py="0.25rem"
+              bg="accent.50"
+              borderBottom="1px solid"
+              borderColor="accent.200"
+            >
+              <Flex justify="space-between" align="center">
+                <Text fontSize="sm" color="accent.700" fontWeight="medium">
+                  {tValidation("pages.ChatPage.editMode.title")}
+                </Text>
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  colorScheme="accent"
+                  onClick={handleCancel}
+                >
+                  {tValidation("pages.ChatPage.editMode.cancel")}
+                </Button>
+              </Flex>
+            </Box>
+          )}
           {fileName && (
             <Stack
               direction="row"
@@ -140,7 +259,7 @@ export function TextInput({ groupId }: TextInputProps) {
               borderColor="gray.200"
             >
               <Stack direction="row" align="center" spacing={2}>
-                {preview && (
+                {preview && isImageUrl(fileName) && (
                   <Image
                     src={preview}
                     alt="Preview"
@@ -218,7 +337,11 @@ export function TextInput({ groupId }: TextInputProps) {
                 color="bg"
                 icon={<BsFillCursorFill />}
                 type="submit"
-                isLoading={sendMessageMutation.isPending || isUploading}
+                isLoading={
+                  sendMessageMutation.isPending ||
+                  editMessageMutation.isPending ||
+                  isUploading
+                }
               />
             </ButtonGroup>
           </Stack>

@@ -787,6 +787,7 @@ const chatPage = {
   sendMessagePlaceholder: "Napisz wiadomość...",
   loadMore: "Załaduj więcej",
   noMessages: "Brak wiadomości",
+  editButton: "Edytuj",
   error: {
     loadFailed: "Nie udało się załadować wiadomości",
   },
@@ -806,6 +807,15 @@ const chatPage = {
     loading: "Wysyłanie wiadomości...",
     success: "Wiadomość wysłana",
     errorDefault: "Nie udało się wysłać wiadomości",
+  },
+  editMessageToast: {
+    loading: "Aktualizowanie wiadomości...",
+    success: "Wiadomość zaktualizowana",
+    errorDefault: "Nie udało się zaktualizować wiadomości",
+  },
+  editMode: {
+    title: "Edycja wiadomości",
+    cancel: "Anuluj",
   },
 };
 
