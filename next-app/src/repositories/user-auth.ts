@@ -3,7 +3,7 @@
 import User from "@/models/user/user-model";
 import dbConnect from "@/util/connect-mongo";
 import bcrypt from "bcryptjs";
-import { check, RepositoryError } from "./common";
+import { check, RepositoryError, type WithSession } from "./common";
 import type { IUserDTO } from "@/models/user/user-types";
 import type {
   EmailType,
@@ -11,6 +11,7 @@ import type {
   LastNameType,
   NicknameType,
   PasswordTypeGeneric,
+  UserIdType,
 } from "@/schemas/model/user/user-types";
 
 export type CreateUserParams = {
@@ -80,4 +81,35 @@ export async function findExisting(params: FindIfExistParams) {
   }
 
   throw new RepositoryError("Invalid credentials");
+}
+
+export async function findUserByEmail(email: EmailType) {
+  await dbConnect();
+  const user = await User.findOne({ email }).lean<IUserDTO>();
+  if (!user) {
+    throw new RepositoryError("User not found");
+  }
+  return user;
+}
+
+export async function changePasswordToTemporary({
+  userId,
+  newPassword,
+  session,
+}: {
+  userId: UserIdType;
+  newPassword: PasswordTypeGeneric;
+} & WithSession) {
+  await dbConnect();
+
+  const salt = await bcrypt.genSalt(hashingRounds);
+  const encodedPassword = await bcrypt.hash(newPassword, salt);
+
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: userId },
+    { encodedPassword },
+    { new: true, session }
+  ).lean<IUserDTO>();
+
+  return check(updatedUser, "Failed to update password");
 }
