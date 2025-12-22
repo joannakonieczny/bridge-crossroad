@@ -31,7 +31,10 @@ import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
-import { createPartnershipPost, modifyPartnershipPost } from "@/services/find-partner/api";
+import {
+  createPartnershipPost,
+  modifyPartnershipPost,
+} from "@/services/find-partner/api";
 import { listEventsForGroup } from "@/services/events/api";
 import {
   addPartnershipPostSchema,
@@ -52,7 +55,7 @@ import { useJoinedGroupsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
 import type { AddPartnershipPostSchemaType } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-types";
 
-type PartnershipFormProps = {
+type CreateModifyPartnershipFormProps = {
   mode?: "create" | "modify";
   partnershipPostId?: string;
   initialData?: AddPartnershipPostSchemaType;
@@ -60,13 +63,13 @@ type PartnershipFormProps = {
   onClose?: () => void;
 };
 
-export default function PartnershipForm({
+export default function CreateModifyPartnershipForm({
   mode = "create",
   partnershipPostId,
   initialData,
   isOpen: controlledIsOpen,
   onClose: controlledOnClose,
-}: PartnershipFormProps = {}) {
+}: CreateModifyPartnershipFormProps = {}) {
   const internalDisclosure = useDisclosure();
   const isOpen = controlledIsOpen ?? internalDisclosure.isOpen;
   const onOpen = internalDisclosure.onOpen;
@@ -77,7 +80,7 @@ export default function PartnershipForm({
 
   const isModifyMode = mode === "modify";
 
-  const t = useTranslations("pages.FindPartner.PartnershipForm");
+  const t = useTranslations("pages.FindPartner.CreateModifyPartnershipForm");
   const tBiddingSystem = useTranslations("common.biddingSystem");
   const tValidation = useTranslationsWithFallback();
 
@@ -188,23 +191,26 @@ export default function PartnershipForm({
       isModifyMode && partnershipPostId
         ? partnershipAction.mutateAsync({
             mode: "modify",
-            data: { ...data, partnershipPostId, groupId: data.groupId || selectedGroupId },
+            data: {
+              ...data,
+              partnershipPostId,
+              groupId: data.groupId || selectedGroupId,
+            },
           })
         : partnershipAction.mutateAsync({
             mode: "create",
-            data: { ...data, groupId: data.groupId || selectedGroupId } as ActionInput<typeof createPartnershipPost>,
+            data: {
+              ...data,
+              groupId: data.groupId || selectedGroupId,
+            } as ActionInput<typeof createPartnershipPost>,
           });
 
     toast.promise(promise, {
       loading: {
-        title: isModifyMode
-          ? t("toast.modify.loading")
-          : t("toast.loading"),
+        title: isModifyMode ? t("toast.modify.loading") : t("toast.loading"),
       },
       success: {
-        title: isModifyMode
-          ? t("toast.modify.success")
-          : t("toast.success"),
+        title: isModifyMode ? t("toast.modify.success") : t("toast.success"),
       },
       error: (err: MutationOrQuerryError<typeof partnershipAction>) => {
         const errKey = getMessageKeyFromError(err);

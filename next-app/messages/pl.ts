@@ -810,7 +810,7 @@ const chatPage = {
 };
 
 const findPartner = {
-  PartnershipForm: {
+  CreateModifyPartnershipForm: {
     addButton: "Dodaj ogłoszenie",
     modalHeader: "Nowe ogłoszenie poszukiwania partnera",
     modalHeaderModify: "Edytuj ogłoszenie",

@@ -14,7 +14,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Announcement from "./Announcement";
-import PartnershipForm from "./PartnershipForm";
+import CreateModifyCreateModifyPartnershipForm from "./CreateModifyPartnershipForm";
 import type { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
 import { usePartnershipPostsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
@@ -203,7 +203,7 @@ export default function AnnoucementsList() {
       </Table>
 
       {editingPost && (
-        <PartnershipForm
+        <CreateModifyCreateModifyPartnershipForm
           mode="modify"
           partnershipPostId={editingPost.id}
           initialData={{
