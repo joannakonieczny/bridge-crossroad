@@ -25,9 +25,12 @@ import type { z } from "zod";
 // Use input type (before transformation) for form data
 type ChangeOnboardingDataFormData = z.input<typeof changeOnboardingDataSchema>;
 
+// Use output type (after transformation) for the onSubmit handler
+type ChangeOnboardingDataOutput = z.infer<typeof changeOnboardingDataSchema>;
+
 type ChangeOnboardingFormProps = {
   user: {
-    onboardingData: {
+    onboardingData?: {
       academy: string;
       yearOfBirth: number;
       startPlayingDate: Date;
@@ -79,22 +82,21 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
     return `${year}-${month}`;
   };
 
-  const { handleSubmit, control, setError, reset } =
-    useForm<ChangeOnboardingDataFormData>({
-      resolver: zodResolver(changeOnboardingDataSchema),
-      defaultValues: {
-        academy: user.onboardingData.academy,
-        yearOfBirth: user.onboardingData.yearOfBirth.toString(),
-        startPlayingDate: formatDateToMonthYear(
-          user.onboardingData.startPlayingDate
-        ),
-        trainingGroup: user.onboardingData.trainingGroup,
-        hasRefereeLicense: user.onboardingData.hasRefereeLicense,
-        cezarId: user.onboardingData.cezarId || "",
-        bboId: user.onboardingData.bboId || "",
-        cuebidsId: user.onboardingData.cuebidsId || "",
-      },
-    });
+  const { handleSubmit, control, setError, reset } = useForm({
+    resolver: zodResolver(changeOnboardingDataSchema),
+    defaultValues: {
+      academy: user.onboardingData?.academy || "",
+      yearOfBirth: user.onboardingData?.yearOfBirth.toString() || "",
+      startPlayingDate: user.onboardingData?.startPlayingDate
+        ? formatDateToMonthYear(user.onboardingData.startPlayingDate)
+        : "",
+      trainingGroup: user.onboardingData?.trainingGroup || "",
+      hasRefereeLicense: user.onboardingData?.hasRefereeLicense || false,
+      cezarId: user.onboardingData?.cezarId || "",
+      bboId: user.onboardingData?.bboId || "",
+      cuebidsId: user.onboardingData?.cuebidsId || "",
+    },
+  });
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changeOnboardingData,
@@ -125,7 +127,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
     },
   });
 
-  const onSubmit = async (data: ChangeOnboardingDataFormData) => {
+  const onSubmit = async (data: ChangeOnboardingDataOutput) => {
     const toastId = "change-onboarding-toast";
 
     toast({
@@ -136,7 +138,20 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
     });
 
     try {
-      await mutateAsync(data);
+      // The data is in output format (Academy enum, number for year) but the API expects input format (strings)
+      // We need to convert it back to the input format
+      const inputData: ChangeOnboardingDataFormData = {
+        academy: data.academy as string,
+        yearOfBirth: data.yearOfBirth.toString(),
+        startPlayingDate: data.startPlayingDate,
+        trainingGroup: data.trainingGroup as string,
+        hasRefereeLicense: data.hasRefereeLicense,
+        cezarId: data.cezarId,
+        bboId: data.bboId,
+        cuebidsId: data.cuebidsId,
+      };
+      
+      await mutateAsync(inputData);
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
 
@@ -146,7 +161,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
         duration: 3000,
       });
 
-      reset(data);
+      reset();
     } catch {
       toast.close(toastId);
     }

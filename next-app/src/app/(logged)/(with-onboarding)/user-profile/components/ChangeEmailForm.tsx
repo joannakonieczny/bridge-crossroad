@@ -17,6 +17,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queries";
 import type { z } from "zod";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 type ChangeEmailFormData = z.infer<typeof changeEmailSchema>;
 
@@ -30,13 +31,12 @@ export function ChangeEmailForm({ currentEmail }: ChangeEmailFormProps) {
   const tValidation = useTranslationsWithFallback();
   const queryClient = useQueryClient();
 
-  const { handleSubmit, control, setError, reset } =
-    useForm<ChangeEmailFormData>({
-      resolver: zodResolver(changeEmailSchema),
-      defaultValues: {
-        newEmail: "",
-      },
-    });
+  const { handleSubmit, control, setError, reset } = useForm({
+    resolver: zodResolver(withEmptyToUndefined(changeEmailSchema)),
+    defaultValues: {
+      newEmail: "",
+    },
+  });
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changeEmail,

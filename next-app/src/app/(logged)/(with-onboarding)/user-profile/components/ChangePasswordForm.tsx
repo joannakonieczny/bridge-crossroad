@@ -15,6 +15,7 @@ import {
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
 import type { z } from "zod";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
@@ -23,15 +24,14 @@ export function ChangePasswordForm() {
   const t = useTranslations("pages.UserProfilePage.ChangePasswordForm");
   const tValidation = useTranslationsWithFallback();
 
-  const { handleSubmit, control, setError, reset } =
-    useForm<ChangePasswordFormData>({
-      resolver: zodResolver(changePasswordSchema),
-      defaultValues: {
-        oldPassword: "",
-        newPassword: "",
-        repeatNewPassword: "",
-      },
-    });
+  const { handleSubmit, control, setError, reset } = useForm({
+    resolver: zodResolver(withEmptyToUndefined(changePasswordSchema)),
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      repeatNewPassword: "",
+    },
+  });
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changePassword,
