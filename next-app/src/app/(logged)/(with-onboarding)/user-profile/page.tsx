@@ -9,15 +9,8 @@ import {
   Spinner,
   Center,
   Flex,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent as ChakraDrawerContent,
-  DrawerBody,
-  IconButton,
-  useDisclosure,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { FaBars } from "react-icons/fa";
 import { useUserInfoQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
 import { ChangeEmailForm } from "./components/ChangeEmailForm";
@@ -30,7 +23,6 @@ type SectionId = "profile" | "email" | "password" | "onboarding";
 export default function UserProfilePage() {
   const t = useTranslations("pages.UserProfilePage");
   const { data: user, isLoading } = useUserInfoQuery();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const isDesktop = useBreakpointValue({ base: false, md: true });
 
   const [activeSection, setActiveSection] = useState<SectionId>("profile");
@@ -51,11 +43,14 @@ export default function UserProfilePage() {
 
     const targetRef = refs[sectionId];
     if (targetRef.current) {
-      targetRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      const elementPosition = targetRef.current.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - 100;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
       setActiveSection(sectionId);
-      if (!isDesktop) {
-        onClose();
-      }
     }
   };
 
@@ -110,25 +105,10 @@ export default function UserProfilePage() {
 
   return (
     <Flex h="100%" position="relative">
-      {/* Mobile drawer toggle button */}
-      {!isDesktop && (
-        <IconButton
-          aria-label="Open menu"
-          icon={<FaBars size="1.5rem" />}
-          variant="ghost"
-          onClick={onOpen}
-          position="fixed"
-          top={4}
-          left={4}
-          zIndex={1001}
-        />
-      )}
-
       {/* Desktop drawer - always visible */}
       {isDesktop && (
         <Box
           w="280px"
-          minH="100vh"
           bg="bg"
           borderRightWidth="1px"
           borderColor="border.200"
@@ -136,8 +116,7 @@ export default function UserProfilePage() {
           position="sticky"
           top={0}
           left={0}
-          h="100vh"
-          overflowY="auto"
+          h="100%"
         >
           <Heading size="md" mb={6}>
             {t("heading")}
@@ -146,23 +125,8 @@ export default function UserProfilePage() {
         </Box>
       )}
 
-      {/* Mobile drawer */}
-      {!isDesktop && (
-        <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
-          <DrawerOverlay />
-          <ChakraDrawerContent bg="bg">
-            <DrawerBody p={6}>
-              <Heading size="md" mb={6}>
-                {t("heading")}
-              </Heading>
-              <DrawerContent />
-            </DrawerBody>
-          </ChakraDrawerContent>
-        </Drawer>
-      )}
-
       {/* Main content area */}
-      <Box flex={1} overflowY="auto">
+      <Box flex={1}>
         <Container maxW="container.md" py={8} px={{ base: 8, md: 12 }}>
           <VStack spacing={12} align="stretch">
             {/* Profile Section */}
