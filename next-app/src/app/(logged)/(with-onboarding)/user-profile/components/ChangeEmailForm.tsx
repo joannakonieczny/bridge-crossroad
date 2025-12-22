@@ -40,6 +40,10 @@ export function ChangeEmailForm({ currentEmail }: ChangeEmailFormProps) {
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changeEmail,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
+      reset();
+    },
     onError: (error) => {
       const errors = error?.validationErrors;
       if (errors) {
@@ -54,44 +58,26 @@ export function ChangeEmailForm({ currentEmail }: ChangeEmailFormProps) {
           }
         );
       }
-
-      const messageKey =
-        getMessageKeyFromError(error) ?? t("toast.errorDefault");
-      if (!toast.isActive("change-email-error")) {
-        toast({
-          id: "change-email-error",
-          status: "error",
-          title: tValidation(messageKey),
-        });
-      }
     },
   });
 
   const onSubmit = async (data: ChangeEmailFormData) => {
-    const toastId = "change-email-toast";
+    const promise = mutateAsync(data);
 
-    toast({
-      id: toastId,
-      status: "loading",
-      title: t("toast.loading"),
-      duration: null,
-    });
-
-    try {
-      await mutateAsync(data);
-
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
-
-      toast.update(toastId, {
-        status: "success",
+    toast.promise(promise, {
+      loading: {
+        title: t("toast.loading"),
+      },
+      success: {
         title: t("toast.success"),
-        duration: 3000,
-      });
-
-      reset();
-    } catch {
-      toast.close(toastId);
-    }
+      },
+      error: (error) => {
+        const messageKey = getMessageKeyFromError(error);
+        return {
+          title: tValidation(messageKey || t("toast.errorDefault")),
+        };
+      },
+    });
   };
 
   return (

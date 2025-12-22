@@ -48,6 +48,10 @@ export function ChangeProfileForm({ user }: ChangeProfileFormProps) {
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changeProfile,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
+      reset(variables);
+    },
     onError: (error) => {
       const errors = error?.validationErrors;
       if (errors) {
@@ -62,44 +66,26 @@ export function ChangeProfileForm({ user }: ChangeProfileFormProps) {
           }
         );
       }
-
-      const messageKey =
-        getMessageKeyFromError(error) ?? t("toast.errorDefault");
-      if (!toast.isActive("change-profile-error")) {
-        toast({
-          id: "change-profile-error",
-          status: "error",
-          title: tValidation(messageKey),
-        });
-      }
     },
   });
 
   const onSubmit = async (data: ChangeProfileFormData) => {
-    const toastId = "change-profile-toast";
+    const promise = mutateAsync(data);
 
-    toast({
-      id: toastId,
-      status: "loading",
-      title: t("toast.loading"),
-      duration: null,
-    });
-
-    try {
-      await mutateAsync(data);
-
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
-
-      toast.update(toastId, {
-        status: "success",
+    toast.promise(promise, {
+      loading: {
+        title: t("toast.loading"),
+      },
+      success: {
         title: t("toast.success"),
-        duration: 3000,
-      });
-
-      reset(data);
-    } catch {
-      toast.close(toastId);
-    }
+      },
+      error: (error) => {
+        const messageKey = getMessageKeyFromError(error);
+        return {
+          title: tValidation(messageKey || t("toast.errorDefault")),
+        };
+      },
+    });
   };
 
   return (

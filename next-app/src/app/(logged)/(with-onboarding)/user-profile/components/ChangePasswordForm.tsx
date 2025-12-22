@@ -35,6 +35,9 @@ export function ChangePasswordForm() {
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changePassword,
+    onSuccess: () => {
+      reset();
+    },
     onError: (error) => {
       const errors = error?.validationErrors;
       if (errors) {
@@ -49,42 +52,26 @@ export function ChangePasswordForm() {
           }
         );
       }
-
-      const messageKey =
-        getMessageKeyFromError(error) ?? t("toast.errorDefault");
-      if (!toast.isActive("change-password-error")) {
-        toast({
-          id: "change-password-error",
-          status: "error",
-          title: tValidation(messageKey),
-        });
-      }
     },
   });
 
   const onSubmit = async (data: ChangePasswordFormData) => {
-    const toastId = "change-password-toast";
+    const promise = mutateAsync(data);
 
-    toast({
-      id: toastId,
-      status: "loading",
-      title: t("toast.loading"),
-      duration: null,
-    });
-
-    try {
-      await mutateAsync(data);
-
-      toast.update(toastId, {
-        status: "success",
+    toast.promise(promise, {
+      loading: {
+        title: t("toast.loading"),
+      },
+      success: {
         title: t("toast.success"),
-        duration: 3000,
-      });
-
-      reset();
-    } catch {
-      toast.close(toastId);
-    }
+      },
+      error: (error) => {
+        const messageKey = getMessageKeyFromError(error);
+        return {
+          title: tValidation(messageKey || t("toast.errorDefault")),
+        };
+      },
+    });
   };
 
   return (

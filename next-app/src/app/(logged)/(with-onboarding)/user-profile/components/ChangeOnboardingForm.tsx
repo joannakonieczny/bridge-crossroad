@@ -101,6 +101,10 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
 
   const { mutateAsync, isPending } = useActionMutation({
     action: changeOnboardingData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
+      reset();
+    },
     onError: (error) => {
       const errors = error?.validationErrors;
       if (errors) {
@@ -115,57 +119,39 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
           }
         );
       }
-
-      const messageKey =
-        getMessageKeyFromError(error) ?? t("toast.errorDefault");
-      if (!toast.isActive("change-onboarding-error")) {
-        toast({
-          id: "change-onboarding-error",
-          status: "error",
-          title: tValidation(messageKey),
-        });
-      }
     },
   });
 
   const onSubmit = async (data: ChangeOnboardingDataOutput) => {
-    const toastId = "change-onboarding-toast";
+    // The data is in output format (Academy enum, number for year) but the API expects input format (strings)
+    // We need to convert it back to the input format
+    const inputData: ChangeOnboardingDataFormData = {
+      academy: data.academy as string,
+      yearOfBirth: data.yearOfBirth.toString(),
+      startPlayingDate: data.startPlayingDate,
+      trainingGroup: data.trainingGroup as string,
+      hasRefereeLicense: data.hasRefereeLicense,
+      cezarId: data.cezarId,
+      bboId: data.bboId,
+      cuebidsId: data.cuebidsId,
+    };
 
-    toast({
-      id: toastId,
-      status: "loading",
-      title: t("toast.loading"),
-      duration: null,
-    });
+    const promise = mutateAsync(inputData);
 
-    try {
-      // The data is in output format (Academy enum, number for year) but the API expects input format (strings)
-      // We need to convert it back to the input format
-      const inputData: ChangeOnboardingDataFormData = {
-        academy: data.academy as string,
-        yearOfBirth: data.yearOfBirth.toString(),
-        startPlayingDate: data.startPlayingDate,
-        trainingGroup: data.trainingGroup as string,
-        hasRefereeLicense: data.hasRefereeLicense,
-        cezarId: data.cezarId,
-        bboId: data.bboId,
-        cuebidsId: data.cuebidsId,
-      };
-
-      await mutateAsync(inputData);
-
-      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
-
-      toast.update(toastId, {
-        status: "success",
+    toast.promise(promise, {
+      loading: {
+        title: t("toast.loading"),
+      },
+      success: {
         title: t("toast.success"),
-        duration: 3000,
-      });
-
-      reset();
-    } catch {
-      toast.close(toastId);
-    }
+      },
+      error: (error) => {
+        const messageKey = getMessageKeyFromError(error);
+        return {
+          title: tValidation(messageKey || t("toast.errorDefault")),
+        };
+      },
+    });
   };
 
   return (
