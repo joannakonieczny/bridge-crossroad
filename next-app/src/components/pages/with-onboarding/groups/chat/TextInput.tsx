@@ -9,7 +9,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalCloseButton,
   Button,
   useDisclosure,
@@ -365,11 +364,6 @@ export function TextInput({
               }}
             />
           </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose} colorScheme="accent">
-              {t("attachFileModal.closeButton")}
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
