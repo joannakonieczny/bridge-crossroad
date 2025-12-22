@@ -115,7 +115,7 @@ export function ChangeProfileForm({ user }: ChangeProfileFormProps) {
               value={field.value}
               onChange={field.onChange}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
@@ -130,7 +130,7 @@ export function ChangeProfileForm({ user }: ChangeProfileFormProps) {
               value={field.value}
               onChange={field.onChange}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
@@ -145,7 +145,7 @@ export function ChangeProfileForm({ user }: ChangeProfileFormProps) {
               value={field.value || ""}
               onChange={field.onChange}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />

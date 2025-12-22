@@ -21,6 +21,7 @@ import { QUERY_KEYS } from "@/lib/queries";
 import { Academy } from "@/club-preset/academy";
 import { TrainingGroup } from "@/club-preset/training-group";
 import type { z } from "zod";
+import { withEmptyToUndefined } from "@/schemas/common";
 
 // Use input type (before transformation) for form data
 type ChangeOnboardingDataFormData = z.input<typeof changeOnboardingDataSchema>;
@@ -83,7 +84,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
   };
 
   const { handleSubmit, control, setError, reset } = useForm({
-    resolver: zodResolver(changeOnboardingDataSchema),
+    resolver: zodResolver(withEmptyToUndefined(changeOnboardingDataSchema)),
     defaultValues: {
       academy: user.onboardingData?.academy || "",
       yearOfBirth: user.onboardingData?.yearOfBirth.toString() || "",
@@ -150,7 +151,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
         bboId: data.bboId,
         cuebidsId: data.cuebidsId,
       };
-      
+
       await mutateAsync(inputData);
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userInfo });
@@ -180,7 +181,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
               onChange={field.onChange}
               options={academyOptions}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
@@ -195,7 +196,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
               value={field.value}
               onChange={field.onChange}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
@@ -229,7 +230,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
               onChange={field.onChange}
               options={trainingGroupOptions}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
@@ -260,7 +261,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
               value={field.value || ""}
               onChange={field.onChange}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
@@ -275,7 +276,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
               value={field.value || ""}
               onChange={field.onChange}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
@@ -290,7 +291,7 @@ export function ChangeOnboardingForm({ user }: ChangeOnboardingFormProps) {
               value={field.value || ""}
               onChange={field.onChange}
               isInvalid={!!fieldState.error}
-              errorMessage={fieldState.error?.message}
+              errorMessage={tValidation(fieldState.error?.message)}
             />
           )}
         />
