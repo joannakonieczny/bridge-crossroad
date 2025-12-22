@@ -10,6 +10,7 @@ import {
   Center,
   Flex,
   useBreakpointValue,
+  Portal,
 } from "@chakra-ui/react";
 import { useUserInfoQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
@@ -104,29 +105,32 @@ export default function UserProfilePage() {
   }
 
   return (
-    <Flex h="100%" position="relative">
+    <Flex>
       {/* Desktop drawer - always visible */}
       {isDesktop && (
-        <Box
-          w="280px"
-          bg="bg"
-          borderRightWidth="1px"
-          borderColor="border.200"
-          p={6}
-          position="sticky"
-          top={0}
-          left={0}
-          h="100%"
-        >
-          <Heading size="md" mb={6}>
-            {t("heading")}
-          </Heading>
-          <DrawerContent />
-        </Box>
+        <Portal>
+          <Box
+            w="280px"
+            bg="bg"
+            borderRightWidth="1px"
+            borderColor="border.200"
+            p={6}
+            position="fixed"
+            top="64px"
+            left={0}
+            zIndex={10}
+            h="calc(100vh - 64px)"
+          >
+            <Heading size="md" my={6}>
+              {t("heading")}
+            </Heading>
+            <DrawerContent />
+          </Box>
+        </Portal>
       )}
 
       {/* Main content area */}
-      <Box flex={1}>
+      <Box flex={1} ml={isDesktop ? "280px" : 0}>
         <Container maxW="container.md" py={8} px={{ base: 8, md: 12 }}>
           <VStack spacing={12} align="stretch">
             {/* Profile Section */}
