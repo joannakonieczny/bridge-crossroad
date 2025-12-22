@@ -1,10 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Box, Table, Tbody, Tr, Td, Flex } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import { getCezarAthleteByPidAction } from "@/services/external/api";
 
 export default function InfoTable() {
+  const [athleteData, setAthleteData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchAthleteData = async () => {
+      try {
+        const data = await getCezarAthleteByPidAction({ pid: "23178" });
+        console.log("Fetched athlete data:", data);
+        setAthleteData(data);
+      } catch (error) {
+        console.error("Error fetching athlete data:", error);
+      }
+    };
+
+    fetchAthleteData();
+  }, []);
   // mock
   const t = useTranslations("pages.DashboardPage.PZBSInfo");
   const rows = [
