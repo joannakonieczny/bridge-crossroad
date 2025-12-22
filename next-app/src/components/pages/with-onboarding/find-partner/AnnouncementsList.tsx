@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   Thead,
@@ -11,8 +11,11 @@ import {
   Skeleton,
   SkeletonText,
   Td,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Announcement from "./Announcement";
+import PartnershipForm from "./PartnershipForm";
+import type { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
 import { usePartnershipPostsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
 import { useQueryStates, parseAsInteger, parseAsString } from "nuqs";
@@ -47,6 +50,19 @@ const experienceMap: Record<string, ExperienceRange<number>> = {
 
 export default function AnnoucementsList() {
   const t = useTranslations("pages.FindPartner.List");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [editingPost, setEditingPost] =
+    useState<PartnershipPostSchemaTypePopulated | null>(null);
+
+  const handleEdit = (post: PartnershipPostSchemaTypePopulated) => {
+    setEditingPost(post);
+    onOpen();
+  };
+
+  const handleCloseEdit = () => {
+    onClose();
+    setEditingPost(null);
+  };
 
   const [filters] = useQueryStates({
     page: parseAsInteger.withDefault(1),
@@ -181,28 +197,38 @@ export default function AnnoucementsList() {
         </Thead>
         <Tbody>
           {posts.map((p) => (
-            <Announcement
-              key={p.id}
-              a={{
-                id: p.id,
-                title: p.name,
-                date:
-                  p.data.type === PartnershipPostType.PERIOD
-                    ? p.data.duration.endsAt
-                    : p.data.event.duration.startsAt,
-                owner: p.owner,
-                frequency: p.data.type,
-                preferredSystem: p.biddingSystem,
-                description: p.description,
-                groupId: filters.groupId || undefined,
-                isUserInterested: p.isUserInterested || false,
-                interestedUsers: p.interestedUsers || [],
-                isOwnByUser: p.isOwnByUser || false,
-              }}
-            />
+            <Announcement key={p.id} post={p} onEdit={handleEdit} />
           ))}
         </Tbody>
       </Table>
+
+      {editingPost && (
+        <PartnershipForm
+          mode="modify"
+          partnershipPostId={editingPost.id}
+          initialData={{
+            name: editingPost.name,
+            description: editingPost.description,
+            biddingSystem: editingPost.biddingSystem,
+            groupId: editingPost.group.id,
+            data:
+              editingPost.data.type === PartnershipPostType.SINGLE
+                ? {
+                    type: PartnershipPostType.SINGLE,
+                    eventId: editingPost.data.event.id,
+                  }
+                : {
+                    type: PartnershipPostType.PERIOD,
+                    duration: {
+                      startsAt: editingPost.data.duration.startsAt,
+                      endsAt: editingPost.data.duration.endsAt,
+                    },
+                  },
+          }}
+          isOpen={isOpen}
+          onClose={handleCloseEdit}
+        />
+      )}
     </Box>
   );
 }
