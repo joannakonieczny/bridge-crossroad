@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { idPropSchema } from "@/schemas/common";
+import { idPropSchemaM } from "@/schemas/common";
 
 import {
   BiddingSystem,
@@ -13,11 +13,14 @@ import {
 } from "@/schemas/model/partnership-post/partnership-post-schema";
 import { TrainingGroup } from "@/club-preset/training-group";
 import { Academy } from "@/club-preset/academy";
+import type { TKey } from "@/lib/typed-translations";
 
 export const addPartnershipPostSchema = z.object({
   name: nameSchema,
   description: descriptionSchema.optional(),
-  groupId: idPropSchema,
+  groupId: idPropSchemaM(
+    "validation.model.event.group.required" satisfies TKey
+  ),
   biddingSystem: z.nativeEnum(BiddingSystem),
   data: partnershipPostDataSchema,
 });

@@ -7,7 +7,10 @@ import { GroupTableName } from "@/models/group/group-types";
 import { check } from "./common";
 import { EventTableName } from "@/models/event/event-types";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
-import type { AddPartnershipPostSchemaType } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-types";
+import type {
+  AddPartnershipPostSchemaType,
+  ModifyPartnershipPostSchemaType,
+} from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-types";
 import type { IPartnershipPostPopulated } from "@/models/mixed-types";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 import type { PartnershipPostIdType } from "@/schemas/model/partnership-post/partnership-post-types";
@@ -128,6 +131,22 @@ export async function addPartnershipPost({
   const doc = new PartnershipPost({ ...post, ownerId, groupId });
   const saved = await doc.save();
   return check(saved?.toObject(), "Failed to add new partnership post");
+}
+
+export async function modifyPartnershipPost({
+  partnershipPostId,
+  post,
+}: {
+  partnershipPostId: PartnershipPostIdType;
+  post: ModifyPartnershipPostSchemaType;
+}) {
+  await dbConnect();
+  const updated = await PartnershipPost.findByIdAndUpdate(
+    partnershipPostId,
+    post,
+    { new: true }
+  ).lean<IPartnershipPostDTO>();
+  return check(updated, "Failed to modify partnership post");
 }
 
 export async function removePartnershipPost({

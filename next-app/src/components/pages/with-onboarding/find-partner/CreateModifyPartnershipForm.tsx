@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Modal,
@@ -31,9 +31,15 @@ import {
   useTranslations,
   useTranslationsWithFallback,
 } from "@/lib/typed-translations";
-import { createPartnershipPost } from "@/services/find-partner/api";
+import {
+  createPartnershipPost,
+  modifyPartnershipPost,
+} from "@/services/find-partner/api";
 import { listEventsForGroup } from "@/services/events/api";
-import { addPartnershipPostSchema } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
+import {
+  addPartnershipPostSchema,
+  modifyPartnershipPostSchema,
+} from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { useActionQuery } from "@/lib/tanstack-action/actions-querry";
 import type {
@@ -47,13 +53,34 @@ import { useQueryStates, parseAsString } from "nuqs";
 import { withEmptyToUndefined } from "@/schemas/common";
 import { useJoinedGroupsQuery } from "@/lib/queries";
 import dayjs from "dayjs";
+import type { AddPartnershipPostSchemaType } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-types";
 
-export default function PartnershipForm() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+type CreateModifyPartnershipFormProps = {
+  mode?: "create" | "modify";
+  partnershipPostId?: string;
+  initialData?: AddPartnershipPostSchemaType;
+  isOpen?: boolean;
+  onClose?: () => void;
+};
+
+export default function CreateModifyPartnershipForm({
+  mode = "create",
+  partnershipPostId,
+  initialData,
+  isOpen: controlledIsOpen,
+  onClose: controlledOnClose,
+}: CreateModifyPartnershipFormProps = {}) {
+  const internalDisclosure = useDisclosure();
+  const isOpen = controlledIsOpen ?? internalDisclosure.isOpen;
+  const onOpen = internalDisclosure.onOpen;
+  const onClose = controlledOnClose ?? internalDisclosure.onClose;
+
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const t = useTranslations("pages.FindPartner.PartnershipForm");
+  const isModifyMode = mode === "modify";
+
+  const t = useTranslations("pages.FindPartner.CreateModifyPartnershipForm");
   const tBiddingSystem = useTranslations("common.biddingSystem");
   const tValidation = useTranslationsWithFallback();
 
@@ -69,8 +96,12 @@ export default function PartnershipForm() {
     watch,
     reset,
   } = useForm({
-    resolver: zodResolver(withEmptyToUndefined(addPartnershipPostSchema)),
-    defaultValues: {
+    resolver: zodResolver(
+      withEmptyToUndefined(
+        isModifyMode ? modifyPartnershipPostSchema : addPartnershipPostSchema
+      )
+    ),
+    defaultValues: initialData || {
       name: "",
       description: "",
       biddingSystem: BiddingSystem.SAYC,
@@ -84,6 +115,27 @@ export default function PartnershipForm() {
       },
     },
   });
+
+  useEffect(() => {
+    if (isModifyMode && initialData) {
+      reset(initialData);
+    } else if (!isModifyMode) {
+      reset({
+        name: "",
+        description: "",
+        biddingSystem: BiddingSystem.SAYC,
+        groupId: filters.groupId || "",
+        data: {
+          type: PartnershipPostType.PERIOD,
+          duration: {
+            startsAt: new Date(),
+            endsAt: dayjs().add(1, "week").toDate(),
+          },
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModifyMode, initialData, reset]);
 
   const selectedGroupId = watch("groupId");
   const dataType = watch("data.type");
@@ -103,24 +155,64 @@ export default function PartnershipForm() {
     enabled: !!selectedGroupId && dataType === PartnershipPostType.SINGLE,
   });
 
-  const createAction = useActionMutation({
-    action: createPartnershipPost,
+  type PartnershipActionInput =
+    | {
+        mode: "create";
+        data: ActionInput<typeof createPartnershipPost>;
+      }
+    | {
+        mode: "modify";
+        data: ActionInput<typeof modifyPartnershipPost>;
+      };
+
+  const partnershipAction = useActionMutation({
+    action: ({ mode, data }: PartnershipActionInput) => {
+      if (mode === "create") {
+        return createPartnershipPost(data);
+      }
+      return modifyPartnershipPost(data);
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["partnershipPosts", data.groupId],
       });
-      setFilters({ groupId: data.groupId });
+      if (!isModifyMode) {
+        setFilters({ groupId: data.groupId });
+      }
       onClose();
       reset();
     },
   });
 
-  function handleWithToast(data: ActionInput<typeof createPartnershipPost>) {
-    const promise = createAction.mutateAsync(data);
+  function handleWithToast(
+    data: AddPartnershipPostSchemaType | Partial<AddPartnershipPostSchemaType>
+  ) {
+    const promise =
+      isModifyMode && partnershipPostId
+        ? partnershipAction.mutateAsync({
+            mode: "modify",
+            data: {
+              ...data,
+              partnershipPostId,
+              groupId: data.groupId || selectedGroupId,
+            },
+          })
+        : partnershipAction.mutateAsync({
+            mode: "create",
+            data: {
+              ...data,
+              groupId: data.groupId || selectedGroupId,
+            } as ActionInput<typeof createPartnershipPost>,
+          });
+
     toast.promise(promise, {
-      loading: { title: t("toast.loading") || "Tworzenie ogłoszenia..." },
-      success: { title: t("toast.success") },
-      error: (err: MutationOrQuerryError<typeof createAction>) => {
+      loading: {
+        title: isModifyMode ? t("toast.modify.loading") : t("toast.loading"),
+      },
+      success: {
+        title: isModifyMode ? t("toast.modify.success") : t("toast.success"),
+      },
+      error: (err: MutationOrQuerryError<typeof partnershipAction>) => {
         const errKey = getMessageKeyFromError(err);
         return { title: tValidation(errKey) };
       },
@@ -129,14 +221,18 @@ export default function PartnershipForm() {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme="accent">
-        {t("addButton")}
-      </Button>
+      {!isModifyMode && (
+        <Button onClick={onOpen} colorScheme="accent">
+          {t("addButton")}
+        </Button>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{t("modalHeader")}</ModalHeader>
+          <ModalHeader>
+            {isModifyMode ? t("modalHeaderModify") : t("modalHeader")}
+          </ModalHeader>
           <ModalCloseButton />
           <Divider />
           <ModalBody>
@@ -345,9 +441,9 @@ export default function PartnershipForm() {
                 <Button
                   colorScheme="accent"
                   type="submit"
-                  isLoading={createAction.isPending}
+                  isLoading={partnershipAction.isPending}
                 >
-                  {t("createButton")}
+                  {isModifyMode ? t("modifyButton") : t("createButton")}
                 </Button>
               </ModalFooter>
             </form>
