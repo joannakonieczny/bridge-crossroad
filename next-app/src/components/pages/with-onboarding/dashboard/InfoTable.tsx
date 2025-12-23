@@ -1,36 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Box, Table, Tbody, Tr, Td, Flex } from "@chakra-ui/react";
+import Link from "next/link";
+import { Box, Table, Tbody, Tr, Td, Flex, Text } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import { getCezarAthleteByPidAction } from "@/services/external/api";
+import { useCezarPlayerQuery, useUserInfoQuery } from "@/lib/queries";
 
 export default function InfoTable() {
-  const [athleteData, setAthleteData] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchAthleteData = async () => {
-      try {
-        const data = await getCezarAthleteByPidAction({ pid: "23178" });
-        console.log("Fetched athlete data:", data);
-        setAthleteData(data);
-      } catch (error) {
-        console.error("Error fetching athlete data:", error);
-      }
-    };
-
-    fetchAthleteData();
-  }, []);
-  // mock
+  const { data: userData } = useUserInfoQuery();
+  const cezarId = userData?.onboardingData?.cezarId;
+  const { data: playerData } = useCezarPlayerQuery(cezarId || null);
   const t = useTranslations("pages.DashboardPage.PZBSInfo");
-  const rows = [
-    { label: t("nameAndLastName"), value: "Jan Nowak" },
-    { label: t("PIDCezar"), value: "23178" },
-    { label: t("WK"), value: "1.0" },
-    { label: t("team"), value: "KS AGH I Kraków" },
-    { label: t("region"), value: "MP" },
-  ];
+  const hasValidData = Boolean(
+    playerData && playerData.fullName && playerData.wk && playerData.okreg
+  );
+  const rows = hasValidData
+    ? [
+        { label: t("nameAndLastName"), value: playerData?.fullName },
+        { label: t("PIDCezar"), value: playerData?.pid },
+        { label: t("WK"), value: playerData?.wk },
+        { label: t("team"), value: playerData?.klub ?? "-" },
+        { label: t("region"), value: playerData?.okreg },
+      ]
+    : [];
+
+  const onboardingRows = userData?.onboardingData
+    ? [
+        { label: t("cuebidsId"), value: userData.onboardingData.cuebidsId ?? "-" },
+        { label: t("bboId"), value: userData.onboardingData.bboId ?? "-" },
+        {
+          label: t("hasRefereeLicense"),
+          value: userData.onboardingData.hasRefereeLicense ? t("hasRefereeLicenseYes") : t("hasRefereeLicenseNo"),
+        },
+      ]
+    : [];
 
   return (
     <Flex justify="start" width="100%" px={{ base: 2, md: 0 }}>
@@ -51,28 +54,74 @@ export default function InfoTable() {
           >
             <Table variant="simple" width="100%" size="sm">
               <Tbody>
-                {rows.map((row, index) => (
-                  <Tr
-                    key={row.label}
-                    bg={index % 2 === 0 ? "border.100" : "bg"}
-                  >
-                    <Td
-                      fontWeight="semibold"
-                      width="50%"
-                      height="52px"
-                      px={{ base: 2, md: 4 }}
+                {hasValidData ? (
+                  rows.map((row, index) => (
+                    <Tr
+                      key={row.label}
+                      bg={index % 2 === 0 ? "border.100" : "bg"}
                     >
-                      <ResponsiveText fontSize="md" fontWeight="semibold">
-                        {row.label}
-                      </ResponsiveText>
-                    </Td>
-                    <Td width="50%" height="52px">
-                      <ResponsiveText fontSize="md">
-                        {row.value}
-                      </ResponsiveText>
-                    </Td>
-                  </Tr>
-                ))}
+                      <Td
+                        fontWeight="semibold"
+                        width="50%"
+                        height="52px"
+                        px={{ base: 2, md: 4 }}
+                      >
+                        <ResponsiveText fontSize="md" fontWeight="semibold">
+                          {row.label}
+                        </ResponsiveText>
+                      </Td>
+                      <Td width="50%" height="52px">
+                        <ResponsiveText fontSize="md">
+                          {row.value}
+                        </ResponsiveText>
+                      </Td>
+                    </Tr>
+                  ))
+                ) : (
+                  <>
+                    {onboardingRows.map((row, index) => (
+                      <Tr
+                        key={row.label}
+                        bg={index % 2 === 0 ? "border.100" : "bg"}
+                      >
+                        <Td
+                          fontWeight="semibold"
+                          width="50%"
+                          height="52px"
+                          px={{ base: 2, md: 4 }}
+                        >
+                          <ResponsiveText fontSize="md" fontWeight="semibold">
+                            {row.label}
+                          </ResponsiveText>
+                        </Td>
+                        <Td width="50%" height="52px">
+                          <ResponsiveText fontSize="md">
+                            {row.value}
+                          </ResponsiveText>
+                        </Td>
+                      </Tr>
+                    ))}
+                    <Tr>
+                      <Td colSpan={2} height="auto" px={{ base: 2, md: 4 }} py={2}>
+                        <ResponsiveText fontSize="md">
+                          {t("missingCezarData")}
+                        </ResponsiveText>
+                        <Link href="/settings">
+                          <Text
+                            mt={2}
+                            fontSize="sm"
+                            textDecoration="underline"
+                            color="accent.500"
+                            _hover={{ color: "accent.600" }}
+                            cursor="pointer"
+                          >
+                            {t("updatePIDInSettings")}
+                          </Text>
+                        </Link>
+                      </Td>
+                    </Tr>
+                  </>
+                )}
               </Tbody>
             </Table>
           </Box>

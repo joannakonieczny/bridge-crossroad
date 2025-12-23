@@ -212,6 +212,14 @@ const dashboardPage = {
     WK: "WK",
     team: "Drużyna",
     region: "Okręg",
+    missingCezarData: "Brak danych o graczu z systemu MSC Cezar",
+    updatePIDInSettings:
+      "Jesteś zrzeszony w PZBS? Zaktualizuj dane o swoim PID w ustawieniach",
+    cuebidsId: "Cuebids ID",
+    bboId: "BBO ID",
+    hasRefereeLicense: "Licencja sędziowska",
+    hasRefereeLicenseYes: "Tak",
+    hasRefereeLicenseNo: "Nie",
   },
 };
 
