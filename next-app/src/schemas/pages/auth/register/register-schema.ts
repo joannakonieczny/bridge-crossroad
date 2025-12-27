@@ -57,7 +57,6 @@ export const registerFormSchema = z
     email: emailSchema,
     password: passwordSchema,
     repeatPassword: repeatPasswordSchema,
-    rememberMe: z.boolean(),
   })
   .transform((data) => {
     const result = { ...data };

@@ -11,7 +11,6 @@ export async function addAdminUser() {
   const parsedPayload = registerFormSchema.parse({
     ...jsonInput,
     repeatPassword: jsonInput.password,
-    rememberMe: false,
   });
 
   try {

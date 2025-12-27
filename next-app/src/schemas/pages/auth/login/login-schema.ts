@@ -46,7 +46,6 @@ const passwordSchema = z
 export const loginFormSchema = z.object({
   nicknameOrEmail: nicknameOrEmailSchema,
   password: passwordSchema,
-  rememberMe: z.boolean(),
 });
 
 export { nicknameOrEmailSchema, passwordSchema };
