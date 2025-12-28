@@ -1,7 +1,6 @@
 "use client";
 
-import { HStack, VStack, Text, SkeletonCircle, Skeleton } from "@chakra-ui/react";
-import ProfilePicture from "@/components/common/ProfilePicture";
+import { HStack, VStack, Text, SkeletonCircle, Skeleton, Avatar } from "@chakra-ui/react";
 import { useUserInfoQuery } from "@/lib/queries";
 
 export default function ProfileBanner() {
@@ -14,11 +13,18 @@ export default function ProfileBanner() {
   const displayName = [first, last].filter(Boolean).join(" ") || "—";
   const description = u?.nickname ?? "";
 
-  const profileSize = { base: "5rem", md: "7.25rem" };
+  const profileSize = { base: "4rem", md: "5.5rem" };
 
   return (
-    <HStack width="100%">
-      {loading ? <SkeletonCircle size={profileSize} /> : <ProfilePicture size={profileSize} />}
+    <HStack width="100%" ml={{ base: "1rem", md: "0" }}>
+      {loading ? (
+        <SkeletonCircle size={profileSize} />
+      ) : (
+        <Avatar 
+          boxSize={profileSize} 
+          name={displayName}
+        />
+      )}
 
       <VStack align="start" width="100%">
         {loading ? (

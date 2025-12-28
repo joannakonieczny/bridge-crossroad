@@ -14,7 +14,6 @@ import {
 import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
-import { getPersonLabel } from "@/util/formatters";
 import { addAttendee, removeAttendee } from "@/services/events/api";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -101,7 +100,7 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
             {participantsCount && (
               <AvatarGroup size="sm" max={4}>
                 {participants.slice(0, 4).map((p, i) => {
-                  return <Avatar key={i} name={getPersonLabel(p)} />;
+                  return <Avatar key={i} name={p.name.firstName+" "+p.name.lastName} />;
                 })}
               </AvatarGroup>
             )}
