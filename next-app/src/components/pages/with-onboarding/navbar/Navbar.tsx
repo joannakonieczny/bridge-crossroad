@@ -22,8 +22,8 @@ import {
   MenuItem,
   useMediaQuery,
   useToast,
+  Avatar,
 } from "@chakra-ui/react";
-import ProfilePicture from "@/components/common/ProfilePicture";
 import {
   FaBars,
   FaRegUser,
@@ -31,7 +31,7 @@ import {
   FaRegQuestionCircle,
   FaAngleDown,
   FaAngleRight,
-  FaSignOutAlt, // added logout icon
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import { usePathname } from "next/navigation";
@@ -40,6 +40,7 @@ import Logo from "@/components/common/Logo";
 import { useTranslations } from "@/lib/typed-translations";
 import { useColorMode } from "@chakra-ui/react";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import { useUserInfoQuery } from "@/lib/queries";
 import NavbarTab from "./NavbarTab";
 import NavbarDrawerItem from "./NavbarDrawerItem";
 import NavbarDrawerMenuItem from "./NavbarDrawerMenuItem";
@@ -56,6 +57,7 @@ const navbarTabs = [
 export default function Navbar() {
   const pathname = usePathname();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const userQ = useUserInfoQuery();
 
   const defaultIndex = useMemo(() => {
     const match = navbarTabs.findIndex((path) => pathname.startsWith(path));
@@ -68,6 +70,10 @@ export default function Navbar() {
   const [isDesktop] = useMediaQuery("(min-width: 1200px)");
 
   const toast = useToast();
+
+  const first = userQ.data?.name?.firstName ?? "";
+  const last = userQ.data?.name?.lastName ?? "";
+  const displayName = [first, last].filter(Boolean).join(" ") || "User";
 
   function handleLogout() {
     const promise = logout();
@@ -127,7 +133,7 @@ export default function Navbar() {
 
           {/* profile + dropdown menu */}
           <Flex flex={1} justifyContent="flex-end" alignItems="center" gap={4}>
-            <ProfilePicture size="3rem" />
+            <Avatar boxSize="3rem" name={displayName} />
             <Menu>
               {({ isOpen }) => (
                 <>
@@ -206,7 +212,7 @@ export default function Navbar() {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                <ProfilePicture size="3rem" />
+                <Avatar boxSize="3rem" name={displayName} />
 
                 {/* Druga ikona, widoczna w Drawerze */}
                 <IconButton
