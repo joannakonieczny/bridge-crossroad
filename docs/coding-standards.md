@@ -331,7 +331,6 @@ const loginFormSchema = z.object({
   password: z
     .string()
     .nonempty("validation.pages.auth.login.password.required" satisfies TKey),
-  rememberMe: z.boolean(),
 });
 
 // Advanced validation with custom refinement
@@ -388,7 +387,6 @@ function LoginPage() {
     defaultValues: {
       nicknameOrEmail: "",
       password: "",
-      rememberMe: false,
     },
   });
 
@@ -690,7 +688,6 @@ export function DummyComponent() {
   const o = {
     nicknameOrEmail: "user@example.com",
     password: "password123",
-    rememberMe: true,
   };
 
   const q = useActionQuery({
