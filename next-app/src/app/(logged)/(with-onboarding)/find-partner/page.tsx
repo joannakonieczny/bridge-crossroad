@@ -2,7 +2,6 @@
 
 import React from "react";
 import { VStack, Flex } from "@chakra-ui/react";
-import MainBar from "@/components/pages/with-onboarding/find-partner/MainBar";
 import FiltersBar from "@/components/pages/with-onboarding/find-partner/FiltersBar";
 import AnnouncementsList from "@/components/pages/with-onboarding/find-partner/AnnouncementsList";
 import PaginationControls from "@/components/pages/with-onboarding/find-partner/PaginationControls";
@@ -18,7 +17,6 @@ export default function FindPartnerPage() {
       minHeight="calc(100vh - 5rem)"
     >
       <VStack spacing={6} align="stretch">
-        <MainBar />
         <FiltersBar />
         <AnnouncementsList />
         <PaginationControls />
