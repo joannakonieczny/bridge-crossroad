@@ -27,11 +27,9 @@ import ProfilePicture from "@/components/common/ProfilePicture";
 import {
   FaBars,
   FaRegUser,
-  FaCog,
-  FaRegQuestionCircle,
   FaAngleDown,
   FaAngleRight,
-  FaSignOutAlt, // added logout icon
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import { usePathname } from "next/navigation";
@@ -152,14 +150,12 @@ export default function Navbar() {
                     borderColor="border.200"
                     boxShadow="md"
                   >
-                    <MenuItem icon={<FaRegUser size="1rem" />}>
+                    <MenuItem
+                      as="a"
+                      href={ROUTES.user_profile}
+                      icon={<FaRegUser size="1rem" />}
+                    >
                       {t("menu.profile")}
-                    </MenuItem>
-                    <MenuItem icon={<FaRegQuestionCircle size="1rem" />}>
-                      {t("menu.settings")}
-                    </MenuItem>
-                    <MenuItem icon={<FaCog size="1rem" />}>
-                      {t("menu.aboutPage")}
                     </MenuItem>
                     <MenuItem
                       icon={<FaSignOutAlt size="1rem" />}
@@ -237,19 +233,12 @@ export default function Navbar() {
                   <Divider />
 
                   {/* menu */}
-                  <NavbarDrawerMenuItem icon={<FaRegUser size="1rem" />}>
-                    {t("menu.profile")}
-                  </NavbarDrawerMenuItem>
-
-                  <NavbarDrawerMenuItem
-                    icon={<FaRegQuestionCircle size="1rem" />}
-                  >
-                    {t("menu.settings")}
-                  </NavbarDrawerMenuItem>
-
-                  <NavbarDrawerMenuItem icon={<FaCog size="1rem" />}>
-                    {t("menu.aboutPage")}
-                  </NavbarDrawerMenuItem>
+                  <NavbarDrawerItem href={ROUTES.user_profile}>
+                    <Flex alignItems="center" gap={2}>
+                      <FaRegUser size="1rem" />
+                      {t("menu.profile")}
+                    </Flex>
+                  </NavbarDrawerItem>
 
                   <NavbarDrawerMenuItem
                     icon={<FaSignOutAlt size="1rem" />}
@@ -260,9 +249,7 @@ export default function Navbar() {
 
                   <Flex alignItems="center" gap={2} pl={2}>
                     <BsFillMoonStarsFill size="1rem" />
-                    <ResponsiveText fontSize="md">
-                      {t("menu.darkMode")}
-                    </ResponsiveText>
+                    {t("menu.darkMode")}
                     <Switch
                       isChecked={colorMode === "dark"}
                       onChange={toggleColorMode}
