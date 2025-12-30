@@ -5,6 +5,7 @@ import { Box, Table, Tbody, Tr, Td, Flex, Text } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { useCezarPlayerQuery, useUserInfoQuery } from "@/lib/queries";
+import { ROUTES } from "@/routes";
 
 export default function InfoTable() {
   const { data: userData } = useUserInfoQuery();
@@ -106,7 +107,7 @@ export default function InfoTable() {
                         <ResponsiveText fontSize="md">
                           {t("missingCezarData")}
                         </ResponsiveText>
-                        <Link href="/settings">
+                        <Link href={ROUTES.user_profile}>
                           <Text
                             mt={2}
                             fontSize="sm"
