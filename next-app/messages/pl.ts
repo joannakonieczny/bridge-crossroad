@@ -188,8 +188,8 @@ const onboardingPage = {
       "Twoja pierwsza grupa - podaj kod aby mieć dostęp do społeczności Just Bridge AGH",
     submitButton: "Zakończ",
     terms: {
-      acceptPrefix: "Akceptuję ",
-      link: "regulamin i warunki użytkowania",
+      acceptPrefix: "Wyrażam zgodę na przetwarzanie danych osobowych i zapoznałem się z ",
+      link: "Polityką prywatności",
     },
     toast: {
       loading: "Przetwarzamy informacje...",
@@ -212,6 +212,14 @@ const dashboardPage = {
     WK: "WK",
     team: "Drużyna",
     region: "Okręg",
+    missingCezarData: "Brak danych o graczu z systemu MSC Cezar",
+    updatePIDInSettings:
+      "Jesteś zrzeszony w PZBS? Zaktualizuj dane o swoim PID w ustawieniach profilu",
+    cuebidsId: "Cuebids ID",
+    bboId: "BBO ID",
+    hasRefereeLicense: "Licencja sędziowska",
+    hasRefereeLicenseYes: "Tak",
+    hasRefereeLicenseNo: "Nie",
   },
 };
 
