@@ -42,6 +42,7 @@ export const ROUTES = {
     upload: "/api/files/upload",
     getShared: (path: string) => mergeUrls("/api/files/shared", path),
   },
+  privacyPolice: "/policy.html",
 } as const;
 
 export type RouteKeys = (typeof ROUTES)[keyof typeof ROUTES];
