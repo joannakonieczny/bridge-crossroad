@@ -46,7 +46,6 @@ const loginPage = {
     },
   },
   utilities: {
-    rememberMe: "Zapamiętaj mnie",
     forgotPassword: "Zapomniałeś hasła?",
   },
   submitButtons: {
@@ -113,9 +112,6 @@ const registerPage = {
     nicknameField: {
       placeholder: "Nick lub przezwisko (opcjonalne)",
     },
-  },
-  utilities: {
-    rememberMe: "Zapamiętaj mnie",
   },
   submitButtons: {
     registerWithGoogle: "Zarejestruj się z Google",

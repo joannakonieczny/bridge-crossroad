@@ -9,9 +9,7 @@ import {
 } from "@/lib/typed-translations";
 import FormHeading from "@/components/pages/auth/FormHeading";
 import FormInput from "@/components/common/form/FormInput";
-import GoogleButton from "@/components/pages/auth/FormGoogleButton";
 import FormMainButton from "@/components/common/form/FormMainButton";
-import FormCheckbox from "@/components/common/form/FormCheckbox";
 import { register } from "@/services/auth/api";
 import { registerFormSchema } from "@/schemas/pages/auth/register/register-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,7 +39,6 @@ export default function RegisterForm() {
       email: "",
       password: "",
       repeatPassword: "",
-      rememberMe: true,
     },
   });
 
@@ -192,22 +189,7 @@ export default function RegisterForm() {
             )}
           />
 
-          <Controller
-            control={formControl}
-            name="rememberMe"
-            render={({ field }) => (
-              <FormCheckbox
-                text={t("utilities.rememberMe")}
-                onElementProps={{
-                  isChecked: field.value,
-                  onChange: (e) => field.onChange(e.target.checked),
-                }}
-              />
-            )}
-          />
-
           <Stack spacing={3}>
-            <GoogleButton text={t("submitButtons.registerWithGoogle")} />
             <FormMainButton text={t("submitButtons.register")} type="submit" />
           </Stack>
         </Stack>
