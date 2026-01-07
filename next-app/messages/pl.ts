@@ -184,7 +184,8 @@ const onboardingPage = {
       "Twoja pierwsza grupa - podaj kod aby mieć dostęp do społeczności Just Bridge AGH",
     submitButton: "Zakończ",
     terms: {
-      acceptPrefix: "Wyrażam zgodę na przetwarzanie danych osobowych i zapoznałem się z ",
+      acceptPrefix:
+        "Wyrażam zgodę na przetwarzanie danych osobowych i zapoznałem się z ",
       link: "Polityką prywatności",
     },
     toast: {
@@ -724,6 +725,7 @@ const eventForm = {
   primaryInfoStep: {
     titlePlaceholder: "Tytuł wydarzenia",
     descriptionPlaceholder: "Opis wydarzenia",
+    locationPlaceholder: "Miejsce wydarzenia (opcjonalnie)",
     groupPlaceholder: "Wybierz grupę",
     organizerPlaceholder: "Wybierz organizatora",
     eventStartPlaceholder: "Początek wydarzenia",
