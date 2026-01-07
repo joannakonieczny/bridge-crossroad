@@ -7,11 +7,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalCloseButton,
   Stack,
   useToast,
-  Button,
 } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -242,11 +240,6 @@ export function CreateModifyGroupModal({
             </Stack>
           </form>
         </ModalBody>
-        <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>
-            {t("cancelButton")}
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

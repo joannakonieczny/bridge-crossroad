@@ -317,7 +317,6 @@ const groupsPage = {
           "Nie udało się przesłać zdjęcia, spróbuj ponownie lub usuń je.",
       },
     },
-    cancelButton: "Anuluj",
     imageToast: {
       loading: "Przesyłanie zdjęcia...",
       success: "Zdjęcie zostało przesłane!",
@@ -404,9 +403,6 @@ const groupsPage = {
       images: {
         loadMore: "Załaduj więcej zdjęć",
         noFiles: "Na tej grupie nie wysłano jeszcze żadnych zdjęć.",
-        viewer: {
-          close: "Zamknij",
-        },
       },
       otherFiles: {
         loadMore: "Załaduj więcej plików",
@@ -470,7 +466,6 @@ const groupsPage = {
         placeholder: "Wybierz użytkownika",
         required: "Wybierz użytkownika z grupy",
       },
-      cancelButton: "Anuluj",
     },
   },
 };
@@ -830,7 +825,6 @@ const chatPage = {
     fileErrorUpload:
       "Nie udało się przesłać pliku, spróbuj ponownie lub usuń go aby wysłać samą wiadomość.",
     submitButton: "Wyślij",
-    closeButton: "Zatwierdź",
   },
   fileUploadToast: {
     loading: "Przesyłanie pliku...",
@@ -872,7 +866,6 @@ const findPartner = {
     eventPlaceholder: "-- Wybierz wydarzenie --",
     startsAtLabel: "Od",
     endsAtLabel: "Do",
-    cancelButton: "Anuluj",
     createButton: "Utwórz ogłoszenie",
     modifyButton: "Zapisz zmiany",
     toast: {

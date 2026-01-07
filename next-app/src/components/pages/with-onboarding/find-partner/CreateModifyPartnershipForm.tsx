@@ -435,9 +435,6 @@ export default function CreateModifyPartnershipForm({
               </Stack>
 
               <ModalFooter px={0} mt={4}>
-                <Button variant="ghost" mr={3} onClick={onClose}>
-                  {t("cancelButton")}
-                </Button>
                 <Button
                   colorScheme="accent"
                   type="submit"
