@@ -46,7 +46,6 @@ const loginPage = {
     },
   },
   utilities: {
-    rememberMe: "Zapamiętaj mnie",
     forgotPassword: "Zapomniałeś hasła?",
   },
   submitButtons: {
@@ -57,6 +56,34 @@ const loginPage = {
     loading: "Trwa logowanie...",
     success: "Pomyślnie zalogowano!",
     errorDefault: "Wystąpił błąd podczas logowania",
+  },
+};
+
+const forgotPasswordPage = {
+  title: "Resetuj hasło",
+  backToLogin: {
+    text: "Pamiętasz hasło?",
+    link: "Wróć do logowania",
+  },
+  form: {
+    emailField: {
+      placeholder: "Adres e-mail",
+    },
+  },
+  emailSentInfo: {
+    message: "Nowe hasło zostało wysłane na podany adres e-mail!",
+    instructions:
+      "Sprawdź swoją skrzynkę pocztową, użyj otrzymanego hasła do zalogowania, a następnie zmień je w ustawieniach konta.",
+  },
+  submitButtons: {
+    sendEmail: "Wyślij nowe hasło",
+    resendEmail: "Wyślij ponownie",
+  },
+  toast: {
+    loading: "Resetowanie hasła...",
+    success: "Nowe hasło zostało wysłane na Twój adres e-mail!",
+    resendSuccess: "Nowe hasło zostało wysłane ponownie!",
+    errorDefault: "Wystąpił błąd podczas wysyłania emaila",
   },
 };
 
@@ -85,9 +112,6 @@ const registerPage = {
     nicknameField: {
       placeholder: "Nick lub przezwisko (opcjonalne)",
     },
-  },
-  utilities: {
-    rememberMe: "Zapamiętaj mnie",
   },
   submitButtons: {
     registerWithGoogle: "Zarejestruj się z Google",
@@ -160,8 +184,9 @@ const onboardingPage = {
       "Twoja pierwsza grupa - podaj kod aby mieć dostęp do społeczności Just Bridge AGH",
     submitButton: "Zakończ",
     terms: {
-      acceptPrefix: "Akceptuję ",
-      link: "regulamin i warunki użytkowania",
+      acceptPrefix:
+        "Wyrażam zgodę na przetwarzanie danych osobowych i zapoznałem się z ",
+      link: "Polityką prywatności",
     },
     toast: {
       loading: "Przetwarzamy informacje...",
@@ -184,6 +209,14 @@ const dashboardPage = {
     WK: "WK",
     team: "Drużyna",
     region: "Okręg",
+    missingCezarData: "Brak danych o graczu z systemu MSC Cezar",
+    updatePIDInSettings:
+      "Jesteś zrzeszony w PZBS? Zaktualizuj dane o swoim PID w ustawieniach profilu",
+    cuebidsId: "Cuebids ID",
+    bboId: "BBO ID",
+    hasRefereeLicense: "Licencja sędziowska",
+    hasRefereeLicenseYes: "Tak",
+    hasRefereeLicenseNo: "Nie",
   },
 };
 
@@ -687,6 +720,7 @@ const eventForm = {
   primaryInfoStep: {
     titlePlaceholder: "Tytuł wydarzenia",
     descriptionPlaceholder: "Opis wydarzenia",
+    locationPlaceholder: "Miejsce wydarzenia (opcjonalnie)",
     groupPlaceholder: "Wybierz grupę",
     organizerPlaceholder: "Wybierz organizatora",
     eventStartPlaceholder: "Początek wydarzenia",
@@ -814,9 +848,10 @@ const chatPage = {
 };
 
 const findPartner = {
-  PartnershipForm: {
+  CreateModifyPartnershipForm: {
     addButton: "Dodaj ogłoszenie",
     modalHeader: "Nowe ogłoszenie poszukiwania partnera",
+    modalHeaderModify: "Edytuj ogłoszenie",
     groupLabel: "Grupa",
     groupPlaceholder: "Wybierz grupę",
     nameLabel: "Nazwa",
@@ -832,10 +867,16 @@ const findPartner = {
     startsAtLabel: "Od",
     endsAtLabel: "Do",
     createButton: "Utwórz ogłoszenie",
+    modifyButton: "Zapisz zmiany",
     toast: {
       loading: "Tworzenie ogłoszenia...",
       success: "Ogłoszenie utworzone",
       error: "Błąd podczas tworzenia",
+      modify: {
+        loading: "Modyfikowanie ogłoszenia...",
+        success: "Ogłoszenie zmodyfikowane pomyślnie",
+        error: "Błąd podczas modyfikowania",
+      },
       frequency: {
         SINGLE: "Pojedyncza",
         PERIOD: "Okresowa",
@@ -1042,6 +1083,9 @@ const messages = {
       login: {
         invalidCredentials: "Nieprawidłowe dane logowania",
       },
+      resetPassword: {
+        userNotFound: "Nie znaleziono użytkownika z podanym adresem e-mail",
+      },
     },
     onboarding: {
       finalPage: {
@@ -1071,6 +1115,7 @@ const messages = {
     Auth: {
       LoginPage: loginPage,
       RegisterPage: registerPage,
+      ForgotPasswordPage: forgotPasswordPage,
     },
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,

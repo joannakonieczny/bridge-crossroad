@@ -38,10 +38,12 @@ export const ROUTES = {
   },
   find_partner: "/find-partner",
   tools: "/tools",
+  user_profile: "/user-profile",
   files: {
     upload: "/api/files/upload",
     getShared: (path: string) => mergeUrls("/api/files/shared", path),
   },
+  privacyPolice: "/policy.html",
 } as const;
 
 export type RouteKeys = (typeof ROUTES)[keyof typeof ROUTES];

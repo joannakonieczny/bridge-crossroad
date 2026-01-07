@@ -47,7 +47,7 @@ export function PrimaryInfoStep({
   }, [ownInfoQ.data?.id]);
 
   function RenderFormInput(p: {
-    name: "title" | "description";
+    name: "title" | "description" | "location";
     placeholder: string;
     type: "text" | "textarea";
   }) {
@@ -141,6 +141,11 @@ export function PrimaryInfoStep({
       <RenderFormInput
         name="description"
         placeholder={t("primaryInfoStep.descriptionPlaceholder")}
+        type="text"
+      />
+      <RenderFormInput
+        name="location"
+        placeholder={t("primaryInfoStep.locationPlaceholder")}
         type="text"
       />
       {!selectedGroup && (

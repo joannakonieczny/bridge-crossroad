@@ -14,6 +14,7 @@ import {
   getLatestEventsForUser,
 } from "@/services/events/api";
 import { listPartnershipPosts } from "@/services/find-partner/api";
+import { getCezarPlayerByPidAction } from "@/services/external/api";
 import type { PartnershipPostStatus } from "@/club-preset/partnership-post";
 import type { PartnershipPostType } from "@/club-preset/partnership-post";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
@@ -62,6 +63,7 @@ export const QUERY_KEYS = {
     p.onboardingData ? JSON.stringify(p.onboardingData) : undefined,
     ,
   ],
+  cezarPlayer: (pid: string) => ["cezar", "player", pid],
 } as const;
 
 function useOnErrorToast(template: string, toastId: string) {
@@ -194,6 +196,20 @@ export function useRecentEventsQuery(
   return useActionQuery({
     queryKey: QUERY_KEYS.latestEvents(limit),
     action: () => getLatestEventsForUser({ limit }),
+    onError: e,
+    ...props,
+  });
+}
+
+export function useCezarPlayerQuery(
+  pid: string | null,
+  props?: TActionQueryOptionsHelper<typeof getCezarPlayerByPidAction>
+) {
+  const e = useOnErrorToast("danych o graczu", "getCezarPlayerByPidAction");
+  return useActionQuery({
+    queryKey: QUERY_KEYS.cezarPlayer(pid || ""),
+    action: () => getCezarPlayerByPidAction({ pid: pid || "" }),
+    enabled: !!pid,
     onError: e,
     ...props,
   });
