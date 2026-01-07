@@ -658,6 +658,25 @@ const registerPageValidation = {
   },
 };
 
+const userPageValidation = {
+  password: {
+    required: "Podaj hasło",
+    min: `Hasło musi mieć co najmniej ${USER.password.min} znaków`,
+    max: `Hasło nie może być dłuższe niż ${USER.password.max} znaków`,
+    noUpperCase: "Hasło musi zawierać wielkie litery",
+    noLowerCase: "Hasło musi zawierać małe litery",
+    noDigit: "Hasło musi zawierać cyfry",
+    noSpecialChar: "Hasło musi zawierać znaki specjalne",
+  },
+  repeatPassword: {
+    required: "Powtórz hasło",
+    mismatch: "Hasła nie pasują do siebie",
+  },
+  oldPassword: {
+    required: "Podaj aktualne hasło",
+  },
+};
+
 const onboardingPageValidation = {
   firstPage: {
     academy: {
@@ -1066,6 +1085,7 @@ const messages = {
         login: loginPageValidation,
         register: registerPageValidation,
       },
+      user: userPageValidation,
       onboarding: onboardingPageValidation,
     },
     common: {
@@ -1085,6 +1105,17 @@ const messages = {
       },
       resetPassword: {
         userNotFound: "Nie znaleziono użytkownika z podanym adresem e-mail",
+      },
+    },
+    user: {
+      changeEmail: {
+        emailExists: "Konto z tym adresem e-mail już istnieje",
+      },
+      changePassword: {
+        invalidOldPassword: "Nieprawidłowe stare hasło",
+      },
+      changeProfile: {
+        nicknameExists: "Nick jest już zajęty",
       },
     },
     onboarding: {
@@ -1120,6 +1151,107 @@ const messages = {
     OnboardingPage: onboardingPage,
     DashboardPage: dashboardPage,
     LandingPage: landingPage,
+    UserProfilePage: {
+      heading: "Mój profil",
+      sections: {
+        profile: "Dane osobowe",
+        email: "Adres e-mail",
+        password: "Hasło",
+        onboarding: "Informacje brydżowe",
+      },
+      ChangeEmailForm: {
+        header: "Zmień adres e-mail",
+        form: {
+          currentEmail: {
+            placeholder: "Aktualny adres e-mail",
+          },
+          newEmail: {
+            placeholder: "Nowy adres e-mail",
+          },
+        },
+        submitButton: "Zmień e-mail",
+        toast: {
+          loading: "Zmiana adresu e-mail...",
+          success: "Adres e-mail został zmieniony!",
+          errorDefault: "Wystąpił błąd podczas zmiany adresu e-mail",
+        },
+      },
+      ChangePasswordForm: {
+        header: "Zmień hasło",
+        form: {
+          oldPassword: {
+            placeholder: "Aktualne hasło",
+          },
+          newPassword: {
+            placeholder: "Nowe hasło",
+          },
+          repeatNewPassword: {
+            placeholder: "Powtórz nowe hasło",
+          },
+        },
+        submitButton: "Zmień hasło",
+        toast: {
+          loading: "Zmiana hasła...",
+          success: "Hasło zostało zmienione!",
+          errorDefault: "Wystąpił błąd podczas zmiany hasła",
+        },
+      },
+      ChangeProfileForm: {
+        header: "Zmień dane osobowe",
+        form: {
+          firstName: {
+            placeholder: "Imię",
+          },
+          lastName: {
+            placeholder: "Nazwisko",
+          },
+          nickname: {
+            placeholder: "Nick (opcjonalnie)",
+          },
+        },
+        submitButton: "Zapisz zmiany",
+        toast: {
+          loading: "Zapisywanie zmian...",
+          success: "Dane zostały zaktualizowane!",
+          errorDefault: "Wystąpił błąd podczas aktualizacji danych",
+        },
+      },
+      ChangeOnboardingForm: {
+        header: "Zmień informacje brydżowe",
+        form: {
+          academy: {
+            placeholder: "Akademia",
+          },
+          yearOfBirth: {
+            placeholder: "Rok urodzenia",
+          },
+          startPlayingDate: {
+            placeholder: "Data rozpoczęcia gry",
+          },
+          trainingGroup: {
+            placeholder: "Grupa treningowa",
+          },
+          hasRefereeLicense: {
+            placeholder: "Posiadam licencję sędziowską",
+          },
+          cezarId: {
+            placeholder: "ID CEZAR (opcjonalnie)",
+          },
+          bboId: {
+            placeholder: "ID BBO (opcjonalnie)",
+          },
+          cuebidsId: {
+            placeholder: "ID Cuebids (opcjonalnie)",
+          },
+        },
+        submitButton: "Zapisz zmiany",
+        toast: {
+          loading: "Zapisywanie zmian...",
+          success: "Informacje zostały zaktualizowane!",
+          errorDefault: "Wystąpił błąd podczas aktualizacji informacji",
+        },
+      },
+    },
     EventPage: {
       page: {
         backLink: "Wróć do kalendarza",
