@@ -171,3 +171,34 @@ export async function updateUserProfile(params: UpdateUserProfileParams) {
 
   return check(updatedUser, "Failed to update user profile");
 }
+
+export async function findUserByEmail(email: EmailType) {
+  await dbConnect();
+  const user = await User.findOne({ email }).lean<IUserDTO>();
+  if (!user) {
+    throw new RepositoryError("User not found");
+  }
+  return user;
+}
+
+export async function changePasswordToTemporary({
+  userId,
+  newPassword,
+  session,
+}: {
+  userId: UserIdType;
+  newPassword: PasswordTypeGeneric;
+} & WithSession) {
+  await dbConnect();
+
+  const salt = await bcrypt.genSalt(hashingRounds);
+  const encodedPassword = await bcrypt.hash(newPassword, salt);
+
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: userId },
+    { encodedPassword },
+    { new: true, session }
+  ).lean<IUserDTO>();
+
+  return check(updatedUser, "Failed to update password");
+}

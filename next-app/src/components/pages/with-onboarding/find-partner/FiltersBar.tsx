@@ -19,7 +19,7 @@ import {
 } from "@/club-preset/partnership-post";
 import { useTranslations } from "@/lib/typed-translations";
 import SelectInput from "@/components/common/form/SelectInput";
-import PartnershipForm from "./PartnershipForm";
+import CreateModifyPartnershipForm from "./CreateModifyPartnershipForm";
 
 export default function FiltersBar() {
   const t = useTranslations("pages.FindPartner.FiltersBar");
@@ -164,7 +164,7 @@ export default function FiltersBar() {
         >
           {t("button.clear")}
         </Button>
-        <PartnershipForm />
+        <CreateModifyPartnershipForm />
       </Grid>
 
       <Accordion
@@ -301,7 +301,7 @@ export default function FiltersBar() {
               >
                 {t("button.clear")}
               </Button>
-              <PartnershipForm />
+              <CreateModifyPartnershipForm />
             </VStack>
           </AccordionPanel>
         </AccordionItem>
