@@ -170,6 +170,8 @@ export async function updateUserProfile(params: UpdateUserProfileParams) {
   }).lean<IUserDTO>();
 
   return check(updatedUser, "Failed to update user profile");
+}
+
 export async function findUserByEmail(email: EmailType) {
   await dbConnect();
   const user = await User.findOne({ email }).lean<IUserDTO>();
