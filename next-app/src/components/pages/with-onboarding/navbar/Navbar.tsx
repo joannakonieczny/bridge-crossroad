@@ -22,16 +22,14 @@ import {
   MenuItem,
   useMediaQuery,
   useToast,
+  Avatar,
 } from "@chakra-ui/react";
-import ProfilePicture from "@/components/common/ProfilePicture";
 import {
   FaBars,
   FaRegUser,
-  FaCog,
-  FaRegQuestionCircle,
   FaAngleDown,
   FaAngleRight,
-  FaSignOutAlt, // added logout icon
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import { usePathname } from "next/navigation";
@@ -40,6 +38,7 @@ import Logo from "@/components/common/Logo";
 import { useTranslations } from "@/lib/typed-translations";
 import { useColorMode } from "@chakra-ui/react";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
+import { useUserInfoQuery } from "@/lib/queries";
 import NavbarTab from "./NavbarTab";
 import NavbarDrawerItem from "./NavbarDrawerItem";
 import NavbarDrawerMenuItem from "./NavbarDrawerMenuItem";
@@ -56,6 +55,7 @@ const navbarTabs = [
 export default function Navbar() {
   const pathname = usePathname();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const userQ = useUserInfoQuery();
 
   const defaultIndex = useMemo(() => {
     const match = navbarTabs.findIndex((path) => pathname.startsWith(path));
@@ -68,6 +68,10 @@ export default function Navbar() {
   const [isDesktop] = useMediaQuery("(min-width: 1200px)");
 
   const toast = useToast();
+
+  const first = userQ.data?.name?.firstName ?? "";
+  const last = userQ.data?.name?.lastName ?? "";
+  const displayName = [first, last].filter(Boolean).join(" ") || "User";
 
   function handleLogout() {
     const promise = logout();
@@ -127,7 +131,7 @@ export default function Navbar() {
 
           {/* profile + dropdown menu */}
           <Flex flex={1} justifyContent="flex-end" alignItems="center" gap={4}>
-            <ProfilePicture size="3rem" />
+            <Avatar boxSize="3rem" name={displayName} />
             <Menu>
               {({ isOpen }) => (
                 <>
@@ -152,14 +156,12 @@ export default function Navbar() {
                     borderColor="border.200"
                     boxShadow="md"
                   >
-                    <MenuItem icon={<FaRegUser size="1rem" />}>
+                    <MenuItem
+                      as="a"
+                      href={ROUTES.user_profile}
+                      icon={<FaRegUser size="1rem" />}
+                    >
                       {t("menu.profile")}
-                    </MenuItem>
-                    <MenuItem icon={<FaRegQuestionCircle size="1rem" />}>
-                      {t("menu.settings")}
-                    </MenuItem>
-                    <MenuItem icon={<FaCog size="1rem" />}>
-                      {t("menu.aboutPage")}
                     </MenuItem>
                     <MenuItem
                       icon={<FaSignOutAlt size="1rem" />}
@@ -206,7 +208,7 @@ export default function Navbar() {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                <ProfilePicture size="3rem" />
+                <Avatar boxSize="3rem" name={displayName} />
 
                 {/* Druga ikona, widoczna w Drawerze */}
                 <IconButton
@@ -237,19 +239,12 @@ export default function Navbar() {
                   <Divider />
 
                   {/* menu */}
-                  <NavbarDrawerMenuItem icon={<FaRegUser size="1rem" />}>
-                    {t("menu.profile")}
-                  </NavbarDrawerMenuItem>
-
-                  <NavbarDrawerMenuItem
-                    icon={<FaRegQuestionCircle size="1rem" />}
-                  >
-                    {t("menu.settings")}
-                  </NavbarDrawerMenuItem>
-
-                  <NavbarDrawerMenuItem icon={<FaCog size="1rem" />}>
-                    {t("menu.aboutPage")}
-                  </NavbarDrawerMenuItem>
+                  <NavbarDrawerItem href={ROUTES.user_profile}>
+                    <Flex alignItems="center" gap={2}>
+                      <FaRegUser size="1rem" />
+                      {t("menu.profile")}
+                    </Flex>
+                  </NavbarDrawerItem>
 
                   <NavbarDrawerMenuItem
                     icon={<FaSignOutAlt size="1rem" />}
@@ -260,9 +255,7 @@ export default function Navbar() {
 
                   <Flex alignItems="center" gap={2} pl={2}>
                     <BsFillMoonStarsFill size="1rem" />
-                    <ResponsiveText fontSize="md">
-                      {t("menu.darkMode")}
-                    </ResponsiveText>
+                    {t("menu.darkMode")}
                     <Switch
                       isChecked={colorMode === "dark"}
                       onChange={toggleColorMode}

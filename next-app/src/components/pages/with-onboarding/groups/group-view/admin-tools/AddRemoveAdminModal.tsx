@@ -7,10 +7,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalCloseButton,
   Stack,
-  Button,
   useToast,
 } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -174,11 +172,6 @@ export default function AddRemoveAdminModal({
             </Stack>
           </form>
         </ModalBody>
-        <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>
-            {t("form.cancelButton")}
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

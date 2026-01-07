@@ -1,6 +1,6 @@
 "use client";
 
-import { Tr, Td, Text, Box, Link } from "@chakra-ui/react";
+import { Tr, Td, Text, Box, Link, Avatar, HStack } from "@chakra-ui/react";
 import { useTranslations } from "@/lib/typed-translations";
 import { STATIC } from "@/club-preset/static";
 
@@ -25,16 +25,19 @@ export default function UserTableRow({
     <Tr>
       {/* Imię i nazwisko + nickname */}
       <Td>
-        <Box>
-          <Text fontWeight="bold" fontSize={{ base: "sm", md: "md" }}>
-            {fullName}
-          </Text>
-          {nickname && (
-            <Text fontSize="sm" color="border.500" mt={2} fontStyle={"italic"}>
-              {nickname}
+        <HStack spacing={3}>
+          <Avatar size="sm" name={fullName} />
+          <Box>
+            <Text fontWeight="bold" fontSize={{ base: "sm", md: "md" }}>
+              {fullName}
             </Text>
-          )}
-        </Box>
+            {nickname && (
+              <Text fontSize="sm" color="border.500" mt={2} fontStyle={"italic"}>
+                {nickname}
+              </Text>
+            )}
+          </Box>
+        </HStack>
       </Td>
 
       {/* Numer PZBS */}

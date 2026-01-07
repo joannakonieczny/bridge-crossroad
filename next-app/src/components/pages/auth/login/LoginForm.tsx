@@ -10,9 +10,7 @@ import {
 import ChakraLink from "@/components/chakra-config/ChakraLink";
 import FormHeading from "@/components/pages/auth/FormHeading";
 import FormInput from "@/components/common/form/FormInput";
-import GoogleButton from "@/components/pages/auth/FormGoogleButton";
 import FormMainButton from "@/components/common/form/FormMainButton";
-import FormCheckbox from "@/components/common/form/FormCheckbox";
 import { login } from "@/services/auth/api";
 import { loginFormSchema } from "@/schemas/pages/auth/login/login-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,7 +36,6 @@ export default function LoginForm() {
     defaultValues: {
       nicknameOrEmail: "",
       password: "",
-      rememberMe: true,
     },
   });
   const toast = useToast();
@@ -121,27 +118,13 @@ export default function LoginForm() {
             )}
           />
 
-          <HStack justify="space-between" pt={4}>
-            <Controller
-              control={formControl}
-              name="rememberMe"
-              render={({ field }) => (
-                <FormCheckbox
-                  text={t("utilities.rememberMe")}
-                  onElementProps={{
-                    isChecked: field.value,
-                    onChange: (e) => field.onChange(e.target.checked),
-                  }}
-                />
-              )}
-            />
+          <HStack justify="flex-end">
             <ChakraLink color="accent.500" href={ROUTES.auth.forgot_password}>
               {t("utilities.forgotPassword")}
             </ChakraLink>
           </HStack>
 
           <Stack spacing={3}>
-            <GoogleButton text={t("submitButtons.loginWithGoogle")} />
             <FormMainButton text={t("submitButtons.login")} type="submit" />
           </Stack>
         </Stack>

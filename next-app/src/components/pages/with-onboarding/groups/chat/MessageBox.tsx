@@ -2,33 +2,45 @@
 
 import type { MessageWithPopulatedSenderType } from "@/schemas/model/chat-message/chat-message-types";
 import { getDateLabel, getPersonLabel } from "@/util/formatters";
-import { Box, Text, Flex } from "@chakra-ui/react";
-import { FiDownload } from "react-icons/fi";
+import { Box, Text, Flex, HStack, Button } from "@chakra-ui/react";
+import { FiDownload, FiEdit2 } from "react-icons/fi";
 import { useState } from "react";
 import { getFileExtension, isImageUrl } from "@/util/helpers";
 import { AsyncImage } from "@/components/common/AsyncImage";
+import { useTranslations } from "@/lib/typed-translations";
 
 type IMessageBoxProps = {
   message: MessageWithPopulatedSenderType;
+  onEdit?: (message: MessageWithPopulatedSenderType) => void;
+  isBeingEdited?: boolean;
 };
 
-export default function MessageBox({ message }: IMessageBoxProps) {
+export default function MessageBox({
+  message,
+  onEdit,
+  isBeingEdited,
+}: IMessageBoxProps) {
+  const t = useTranslations("pages.ChatPage");
   const isSelf = !!message.sender?.isCurrentUser;
   const isAdmin = !!message.sender?.isGroupAdmin;
   const sender = message.sender;
   const content = message.message;
   const fileUrl = message.fileUrl;
-  const [showDate, setShowDate] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
   const isImage = isImageUrl(fileUrl);
   const fileExt = getFileExtension(fileUrl);
 
-  const messageBoxColor = isSelf
+  const messageBoxColor = isBeingEdited
+    ? "accent.300"
+    : isSelf
     ? "accent.500"
     : isAdmin
     ? "secondary.200"
     : "border.100";
 
-  const messageBoxHoverColor = isSelf
+  const messageBoxHoverColor = isBeingEdited
+    ? "accent.400"
+    : isSelf
     ? "accent.600"
     : isAdmin
     ? "secondary.300"
@@ -48,7 +60,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
       </Text>
       <Flex
         alignItems="flex-end"
-        gap={0}
+        gap={2}
         flexDirection={isSelf ? "row-reverse" : "row"}
         width="fit-content"
         maxW="60%"
@@ -61,7 +73,7 @@ export default function MessageBox({ message }: IMessageBoxProps) {
             borderRadius="0.5rem"
             p="1"
             minW={{ base: "6ch", md: "10ch" }}
-            onClick={() => setShowDate((s) => !s)}
+            onClick={() => setIsSelected((s) => !s)}
             cursor="pointer"
             role="button"
             display="flex"
@@ -124,15 +136,29 @@ export default function MessageBox({ message }: IMessageBoxProps) {
               </Flex>
             )}
           </Box>
-          {showDate && (
-            <Text
-              fontSize="xs"
-              color="border.500"
-              marginTop="0.25rem"
-              textAlign={isSelf ? "right" : "left"}
-            >
-              {getDateLabel(message.createdAt)}
-            </Text>
+          {isSelected && (
+            <HStack>
+              {isSelf && onEdit && (
+                <Button
+                  leftIcon={<FiEdit2 />}
+                  size="xs"
+                  variant="ghost"
+                  colorScheme="accent"
+                  onClick={() => onEdit(message)}
+                >
+                  {t("editButton")}
+                </Button>
+              )}
+
+              <Text
+                fontSize="xs"
+                color="border.500"
+                marginTop="0.25rem"
+                textAlign={isSelf ? "right" : "left"}
+              >
+                {getDateLabel(message.createdAt)}
+              </Text>
+            </HStack>
           )}
         </Flex>
       </Flex>

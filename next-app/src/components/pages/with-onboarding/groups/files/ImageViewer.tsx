@@ -7,12 +7,10 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Button,
   Text,
 } from "@chakra-ui/react";
 import { AsyncImage } from "@/components/common/AsyncImage";
 import { getPersonLabel, getDateLabel } from "@/util/formatters";
-import { useTranslations } from "@/lib/typed-translations";
 import type { MessageWithPopulatedSenderTypeWithoutMessage } from "@/schemas/model/chat-message/chat-message-types";
 
 type ImageViewerProps = {
@@ -26,9 +24,6 @@ export function ImageViewer({
   onClose,
   selectedMessage,
 }: ImageViewerProps) {
-  const t = useTranslations(
-    "pages.GroupsPage.GroupFiles.sections.images.viewer"
-  );
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
       <ModalOverlay />
@@ -47,20 +42,12 @@ export function ImageViewer({
             objectFit="contain"
           />
         </ModalBody>
-        <ModalFooter
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
-        >
+        <ModalFooter>
           <Text color="border.500">
             {getPersonLabel(selectedMessage?.sender) +
               " - " +
               getDateLabel(selectedMessage?.createdAt)}
           </Text>
-          <Button onClick={onClose} colorScheme="accent">
-            {t("close")}
-          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

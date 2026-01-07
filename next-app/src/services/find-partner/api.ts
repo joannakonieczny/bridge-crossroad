@@ -3,6 +3,7 @@
 import {
   listPartnershipPostsInGroup,
   addPartnershipPost,
+  modifyPartnershipPost as modifyPartnershipPostRepo,
   removePartnershipPost,
   addInterestedUser,
   removeInterestedUser,
@@ -17,6 +18,7 @@ import {
 } from "../action-lib";
 import {
   addPartnershipPostSchema,
+  modifyPartnershipPostSchema,
   listPartnershipPostsSchema,
   modifyPartnershipPostStatusSchema,
 } from "@/schemas/pages/with-onboarding/partnership-posts/partnership-posts-schema";
@@ -33,6 +35,9 @@ import {
 import { partition } from "@/util/helpers";
 import { RepositoryError } from "@/repositories/common";
 import { returnValidationErrors } from "next-safe-action";
+import { getUserData } from "@/repositories/onboarding";
+import { sendEmail } from "@/repositories/mailer";
+import { partnershipInterestNotificationTemplate } from "@/email-templates/pl/email-templates";
 
 export const listPartnershipPosts = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(listPartnershipPostsSchema))
@@ -114,15 +119,73 @@ export const createPartnershipPost = withinOwnGroupAction
     return sanitizePartnershipPost(res);
   });
 
-export const addInterested = withinOwnGroupAction
-  .inputSchema(async (s) => s.merge(havingPartnershipPostId))
-  .action(async ({ parsedInput: { partnershipPostId }, ctx: { userId } }) => {
-    const res = await addInterestedUser({
+export const modifyPartnershipPost = withinOwnPartnershipPostAction
+  .inputSchema(async (s) => s.merge(modifyPartnershipPostSchema))
+  .action(async ({ parsedInput: postData, ctx: { partnershipPostId, groupId } }) => {
+    // Verify eventId if it's being updated and is within group
+    if (postData.data?.type === PartnershipPostType.SINGLE && postData.data.eventId) {
+      const { eventId } = postData.data;
+
+      const group = await getGroupById(groupId);
+      if (!group.events.find((event) => event.toString() === eventId)) {
+        throw new RepositoryError(
+          `Provided eventId '${eventId}' does not belong to group '${groupId}'`
+        );
+      }
+    }
+
+    const res = await modifyPartnershipPostRepo({
       partnershipPostId,
-      interestedUserId: userId,
+      post: postData,
     });
     return sanitizePartnershipPost(res);
   });
+
+export const addInterested = withinOwnGroupAction
+  .inputSchema(async (s) => s.merge(havingPartnershipPostId))
+  .action(
+    async ({ parsedInput: { partnershipPostId }, ctx: { userId } }) => {
+      const res = await addInterestedUser({
+        partnershipPostId,
+        interestedUserId: userId,
+      });
+      return sanitizePartnershipPost(res);
+    },
+    {
+      onSuccess: async (d) => {
+        const interestedUserId = d.ctx?.userId;
+        if (!d.data || !interestedUserId) return;
+
+        const partnershipPost = await getPartnershipPost({
+          partnershipPostId: d.data.id,
+        });
+        const postOwnerId = partnershipPost.ownerId.toString();
+
+        // Don't send email if the interested user is the post owner
+        if (postOwnerId === interestedUserId) return;
+
+        const [postOwner, interestedUser] = await Promise.all([
+          getUserData(postOwnerId),
+          getUserData(interestedUserId),
+        ]);
+
+        sendEmail({
+          userEmail: postOwner.email,
+          ...partnershipInterestNotificationTemplate({
+            interestedPlayer: {
+              firstName: interestedUser.name.firstName,
+              nickname: interestedUser.nickname,
+            },
+            postName: partnershipPost.name,
+            person: {
+              firstName: postOwner.name.firstName,
+              nickname: postOwner.nickname,
+            },
+          }),
+        });
+      },
+    }
+  );
 
 export const removeInterested = withinOwnGroupAction
   .inputSchema(async (s) => s.merge(havingPartnershipPostId))

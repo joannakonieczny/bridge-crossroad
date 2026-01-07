@@ -4,12 +4,25 @@ import { Flex, Divider, Box } from "@chakra-ui/react";
 import { TextInput } from "./TextInput";
 import { ChatBox } from "./ChatBox";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
+import type { MessageWithPopulatedSenderType } from "@/schemas/model/chat-message/chat-message-types";
+import { useState } from "react";
 
 type IChatViewProps = {
   groupId: GroupIdType;
 };
 
 export default function ChatView(props: IChatViewProps) {
+  const [editingMessage, setEditingMessage] =
+    useState<MessageWithPopulatedSenderType | null>(null);
+
+  const handleEditMessage = (message: MessageWithPopulatedSenderType) => {
+    setEditingMessage(message);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessage(null);
+  };
+
   return (
     <Flex
       backgroundColor="border.50"
@@ -22,10 +35,18 @@ export default function ChatView(props: IChatViewProps) {
       direction="column"
       alignContent="center"
     >
-      <ChatBox groupId={props.groupId} />
+      <ChatBox
+        groupId={props.groupId}
+        onEditMessage={handleEditMessage}
+        editingMessageId={editingMessage?.id}
+      />
       <Box>
         <Divider flexShrink={0} />
-        <TextInput groupId={props.groupId} />
+        <TextInput
+          groupId={props.groupId}
+          editingMessage={editingMessage}
+          onCancelEdit={handleCancelEdit}
+        />
       </Box>
     </Flex>
   );
