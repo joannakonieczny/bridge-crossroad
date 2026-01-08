@@ -31,12 +31,12 @@ export default function Sidebar() {
   return (
     <Box
       w="16.5rem"
-      minH="calc(100vh - 5rem)"
       bg={colorMode === "dark" ? "neutral.100" : "neutral.50"}
       flex="0 0 16.5rem"
       p={4}
       overflowY="auto"  
       position="relative"
+      height="calc(100vh - 5rem)"
     >
       <Box mb={4} width="100%" pr={2}>
         <Button

@@ -113,26 +113,26 @@ export default function Announcement({ post, onEdit }: AnnouncementProps) {
             />
             <HStack spacing={3} align={{ base: "center", md: "flex-start" }}>
               <Avatar
-                size="sm"
-                name={getPersonLabel(post.owner)}
-                display={{ base: "none", md: "flex" }}
+              size="sm"
+              name={post.owner.name.firstName + " " + post.owner.name.lastName}
+              display={{ base: "none", md: "flex" }}
               />
               <Box>
-                <Link
-                  color="accent.500"
-                  fontWeight="semibold"
-                  href="#"
-                  _hover={{ textDecoration: "underline" }}
-                >
-                  {post.name}
-                </Link>
-                <Text fontSize="sm" color="neutral.500">
-                  {getDateLabel(
-                    post.data.type === PartnershipPostType.PERIOD
-                      ? post.data.duration.endsAt
-                      : post.data.event.duration.startsAt
-                  )}
-                </Text>
+              <Link
+                color="accent.500"
+                fontWeight="semibold"
+                href="#"
+                _hover={{ textDecoration: "underline" }}
+              >
+                {post.name}
+              </Link>
+              <Text fontSize="sm" color="neutral.500">
+                {getDateLabel(
+                post.data.type === PartnershipPostType.PERIOD
+                  ? post.data.duration.endsAt
+                  : post.data.event.duration.startsAt
+                )}
+              </Text>
               </Box>
             </HStack>
           </Flex>

@@ -118,13 +118,6 @@
   border-color: var(--chakra-colors-neutral-400) !important;
 }
 
-/* Dark mode: past events secondary-700 */
-:global(.chakra-ui-dark) .root :global(.fc-event[style*="border-300"]),
-:global([data-theme="dark"]) .root :global(.fc-event[style*="border-300"]) {
-  background-color: var(--chakra-colors-secondary-700) !important;
-  border-color: var(--chakra-colors-secondary-700) !important;
-}
-
 /* Dark mode: no today highlight */
 :global(.chakra-ui-dark) .root :global(.fc-day-today),
 :global(.chakra-ui-dark) .root :global(.fc-col-header-cell.fc-day-today),

@@ -6,7 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import plLocale from "@fullcalendar/core/locales/pl";
 import enLocale from "@fullcalendar/core/locales/en-gb";
-import { Box, useBreakpointValue } from "@chakra-ui/react";
+import { Box, useBreakpointValue, useColorMode } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
 import { useEventsForUserQuery } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
@@ -23,7 +23,8 @@ import type {
 
 function getEventDayColor(
   eventStartDate: string | Date,
-  eventEndDate: string | Date
+  eventEndDate: string | Date,
+  isDark: boolean
 ) {
   const start = dayjs(eventStartDate).isValid()
     ? dayjs(eventStartDate).startOf("day")
@@ -44,7 +45,7 @@ function getEventDayColor(
   ) {
     return "var(--chakra-colors-secondary-300)";
   }
-  return "var(--chakra-colors-border-300)";
+  return isDark ? "var(--chakra-colors-secondary-700)" : "var(--chakra-colors-gray-300)";
 }
 
 const COLOR_HOVER_MAPPINGS = [
@@ -80,6 +81,8 @@ export default function Calendar() {
   const t = useTranslations("common.eventType");
   const locale = useLocale();
   const calendarRef = useRef<FullCalendar>(null);
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === "dark";
 
   const router = useRouter();
   const pathname = usePathname();
@@ -133,7 +136,7 @@ export default function Calendar() {
 
   const eventsWithColor = rawEvents.map((e) => ({
     ...e,
-    color: getEventDayColor(e.start, e.end),
+    color: getEventDayColor(e.start, e.end, isDark),
     textColor: "bg",
   }));
 
