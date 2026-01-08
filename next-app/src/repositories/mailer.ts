@@ -12,15 +12,15 @@ const transporter = nodemailer.createTransport({
 });
 
 type SendEmailInput = {
-  to: string;
+  userEmail: string;
   subject: string;
   body: string;
 };
 
-export const sendEmail = async ({ to, subject, body }: SendEmailInput) =>
+export const sendEmail = async ({ userEmail, subject, body }: SendEmailInput) =>
   transporter.sendMail({
     from: config.GMAIL_FROM_EMAIL,
-    to,
+    to: userEmail,
     subject,
     html: body,
   });

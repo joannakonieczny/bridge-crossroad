@@ -9,7 +9,7 @@ export default async function WithOnboardingLayout({
 }: PropsWithChildren) {
   await requireUserOnboarding();
   return (
-    <Flex direction={"column"} height="100vh">
+    <Flex direction={"column"} minH="100vh">
       <Navbar />
       {children}
     </Flex>

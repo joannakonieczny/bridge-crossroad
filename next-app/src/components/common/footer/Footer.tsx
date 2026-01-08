@@ -68,12 +68,9 @@ export default function Footer() {
 
         {/* Pomoc */}
         <Flex direction="column" gap="1.5rem" width="100%">
-          <ResponsiveHeading text={t("help.title")} fontSize="xl" color="white" />
-          <ResponsiveText color="blue.50">
+          <ResponsiveHeading text={t("help.title")} fontSize="xl" color="bg" />
+          <ResponsiveText as={ChakraLink} href={ROUTES.privacyPolice} color="bg">
             {t("help.content.privacyPolice")}
-          </ResponsiveText>
-          <ResponsiveText color="blue.50">
-            {t("help.content.technicalHelp")}
           </ResponsiveText>
         </Flex>
 

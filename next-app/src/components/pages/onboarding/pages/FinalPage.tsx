@@ -162,7 +162,7 @@ export default function FinalPage() {
               label={t("terms.acceptPrefix")}
               linkInfo={{
                 text: t("terms.link"),
-                href: "/terms",
+                href: ROUTES.privacyPolice,
               }}
               isChecked={value}
               onChange={onChange}

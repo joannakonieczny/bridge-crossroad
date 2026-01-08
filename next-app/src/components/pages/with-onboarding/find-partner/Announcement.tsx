@@ -15,40 +15,30 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { FiChevronDown } from "react-icons/fi";
+import { FiChevronDown, FiEdit } from "react-icons/fi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useActionMutation } from "@/lib/tanstack-action/actions-mutation";
 import { QUERY_KEYS } from "@/lib/queries";
 import { useTranslations } from "@/lib/typed-translations";
 import { addInterested, removeInterested } from "@/services/find-partner/api";
-import type { PartnershipPostType } from "@/club-preset/partnership-post";
 import { BiddingSystem } from "@/club-preset/partnership-post";
 import { getPersonLabel, getDateLabel } from "@/util/formatters";
-import type { UserTypeBasic } from "@/schemas/model/user/user-types";
-import type { GroupIdType } from "@/schemas/model/group/group-types";
 import SelectInput from "@/components/common/form/SelectInput";
+import { PartnershipPostType } from "@/club-preset/partnership-post";
+import type { PartnershipPostSchemaTypePopulated } from "@/schemas/model/partnership-post/partnership-post-types";
 
 type AnnouncementProps = {
-  id: string;
-  title: string;
-  date?: Date;
-  owner?: UserTypeBasic;
-  frequency: PartnershipPostType;
-  preferredSystem: BiddingSystem;
-  isOwnByUser: boolean;
-  description?: string;
-  interestedUsers?: UserTypeBasic[];
-  isUserInterested?: boolean;
-  groupId?: GroupIdType;
+  post: PartnershipPostSchemaTypePopulated;
+  onEdit?: (post: PartnershipPostSchemaTypePopulated) => void;
 };
 
-export default function Announcement({ a }: { a: AnnouncementProps }) {
+export default function Announcement({ post, onEdit }: AnnouncementProps) {
   const { isOpen, onToggle } = useDisclosure();
   const [selectedInterestedUser, setSelectedInterestedUser] = useState<
     string | undefined
   >(undefined);
   const [interested, setInterested] = useState<boolean>(
-    a.isUserInterested || false
+    post.isUserInterested || false
   );
 
   const toast = useToast();
@@ -79,8 +69,8 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
 
   const handleToggleInterest = () => {
     const payload = {
-      partnershipPostId: a.id,
-      groupId: a.groupId || "",
+      partnershipPostId: post.id,
+      groupId: post.group.id,
     };
 
     const action = interested ? removeAction : addAction;
@@ -97,7 +87,8 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
     label: tBiddingSystem(value),
   }));
 
-  const hasInterestedUsers = a.interestedUsers && a.interestedUsers.length > 0;
+  const hasInterestedUsers =
+    post.interestedUsers && post.interestedUsers.length > 0;
   const selectPlaceholder = hasInterestedUsers
     ? t("ui.select.playWith")
     : t("ui.select.noInterested");
@@ -123,7 +114,7 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
             <HStack spacing={3} align={{ base: "center", md: "flex-start" }}>
               <Avatar
                 size="sm"
-                name={getPersonLabel(a.owner)}
+                name={getPersonLabel(post.owner)}
                 display={{ base: "none", md: "flex" }}
               />
               <Box>
@@ -133,10 +124,14 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
                   href="#"
                   _hover={{ textDecoration: "underline" }}
                 >
-                  {a.title}
+                  {post.name}
                 </Link>
                 <Text fontSize="sm" color="neutral.500">
-                  {getDateLabel(a.date)}
+                  {getDateLabel(
+                    post.data.type === PartnershipPostType.PERIOD
+                      ? post.data.duration.endsAt
+                      : post.data.event.duration.startsAt
+                  )}
                 </Text>
               </Box>
             </HStack>
@@ -144,17 +139,17 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
         </Td>
 
         <Td py={2}>
-          <Text fontWeight="medium">{getPersonLabel(a.owner)}</Text>
+          <Text fontWeight="medium">{getPersonLabel(post.owner)}</Text>
         </Td>
 
         <Td py={2} display={{ base: "none", md: "table-cell" }}>
-          <Text>{t(`frequency.${a.frequency}`)}</Text>
+          <Text>{t(`frequency.${post.data.type}`)}</Text>
         </Td>
 
         <Td py={2} display={{ base: "none", md: "table-cell" }}>
           <Text>
             {
-              biddingSystemOptions.find((o) => o.value === a.preferredSystem)
+              biddingSystemOptions.find((o) => o.value === post.biddingSystem)
                 ?.label
             }
           </Text>
@@ -188,10 +183,10 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
               gap={4}
             >
               <Text flex="1" whiteSpace="pre-wrap">
-                {a.description || t("ui.noDescription")}
+                {post.description || t("ui.noDescription")}
               </Text>
 
-              {!a.isOwnByUser && (
+              {!post.isOwnByUser && (
                 <Button
                   colorScheme={interested ? "red" : "accent"}
                   onClick={handleToggleInterest}
@@ -210,7 +205,7 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
               )}
             </Flex>
 
-            {a.isOwnByUser && (
+            {post.isOwnByUser && (
               <Flex
                 mt={4}
                 direction={{ base: "column", md: "row" }}
@@ -224,15 +219,26 @@ export default function Announcement({ a }: { a: AnnouncementProps }) {
                     setSelectedInterestedUser(e.target.value || undefined)
                   }
                   isDisabled={!hasInterestedUsers}
-                  options={(a.interestedUsers || []).map((u) => ({
+                  options={(post.interestedUsers || []).map((u) => ({
                     value: u.id,
                     label: getPersonLabel(u),
                   }))}
                 />
 
-                <Button size="sm" onClick={() => {}}>
-                  {t("ui.button.save")}
-                </Button>
+                <HStack spacing={2}>
+                  <Button size="sm" onClick={() => {}}>
+                    {t("ui.button.save")}
+                  </Button>
+                  {onEdit && (
+                    <IconButton
+                      aria-label={"edit announcement"}
+                      icon={<FiEdit />}
+                      size="sm"
+                      colorScheme="accent"
+                      onClick={() => onEdit(post)}
+                    />
+                  )}
+                </HStack>
               </Flex>
             )}
           </Td>

@@ -1,6 +1,8 @@
 "use server";
 
 import { addOnboardingData, getUserData } from "@/repositories/onboarding";
+import { sendEmail } from "@/repositories/mailer";
+import { onboardingCompletedTemplate } from "@/email-templates/pl/email-templates";
 import { sanitizeUser } from "../../sanitizers/server-only/user-sanitize";
 import { authAction } from "../action-lib";
 import { completeOnboardingAndJoinMainGroupSchema } from "@/schemas/pages/onboarding/onboarding-schema";
@@ -11,24 +13,46 @@ import type { TKey } from "@/lib/typed-translations";
 
 export const completeOnboardingAndJoinMainGroup = authAction
   .inputSchema(completeOnboardingAndJoinMainGroupSchema)
-  .action(async ({ parsedInput: onboardingData, ctx: { userId } }) => {
-    await addOnboardingData(userId, onboardingData);
-    const mainGroup = await getMainGroup();
-    if (mainGroup.invitationCode != onboardingData.inviteCode) {
-      returnValidationErrors(completeOnboardingAndJoinMainGroupSchema, {
-        inviteCode: {
-          _errors: [
-            "api.onboarding.finalPage.inviteCode.invalid" satisfies TKey,
-          ],
-        },
+  .action(
+    async ({ parsedInput: onboardingData, ctx: { userId } }) => {
+      await addOnboardingData(userId, onboardingData);
+      const mainGroup = await getMainGroup();
+      if (mainGroup.invitationCode != onboardingData.inviteCode) {
+        returnValidationErrors(completeOnboardingAndJoinMainGroupSchema, {
+          inviteCode: {
+            _errors: [
+              "api.onboarding.finalPage.inviteCode.invalid" satisfies TKey,
+            ],
+          },
+        });
+      }
+      const res = await addUserToGroup({
+        userId,
+        groupId: mainGroup._id.toString(),
       });
+      return sanitizeUser(res.user);
+    },
+    {
+      onSuccess: async (d) => {
+        if (!d.ctx?.userId) return;
+        const [user, mainGroup] = await Promise.all([
+          getUserData(d.ctx.userId),
+          getMainGroup(),
+        ]);
+
+        sendEmail({
+          userEmail: user.email,
+          ...onboardingCompletedTemplate({
+            person: {
+              firstName: user.name.firstName,
+              nickname: user.nickname,
+            },
+            groupName: mainGroup.name,
+          }),
+        });
+      },
     }
-    const res = await addUserToGroup({
-      userId,
-      groupId: mainGroup._id.toString(),
-    });
-    return sanitizeUser(res.user);
-  });
+  );
 
 export const getUser = authAction.action(async ({ ctx: { userId } }) => {
   //TODO return less data

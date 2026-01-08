@@ -2,7 +2,7 @@ import React, { type ChangeEvent, useState } from "react";
 import { Box, HStack, useColorMode } from "@chakra-ui/react";
 import SearchInput from "@/components/common/SearchInput";
 import { useTranslations } from "@/lib/typed-translations";
-import PartnershipForm from "@/components/pages/with-onboarding/find-partner/PartnershipForm";
+import CreateModifyPartnershipForm from "./CreateModifyPartnershipForm";
 
 export default function MainBar() {
   const t = useTranslations("pages.FindPartner.MainBar");
@@ -21,7 +21,7 @@ export default function MainBar() {
             placeholder={t("searchPlaceholder")}
           />
         </Box>
-        <PartnershipForm />
+        <CreateModifyPartnershipForm />
       </HStack>
     </Box>
   );

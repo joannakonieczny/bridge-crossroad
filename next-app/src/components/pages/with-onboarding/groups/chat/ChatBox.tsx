@@ -2,6 +2,7 @@
 
 import { Stack, Flex, Button, Spinner, Text } from "@chakra-ui/react";
 import type { GroupIdType } from "@/schemas/model/group/group-types";
+import type { MessageWithPopulatedSenderType } from "@/schemas/model/chat-message/chat-message-types";
 import MessageBox from "./MessageBox";
 import { useTranslations } from "@/lib/typed-translations";
 import { useActionInfiniteQuery } from "@/lib/tanstack-action/actions-infinite-query";
@@ -12,9 +13,15 @@ import { useQueryClient } from "@tanstack/react-query";
 
 type ChatBoxProps = {
   groupId: GroupIdType;
+  onEditMessage?: (message: MessageWithPopulatedSenderType) => void;
+  editingMessageId?: string;
 };
 
-export function ChatBox({ groupId }: ChatBoxProps) {
+export function ChatBox({
+  groupId,
+  onEditMessage,
+  editingMessageId,
+}: ChatBoxProps) {
   const t = useTranslations("pages.ChatPage");
   const queryClient = useQueryClient();
 
@@ -71,7 +78,12 @@ export function ChatBox({ groupId }: ChatBoxProps) {
       sx={{ display: "flex", flexDirection: "column-reverse" }}
     >
       {allMessages.map((msg) => (
-        <MessageBox key={msg.id} message={msg} />
+        <MessageBox
+          key={msg.id}
+          message={msg}
+          onEdit={onEditMessage}
+          isBeingEdited={msg.id === editingMessageId}
+        />
       ))}
 
       {messagesQuery.hasNextPage && (
