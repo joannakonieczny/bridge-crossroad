@@ -24,7 +24,7 @@ export default function SidebarCard({
       variant="outline"
       w="14rem"
       boxShadow="sm"
-      bg="white"
+      bg="bg"
     >
       <Box>
         <AsyncImage src={imageUrl} alt={title} w="100%" h="9rem" />

@@ -1,3 +1,5 @@
+"use client";
+
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
 import { Box, Flex, Button, Highlight, Link } from "@chakra-ui/react";
@@ -16,6 +18,7 @@ export default function LandingPage1() {
       minHeight="100vh"
       position="relative"
       overflow="hidden"
+      bgColor="bg"
     >
       <ChakraSVG
         svg={Landing1SVG}

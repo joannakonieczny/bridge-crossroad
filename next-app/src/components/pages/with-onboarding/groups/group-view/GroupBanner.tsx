@@ -12,6 +12,7 @@ import {
   WrapItem,
   Tag,
   HStack,
+  useColorMode,
 } from "@chakra-ui/react";
 import GroupAdminMenu from "./admin-tools/GroupAdminMenu";
 import { useTranslations } from "@/lib/typed-translations";
@@ -60,6 +61,7 @@ export function GroupBannerLoader() {
 
 export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
   const t = useTranslations("pages.GroupsPage.GroupBanner");
+  const { colorMode } = useColorMode();
 
   if (isLoading || !group) return <GroupBannerLoader />;
 
@@ -67,7 +69,7 @@ export default function GroupBanner({ group, isLoading }: IGroupBannerProps) {
   const membersCount = group.members?.length ?? 0;
 
   return (
-    <Box bg="bg" borderRadius="xl" borderWidth="1px" p={{ base: 4, md: 6 }}>
+    <Box bg={colorMode === "dark" ? "neutral.100" : "bg"} borderRadius="xl" borderWidth="1px" p={{ base: 4, md: 6 }}>
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
         {/* IMAGE */}
         <Flex

@@ -98,7 +98,7 @@ export default function Announcement({ post, onEdit }: AnnouncementProps) {
       <Tr
         _hover={{ ".vertical-bar": { bg: "accent.500" } }}
         borderBottomWidth={isOpen ? "0" : "1px"}
-        borderBottomColor={isOpen ? "transparent" : "border.200"}
+        borderBottomColor={isOpen ? "transparent" : "neutral.200"}
       >
         <Td py={2}>
           <Flex align="center">
@@ -126,7 +126,7 @@ export default function Announcement({ post, onEdit }: AnnouncementProps) {
                 >
                   {post.name}
                 </Link>
-                <Text fontSize="sm" color="border.500">
+                <Text fontSize="sm" color="neutral.500">
                   {getDateLabel(
                     post.data.type === PartnershipPostType.PERIOD
                       ? post.data.duration.endsAt

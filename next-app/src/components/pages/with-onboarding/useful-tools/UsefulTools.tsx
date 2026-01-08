@@ -11,7 +11,7 @@ export default function UsefulTools() {
   const t = useTranslations("pages.UsefulTools");
 
   return (
-    <Box minH="calc(100dvh - 5rem)">
+    <Box minH="calc(100dvh - 5rem)" bg="neutral.50">
       <Flex
         direction="column"
         w="full"

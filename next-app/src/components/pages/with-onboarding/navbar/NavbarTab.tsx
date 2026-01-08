@@ -1,6 +1,6 @@
 "use client";
 
-import { Tab } from "@chakra-ui/react";
+import { Tab, useColorMode } from "@chakra-ui/react";
 import Link from "next/link";
 
 interface NavbarTabProps {
@@ -9,13 +9,16 @@ interface NavbarTabProps {
 }
 
 export default function NavbarTab({ href, children }: NavbarTabProps) {
+
+  const { colorMode } = useColorMode();
+
   return (
     <Tab
       as={Link}
       href={href}
       whiteSpace="nowrap"
       fontSize="0.87rem"
-      _selected={{ color: "fonts" }}
+      _selected={{ color: colorMode === "dark" ? "blue.500" : "fonts" }}
       _focus={{ boxShadow: "none" }}
     >
       {children}

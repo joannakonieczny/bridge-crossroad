@@ -165,7 +165,7 @@ function MonthYearInput(props: IMonthYearInputProps) {
           _focus={{ borderColor: "accent.500" }}
         />
         <InputRightElement>
-          <FiCalendar onClick={onOpen} cursor="pointer" color="border.500" />
+          <FiCalendar onClick={onOpen} cursor="pointer" color="neutral.500" />
         </InputRightElement>
       </InputGroup>
 

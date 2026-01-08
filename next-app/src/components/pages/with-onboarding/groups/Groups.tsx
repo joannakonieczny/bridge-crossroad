@@ -8,6 +8,7 @@ import {
   Input,
   useToast,
   useDisclosure,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FaArrowAltCircleRight, FaPlus } from "react-icons/fa";
 import GroupsGrid from "./GroupsGrid";
@@ -28,6 +29,7 @@ export default function Groups() {
   const toast = useToast();
   const tValidation = useTranslationsWithFallback();
   const t = useTranslationsWithFallback("pages.GroupsPage.Groups");
+  const { colorMode } = useColorMode();
 
   const queryClient = useQueryClient();
 
@@ -69,7 +71,7 @@ export default function Groups() {
         flexDirection="column"
         overflowY="visible"
         minHeight="calc(100vh - 5rem)"
-        backgroundColor="border.50"
+        backgroundColor="neutral.50"
       >
         <Box width="100%">
           {/* Górny pasek */}
@@ -79,7 +81,7 @@ export default function Groups() {
             justify={{ base: "stretch", md: "space-between" }}
             align={{ base: "stretch", md: "center" }}
             width="100%"
-            backgroundColor="bg"
+            backgroundColor={colorMode === "dark" ? "neutral.100" : "bg"}
             padding="0.5rem"
             mb={4}
           >

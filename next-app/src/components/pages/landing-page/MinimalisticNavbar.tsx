@@ -1,4 +1,6 @@
-import { Button, Flex } from "@chakra-ui/react";
+"use client";
+
+import { Button, Flex, useColorMode } from "@chakra-ui/react";
 import Logo from "@/components/common/Logo";
 import Link from "next/link";
 import { useTranslations } from "@/lib/typed-translations";
@@ -7,10 +9,12 @@ import { ROUTES } from "@/routes";
 export default function MinimalisticNavbar() {
   const t = useTranslations("pages.LandingPage");
 
+  const { colorMode } = useColorMode();
+
   return (
     <Flex
       as="nav"
-      bg="bg"
+      bg={colorMode === "light" ? "bg" : "neutral.100"}
       p={4}
       boxShadow="sm"
       alignItems="center"

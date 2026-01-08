@@ -85,7 +85,7 @@ export default function Navbar() {
   return (
     <Flex
       as="nav"
-      bg="bg"
+      bg={colorMode === "dark" ? "neutral.100" : "bg"}
       p={4}
       boxShadow="sm"
       alignItems="center"
@@ -106,7 +106,7 @@ export default function Navbar() {
             alignItems="center"
             defaultIndex={defaultIndex}
           >
-            <TabList gap={8} color="accent.500">
+            <TabList gap={8} color={colorMode === "dark" ? "white" : "accent.500"}>
               <NavbarTab href={ROUTES.dashboard}>
                 {t("tabs.dashboard")}
               </NavbarTab>
@@ -124,7 +124,7 @@ export default function Navbar() {
             <TabIndicator
               mt="-1.5px"
               height="2px"
-              bg="fonts"
+              bg={colorMode === "dark" ? "blue.500" : "fonts"}
               borderRadius="1px"
             />
           </Tabs>
@@ -152,18 +152,21 @@ export default function Navbar() {
                   />
                   <MenuList
                     minWidth="240px"
-                    bg="bg"
-                    borderColor="border.200"
+                    bg={colorMode === "light" ? "bg" : "neutral.50"}
+                    borderColor="neutral.200"
                     boxShadow="md"
                   >
                     <MenuItem
                       as="a"
                       href={ROUTES.user_profile}
                       icon={<FaRegUser size="1rem" />}
+                      bg={colorMode === "dark" ? "neutral.50" : undefined}
                     >
                       {t("menu.profile")}
                     </MenuItem>
                     <MenuItem
+                      bg={colorMode === "dark" ? "neutral.50" : undefined}
+                      _hover={colorMode === "dark" ? { bg: "neutral.200" } : undefined}
                       icon={<FaSignOutAlt size="1rem" />}
                       onClick={handleLogout}
                     >

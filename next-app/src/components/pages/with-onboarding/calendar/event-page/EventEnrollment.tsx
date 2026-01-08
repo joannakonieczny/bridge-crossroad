@@ -10,6 +10,7 @@ import {
   AvatarGroup,
   Icon,
   useToast,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FaUserPlus, FaUserMinus } from "react-icons/fa";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
@@ -86,8 +87,10 @@ export default function EventEnrollment({ event }: EventEnrollmentProps) {
     },
   });
 
+  const { colorMode } = useColorMode();
+
   return (
-    <Box bg="bg" borderRadius="md" boxShadow="sm" p={4} w="100%">
+    <Box bg={colorMode === "light" ? "bg" : "neutral.100"} borderRadius="md" boxShadow="sm" p={4} w="100%">
       <VStack align="start" spacing={4}>
         <ResponsiveHeading
           text={t("heading")}

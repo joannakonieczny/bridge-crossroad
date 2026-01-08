@@ -152,10 +152,10 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
                 <AsyncImage src={m.fileUrl} w="100%" h="160px" />
               </Link>
               <Flex px={2} py={2} align="center" justify="space-between">
-                <Text fontSize="xs" color="border.500">
+                <Text fontSize="xs" color="neutral.500">
                   {getPersonLabel(m.sender)}
                 </Text>
-                <Text fontSize="xs" color="border.500">
+                <Text fontSize="xs" color="neutral.500">
                   {getDateLabel(m.createdAt)}
                 </Text>
               </Flex>
@@ -207,7 +207,7 @@ export default function GroupChatFiles({ groupId }: GroupChatFilesProps) {
                   </Tag>
                   <Box>
                     <Text fontWeight="medium">{getPersonLabel(m.sender)}</Text>
-                    <Text fontSize="sm" color="border.500">
+                    <Text fontSize="sm" color="neutral.500">
                       {getDateLabel(m.createdAt)}
                     </Text>
                   </Box>

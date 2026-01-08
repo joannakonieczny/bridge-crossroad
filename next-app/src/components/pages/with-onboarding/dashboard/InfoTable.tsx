@@ -42,7 +42,7 @@ export default function InfoTable() {
         borderRadius="md"
         overflow="hidden"
         border="1px solid"
-        borderColor="border.200"
+        borderColor="neutral.200"
         width="100%"
       >
         <Flex justify="center" width="100%">
@@ -50,7 +50,7 @@ export default function InfoTable() {
             borderRadius="md"
             overflow="hidden"
             border="1px solid"
-            borderColor="border.200"
+            borderColor="neutral.200"
             width="100%"
           >
             <Table variant="simple" width="100%" size="sm">

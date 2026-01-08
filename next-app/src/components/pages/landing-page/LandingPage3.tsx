@@ -1,6 +1,8 @@
+"use client";
+
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import ResponsiveText from "@/components/common/texts/ResponsiveText";
-import { Box, Flex, Highlight } from "@chakra-ui/react";
+import { Box, Flex, Highlight, useColorModeValue } from "@chakra-ui/react";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
 import Landing3UpperArrowSVG from "@/assets/landing-page/landing-page-3.svg";
 import Landing3ArtSVG from "@/assets/landing-page/landing-page-3-art.svg";
@@ -8,11 +10,13 @@ import { useTranslations } from "@/lib/typed-translations";
 
 export default function LandingPage3() {
   const t = useTranslations("pages.LandingPage.landingPage3");
+  const bg = useColorModeValue("secondary.100", "blue.700");
+  const highlightColor = useColorModeValue(undefined, "yellow.400");
 
   return (
     <Box
       as="section"
-      bg="secondary.100"
+      bg={bg}
       w="100%"
       minHeight="100vh"
       position="relative"
@@ -48,7 +52,10 @@ export default function LandingPage3() {
             w="100%"
             textAlign="center"
           >
-            <Highlight query={t("highlight")} styles={{ fontWeight: "bold" }}>
+            <Highlight
+              query={t("highlight")}
+              styles={{ fontWeight: "bold", color: highlightColor }}
+            >
               {t("text")}
             </Highlight>
           </ResponsiveText>

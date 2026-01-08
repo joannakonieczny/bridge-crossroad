@@ -67,7 +67,7 @@ export default function UserTableRow({
             {cuebidsCode}
           </Link>
         ) : (
-          <Text color="border.400" fontSize={{ base: "xs", md: "sm" }}>
+          <Text color="neutral.400" fontSize={{ base: "xs", md: "sm" }}>
             {t("placeholder")}
           </Text>
         )}

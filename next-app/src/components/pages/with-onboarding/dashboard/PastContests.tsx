@@ -89,7 +89,7 @@ export default function PastContests() {
                     <ResponsiveText
                       as="span"
                       fontSize="sm"
-                      color="border.500"
+                      color="neutral.500"
                       mt="1"
                       ml={{ base: 3, md: 10 }}
                     >

@@ -12,6 +12,7 @@ import {
   useBreakpointValue,
   VStack,
   Text,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import MainHeading from "@/components/common/texts/MainHeading";
@@ -31,12 +32,14 @@ type MobileMemberCardProps = {
 };
 
 function MobileMemberCard({ fullName, nickname }: MobileMemberCardProps) {
+
+  
   return (
     <Box p={3} bg="bg" borderRadius="md" boxShadow="sm">
       <Text fontWeight="bold" fontSize="sm">
         {fullName}
       </Text>
-      <Text fontSize="sm" color="border.500">
+      <Text fontSize="sm" color="neutral.500">
         {nickname}
       </Text>
     </Box>
@@ -91,16 +94,18 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
     ].some((field) => field?.toLowerCase().includes(query));
   });
 
+  const { colorMode } = useColorMode();
+
   return (
     <Flex
       flex={1}
       direction={"column"}
-      backgroundColor={"border.50"}
+      backgroundColor={"neutral.50"}
       padding={{ base: "1rem", md: "2rem" }}
     >
       <Flex
         flex={1}
-        backgroundColor="bg"
+        backgroundColor={colorMode === "light" ? "bg" : "neutral.100"}
         padding={{ base: "1rem", md: "2rem" }}
         direction="column"
         gap={6}

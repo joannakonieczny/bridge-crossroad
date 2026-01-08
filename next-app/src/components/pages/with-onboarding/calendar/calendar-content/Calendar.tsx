@@ -57,6 +57,14 @@ const COLOR_HOVER_MAPPINGS = [
     to: "var(--chakra-colors-secondary-500)",
   },
   {
+    match: "--chakra-colors-secondary-700",
+    to: "var(--chakra-colors-secondary-800)",
+  },
+  {
+    match: "secondary-700",
+    to: "var(--chakra-colors-secondary-800)",
+  },
+  {
     match: "--chakra-colors-accent-300",
     to: "var(--chakra-colors-accent-500)",
   },

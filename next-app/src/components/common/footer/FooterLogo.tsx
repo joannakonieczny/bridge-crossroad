@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { ChakraSVG } from "@/components/chakra-config/ChakraSVG";
 import LogoDark from "@/assets/common/logo-darkmode.svg";
 import { ROUTES } from "@/routes";
@@ -8,6 +8,7 @@ import ResponsiveHeading from "../texts/ResponsiveHeading";
 
 export default function FooterLogo() {
   return (
+    <Box width="100%">
     <Link href={ROUTES.dashboard} style={{ textDecoration: "none" }}>
       <Flex
         gap={2}
@@ -25,10 +26,11 @@ export default function FooterLogo() {
           text={baseConfig.appName}
           showBar={false}
           fontSize="4xl"
-          color="bg"
+          color="white"
           whiteSpace="nowrap"
         />
       </Flex>
     </Link>
+    </Box>
   );
 }

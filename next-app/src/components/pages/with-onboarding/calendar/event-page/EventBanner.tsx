@@ -13,6 +13,7 @@ import {
   useDisclosure,
   Skeleton,
   Button,
+  useColorMode,
 } from "@chakra-ui/react";
 import ResponsiveHeading from "@/components/common/texts/ResponsiveHeading";
 import type { EventSchemaTypePopulated } from "@/schemas/model/event/event-types";
@@ -37,7 +38,6 @@ function convertEventToFormData(
     imageUrl: event.imageUrl,
   };
 
-  // Convert populated data back to IDs
   switch (event.data.type) {
     case EventType.TOURNAMENT_PAIRS:
       return {
@@ -112,13 +112,15 @@ export default function EventBanner({
   } = useDisclosure();
   const t = useTranslations("pages.EventPage");
 
+  const { colorMode } = useColorMode();
+
   return (
     <Box
       w="100%"
       maxW="100%"
       overflowX="hidden"
       boxSizing="border-box"
-      bgColor="bg"
+      bgColor={colorMode === "dark" ? "neutral.100" : "bg"}
       mt={4}
       px={{ base: 3, md: 0 }}
     >
