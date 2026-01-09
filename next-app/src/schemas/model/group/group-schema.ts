@@ -6,7 +6,7 @@ import {
   idPropSchema,
   withTimeStampsSchema,
 } from "@/schemas/common";
-import { userSchemaBasic } from "../user/user-schema";
+import { userSchemaBasicWithOnboarding } from "../user/user-schema";
 
 const { name, description, invitationCode } = GroupValidationConstants;
 
@@ -57,7 +57,7 @@ export const groupBasicSchema = z.object({
 export const groupFullSchema = groupBasicSchema
   .extend({
     invitationCode: invitationCodeSchema,
-    members: z.array(userSchemaBasic),
-    admins: z.array(userSchemaBasic),
+    members: z.array(userSchemaBasicWithOnboarding),
+    admins: z.array(userSchemaBasicWithOnboarding),
   })
   .merge(withTimeStampsSchema);

@@ -21,6 +21,7 @@ import type { GroupIdType } from "@/schemas/model/group/group-types";
 import { useTranslations } from "@/lib/typed-translations";
 import { useGroupQuery } from "@/lib/queries";
 import { MdOutlineContentCopy } from "react-icons/md";
+import type { UserTypeBasicWithOnboarding } from "@/schemas/model/user/user-types";
 
 type IGroupViewProps = {
   groupId: GroupIdType;
@@ -163,7 +164,7 @@ export default function GroupView(props: IGroupViewProps) {
         </VStack>
       ) : (
         <PeopleList
-          members={group?.members ?? []}
+          members={(group?.members ?? []) as UserTypeBasicWithOnboarding[]}
           isLoading={groupQ.isLoading}
         />
       )}

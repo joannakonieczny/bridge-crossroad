@@ -32,7 +32,12 @@ export default function UserTableRow({
               {fullName}
             </Text>
             {nickname && (
-              <Text fontSize="sm" color="border.500" mt={2} fontStyle={"italic"}>
+              <Text
+                fontSize="sm"
+                color="border.500"
+                mt={2}
+                fontStyle={"italic"}
+              >
                 {nickname}
               </Text>
             )}

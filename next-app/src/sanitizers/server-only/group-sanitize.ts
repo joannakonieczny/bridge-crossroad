@@ -4,7 +4,7 @@ import type {
   GroupBasicType,
   GroupFullType,
 } from "@/schemas/model/group/group-types";
-import { sanitizeMinUserInfo } from "./user-sanitize";
+import { sanitizeMinUserInfoWithOnboarding } from "./user-sanitize";
 import { sanitizeFileUrl } from "./common";
 import type { UserIdType } from "@/schemas/model/user/user-types";
 
@@ -33,8 +33,8 @@ export function sanitizeGroupsFullInfoPopulated(
     invitationCode: group.invitationCode,
     createdAt: group.createdAt,
     updatedAt: group.updatedAt,
-    members: group.members.map(sanitizeMinUserInfo),
-    admins: group.admins.map(sanitizeMinUserInfo),
+    members: group.members.map(sanitizeMinUserInfoWithOnboarding),
+    admins: group.admins.map(sanitizeMinUserInfoWithOnboarding),
     isMember: group.members.some(
       (member) => member._id.toString() === mappers.userId
     ),

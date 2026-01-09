@@ -148,3 +148,7 @@ export const userSchemaBasic = z.object({
   name: nameSchema,
   nickname: nicknameSchema.optional(),
 });
+
+export const userSchemaBasicWithOnboarding = userSchemaBasic.extend({
+  onboardingData: onboardingDataSchema.optional(),
+});
