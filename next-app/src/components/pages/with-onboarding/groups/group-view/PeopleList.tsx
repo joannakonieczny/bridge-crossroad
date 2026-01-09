@@ -19,10 +19,10 @@ import MainHeading from "@/components/common/texts/MainHeading";
 import SearchInput from "@/components/common/SearchInput";
 import UserTableRow from "./UserTableRow";
 import { useTranslations } from "@/lib/typed-translations";
-import type { UserTypeBasic } from "@/schemas/model/user/user-types";
+import type { UserTypeBasicWithOnboarding } from "@/schemas/model/user/user-types";
 
 type PeopleListProps = {
-  members?: UserTypeBasic[];
+  members?: UserTypeBasicWithOnboarding[];
   isLoading?: boolean;
 };
 
@@ -32,8 +32,6 @@ type MobileMemberCardProps = {
 };
 
 function MobileMemberCard({ fullName, nickname }: MobileMemberCardProps) {
-
-  
   return (
     <Box p={3} bg="bg" borderRadius="md" boxShadow="sm">
       <Text fontWeight="bold" fontSize="sm">
@@ -78,9 +76,9 @@ export default function PeopleList({ members, isLoading }: PeopleListProps) {
     members?.map((m) => ({
       fullName: `${m.name.firstName} ${m.name.lastName}`,
       nickname: m.nickname ?? "",
-      pzbsId: "",
-      bboId: "",
-      cuebidsId: "",
+      pzbsId: m.onboardingData?.cezarId ?? "",
+      bboId: m.onboardingData?.bboId ?? "",
+      cuebidsId: m.onboardingData?.cuebidsId ?? "",
     })) ?? [];
 
   const filteredData = formattedMembersData.filter((user) => {
